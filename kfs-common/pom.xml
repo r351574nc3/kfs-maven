@@ -37,6 +37,83 @@
   </ciManagement>
 
 <!-- Properties later populated into configuration.properties -->
+<properties>
+  <commons.logging.version>1.1.1</commons.logging.version>
+  <!-- Servlet API Version -->
+  <jsp.version>2.0</jsp.version>
+  <jstl.version>1.2</jstl.version>
+  <servlet.version>2.4</servlet.version>
+  <taglib.plugin.version>2.4</taglib.plugin.version>
+
+  <cxf.version>2.2.9</cxf.version>
+  <drools.version>5.1.1</drools.version>
+  <jetty.version>7.2.0.v20101020</jetty.version>
+  <jmock.version>2.5.1</jmock.version>
+  
+  <!-- Database versions -->
+  <mysql.version>5.1.13</mysql.version>
+  <oracle.version>10.2.0.3.0</oracle.version>
+  
+  <!-- Rice versions -->
+  <rice.version>1.0.3.3</rice.version>
+  <rice.snapshot.impl.version>1.0.3.3</rice.snapshot.impl.version>
+  <rice.snapshot.web.version>1.0.3.3</rice.snapshot.web.version>
+
+  <selenium.version>2.0b3</selenium.version>
+  <servlet.version>2.4</servlet.version>
+  <slf4j.version>1.6.1</slf4j.version>
+  <springframework.version>2.5.6</springframework.version>
+  <struts.version>1.2.9</struts.version> 
+  
+  <!-- Checkstyle config -->
+  <checkstyle.config.location>${basedir}/src/main/config/KC_Checkstyle.xml</checkstyle.config.location>
+  <checkstyle.enable.rss>false</checkstyle.enable.rss>
+  <checkstyle.enable.rules.summary>false</checkstyle.enable.rules.summary>
+  
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  
+  <!-- defaults to dev unless overriden -->
+  <build.environment>dev</build.environment>
+  <default.context.path>/${project.artifactId}-${build.environment}</default.context.path>
+  
+  <rice.web.excludes>
+    META-INF/,
+    WEB-INF/classes/,
+    WEB-INF/lib/,
+    rice-portal/,
+    WEB-INF/jsp/travelDocument2.jsp,
+    WEB-INF/tags/rice-portal/			
+    WEB-INF/struts-config.xml,
+    WEB-INF/validator-rules.xml,
+    WEB-INF/web.xml,
+    portal.jsp	
+    acknowledgments.jsp,
+    WEB-INF/tags/rice-portal/portalBody.tag,
+    WEB-INF/tags/rice-portal/portalTabs.tag,
+  </rice.web.excludes>
+  
+  <!-- 
+       Maven 3 Migration: This section is used to removed the duplicate
+       properties needed to support the different reporting style in Maven 3.
+       After migrating to Maven 3 this will not be required
+       
+       see https://cwiki.apache.org/MAVEN/maven-3x-and-site-plugin.html
+  -->
+  <checkstyle.plugin.version>2.6</checkstyle.plugin.version>
+  <javadoc.plugin.version>2.7</javadoc.plugin.version>
+  <project.info.reports.plugin.version>2.2</project.info.reports.plugin.version>
+  <surefire.plugin.version>2.6</surefire.plugin.version>
+  <surefire.usefile>false</surefire.usefile>
+  <surefire.testFailureIgnore>false</surefire.testFailureIgnore>
+  <surefire.forkMode>never</surefire.forkMode>
+  <surefire.reportFormat>plain</surefire.reportFormat>
+  <surefire.argLine>-Xmx1536m -XX:MaxPermSize=512m</surefire.argLine>
+  <surefire.aggregate>true</surefire.aggregate>
+  <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
+  <cobertura.maxmem>512M</cobertura.maxmem>
+  <properties.directory>src/main/config/properties</properties.directory>
+  <account.wsdl.packaged.location>wsdl/AccountCreationService.wsdl</account.wsdl.packaged.location>  
+</properties>
 
 
 </project>
