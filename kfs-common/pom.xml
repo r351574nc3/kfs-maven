@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.kuali.pom</groupId>
+    <artifactId>kuali-common</artifactId>
+    <version>1.0.31</version>
+  </parent>
+  <groupId>org.kuali.kfs</groupId>
+  <artifactId>kfs</artifactId>
+  <packaging>pom</packaging>
+  <name>KFS</name>
+  <inceptionYear>2005</inceptionYear>
+  <version>4.1.1-maven-SNAPSHOT</version>
+  <description></description>
+  <url>http://${kuali.site.hostname}/rice/${project.version}</url>
+
+  <ciManagement>
+    <url>http://jenkins.leosandbox.org</url>
+  </ciManagement>
+
+</project>
