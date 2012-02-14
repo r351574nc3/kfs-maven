@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - Copyright 2011 The Kuali Foundation.
+   - 
+   - Licensed under the Educational Community License, Version 2.0 (the "License");
+   - you may not use this file except in compliance with the License.
+   - You may obtain a copy of the License at
+   - 
+   - http://www.opensource.org/licenses/ecl2.php
+   - 
+   - Unless required by applicable law or agreed to in writing, software
+   - distributed under the License is distributed on an "AS IS" BASIS,
+   - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   - See the License for the specific language governing permissions and
+   - limitations under the License.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+                           
+    <bean id="vndModuleConfiguration" parent="vndModuleConfiguration-parentBean" />
+
+	<bean id="vndModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+		<property name="namespaceCode" value="KFS-VND"/>
+		<property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>org.kuali.kfs.vnd</value>
+            </list>
+        </property>
+		<property name="dataDictionaryPackages">
+			<list>
+                <value>org/kuali/kfs/vnd/businessobject/datadictionary</value>
+                <value>org/kuali/kfs/vnd/document/datadictionary</value>
+			</list>
+		</property>
+		<property name="scriptConfigurationFilePaths">
+            <list>
+                <value>org/kuali/kfs/vnd/dwr-vnd.xml</value>
+            </list>
+        </property>
+		<property name="databaseRepositoryFilePaths">
+			<list>
+				<value>org/kuali/kfs/vnd/ojb-vnd.xml</value>
+			</list>
+		</property>
+        <property name="batchFileDirectories">
+          	<list>
+            	<value>${reports.directory}/vnd</value>
+          	</list>
+        </property>
+
+	</bean>
+
+    <bean id="vndModuleService" parent="vndModuleService-parentBean"/>
+
+    <bean id="vndModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+		<property name="moduleConfiguration" ref="vndModuleConfiguration" />
+	</bean>
+
+	<!-- TODO: ewestfal
+	     12-23-2008
+	     commented out since the workflow lookup framework no longer exists
+	     
+	<bean id="workflow-org.kuali.kfs.vnd.businessobject.VendorType-Lookupable" parent="workflowLookupable" scope="prototype">
+		<property name="businessObjectClassName">
+			<value>org.kuali.kfs.vnd.businessobject.VendorType</value>
+		</property>
+	</bean>
+
+	<bean id="workflow-org.kuali.kfs.vnd.businessobject.ContractManager-Lookupable" parent="workflowLookupable" scope="prototype">
+		<property name="businessObjectClassName">
+			<value>org.kuali.kfs.vnd.businessobject.ContractManager</value>
+		</property>
+	</bean>
+
+    <bean id="workflow-org.kuali.kfs.vnd.businessobject.CommodityCode-Lookupable" parent="workflowLookupable" scope="prototype">
+        <property name="businessObjectClassName">
+            <value>org.kuali.kfs.vnd.businessobject.CommodityCode</value>
+        </property>
+    </bean>
+    -->
+    
+    <bean id="vendorDao" parent="platformAwareDao" class="org.kuali.kfs.vnd.dataaccess.impl.VendorDaoOjb" >
+        <property name="dateTimeService" ref="dateTimeService"/>
+    </bean>
+   
+    <bean id="vendorService" class="org.kuali.kfs.vnd.document.service.impl.VendorServiceImpl">
+        <property name="vendorDao" ref="vendorDao"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="documentService" ref="documentService"/>
+        <property name="persistenceService" ref="persistenceService" />
+    </bean>
+
+    <bean id="phoneNumberService" class="org.kuali.kfs.vnd.service.impl.PhoneNumberServiceImpl">
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+    </bean>
+    
+    <bean id="taxNumberService" class="org.kuali.kfs.vnd.service.impl.TaxNumberServiceImpl">
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+    </bean>
+    
+    <bean id="vendorLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl" scope="prototype">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <!--property name="dictionaryValidationService">
+            <ref bean="dictionaryValidationService" />
+            </property-->
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+        <property name="vendorService">
+            <ref bean="vendorService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+    </bean>
+
+    <bean id="vendorContactLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorContactLookupableHelperServiceImpl" scope="prototype">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorPhoneLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorPhoneLookupableHelperServiceImpl" scope="prototype">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorContractLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorContractLookupableHelperServiceImpl" scope="prototype">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="lookupDao">
+            <ref bean="lookupDao" />
+        </property>
+        <property name="dateTimeService">
+            <ref bean="dateTimeService" />
+        </property>                
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorAddressLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorAddressLookupableHelperServiceImpl" scope="prototype">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+  
+    <bean id="vendorCustomerNumberLookupableHelperService" class="org.kuali.kfs.vnd.businessobject.lookup.VendorCustomerNumberLookupableHelperServiceImpl" scope="prototype">
+        <property name="persistenceStructureService">
+            <ref bean="persistenceStructureService" />
+        </property>
+        <property name="lookupService">
+            <ref bean="lookupService" />
+        </property>
+        <property name="businessObjectMetaDataService">
+            <ref bean="businessObjectMetaDataService" />
+        </property>
+        <property name="businessObjectDictionaryService">
+            <ref bean="businessObjectDictionaryService" />
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="dataDictionaryService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="vendorLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorContactLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="vendorContactLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorPhoneLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="vendorPhoneLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorContractLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="vendorContractLookupableHelperService" />
+        </property>
+    </bean>
+    
+    <bean id="vendorAddressLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="vendorAddressLookupableHelperService" />
+        </property>
+    </bean>
+  
+    <bean id="vendorCustomerNumberLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="vendorCustomerNumberLookupableHelperService" />
+        </property>
+    </bean>
+   
+   <bean id="commodityCodeDao" parent="platformAwareDao" class="org.kuali.kfs.vnd.dataaccess.impl.CommodityCodeDaoOjb" />
+
+    <bean id="commodityCodeService" class="org.kuali.kfs.vnd.service.impl.CommodityCodeServiceImpl">
+         <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property> 
+        <property name="commodityCodeDao">
+            <ref bean="commodityCodeDao" />
+        </property> 
+    </bean>
+    
+    <bean id="commodityReviewRoleTypeService" class="org.kuali.kfs.vnd.identity.CommodityReviewRoleTypeServiceImpl"/>
+    <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+	  <property name="serviceDefinition">
+	    <bean parent="kfsService"
+	      p:service-ref="commodityReviewRoleTypeService"
+	      p:localServiceName="commodityReviewRoleTypeService" />
+	  </property>
+	</bean>
+
+    <bean id="contractManagerRoleTypeService" class="org.kuali.kfs.vnd.identity.ContractManagerRoleTypeServiceImpl"/>
+    <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+	  <property name="serviceDefinition">
+	    <bean parent="kfsService"
+	      p:service-ref="contractManagerRoleTypeService"
+	      p:localServiceName="contractManagerRoleTypeService" />
+	  </property>
+	</bean>
+
+    <bean id="vendorTypeRoleTypeService" class="org.kuali.kfs.vnd.identity.VendorTypeRoleTypeServiceImpl"/>
+    <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+	  <property name="serviceDefinition">
+	    <bean parent="kfsService"
+	      p:service-ref="vendorTypeRoleTypeService"
+	      p:localServiceName="vendorTypeRoleTypeService" />
+	  </property>
+	</bean>    
+    
+</beans>
+

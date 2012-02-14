@@ -26,7 +26,7 @@
   <groupId>org.kuali.kfs</groupId>
   <artifactId>kfs-parent</artifactId>
   <packaging>pom</packaging>
-  <name>KFS</name>
+  <name>kfs</name>
   <inceptionYear>2005</inceptionYear>
   <version>4.1.1-maven-SNAPSHOT</version>
   <description></description>
@@ -790,5 +790,6 @@
 
   <modules>
     <module>core</module>
+    <module>web</module>
   </modules>
 </project>

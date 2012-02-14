@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - Copyright 2011 The Kuali Foundation.
+   - 
+   - Licensed under the Educational Community License, Version 2.0 (the "License");
+   - you may not use this file except in compliance with the License.
+   - You may obtain a copy of the License at
+   - 
+   - http://www.opensource.org/licenses/ecl2.php
+   - 
+   - Unless required by applicable law or agreed to in writing, software
+   - distributed under the License is distributed on an "AS IS" BASIS,
+   - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   - See the License for the specific language governing permissions and
+   - limitations under the License.
+ -->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+    <bean id="ecModuleConfiguration" parent="ecModuleConfiguration-parentBean" />
+    
+    <bean id="ecModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+    	<property name="namespaceCode" value="KFS-EC" />
+		<property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>org.kuali.kfs.module.ec</value>
+                <value>org.kuali.kfs.integration.ec</value>
+            </list>
+        </property>
+		<property name="dataDictionaryPackages">
+			<list>
+                <value>org/kuali/kfs/module/ec/businessobject/datadictionary</value>
+                <value>org/kuali/kfs/module/ec/document/datadictionary</value>
+			</list>
+		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list>
+				<value>org/kuali/kfs/module/ec/ojb-ec.xml</value>
+			</list>
+		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list>
+				<value>org/kuali/kfs/module/ec/dwr-ec.xml</value>
+			</list>
+		</property>		
+
+		<property name="jobNames">
+			<list>
+				<value>effortCertificationExtractJob</value>
+				<value>effortCertificationCreateJob</value>
+			</list>
+		</property>
+		
+		<property name="externalizableBusinessObjectImplementations">
+            <map>
+				<entry key="org.kuali.kfs.integration.ec.EffortCertificationReport" value="org.kuali.kfs.module.ec.businessobject.EffortCertificationReportDefinition" />
+            </map>
+        </property>	
+        
+        <property name="fiscalYearMakers">
+          <list>
+            <ref bean="effortCertificationReportEarnPaygroupFiscalYearMaker" />
+            <ref bean="effortCertificationReportPositionFiscalYearMaker" />
+            <ref bean="effortCertificationReportDefinitionFiscalYearMaker" />
+          </list>	
+        </property>
+        
+        <property name="batchFileDirectories">
+          	<list>
+            	<value>${reports.directory}/ec</value>
+          	</list>
+        </property>
+          
+	</bean>
+
+    <bean id="ecModuleService" parent="ecModuleService-parentBean"/>
+
+    <bean id="ecModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+		<property name="moduleConfiguration" ref="ecModuleConfiguration" />
+	</bean>
+
+    <bean id="effortCertificationModuleService" class="org.kuali.kfs.module.ec.service.impl.EffortCertificationModuleServiceImpl" />
+	
+	<!-- Section 1: Batch Job Definitions --> 
+	<bean id="effortCertificationExtractJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="effortCertificationExtractStep"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="effortCertificationExtractStep" class="org.kuali.kfs.module.ec.batch.EffortCertificationExtractStep" parent="step">
+		<property name="effortCertificationExtractService">
+			<ref bean="effortCertificationExtractService" />
+		</property>
+	</bean> 
+	
+	<bean id="effortCertificationCreateJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="effortCertificationCreateStep"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="effortCertificationCreateStep" class="org.kuali.kfs.module.ec.batch.EffortCertificationCreateStep" parent="step">
+		<property name="effortCertificationCreateService">
+			<ref bean="effortCertificationCreateService" />
+		</property>
+	</bean>
+	
+	<!-- Section 2: Service declarations -->
+	
+	<bean id="effortCertifcationReportPeriodUpdateService" class="org.kuali.kfs.module.ec.document.service.impl.EffortCertificationAutomaticReportPeriodUpdateServiceImpl" >
+		<property name="effortCertificationReportDefinitionDao">
+			<ref bean="effortCertificationReportDefinitionDao" />
+		</property>
+	</bean>
+	
+	<bean id="effortCertificationExtractService" class="org.kuali.kfs.module.ec.batch.service.impl.EffortCertificationExtractServiceImpl" >
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+		<property name="universityDateService">
+			<ref bean="universityDateService" />
+		</property>
+				
+		<property name="laborModuleService">
+			<ref bean="laborModuleService" />
+		</property>
+		<property name="kualiModuleService">
+			<ref bean="kualiModuleService" />
+		</property>		
+		
+		<property name="effortCertificationDocumentBuildService">
+			<ref bean="effortCertificationDocumentBuildService" />
+		</property>
+		<property name="effortCertificationReportService">
+			<ref bean="effortCertificationReportService" />
+		</property>	
+		<property name="effortCertificationReportDefinitionService">
+			<ref bean="effortCertificationReportDefinitionService" />
+		</property>				
+	</bean>
+	
+	<bean id="effortCertificationCreateService" class="org.kuali.kfs.module.ec.batch.service.impl.EffortCertificationCreateServiceImpl" >
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="effortCertificationDocumentService">
+			<ref bean="effortCertificationDocumentService" />
+		</property>	
+	</bean>
+	
+	<bean id="effortCertificationReportDefinitionService" class="org.kuali.kfs.module.ec.service.impl.EffortCertificationReportDefinitionServiceImpl" >
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>					
+	</bean>	
+	
+	<bean id="effortCertificationReportService" class="org.kuali.kfs.module.ec.service.impl.EffortCertificationReportServiceImpl">
+		<property name="reportGenerationService">
+			<ref bean="reportGenerationService" />
+		</property>
+		<property name="effortExtractProcessReportInfo">
+			<ref bean="effortExtractProcessReportInfo" />
+		</property>
+	</bean>
+	
+	<bean id="effortExtractProcessReportInfo" class="org.kuali.kfs.sys.report.ReportInfoHolder" >
+		<property name="reportTitle" value="Effort Certification Extract Process" />
+		<property name="reportFileName" value="effort_extract_summary" />
+		<property name="reportsDirectory" value="${reports.directory}/ec/" />
+		<property name="resourceBundleBaseName" value="org/kuali/kfs/module/ec/report/messages" />
+		<property name="reportTemplateClassPath" value="org/kuali/kfs/module/ec/report/" />
+		<property name="reportTemplateName" value="EffortExtractProcessReport" />
+		<property name="subReportTemplateClassPath" value="org/kuali/kfs/module/ec/report/" />
+		<property name="subReports">
+			<map>
+				<entry key="extractErrors" value="ExtractErrors"/>
+			</map>
+		</property>
+	</bean>		
+	
+	<bean id="effortCertificationDocumentBuildService" class="org.kuali.kfs.module.ec.service.impl.EffortCertificationDocumentBuildServiceImpl" >
+		<property name="effortCertificationDetailBuildService">
+			<ref bean="effortCertificationDetailBuildService" />
+		</property>	
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>					
+	</bean>
+			
+	<bean id="effortCertificationDetailBuildService" class="org.kuali.kfs.module.ec.service.impl.EffortCertificationDetailBuildServiceImpl" />
+	
+	<bean id="effortCertificationDocumentService" class="org.kuali.kfs.module.ec.service.impl.EffortCertificationDocumentServiceImpl" >
+		<property name="laborModuleService">
+			<ref bean="laborModuleService" />
+		</property>
+		<property name="kualiModuleService">
+			<ref bean="kualiModuleService" />
+		</property>		
+		<property name="contractsAndGrantsModuleService">
+			<ref bean="contractsAndGrantsModuleService" />
+		</property>	
+		<property name="documentService">
+			<ref bean="documentService" />
+		</property>	
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+	</bean>	
+	 	
+	<!-- DAO declarations -->		
+	<bean id="effortCertificationReportDefinitionDao" parent="platformAwareDao" class="org.kuali.kfs.module.ec.dataaccess.impl.EffortCertificationReportDefinitionDaoOjb" />
+	
+	<!-- lookup declarations -->
+	<bean id="outstandingReportsByOrganizationLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" singleton="false">
+		<property name="lookupableHelperService">
+			<ref bean="outstandingReportsByOrganizationLookupableHelperService" />
+		</property>
+	</bean>
+
+	<bean id="outstandingCertificationsByReportLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" singleton="false">
+		<property name="lookupableHelperService">
+			<ref bean="outstandingCertificationsByReportLookupableHelperService" />
+		</property>
+	</bean>
+	
+	<bean id="duplicateCertificationsReportLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" singleton="false">
+		<property name="lookupableHelperService">
+			<ref bean="duplicateCertificationsReportLookupableHelperService" />
+		</property>
+	</bean>
+	
+	<bean id="outstandingReportsByOrganizationLookupableHelperService" class="org.kuali.kfs.module.ec.businessobject.lookup.OutstandingCertificationsByOrganizationLookupableHelperServiceImpl" singleton="false">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+	</bean> 
+
+	<bean id="outstandingCertificationsByReportLookupableHelperService" class="org.kuali.kfs.module.ec.businessobject.lookup.OutstandingCertificationsByReportLookupableHelperServiceImpl" singleton="false">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+	</bean> 
+
+	<bean id="duplicateCertificationsReportLookupableHelperService" class="org.kuali.kfs.module.ec.businessobject.lookup.DuplicateCertificationsLookupableHelperServiceImpl" singleton="false">
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+	</bean> 
+
+	<bean id="effortLedgerBalanceLookupableHelperService" class="org.kuali.kfs.module.ec.businessobject.lookup.EffortLedgerBalanceLookupableHelperServiceImpl" singleton="false">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+		<property name="kualiModuleService">
+			<ref bean="kualiModuleService" />
+		</property>
+		<property name="effortCertificationReportDefinitionService">
+			<ref bean="effortCertificationReportDefinitionService" />
+		</property>
+		<property name="optionsService">
+			<ref bean="optionsService" />
+		</property>
+
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+	</bean> 
+	
+	<bean id="effortCertificationDetailBuildLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" singleton="false">
+		<property name="lookupableHelperService">
+			<ref bean="effortCertificationDetailBuildLookupableHelperService" />
+		</property>
+	</bean>
+	
+	<bean id="effortCertificationDetailBuildLookupableHelperService" class="org.kuali.kfs.module.ec.businessobject.lookup.EffortCertificationDetailBuildLookupableHelperServiceImpl" singleton="false">				
+		<property name="persistenceStructureService">
+			<ref bean="persistenceStructureService" />
+		</property>
+		<property name="lookupService">
+			<ref bean="lookupService" />
+		</property>
+		<property name="businessObjectDictionaryService">
+			<ref bean="businessObjectDictionaryService" />
+		</property>
+		<property name="businessObjectMetaDataService">
+			<ref bean="businessObjectMetaDataService" />
+		</property>
+		<property name="dataDictionaryService">
+			<ref bean="dataDictionaryService" />
+		</property>
+	</bean>   	
+	
+	<bean id="effortLedgerBalanceInquirable" class="org.kuali.kfs.module.ec.businessobject.inquiry.EffortLedgerBalanceInquirableImpl" singleton="false"/>
+	
+	<bean id="effortCertificationReportEarnPaygroupFiscalYearMaker" parent="FiscalYearMaker">
+		<property name="businessObjectClass" value="org.kuali.kfs.module.ec.businessobject.EffortCertificationReportEarnPaygroup" /> 
+	</bean>
+	
+	<bean id="effortCertificationReportPositionFiscalYearMaker" parent="FiscalYearMaker">
+		<property name="businessObjectClass" value="org.kuali.kfs.module.ec.businessobject.EffortCertificationReportPosition" /> 
+		<property name="parentClasses">
+		  <set>
+		    <value>org.kuali.kfs.module.ec.businessobject.EffortCertificationReportDefinition</value>
+		  </set>
+		</property>
+	</bean>
+	
+	<bean id="effortCertificationReportDefinitionFiscalYearMaker" class="org.kuali.kfs.module.ec.batch.dataaccess.impl.EffortCertificationReportDefinitionFiscalYearMakerImpl" parent="FiscalYearMaker">
+		<property name="businessObjectClass" value="org.kuali.kfs.module.ec.businessobject.EffortCertificationReportDefinition" /> 
+		<property name="parentClasses">
+		  <set>
+		    <value>org.kuali.kfs.coa.businessobject.AccountingPeriod</value>
+		  </set>
+		</property>
+	</bean>
+</beans>
+
