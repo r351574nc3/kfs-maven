@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - Copyright 2011 The Kuali Foundation.
+   - 
+   - Licensed under the Educational Community License, Version 2.0 (the "License");
+   - you may not use this file except in compliance with the License.
+   - You may obtain a copy of the License at
+   - 
+   - http://www.opensource.org/licenses/ecl2.php
+   - 
+   - Unless required by applicable law or agreed to in writing, software
+   - distributed under the License is distributed on an "AS IS" BASIS,
+   - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   - See the License for the specific language governing permissions and
+   - limitations under the License.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+                           
+    <bean id="cgModuleConfiguration" parent="cgModuleConfiguration-parentBean" />
+    
+    <bean id="cgModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+    	<property name="namespaceCode" value="KFS-CG" />
+		<property name="initializeDataDictionary" value="true" />
+        <property name="packagePrefixes">
+            <list>
+                <value>org.kuali.kfs.module.cg</value>
+                <value>org.kuali.kfs.integration.cg</value>
+            </list>
+        </property>
+		<property name="dataDictionaryPackages">
+			<list>
+                <value>org/kuali/kfs/module/cg/businessobject/datadictionary</value>
+                <value>org/kuali/kfs/module/cg/document/datadictionary</value>
+			</list>
+		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list>
+				<value>org/kuali/kfs/module/cg/ojb-cg.xml</value>
+			</list>
+		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list>
+				<value>org/kuali/kfs/module/cg/dwr-cg.xml</value>
+			</list>
+		</property>
+		<property name="jobNames">
+			<list>
+				<value>closeJob</value>
+				<value>cfdaJob</value>
+			</list>
+		</property>
+		<property name="triggerNames">
+			<list>
+				<value>cfdaJobTrigger</value>
+			</list>
+		</property>
+		<property name="externalizableBusinessObjectImplementations">
+            <map>
+                <entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsCfda" value="org.kuali.kfs.module.cg.businessobject.CFDA" />
+                <entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation" value="org.kuali.kfs.module.cg.businessobject.AwardAccount" />
+                <entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsAward" value="org.kuali.kfs.module.cg.businessobject.Award" />
+                <entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation" value="org.kuali.kfs.module.cg.businessobject.AwardAccount" />
+                <entry key="org.kuali.kfs.integration.cg.ContractAndGrantsProposal" value="org.kuali.kfs.module.cg.businessobject.Proposal" />
+                <entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsAgency" value="org.kuali.kfs.module.cg.businessobject.Agency" />
+	            <entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsUnit" value="org.kuali.kfs.integration.cg.businessobject.UnitDTO" /> 
+       			<entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsBudgetCategory" value="org.kuali.kfs.integration.cg.businessobject.BudgetCategoryDTO" />                                
+            </map>
+        </property>
+        <property name="batchFileDirectories">
+          	<list>
+            	<value>${reports.directory}/cg</value>
+          	</list>
+        </property>
+	</bean>
+
+    <bean id="cgModuleService" parent="cgModuleService-parentBean"/>
+
+    <bean id="cgModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+		<property name="moduleConfiguration" ref="cgModuleConfiguration" />
+	</bean>
+
+    <bean id="contractsAndGrantsModuleService" class="org.kuali.kfs.module.cg.service.impl.ContractsAndGrantsModuleServiceImpl" />
+	
+	<!-- DAOs -->
+	<bean id="awardDao" parent="platformAwareDao" class="org.kuali.kfs.module.cg.dataaccess.impl.AwardDaoOjb" />
+
+	<bean id="proposalDao" parent="platformAwareDao" class="org.kuali.kfs.module.cg.dataaccess.impl.ProposalDaoOjb" />
+	
+	<bean id="closeDao" parent="platformAwareDao" class="org.kuali.kfs.module.cg.dataaccess.impl.CloseDaoOjb" />
+	
+	<!-- Services -->
+	<bean id="closeService" class="org.kuali.kfs.module.cg.service.impl.CloseServiceImpl">
+		<property name="awardDao">
+			<ref bean="awardDao" />
+		</property>
+		<property name="proposalDao">
+			<ref bean="proposalDao" />
+		</property>
+		<property name="closeDao">
+			<ref bean="closeDao" />
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService" />
+		</property>
+	</bean>
+	
+	<bean id="proposalLookupableHelperService" class="org.kuali.kfs.module.cg.businessobject.lookup.ProposalLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" >
+	</bean>
+
+	<bean id="proposalLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+		<property name="lookupableHelperService">
+			<ref bean="proposalLookupableHelperService" />
+		</property>
+	</bean>
+
+    <bean id="awardLookupableHelperService" class="org.kuali.kfs.module.cg.businessobject.lookup.AwardLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" >
+    </bean>
+
+    <bean id="awardLookupable" class="org.kuali.rice.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="awardLookupableHelperService" />
+        </property>
+    </bean>
+
+    <bean id="subcontractorService" class="org.kuali.kfs.module.cg.service.impl.SubcontractorServiceImpl">
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+    </bean>
+
+    <bean id="agencyService" class="org.kuali.kfs.module.cg.service.impl.AgencyServiceImpl">
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+    </bean>
+
+    <bean id="cfdaService" class="org.kuali.kfs.module.cg.service.impl.CfdaServiceImpl">
+        <property name="businessObjectService">
+            <ref bean="businessObjectService" />
+        </property>
+    </bean>
+	
+    <bean id="cfdaBatchStep" class="org.kuali.kfs.module.cg.batch.CfdaBatchStep" parent="step">
+        <property name="cfdaService">
+            <ref bean="cfdaService" />
+        </property>
+        <property name="mailService">
+            <ref bean="mailService" />
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService" />
+        </property>
+        <property name="configurationService" ref="kualiConfigurationService" />
+    </bean>
+
+    <bean id="cfdaJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="cfdaBatchStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="cfdaJobTrigger" parent="cronTrigger">
+		<property name="jobName" value="cfdaJob" />
+		<property name="cronExpression" value="00 00 00 1 1,4,7,10  ?" />
+	</bean>
+
+    <bean id="closeBatchStep" class="org.kuali.kfs.module.cg.batch.CloseBatchStep" parent="step">
+        <property name="closeService">
+            <ref bean="closeService" />
+        </property>
+    </bean>
+
+    <bean id="closeJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="closeBatchStep" />
+			</list>
+		</property>
+	</bean>
+	
+<bean id="routingFormResearchRiskService" class="org.kuali.kfs.module.cg.document.service.impl.RoutingFormResearchRiskServiceImpl">
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+	</bean>
+   
+    <bean id="researchRiskReviewRoleTypeService" class="org.kuali.kfs.module.cg.identity.ResearchRiskReviewRoleTypeServiceImpl"/>    
+    <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+	  <property name="serviceDefinition">
+	    <bean parent="kfsService"
+	      p:service-ref="researchRiskReviewRoleTypeService"
+	      p:localServiceName="researchRiskReviewRoleTypeService" />
+	  </property>
+	</bean>
+
+   
+
+</beans>
+
