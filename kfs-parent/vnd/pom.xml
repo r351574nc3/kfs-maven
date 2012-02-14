@@ -20,34 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.kuali.pom</groupId>
-    <artifactId>kfs-common</artifactId>
-    <version>0.0.1</version>
+    <artifactId>kfs-parent</artifactId>
+    <version>4.1.1-maven-SNAPSHOT</version>
   </parent>
-  <groupId>org.kuali.kfs</groupId>
-  <artifactId>kfs-parent</artifactId>
-  <packaging>pom</packaging>
-  <name>KFS</name>
-  <inceptionYear>2005</inceptionYear>
-  <version>4.1.1-maven-SNAPSHOT</version>
-  <description></description>
-  <url>http://${kuali.site.hostname}/rice/${project.version}</url>
-
-  <ciManagement>
-    <url>http://jenkins.leosandbox.org</url>
-  </ciManagement>
+  <artifactId>vnd</artifactId>
 
   <build>
   </build>  
 
-  <modules>
-    <module>coa</module>
-    <module>fp</module>		
-    <module>gl</module>		
-    <module>integration</module>	
-    <module>module</module>		
-    <module>pdp</module>		
-    <module>sys</module>		
-    <module>vnd</module>
-    <module>web</module>
-  </modules>
 </project>
