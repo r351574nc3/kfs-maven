@@ -1,0 +1,7 @@
+<project>
+  <modelVersion>4.1.1</modelVersion>
+  <groupId>org.kuali.kfs</groupId>
+  <artifactId>kfs-assembly</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Shared Assembly Descriptor for KFS projects</name>
+</project>
