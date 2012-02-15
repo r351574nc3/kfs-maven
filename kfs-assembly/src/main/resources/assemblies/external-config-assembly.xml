@@ -8,8 +8,9 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${external.config.temp.directory}</directory>
+      <directory>src/main/resources</directory>
       <outputDirectory>${external.config.directory}</outputDirectory>
+      <filtered>true</filtered>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
   </fileSets>

@@ -798,11 +798,9 @@
   <profiles>
     <profile>
       <id>distribute</id>
-      <!--
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      -->
       <build>
         <plugins>              
           <plugin>
