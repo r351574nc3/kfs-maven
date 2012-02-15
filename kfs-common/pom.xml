@@ -544,7 +544,8 @@ xpp3*.jar</runtime.only.jars>
 <!--
 <external.config.directory>${base.directory}/opt</external.config.directory>
 -->
-<external.config.directory>${basedir}/temp/kuali/main/${build.environment}</external.config.directory>
+<external.config.directory>${user.home}/kuali/main/${build.environment}</external.config.directory>
+<external.config.temp.directory>${basedir}/temp/kuali/main/${build.environment}</external.config.temp.directory>
 
 <!--
 #############################

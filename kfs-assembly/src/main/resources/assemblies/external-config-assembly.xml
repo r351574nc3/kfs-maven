@@ -8,8 +8,8 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${external.config.directory}</directory>
-      <outputDirectory>kuali/main/${build.environment}</outputDirectory>
+      <directory>${external.config.temp.directory}</directory>
+      <outputDirectory>${external.config.directory}</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
   </fileSets>
