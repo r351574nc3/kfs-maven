@@ -591,15 +591,15 @@ xpp3*.jar</runtime.only.jars>
 <base.work.directory>${external.config.directory}/work</base.work.directory>
 <base.deploy.directory>${external.config.directory}/ears</base.deploy.directory>
 
-<security.directory>${user.home}/${base.security.directory}/${build.environment}/${project.parent.name}</security.directory>
+<security.directory>${user.home}/${base.security.directory}/${project.parent.name}</security.directory>
 <!-- the directory that contains the non-secure property files that are nonetheless external to the deployed application -->
-<settings.directory>${user.home}/${base.settings.directory}/${build.environment}/${project.parent.name}</settings.directory>
+<settings.directory>${user.home}/${base.settings.directory}/${project.parent.name}</settings.directory>
 <!-- used as the working deployment directory by the dist target -->
-<deploy.working.directory>${user.home}/${base.deploy.directory}/${build.environment}/${project.parent.name}</deploy.working.directory>
+<deploy.working.directory>${user.home}/${base.deploy.directory}/${project.parent.name}</deploy.working.directory>
 <!-- the directory containing the log files output by the application -->
-<logs.directory>${user.home}/${base.logs.directory}/${build.environment}/${project.parent.name}</logs.directory>
+<logs.directory>${user.home}/${base.logs.directory}/${project.parent.name}</logs.directory>
 <!-- the working directory that is external to the application -->
-<external.work.directory>${user.home}/${base.work.directory}/${build.environment}/${project.parent.name}</external.work.directory>
+<external.work.directory>${user.home}/${base.work.directory}/${project.parent.name}</external.work.directory>
 <!-- the base working directory for storage of note-associated attachments that are uploaded by users -->
 <attachments.directory>${external.work.directory}/attachments</attachments.directory>
 <!-- the base working directory for storage of batch input files -->
