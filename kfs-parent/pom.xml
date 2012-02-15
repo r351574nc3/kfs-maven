@@ -790,6 +790,7 @@
 
   <modules>
     <module>core</module>
+    <module>endow</module>
     <module>rice</module>
     <module>web</module>
   </modules>
