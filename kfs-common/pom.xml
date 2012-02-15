@@ -112,7 +112,1011 @@
   <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
   <cobertura.maxmem>512M</cobertura.maxmem>
   <properties.directory>src/main/config/properties</properties.directory>
-  <account.wsdl.packaged.location>wsdl/AccountCreationService.wsdl</account.wsdl.packaged.location>  
+  <account.wsdl.packaged.location>wsdl/AccountCreationService.wsdl</account.wsdl.packaged.location>
+
+<!-- ################################################################################ -->
+<!-- The beginning of the section that describes all the KFS properties                                                          -->
+<!-- ################################################################################ -->
+
+
+<!-- values used in KFS-PURAP B2B functions - all values but user
+agent derived by build.xml based on build.environment -->
+<b2b.user.agent>kfs</b2b.user.agent>
+<b2b.test.environment>test</b2b.test.environment>
+<b2b.production.environment>Production</b2b.production.environment>
+
+<b2b.test.purchase.order.identity>KualiDemo</b2b.test.purchase.order.identity>
+<b2b.test.purchase.order.password>p01mport</b2b.test.purchase.order.password>
+<b2b.test.shopping.identity>KualiDemo</b2b.test.shopping.identity>
+<b2b.test.shopping.password>c#m1</b2b.test.shopping.password>
+<b2b.test.punch.back.url>${application.url}/b2b.do?methodToCall=returnFromShopping</b2b.test.punch.back.url>
+<b2b.test.punch.out.url>http://usertest.sciquest.com/apps/Router/ExternalAuth/cXML/KualiDemo</b2b.test.punch.out.url>
+        
+<!-- use this url for testing with B2BPurchaseOrderSciquestServiceImpl -->
+<b2b.test.purchase.order.url>https://usertest.sciquest.com/apps/Router/POXMLImport</b2b.test.purchase.order.url>
+
+<!-- use this url for testing with B2BPurchaseOrderServiceImpl
+(although not working yet) -->
+<!-- 
+<b2b.test.purchase.order.url>http://sciwmtest.sciquest.com/invoke/wm.tn/receive</b2b.test.purchase.order.url>
+-->
+
+<b2b.production.purchase.order.identity></b2b.production.purchase.order.identity>
+<b2b.production.purchase.order.password></b2b.production.purchase.order.password>
+<b2b.production.shopping.identity></b2b.production.shopping.identity>
+<b2b.production.shopping.password></b2b.production.shopping.password>
+<b2b.production.purchase.order.url></b2b.production.purchase.order.url>
+<b2b.production.punch.back.url></b2b.production.punch.back.url>
+<b2b.production.punch.out.url></b2b.production.punch.out.url>
+
+<!-- determines whether quartz (SchedulerService and scheduleJob) should be used for batch job scheduling and execution - impacts whether the batch scheduling ui works -->
+<use.quartz.scheduling>true</use.quartz.scheduling>
+<!-- This property will be set dynamically by the build script, but you can force it by 
+ setting it in your kfs-build.properties file. -->
+<!--
+<use.quartz.jdbc.jobstore>false</#use.quartz.jdbc.jobstore>
+-->
+
+<!-- the quartz cron expression for the scheduleJobTrigger -->
+<batch.schedule.cron.expression>00 00 23 ? * *</batch.schedule.cron.expression>
+
+<!-- number of threads quartz will use for processing jobs -->
+<batch.quartz.thread.pool.size>8</batch.quartz.thread.pool.size>
+
+<!-- time in ms that the scheduler will wait before rechecking the trigger table for new ready-to-run jobs -->
+<batch.quartz.trigger.check.interval>30000</batch.quartz.trigger.check.interval>
+
+<!-- used in batch configuration to force transactions to timeout after they've run too long -->
+<batch.transaction.timeout>500000</batch.transaction.timeout>
+
+<rice.api.module.name>api</rice.api.module.name>
+<rice.impl.module.name>impl</rice.impl.module.name>
+<rice.web.module.name>web</rice.web.module.name>
+<rice.sampleapp.module.name>sampleapp</rice.sampleapp.module.name>
+<rice.output.src.suffix>-sources.jar</rice.output.src.suffix>
+<rice.output.doc.suffix>-javadoc.jar</rice.output.doc.suffix>
+<rice.version>1.0.3.3-m2-SNAPSHOT</rice.version>
+<rice.war.file.name>${rice.name}-web-${rice.version}.war</rice.war.file.name>
+
+<!-- paths used for pulling in rice changes using the KFS Ant script -->
+<projects.directory>${base.directory}/projects</projects.directory>
+<maven.home.directory>${base.directory}/tools/maven</maven.home.directory>
+
+<dependencies.project.directory>${projects.directory}/${ant.project.name}-dependencies</dependencies.project.directory>
+<rice.project.directory>${projects.directory}/rice</rice.project.directory>
+
+<!--
+<is.local.build>true</is.local.build>
+-->
+
+<is.clustered>false</is.clustered>
+
+<!-- Set these to false to disable any of the optional KFS modules -->
+<module.labor.distribution.enabled>true</module.labor.distribution.enabled>
+<module.accounts.receivable.enabled>true</module.accounts.receivable.enabled>
+<module.purchasing.enabled>true</module.purchasing.enabled>
+<module.capital.asset.enabled>true</module.capital.asset.enabled>
+<module.endowment.enabled>true</module.endowment.enabled>
+
+<!-- The following optional kfs modules are related, only one can be set to true or both to false. -->
+<module.contracts.and.grants.enabled>true</module.contracts.and.grants.enabled>
+<module.external.kuali.coeus.enabled>false</module.external.kuali.coeus.enabled>
+
+<!-- Set this to true to turn on the accounting-line access security system           -->
+<!-- This overrides some components in the core modules and labor distribution -->
+<module.access.security.enabled>false</module.access.security.enabled>
+
+<!-- Set the property below to add additional properties to the               -->
+<!-- configuration.properties file that is deployed with the application. -->
+<!-- It will be tokenized using the same properties available to              -->
+<!-- build/project/configuration.properties.                                           -->
+<institutional.configuration.file></institutional.configuration.file>
+
+<!-- allows insertion of custom content into the tomcat context file -->
+<custom.context.content></custom.context.content>
+
+
+<!-- the core configuration property files that should be available in the KualiConfigurationService context, along with configuration.properties -->
+<core.property.files>classpath:KR-ApplicationResources.properties,\
+classpath:ApplicationResources.properties,\
+classpath:org/kuali/kfs/sec/messages-sec.properties</core.property.files>
+
+<!-- the institution specific configuration property files that should be available in the KualiConfigurationService context, along with configuration.properties -->
+<institution.property.files></institution.property.files>
+
+<!-- all the configuration property files that should be available in the KualiConfigurationService context, along with configuration.properties -->
+<property.files>${core.property.files}${institution.property.files}</property.files>
+
+<!-- the core configuration property files that should be added to the KualiConfigurationService context for unit testing -->
+<core.property.test.files>classpath:test-configuration.properties</core.property.test.files>
+<!-- the institution specific configuration property files that should be added to the KualiConfigurationService context for unit testing -->
+<institution.property.test.files></institution.property.test.files>
+<!-- all the configuration property files that should be added to the KualiConfigurationService context for unit testing -->
+<property.test.files>${core.property.test.files}${institution.property.test.files}</property.test.files>
+
+<feedback.link.url>https://test.kuali.org/jira/secure/CreateIssue.jspa?pid=10091&amp;issuetype=1</feedback.link.url>
+<licensing.contact.email>license@kuali.org</licensing.contact.email>
+
+
+<!-- ################################################# -->
+<!-- #  Various properties used by the build process # -->
+<!-- ################################################# -->
+
+<non.java.resources>**/*.properties,
+**/*.dtd,
+**/*.xml,
+**/*.html,
+**/*.xsd,
+**/*.jasper,
+**/*.jrxml,
+META-INF/*</non.java.resources>
+
+<tests.non.java.resources>${non.java.resources},
+**/*.txt,
+**/*.sql</tests.non.java.resources>
+
+<!-- miscellaneous build.xml configuration -->
+
+<compile.min.memory>128M</compile.min.memory>
+<compile.max.memory>512M</compile.max.memory>
+
+<run.tests.min.memory>384M</run.tests.min.memory>
+<run.tests.max.memory>1024M</run.tests.max.memory>
+<run.tests.max.permsize>128M</run.tests.max.permsize>
+
+<run.postloadencrypt.min.memory>384M</run.postloadencrypt.min.memory>
+<run.postloadencrypt.max.memory>1024M</run.postloadencrypt.max.memory>
+<run.postloadencrypt.max.permsize>256M</run.postloadencrypt.max.permsize>
+
+<tests.includes>**/*Test.java</tests.includes>
+<tests.startup.class>ContinuousIntegrationStartup</tests.startup.class>
+<tests.shutdown.class>ContinuousIntegrationShutdown</tests.shutdown.class>
+
+<tests.compile.includes>**/*.java</tests.compile.includes>
+<tests.compile.excludes></tests.compile.excludes>
+
+<javadoc.max.memory>512M</javadoc.max.memory>
+
+<!-- determines what ${build.environment} the KualiConfigurationService considers your production environment -->
+<production.environment.code>prd</production.environment.code>
+
+<!-- KFS Report Writer Service -->
+<report.writer.service.new.line.characters>\\n</report.writer.service.new.line.characters>
+
+<kfs.locale>en_US</kfs.locale>
+
+<!-- This will either enable or disable the KC web-service used to create a CG account. -->
+<accountCreationServiceSOAP.expose>true</accountCreationServiceSOAP.expose>
+
+<!-- indicates whether schema files should be rebuilt or not -->
+<!--
+<dont.filter.project.schema></#dont.filter.project.schema>
+-->
+
+<!-- indicates whether schema validation should be built from data dictionary, otherwise validation is basic xsd types only -->
+<use.dd.schema.validation>false</use.dd.schema.validation>
+
+<classpath.prefix><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="work/src"/>
+    <classpathentry kind="src" output="test/classes" path="test/infrastructure/src"/>
+    <classpathentry kind="src" output="test/classes" path="test/unit/src"/>
+    <classpathentry kind="src" output="test/classes" path="test/integration/src"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+        <accessrules>
+            <accessrule kind="nonaccessible" pattern="com/**"/>
+            <accessrule kind="nonaccessible" pattern="sun/**"/>
+            <accessrule kind="nonaccessible" pattern="sunw/**"/>
+        </accessrules>
+    </classpathentry>]]></classpath.prefix>
+	
+<classpath.suffix><![CDATA[    <classpathentry kind="output" path="work/web-root/WEB-INF/classes"/>
+</classpath>
+]]></classpath.suffix>
+
+<!-- These are JAR files which we want to exclude from the Rice project because they 
+     either:
+       1) are old (unused even by Rice)
+       2) are problems with the Rice classpath we don't want to inherit
+       3) are older than the version that KFS is currently using -->
+<rice.lib.jars.to.exclude>**/rice-*,
+**/cas-2*,
+**/casclient-2*,
+**/cas-server*,
+**/acegi*,
+**/commons-digester*,
+**/dwr*,
+**/log4j*,
+**/xml-apis-*,
+**/derby*,
+**/commons-pool-*,
+**/commons-dbcp-*,
+**/ant-*.jar,
+**/hsqldb-*.jar,
+**/torque-*.jar,
+**/velocity-*.jar,
+**/p6spy-*.jar</rice.lib.jars.to.exclude>
+
+<!-- These are libraries which should not be referenced in KFS code.  They need to be   -->
+<!-- there for runtime testing, but their classes should not be referenced in KFS code. -->
+<runtime.only.jars>abdera*.jar,
+activation*.jar,
+aopalliance*.jar,
+asm*.jar,
+avalon*.jar,
+backport*.jar,
+batik*.jar,
+bcprov*.jar,
+cas*.jar,
+cglib*.jar,
+commons-dbcp-*.jar,
+commons-el*.jar,
+commons-httpclient-*.jar,
+commons-pool-*.jar,
+connector-api*.jar,
+geronimo*.jar,
+hibernate*.jar,
+jasper-*.jar,
+jaxen*.jar,
+jboss*.jar,
+jdom*.jar,
+jotm*.jar,
+mysql*.jar,
+ojdbc*.jar,
+opensaml*.jar,
+p6spy*.jar,
+saaj-impl*.jar,
+struts-el*.jar,
+taglibs*.jar,
+wsdl4j*.jar,
+wss4j*.jar,
+wstx*.jar,
+xalan-serializer*.jar,
+xapool*.jar,
+xml-resolver*.jar,
+XmlSchema*.jar,
+xmlsec*.jar,
+xpp3*.jar</runtime.only.jars>
+
+<!-- Web Authentication -->
+
+<!-- for development efficiency, this property will deploy rice cas locally -->
+<deploy.local.cas.server>true</deploy.local.cas.server>
+
+<!-- the value of this property will be included in the filter section of web.xml -->
+<authentication.filter.definition><![CDATA[
+<filter>
+        <filter-name>CAS Authentication Filter</filter-name>
+        <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>casServerLoginUrl</param-name>
+            <param-value>${cas.url}/login</param-value>
+        </init-param>
+        <init-param>
+            <param-name>serverName</param-name>
+            <param-value>${appserver.url}</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>CAS Validation Filter</filter-name>
+        <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+        <init-param>
+            <param-name>casServerUrlPrefix</param-name>
+            <param-value>${cas.url}</param-value>
+        </init-param>
+        <init-param>
+            <param-name>serverName</param-name>
+            <param-value>${appserver.url}</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+        <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+    </filter>]]></authentication.filter.definition>
+
+<!-- the value of this property will be included in the filter mapping section of web.xml -->
+<authentication.filter.mappings><![CDATA[
+<filter-mapping>
+        <filter-name>CAS Authentication Filter</filter-name>
+            <servlet-name>action</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS Validation Filter</filter-name>
+            <servlet-name>action</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+            <servlet-name>action</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS Authentication Filter</filter-name>
+            <servlet-name>dwr-invoker</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS Validation Filter</filter-name>
+            <servlet-name>dwr-invoker</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+            <servlet-name>dwr-invoker</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS Authentication Filter</filter-name>
+            <servlet-name>batchFileUpload</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS Validation Filter</filter-name>
+            <servlet-name>batchFileUpload</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+            <servlet-name>batchFileUpload</servlet-name>
+        </filter-mapping>]]></authentication.filter.mappings>
+
+
+
+<!-- the following 6 properties are only used when cas is deployed locally -->
+<cas.context.name>cas</cas.context.name>
+<cas.context.file>context-cas.xml</cas.context.file>
+
+<!-- datasource information for the built-in CAS server which uses the KIM KRIM_PRNCPL_T table. -->
+<cas.datasource.username>${datasource.username}</cas.datasource.username>
+<cas.datasource.password>${datasource.password}</cas.datasource.password>
+
+<!-- the datasource URL and driver are set dynamically in build.xml -->
+<!--
+<cas.datasource.url>${datasource.url}</#cas.datasource.url>
+<cas.datasource.driver.class>${datasource.driver.class}</#cas.datasource.driver.class>
+-->
+
+<!-- determines whether cas requires that the application be secured via ssl -->
+<cas.require.https>false</cas.require.https>
+
+<!-- determines whether the password field appears on the cas login screen and is validated -->
+<cas.validate.password>false</cas.validate.password>
+
+<!-- The property value (for datasource.ojb.platform) which indicates a MySQL database -->
+<mysql.ojb.platform>MySQL</mysql.ojb.platform>
+
+<!-- The property value (for datasource.ojb.platform) which indicates an Oracle database -->
+<oracle.ojb.platform>Oracle9i</oracle.ojb.platform>
+
+<!-- Default to oracle if not specified elsewhere -->
+<datasource.ojb.platform>${oracle.ojb.platform}</datasource.ojb.platform>
+
+<mysql.driver.class>com.mysql.jdbc.Driver</mysql.driver.class>
+<oracle.driver.class>oracle.jdbc.OracleDriver</oracle.driver.class>
+<p6spy.driver.class>com.p6spy.engine.spy.P6SpyDriver</p6spy.driver.class>
+
+<!-- Special OJB classes for handling sequences -->
+<mysql.ojb.sequence.manager>org.apache.ojb.broker.platforms.KualiMySQLSequenceManagerImpl</mysql.ojb.sequence.manager>
+<oracle.ojb.sequence.manager>org.apache.ojb.broker.util.sequence.SequenceManagerNextValImpl</oracle.ojb.sequence.manager>
+
+<!-- Rice classes for handling Differences between database versions -->
+<mysql.server.datasource.platform>org.kuali.rice.core.database.platform.MySQLDatabasePlatform</mysql.server.datasource.platform>
+<oracle.server.datasource.platform>org.kuali.rice.core.database.platform.OracleDatabasePlatform</oracle.server.datasource.platform>
+
+<!-- specify the number of connections in the pool -->
+<datasource.pool.size>50</datasource.pool.size>
+
+<!-- The maximum number of connections the persistence broker pool will handle -->
+<!-- When running with Embedded Rice, this can be the same as the datasource.pool.size property. -->
+<!-- When running with a standalone Rice server (to which this server will have direct database connections), -->
+<!-- this property must be the sum of the datasource.pool.size and rice.server.datasource.pool.size -->
+<ojb.persistencebroker.pool.maxactive>${datasource.pool.size}</ojb.persistencebroker.pool.maxactive>
+
+<!-- specify the number of prepared statements cached per connection -->
+<datasource.maximum.cached.preparedstatements>25</datasource.maximum.cached.preparedstatements>
+<!-- specify the connection timeout -->
+<datasource.connection.timeout>100000</datasource.connection.timeout>
+<!-- used in datasource configuration to force transactions to timeout after they've run too long -->
+<transaction.timeout>${datasource.connection.timeout}</transaction.timeout>
+
+<!-- specify the query used to validate connections as they're pulled from the pool -->
+<datasource.validating.query>select 1 from dual</datasource.validating.query>
+
+<!--
+# 0: no check, the connection is taken from the pool without any verification
+# 1: test if the connection is closed or not, if it is closed, another connection is tested, until we can return a valid connection
+# 2: a test is made on the connection with a jdbc statement string. You need to set this string with setJdbcTestStmt(string test) method on StandardXAPoolDataSource object or StandardPoolDataSource object if you use this one. In a lot of case, you can use "select 1" to test your connection.
+# 3: test all the unused connections inside the pool, and verify if a connection is closed. If a connection is closed, the pool removes it and creates a new one if needed.
+# 4: verify all the unused connections from the pool with a jdbc statement string (see level 2, to set up a jdbc statement string).
+-->
+<datasource.xapool.connection.test.mode>2</datasource.xapool.connection.test.mode>
+
+<!--
+#############################
+##  Base Directories 
+##     You will want to customize these in your kfs-build.properties file to
+##     match your environment.
+#############################
+-->
+<!-- These are the base directories you may want to configure for your development environment -->
+<base.directory>/java</base.directory>
+
+<!-- determines where the build will look for your tomcat application server -->
+<appserver.home>${basedir}/build/tomcat</appserver.home>
+
+<!-- the base directory for external configuration files and work directories -->
+<external.config.directory>${base.directory}/opt</external.config.directory>
+
+<!--
+#############################
+##  Derived Directory Paths 
+##     These should probably not be changed, as they represent standard directory 
+##     structures under the base directories.
+#############################
+-->
+
+<!-- Application server directories - these assume the Tomcat 6.0 structure -->
+<tomcat.version>6</tomcat.version>
+<#appserver.lib.dir>${appserver.home}/lib</#appserver.lib.dir>
+<#appserver.classes.dir>${appserver.home}/lib</#appserver.classes.dir>
+<appserver.deploy.dir>${appserver.home}/webapps</appserver.deploy.dir>
+<appserver.config.dir>${appserver.home}/conf</appserver.config.dir>
+<appserver.localhost.dir>${appserver.config.dir}/Catalina/localhost</appserver.localhost.dir>
+<appserver.work.dir>${appserver.home}/work/Catalina/localhost</appserver.work.dir>
+
+<!-- work directory and subdirs -->
+<work.directory>work</work.directory>
+<source.directory>${work.directory}/src</source.directory>
+<database.directory>${work.directory}/db</database.directory>
+<webroot.directory>${work.directory}/web-root</webroot.directory>
+<webinf.directory>${webroot.directory}/WEB-INF</webinf.directory>
+<tags.directory>${webinf.directory}/tags</tags.directory>
+<classes.directory>${webinf.directory}/classes</classes.directory>
+<lib.directory>${webinf.directory}/lib</lib.directory>
+<metainf.directory>${webroot.directory}/META-INF</metainf.directory>
+<static.directory>${webroot.directory}/static</static.directory>
+<help.directory>${static.directory}/help</help.directory>
+<xsd.directory>${static.directory}/xsd</xsd.directory>
+
+<test.infrastructure.source.directory>test/infrastructure/src</test.infrastructure.source.directory>
+<test.unit.source.directory>test/unit/src</test.unit.source.directory>
+<test.integration.source.directory>test/integration/src</test.integration.source.directory>
+<test.lib.directory>test/lib</test.lib.directory>
+
+<!-- derived directories within the "/opt" directory -->
+<base.security.directory>${external.config.directory}/sa_forms/java</base.security.directory>
+<base.settings.directory>${external.config.directory}/j2ee</base.settings.directory>
+<base.logs.directory>${external.config.directory}/logs</base.logs.directory>
+<base.work.directory>${external.config.directory}/work</base.work.directory>
+<base.deploy.directory>${external.config.directory}/ears</base.deploy.directory>
+
+<security.directory>${base.security.directory}/${build.environment}/${ant.project.name}</security.directory>
+<!-- the directory that contains the non-secure property files that are nonetheless external to the deployed application -->
+<settings.directory>${base.settings.directory}/${build.environment}/${ant.project.name}</settings.directory>
+<!-- used as the working deployment directory by the dist target -->
+<deploy.working.directory>${base.deploy.directory}/${build.environment}/${ant.project.name}</deploy.working.directory>
+<!-- the directory containing the log files output by the application -->
+<logs.directory>${base.logs.directory}/${build.environment}/${ant.project.name}</logs.directory>
+<!-- the working directory that is external to the application -->
+<external.work.directory>${base.work.directory}/${build.environment}/${ant.project.name}</external.work.directory>
+<!-- the base working directory for storage of note-associated attachments that are uploaded by users -->
+<attachments.directory>${external.work.directory}/attachments</attachments.directory>
+<!-- the base working directory for storage of batch input files -->
+<staging.directory>${external.work.directory}/staging</staging.directory>
+<!-- a directory for temporary file storage, e.g. during pdf generation -->
+<temp.directory>${external.work.directory}/temp</temp.directory>
+<!-- the base working directory for oltp and batch report generation -->
+<reports.directory>${external.work.directory}/reports</reports.directory>
+
+<!-- Build support file directories and subdirectories -->
+<build.directory>build</build.directory>
+<build.external.directory>${build.directory}/external</build.external.directory>
+<build.appserver.directory>${build.external.directory}/appserver</build.appserver.directory>
+<build.user.directory>${build.external.directory}/user</build.user.directory>
+<build.work.directory>${build.external.directory}/work</build.work.directory>
+<build.project.directory>${build.directory}/project</build.project.directory>
+<licenses.directory>licenses</licenses.directory>
+<build.distribution.directory>${build.directory}/distribution</build.distribution.directory>
+<build.distribution.licenses.directory>${build.distribution.directory}/${licenses.directory}</build.distribution.licenses.directory>
+<build.server.lib.directory>${build.directory}/server-lib</build.server.lib.directory>
+<build.rice.lib.directory>${build.directory}/rice-lib</build.rice.lib.directory>
+<build.kfs.lib.directory>${build.directory}/kfs-lib</build.kfs.lib.directory>
+
+<!-- determines where the build will look for your database drivers -->
+<drivers.directory>${build.directory}/drivers</drivers.directory>
+
+<all.temp.directory>${build.directory}/temp</all.temp.directory>
+<war.directory>${build.directory}/war</war.directory>
+<war.classes.directory>${war.directory}/WEB-INF/classes</war.classes.directory>
+
+<!-- Testing directories -->
+<test.directory>${build.directory}/test</test.directory>
+<test.classes.directory>${test.directory}/classes</test.classes.directory>
+<test.xml.results.directory>${test.directory}/xml</test.xml.results.directory>
+
+<deployDir>${build.directory}</deployDir>
+<test.html.results.directory>${deployDir}/test</test.html.results.directory>
+<doc.directory>${build.directory}/doc</doc.directory>
+<dddoc.directory>${build.directory}/doc-dd-tags</dddoc.directory>
+
+<!-- files -->
+
+<context.file>context.xml</context.file>
+<carol.file>carol.properties</carol.file>
+<security.file>security.properties</security.file>
+<keystore.filename>rice.keystore</keystore.filename>
+<configuration.file>configuration.properties</configuration.file>
+<p6spy.file>spy.properties</p6spy.file>
+<web.file>web.xml</web.file>
+<spring.ide.support.file>.springBeans</spring.ide.support.file>
+<ojb.properties.file>OJB.properties</ojb.properties.file>
+<ojb.logging.file>OJB-logging.properties</ojb.logging.file>
+<ojb.repository.file>OJB-repository.xml</ojb.repository.file>
+
+<!-- the file that lists the tables and columns that should be processed by the PostDataLoadEncryptionStep -->
+<encrypt.attributes.properties.file>fieldsToEncrypt.properties</encrypt.attributes.properties.file>
+
+<!-- the single secure property file currently used by the application -->
+<security.property.file>${security.directory}/${security.file}</security.property.file>
+<!-- the single keystore file currently used by the KSB to authenticate services -->
+<keystore.file>${security.directory}/${keystore.filename}</keystore.file>
+
+<!-- determines the mail relay server used by MailService -->
+<mail.relay.server>[[Please set this in your ${user.home}/${ant.project.name}-build.properties file.]]</mail.relay.server>
+<mail.transport.protocol>smtp</mail.transport.protocol>
+
+<!-- from email address for mail sent by the batch framework (JobListener and other) and to email address for job failure messages -->
+<batch.mailing.list>[[Please set this in your ${user.home}/${ant.project.name}-build.properties file.]]</batch.mailing.list>
+
+<!-- to/from email address for mail sent by the incident reporting framework (KualiExceptionIncident, etc.) -->
+<incident.mailing.list>[[Please set this in your ${user.home}/${ant.project.name}-build.properties file.]]</incident.mailing.list>
+<log4j.file>log4j.properties</log4j.file>
+<log4j.library.file>log4j-1.2.14.jar</log4j.library.file>
+
+<!-- the property file that contains the log4j configuration for the application -->
+<log4j.settings.file>${settings.directory}/${log4j.file}</log4j.settings.file>
+
+<!-- determines how frequently the logging framework (Log4jConfigurer) will check for changes to log4j.properties -->
+<log4j.reload.minutes>5</log4j.reload.minutes>
+<!-- determines when the MemoryMonitor considers the appplication to have exceeded reasonable memory usage -->
+<memory.monitor.threshold>.85</memory.monitor.threshold>
+
+<periodic.thread.dump>true</periodic.thread.dump>
+<periodic.thread.dump.seconds>300</periodic.thread.dump.seconds>
+
+<!-- this property can be used to turn p6spy logging on and off (we use p6spy to log the sql generated by ojb) -->
+<use.p6spy>false</use.p6spy>
+
+<!-- This property sets KFS to configure itself to work with a standalone Rice instance  -->
+<rice.standalone>false</rice.standalone>
+
+<!-- Sets the build process to install a Rice instance locally in the development Tomcat server -->
+<deploy.local.rice.server>false</deploy.local.rice.server>
+
+<!-- rice.url is set dynamically in build.xml based on the rice.standalone flag -->
+<!-- If using any other application server besides the one containing KFS, you will need -->
+<!-- to set this in your kfs-build.properties -->
+<!--
+<rice.url>https://somehostname.sampleu.edu/kr-dev</rice.url> 
+-->
+
+<rice.config.property.file>${appserver.home}/conf/rice-config.xml</rice.config.property.file>
+
+<rice.server.datasource.username>${datasource.username}</rice.server.datasource.username>
+<rice.server.datasource.password>${datasource.password}</rice.server.datasource.password>
+<rice.server.datasource.pool.size>${datasource.pool.size}</rice.server.datasource.pool.size>
+<rice.server.datasource.connection.timeout>${datasource.connection.timeout}</rice.server.datasource.connection.timeout>
+<rice.server.datasource.validating.query>${datasource.validating.query}</rice.server.datasource.validating.query>
+<rice.server.datasource.maximum.cached.preparedstatements>${datasource.maximum.cached.preparedstatements}</rice.server.datasource.maximum.cached.preparedstatements>
+
+<!-- Where, on the classpath, to pull the OJB properties file for the rice components -->
+<rice.custom.ojb.properties>${ojb.properties.file}</rice.custom.ojb.properties>
+
+<!-- Base Rice version properties -->
+<rice.name>rice</rice.name>
+<kfs.rice.version>1.0.3.3</kfs.rice.version>
+<rice.output.licenses.suffix>-licenses.zip</rice.output.licenses.suffix>
+<rice.server.war.file.name.prefix>${rice.name}-web-</rice.server.war.file.name.prefix>
+<rice.server.war.file.name>${rice.server.war.file.name.prefix}${kfs.rice.version}.war</rice.server.war.file.name>
+
+<rice.application>kr</rice.application>
+<kew.application>kew</kew.application>
+<ksb.application>ksb</ksb.application>
+<kim.application>kim</kim.application>
+
+<!-- the KSB always runs locally -->
+<rice.ksb.url>${application.url}/${ksb.application}</rice.ksb.url>
+
+<!--
+# In a production or clustered environment, this should be the private IP 
+# address, port and base context name for the location of the KSB services
+# see the spring-rice-configurer.xml file for how this is used
+# This odd syntax here is to allow it to be removed completely
+# To use, make the value of the property "http.url=host:port/context-name" </# To use, make the value of the property "http.url>
+<rice.ksb.http.url.expression=# http.url>.... -- Set dynamically via a -Dhttp.url property on tomcat startup</rice.ksb.http.url.expression=# http.url>
+-->
+
+<!-- a logical name for the ${keystore.file}, should not need to be changed during development -->
+<keystore.alias>rice</keystore.alias>
+<!-- the password that will open the keystore -->
+<keystore.password>r1c3pw</keystore.password>
+<!-- used by the DemonstrationGradeEncryptionService and the workflow EncryptionService to encrypt / decrypt data in the database -->
+<encryption.key>7IC64w6ksLU</encryption.key>
+
+<!-- Determines whether data should be unmasked -->
+<rice.enable.nonproduction.data.unmasking>false </rice.enable.nonproduction.data.unmasking>
+
+<!-- rice & notification -->
+<!-- determines if notifications coming out of KEW should be forwarded to KEN -->
+<rice.kew.enableKENNotification>false</rice.kew.enableKENNotification>
+
+<!-- the files that define the struts context for the rice struts module -->
+<rice.struts.config.files>/${rice.application}/WEB-INF/struts-config.xml</rice.struts.config.files>
+<rice.kns.struts.config.files>/${rice.application}/WEB-INF/struts-config.xml</rice.kns.struts.config.files>
+<!-- the files that define the struts context for the kew struts module -->
+<rice.kew.struts.config.files>/${kew.application}/WEB-INF/struts-config.xml</rice.kew.struts.config.files>
+<!-- the path to the file containing the log4j configuration for workflow -->
+<rice.kew.log4j.settings.path>${log4j.settings.file}</rice.kew.log4j.settings.path>
+<!-- the files that define the struts context for the ksb struts module -->
+<rice.ksb.struts.config.files>/${ksb.application}/WEB-INF/struts-config.xml</rice.ksb.struts.config.files>
+<!-- the files that define the struts context for the kim struts module -->
+<rice.kim.struts.config.files>/${kim.application}/WEB-INF/struts-config.xml</rice.kim.struts.config.files>
+
+<!-- the directory where attachments uploaded through the workflow ui are stored -->
+<rice.kew.attachment.directory>${attachments.directory}</rice.kew.attachment.directory>
+<!-- the directory where the xml files that define your workflow data should be stored when they are uploaded -->
+<rice.kew.xml.directory>${staging.directory}/workflow</rice.kew.xml.directory>
+<!-- the frequency wih which workflow checks for new files in the xml directory -->
+<rice.kew.xml.poll.interval.secs>30</rice.kew.xml.poll.interval.secs>
+<!-- the length of time workflow waits to do the first check of the xml directory when the application starts up -->
+<rice.kew.xml.initial.delay.secs>60</rice.kew.xml.initial.delay.secs>
+
+<!-- globally disable or enable the outbox (screen to which there is a link in the action list that shows the documents a user has taken action on) -->
+<rice.kew.actionlist.outbox>false</rice.kew.actionlist.outbox>
+
+<!-- Rice web service configuration -->
+<rice.kew.secure.workflowdocument.javaservice.endpoint>true</rice.kew.secure.workflowdocument.javaservice.endpoint>
+<rice.kew.secure.workflowutility.javaservice.endpoint>true</rice.kew.secure.workflowutility.javaservice.endpoint>
+<rice.kew.simpleDocumentActionsService.security>true</rice.kew.simpleDocumentActionsService.security>
+<rice.kew.secure.workflowutility.soapservice.endpoint>true</rice.kew.secure.workflowutility.soapservice.endpoint>
+<rice.kim.soapExposedService.jaxws.security>true</rice.kim.soapExposedService.jaxws.security>
+
+<rice.kim.identityArchiveServiceImpl.executionIntervalSeconds>600</rice.kim.identityArchiveServiceImpl.executionIntervalSeconds>
+<rice.kim.identityArchiveServiceImpl.maxWriteQueueSize>300</rice.kim.identityArchiveServiceImpl.maxWriteQueueSize>
+
+<!-- determines whether the workflow processes that would normally be performed asynchronously are asynchronous (async) or are synchronous instead -->
+<rice.ksb.message.delivery>async</rice.ksb.message.delivery>
+<!-- how many times the service bus will try to send a message when it is encountering an exception that may be due to a resource outage, for example -->
+<rice.ksb.route.queue.max.retry.attempts>3</rice.ksb.route.queue.max.retry.attempts>
+<!-- the length of time the service bus will wait before retrying after each failed attempt to send a message -->
+<rice.ksb.route.queue.time.increment>1000</rice.ksb.route.queue.time.increment>
+<!-- the number of threads available to process service bus messages, i.e. deal with queued workflow documents -->
+<rice.ksb.thread.pool.size>20</rice.ksb.thread.pool.size>
+
+<!-- number of seconds between each "ping" of the service bus to see what services are currently available -->
+<rice.ksb.bus.refresh.rate.seconds>120</rice.ksb.bus.refresh.rate.seconds>
+
+<rice.cxf.client.connectionTimeout>30000</rice.cxf.client.connectionTimeout>
+<rice.cxf.client.receiveTimeout>120000</rice.cxf.client.receiveTimeout>
+<rice.cxf.client.allowChunking>false</rice.cxf.client.allowChunking>
+
+<!-- Set to true to prevent the application from publishing the services to a master service bus.  For use on application configurations  -->
+<!-- that should not receive service calls from other applications.  (batch jobs and unit tests) -->
+<rice.ksb.batch.mode>false</rice.ksb.batch.mode>
+
+<!-- KIM Cache Settings -->
+
+<rice.kim.cache.entity.max.size>3000</rice.kim.cache.entity.max.size>
+<rice.kim.cache.entity.max.age.seconds>3600</rice.kim.cache.entity.max.age.seconds>
+<rice.kim.cache.group.max.size>3000</rice.kim.cache.group.max.size>
+<rice.kim.cache.group.max.age.seconds>3600</rice.kim.cache.group.max.age.seconds>
+<rice.kim.cache.role.max.size>3000</rice.kim.cache.role.max.size>
+<rice.kim.cache.role.max.age.seconds>300</rice.kim.cache.role.max.age.seconds>
+<rice.kim.cache.permission.max.size>3000</rice.kim.cache.permission.max.size>
+<rice.kim.cache.permission.max.age.seconds>30</rice.kim.cache.permission.max.age.seconds>
+<rice.kim.cache.responsibility.max.size>3000</rice.kim.cache.responsibility.max.size>
+<rice.kim.cache.responsibility.max.age.seconds>30</rice.kim.cache.responsibility.max.age.seconds>
+<rice.kim.cache.person.max.size>3000</rice.kim.cache.person.max.size>
+<rice.kim.cache.person.max.age.seconds>3600</rice.kim.cache.person.max.age.seconds>
+
+<!-- KIM hidden fields -->
+<rice.org.kuali.rice.kim.bo.ui.PersonDocumentEmploymentInfo.hidden>baseSalaryAmount</rice.org.kuali.rice.kim.bo.ui.PersonDocumentEmploymentInfo.hidden>
+<rice.kim.hide.PersonDocumentAddress.type>HM</rice.kim.hide.PersonDocumentAddress.type>
+<rice.kim.hide.PersonDocumentPhone.type>HM</rice.kim.hide.PersonDocumentPhone.type>
+<rice.kim.show.blank.qualifiers>true</rice.kim.show.blank.qualifiers>
+
+<!-- KNS Cache Settings -->
+
+<rice.kns.cache.parameter.max.size>1000</rice.kns.cache.parameter.max.size>
+<rice.kns.cache.parameter.max.age.seconds>3600</rice.kns.cache.parameter.max.age.seconds>
+<rice.kns.cache.nonDatabaseComponent.max.size>2000</rice.kns.cache.nonDatabaseComponent.max.size>
+<rice.kns.cache.nonDatabaseComponent.max.age.seconds>3600</rice.kns.cache.nonDatabaseComponent.max.age.seconds>
+
+<rice.kns.cache.methodresult.max.size>1000</rice.kns.cache.methodresult.max.size>
+<rice.kns.cache.methodresult.max.age.seconds>60</rice.kns.cache.methodresult.max.age.seconds>
+<rice.kns.cache.methodresult.nocopy.max.size>1000</rice.kns.cache.methodresult.nocopy.max.size>
+<rice.kns.cache.methodresult.nocopy.max.age.seconds>600</rice.kns.cache.methodresult.nocopy.max.age.seconds>
+
+<rice.kns.session.document.cache.size>1000</rice.kns.session.document.cache.size>
+
+<rice.kim.cache.permission.refresh.period.seconds>3600</rice.kim.cache.permission.refresh.period.seconds>
+<rice.kim.cache.role.refresh.period.seconds>3600</rice.kim.cache.role.refresh.period.seconds>
+
+<!-- properties for Action List notification -->
+<rice.kew.email.reminder.lifecycle.enabled>false</rice.kew.email.reminder.lifecycle.enabled>
+<rice.kew.mail.smtp.host>${mail.relay.server}</rice.kew.mail.smtp.host>
+<rice.kew.mail.transport.protocol>${mail.transport.protocol}</rice.kew.mail.transport.protocol>
+
+<!-- turn on/off daily and/or weekly workflow notifications -->
+<rice.kew.daily.email>false</rice.kew.daily.email>
+<rice.kew.weekly.email>false</rice.kew.weekly.email>
+<!-- the cron expression defining when daily emails will be sent (default to 1AM every day)  -->
+<rice.kew.daily.email.cron.expression>0 0 1 * * ?</rice.kew.daily.email.cron.expression>
+<!-- the cron expression defining when daily emails will be sent (default to 2AM every Monday)  -->
+<rice.kew.weekly.email.cron.expression>0 0 2 ? * 2</rice.kew.weekly.email.cron.expression>
+
+<!-- Needed by DWR -->
+<classpath.resource.prefix>/WEB-INF/classes/</classpath.resource.prefix>
+
+<!-- whether to validate the DD upon startup -->
+<validate.data.dictionary>true</validate.data.dictionary>
+<validate.ebo.references>true</validate.ebo.references>
+
+<spring.transaction.bean.file>spring-jta.xml</spring.transaction.bean.file>
+<spring.datasource.bean.file>spring-datasources.xml</spring.datasource.bean.file>
+
+<!-- the files that define the spring context for the application - note that further configuration files may be specified in the module definitions -->
+<core.spring.source.files>org/kuali/kfs/sys/spring-sys.xml,\</core.spring.source.files>
+org/kuali/kfs/coa/spring-coa.xml,\
+org/kuali/kfs/fp/spring-fp.xml,\
+org/kuali/kfs/gl/spring-gl.xml,\
+org/kuali/kfs/pdp/spring-pdp.xml,\
+org/kuali/kfs/vnd/spring-vnd.xml
+
+<access.security.core.spring.files>,org/kuali/kfs/sec/spring-sec.xml,org/kuali/kfs/sec/spring-sec-gl-overrides.xml</access.security.core.spring.files>
+<access.security.ld.spring.files>,org/kuali/kfs/module/ld/spring-sec-ld-overrides.xml</access.security.ld.spring.files>
+<access.security.purap.spring.files>,org/kuali/kfs/module/purap/spring-sec-purap-overrides.xml</access.security.purap.spring.files>
+<access.security.rice.spring.files>,org/kuali/kfs/sec/spring-sec-rice-overrides.xml</access.security.rice.spring.files>
+
+<integration.spring.files>,org/kuali/kfs/integration/spring-integration.xml</integration.spring.files>
+
+<endowment.spring.files>,org/kuali/kfs/module/endow/spring-endow.xml</endowment.spring.files>
+<capital.asset.spring.files>,org/kuali/kfs/module/cam/spring-cam.xml,org/kuali/kfs/module/cab/spring-cab.xml</capital.asset.spring.files>
+<accounts.receivable.spring.files>,org/kuali/kfs/module/ar/spring-ar.xml</accounts.receivable.spring.files>
+<purchasing.spring.files>,org/kuali/kfs/module/purap/spring-purap.xml</purchasing.spring.files>
+<contracts.and.grants.spring.files>,org/kuali/kfs/module/cg/spring-cg.xml</contracts.and.grants.spring.files>
+<kuali.coeus.spring.files>,org/kuali/kfs/module/external/kc/spring-kc.xml</kuali.coeus.spring.files>
+<labor.distribution.spring.files>,org/kuali/kfs/module/ld/spring-ld.xml
+,org/kuali/kfs/module/bc/spring-bc.xml
+,org/kuali/kfs/module/ec/spring-ec.xml</labor.distribution.spring.files>
+
+
+<!-- These beans define the other optional modules within KFS.  If you are not using a module, you can -->
+<!-- remove it from this list -->
+<!-- Commented out - in the base distribution, this property is generated by build.xml -->
+<!--
+<optional.module.spring.source.files></optional.module.spring.source.files>
+-->
+
+
+<batch.spring.files>,spring-kfs-batch.xml</batch.spring.files>
+
+<!-- the institution specific files that define the spring context for the application -->
+<institution.spring.source.files></institution.spring.source.files>
+
+<!-- Commented out since needs to be set dynamically in build.xml -->
+<!--
+<spring.source.files>${core.spring.source.files}${optional.module.spring.source.files}${institution.spring.source.files}</spring.source.files>
+-->
+
+<base.kfs.rice.override.spring.files>spring-kfs-rice-overrides.xml</base.kfs.rice.override.spring.files>
+
+<!-- the core files that are included in the application spring context for unit testing -->
+<core.spring.test.files>org/kuali/kfs/sys/spring-sys-test.xml,\</core.spring.test.files>
+org/kuali/kfs/gl/spring-gl-test.xml
+
+<!-- Commented out - in the base distribution, this property is generated by build.xml -->
+<!--
+<optional.module.spring.test.files></optional.module.spring.test.files>
+-->
+
+<endowment.spring.test.files>,org/kuali/kfs/module/endow/spring-endow-test.xml</endowment.spring.test.files>
+<capital.asset.spring.test.files>,org/kuali/kfs/module/cam/spring-cam-test.xml</capital.asset.spring.test.files>
+<accounts.receivable.spring.test.files>,org/kuali/kfs/module/ar/spring-ar-test.xml</accounts.receivable.spring.test.files>
+<purchasing.spring.test.files>,org/kuali/kfs/module/purap/spring-purap-test.xml</purchasing.spring.test.files>
+<contracts.and.grants.spring.test.files></contracts.and.grants.spring.test.files>
+<labor.distribution.spring.test.files></labor.distribution.spring.test.files>
+
+<!-- org/kuali/kfs/module/external/kc/spring-kc-test.xml,\ -->
+
+<!-- the institution specific files that are included in the application spring context for unit testing -->
+<institution.spring.test.files></institution.spring.test.files>
+
+<!-- all the files that are included in the application spring context for unit testing -->
+<!-- Commented out since needs to be set dynamically in build.xml -->
+<!--
+<spring.test.files>${core.spring.test.files}${optional.module.spring.test.files}${institution.spring.test.files}</spring.test.files>
+-->
+
+<!-- 5. DATA DICTIONARY SPRING SUPPORT PROPERTIES -->
+
+<rice.datadictionary.directory>${build.directory}/rice-datadictionary</rice.datadictionary.directory>
+
+<spring.ide.support.file.prefix><![CDATA[
+<?xml version="1.0" encoding>"UTF-8"?>
+<beansProjectDescription>
+    <configExtensions>
+        <configExtension>xml</configExtension>
+    </configExtensions>
+    <configs>]]><spring.ide.support.file.prefix>
+
+<spring.ide.support.file.datadictionary><![CDATA[
+    </configs>
+    <configSets>
+        <configSet>
+            <name>Data Dictionary</name>
+            <allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+            <incomplete>false</incomplete>
+            <configs>]]></spring.ide.support.file.datadictionary>
+
+<spring.ide.support.file.services><![CDATA[
+            </configs>
+        </configSet>
+        <configSet>
+            <name>Services</name>
+            <allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+            <incomplete>false</incomplete>
+            <configs>]]></spring.ide.support.file.services>
+
+<spring.ide.support.file.suffix><![CDATA[
+            </configs>
+        </configSet>
+    </configSets>
+    <springVersion>2.0</springVersion>
+</beansProjectDescription>]]></spring.ide.support.file.suffix>
+
+<spring.ide.support.file.line.prefix><![CDATA[
+            <config>]]></spring.ide.support.file.line.prefix>
+
+<spring.ide.support.file.line.suffix><![CDATA[</config>]]></spring.ide.support.file.line.suffix>
+
+<spring.ide.support.datadictionary.files>**/datadictionary/**/*.xml</spring.ide.support.datadictionary.files>
+
+<!--
+#############################
+##  URL Properties
+##     Properties you will want to configure to match your development/server environment
+#############################
+-->
+<!-- tells the build what the base url is for the tomcat instance where the application will be deployed -->
+<appserver.url>http://localhost:8080</appserver.url>
+
+<!-- the base url of the application -->
+<application.url>${appserver.url}/${ant.project.name}-${build.environment}</application.url>
+
+<!-- The URL for the CAS server -->
+<cas.url>${appserver.url}/cas</cas.url>
+
+<!-- rice.url is set dynamically in build.xml based on the rice.standalone flag -->
+<!-- If using any other application server besides the one containing KFS, you will need -->
+<!-- to set this in your kfs-build.properties
+<!--
+<rice.url>https://somehostname.sampleu.edu/kr-dev</rice.url>
+-->
+
+<!-- the base url for static content like images and help that could reside within the application or be maintained by other group(s) on other server(s) -->
+<externalizable.static.content.url>${application.url}/static</externalizable.static.content.url>
+
+<!--
+#############################
+##  Derived URL Properties
+##     URL-related properties you will likely want to leave alone since they
+##     reference standard locations under the main URLs.
+#############################
+-->
+<!-- the base url for help content -->
+<externalizable.help.url>${externalizable.static.content.url}/help/</externalizable.help.url>
+<!-- the base url for images that can reside outside the application -->
+<externalizable.images.url>${externalizable.static.content.url}/images/</externalizable.images.url>
+<!-- the base url for xml (xsd, xsl, etc.) related files that can reside outside the application -->
+<externalizable.xml.url>${externalizable.static.content.url}/xml/</externalizable.xml.url>
+
+<!-- Kuali Coeus application server URL -->
+<kc.application.url>http://test.kc.kuali.org/kc-trunk</kc.application.url>
+
+<http.session.timeout.minutes>15</http.session.timeout.minutes>
+
+<!-- 
+##########################
+##  Core Web Configuration Files
+##    You should leave these alone and override beans as necessary in the "institutional..." properties below
+##########################
+-->
+
+<!-- the core files that define the struts context for the application -->
+<core.struts.config.files>/WEB-INF/struts-config.xml</core.struts.config.files>
+
+<!-- Resources used by the Rice server portion of the framework -->
+<core.rice.struts.message.resources>KR-ApplicationResources, 
+org.kuali.rice.kew.ApplicationResources,
+org.kuali.rice.ksb.messaging.ApplicationResources,
+KIM-ApplicationResources,
+ApplicationResources,
+org.kuali.kfs.sec.messages-sec</core.rice.struts.message.resources>
+
+<!-- the core classes that wrap java constants for jsps and tags (see ApplicationInitializeListener) -->
+<core.jstl.constants.classnames>org.kuali.kfs.sys.KFSConstants,
+org.kuali.kfs.sys.KfsAuthorizationConstants,
+org.kuali.kfs.gl.GeneralLedgerConstants,
+org.kuali.kfs.sec.SecConstants,
+org.kuali.kfs.module.cg.CGConstants,
+org.kuali.kfs.module.purap.PurapConstants,
+org.kuali.kfs.module.bc.BCConstants,
+org.kuali.kfs.module.ec.EffortConstants,
+org.kuali.kfs.module.cam.CamsConstants,
+org.kuali.kfs.module.endow.EndowConstants</core.jstl.constants.classnames>
+
+<!-- used to determine what class from the above (jstl.constants.classnames) list is bound to the "Constants" name in JSTL -->
+<jstl.constants.main.class>org.kuali.kfs.sys.KFSConstants</jstl.constants.main.class>
+
+<!-- the core javascript files that should be available to every page in the application -->
+<core.javascript.files>kr/scripts/core.js,
+kr/scripts/dhtml.js,
+kr/scripts/my_common.js,
+kr/scripts/jscalendar-1.0/calendar.js,
+kr/scripts/jscalendar-1.0/lang/calendar-en.js,
+kr/scripts/jscalendar-1.0/calendar-setup.js,
+dwr/engine.js,dwr/util.js,
+dwr/interface/PersonService.js,
+kr/scripts/objectInfo.js,
+scripts/rice-overrides.js</core.javascript.files>
+
+<!-- the javascript files that should be available to the portal -->
+<core.portal.javascript.files>kr/scripts/my_common.js</core.portal.javascript.files>
+
+<!-- the core css files that should be available to every page in the application -->
+<core.css.files>kr/css/kuali.css,kr/scripts/jscalendar-1.0/calendar-win2k-1.css</core.css.files>
+<!-- the css files that should be available to every page in the application -->
+<core.portal.css.files>css/portal.css</core.portal.css.files>
+
+<!--
+##########################
+##  Institutional Override Properties
+##    Override these properties elsewhere to add additional configuration items
+##########################
+-->
+
+<!-- the institution specific files that define the struts context for the application -->
+<institution.struts.config.files></institution.struts.config.files>
+
+<!-- the institution specific files containing user messages that will be displayed via struts tags in jsps -->
+<institution.rice.struts.message.resources></institution.rice.struts.message.resources>
+
+<!-- the institution specific classes that wrap java constants for jsps and tags (see ApplicationInitializeListener) -->
+<institution.jstl.constants.classnames></institution.jstl.constants.classnames>
+
+<!-- the institution specific javascript files that should be available to every non-portal page in the application -->
+<institution.javascript.files></institution.javascript.files>
+
+<!-- the institution specific javascript files that should be available in the portal -->
+<institution.portal.javascript.files></institution.portal.javascript.files>
+
+<!-- additional css files that should be available to every non-portal page in the application -->
+<institution.css.files></institution.css.files>
+
+<!-- the institution specific css files that should be available to every non-portal page in the application -->
+<institution.portal.css.files></institution.portal.css.files>
+
+<!--
+##########################
+##  Derived Properties
+##    These merge the institution and core lists above.  Leave these alone unless absolutely necessary.
+##########################
+-->
+
+<struts.config.files>${core.struts.config.files}${institution.struts.config.files}</struts.config.files>
+<rice.struts.message.resources>${core.rice.struts.message.resources}${institution.rice.struts.message.resources}</rice.struts.message.resources>
+
+<jstl.constants.classnames>${core.jstl.constants.classnames}${institution.jstl.constants.classnames}</jstl.constants.classnames>
+
+<javascript.files>${core.javascript.files}${institution.javascript.files}</javascript.files>
+<portal.javascript.files>${core.portal.javascript.files}${institution.portal.javascript.files}</portal.javascript.files>
+
+<css.files>${core.css.files}${institution.css.files}</css.files>
+<portal.css.files>${core.portal.css.files}${institution.portal.css.files}</portal.css.files>
 </properties>
 
 
