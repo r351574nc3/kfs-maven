@@ -25,5 +25,12 @@
   </parent>
   <artifactId>kfs-rice</artifactId>
 
-
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>kfs-core</artifactId>
+      <version>${project.version}</version>  
+    </dependency>
+  </dependencies> 
+  
 </project>
