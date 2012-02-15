@@ -27,7 +27,7 @@
   <packaging>war</packaging>
 
   <build>
-    <finalName>${project.parent.name}-${environment}</finalName>
+    <finalName>${parent.project.name}-${environment}</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
