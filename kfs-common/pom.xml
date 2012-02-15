@@ -119,8 +119,8 @@
 <!-- ################################################################################ -->
 
 
-<!-- values used in KFS-PURAP B2B functions - all values but user
-agent derived by build.xml based on build.environment -->
+<!-- values used in KFS-PURAP B2B functions - all values but user -->
+<!-- agent derived by build.xml based on build.environment -->
 <environment>dev</environment>
 <build.environment>${environment}</build.environment>
 <build.version>${project.version}</build.version>
@@ -541,7 +541,10 @@ xpp3*.jar</runtime.only.jars>
 <appserver.home>${basedir}/build/tomcat</appserver.home>
 
 <!-- the base directory for external configuration files and work directories -->
+<!--
 <external.config.directory>${base.directory}/opt</external.config.directory>
+-->
+<external.config.directory>${basedir}/temp/kuali/main/${build.environment}</external.config.directory>
 
 <!--
 #############################
@@ -582,8 +585,8 @@ xpp3*.jar</runtime.only.jars>
 <test.lib.directory>test/lib</test.lib.directory>
 
 <!-- derived directories within the "/opt" directory -->
-<base.security.directory>${external.config.directory}/sa_forms/java</base.security.directory>
-<base.settings.directory>${external.config.directory}/j2ee</base.settings.directory>
+<base.security.directory>${external.config.directory}/security</base.security.directory>
+<base.settings.directory>${external.config.directory}/settings</base.settings.directory>
 <base.logs.directory>${external.config.directory}/logs</base.logs.directory>
 <base.work.directory>${external.config.directory}/work</base.work.directory>
 <base.deploy.directory>${external.config.directory}/ears</base.deploy.directory>
