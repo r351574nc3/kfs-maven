@@ -37,6 +37,15 @@
   </ciManagement>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.zip</exclude>
+        </excludes>
+      </resource>
+    </resources>
   </build>  
   <dependencyManagement>
   </dependencyManagement>
