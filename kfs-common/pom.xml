@@ -121,36 +121,29 @@
 
 <!-- values used in KFS-PURAP B2B functions - all values but user -->
 <!-- agent derived by build.xml based on build.environment -->
+<dev.mode>true</dev.mode>
 <environment>dev</environment>
 <build.environment>${environment}</build.environment>
 <build.version>${project.version}</build.version>
 <b2b.user.agent>kfs</b2b.user.agent>
-<b2b.test.environment>test</b2b.test.environment>
+<b2b.environment>test</b2b.environment>
 <b2b.production.environment>Production</b2b.production.environment>
 
-<b2b.test.purchase.order.identity>KualiDemo</b2b.test.purchase.order.identity>
-<b2b.test.purchase.order.password>p01mport</b2b.test.purchase.order.password>
-<b2b.test.shopping.identity>KualiDemo</b2b.test.shopping.identity>
-<b2b.test.shopping.password>c#m1</b2b.test.shopping.password>
-<b2b.test.punch.back.url>${application.url}/b2b.do?methodToCall=returnFromShopping</b2b.test.punch.back.url>
-<b2b.test.punch.out.url>http://usertest.sciquest.com/apps/Router/ExternalAuth/cXML/KualiDemo</b2b.test.punch.out.url>
+<b2b.purchase.order.identity>KualiDemo</b2b.purchase.order.identity>
+<b2b.purchase.order.password>p01mport</b2b.purchase.order.password>
+<b2b.shopping.identity>KualiDemo</b2b.shopping.identity>
+<b2b.shopping.password>c#m1</b2b.shopping.password>
+<b2b.punch.back.url>${application.url}/b2b.do?methodToCall=returnFromShopping</b2b.punch.back.url>
+<b2b.punch.out.url>http://usertest.sciquest.com/apps/Router/ExternalAuth/cXML/KualiDemo</b2b.punch.out.url>
         
 <!-- use this url for testing with B2BPurchaseOrderSciquestServiceImpl -->
-<b2b.test.purchase.order.url>https://usertest.sciquest.com/apps/Router/POXMLImport</b2b.test.purchase.order.url>
+<b2b.purchase.order.url>https://usertest.sciquest.com/apps/Router/POXMLImport</b2b.purchase.order.url>
 
 <!-- use this url for testing with B2BPurchaseOrderServiceImpl
 (although not working yet) -->
 <!-- 
 <b2b.test.purchase.order.url>http://sciwmtest.sciquest.com/invoke/wm.tn/receive</b2b.test.purchase.order.url>
 -->
-
-<b2b.production.purchase.order.identity></b2b.production.purchase.order.identity>
-<b2b.production.purchase.order.password></b2b.production.purchase.order.password>
-<b2b.production.shopping.identity></b2b.production.shopping.identity>
-<b2b.production.shopping.password></b2b.production.shopping.password>
-<b2b.production.purchase.order.url></b2b.production.purchase.order.url>
-<b2b.production.punch.back.url></b2b.production.punch.back.url>
-<b2b.production.punch.out.url></b2b.production.punch.out.url>
 
 <!-- determines whether quartz (SchedulerService and scheduleJob) should be used for batch job scheduling and execution - impacts whether the batch scheduling ui works -->
 <use.quartz.scheduling>true</use.quartz.scheduling>
@@ -1118,7 +1111,117 @@ scripts/rice-overrides.js</core.javascript.files>
 
 <css.files>${core.css.files}${institution.css.files}</css.files>
 <portal.css.files>${core.portal.css.files}${institution.portal.css.files}</portal.css.files>
+
+<!-- Handling init-base-properties target outcome -->
+<appenders>INFO, LogFile, StdOut</appenders>
+<distributable.tag></distributable.tag>
+
+<!-- Handling init-database-properties target outcome -->
+<datasource.ojb.platform>${oracle.ojb.platform}</datasource.ojb.platform>
+<datasource.driver.class>${oracle.driver.class}</datasource.driver.class>
+<p6spy.real.driver.class>${oracle.driver.class}</p6spy.real.driver.class>
+<datasource.ojb.sequence.manager>${oracle.ojb.sequence.manager}</datasource.ojb.sequence.manager>
+<rice.server.datasource.ojb.platform>${datasource.ojb.platform}</rice.server.datasource.ojb.platform>
+<rice.server.datasource.driver.class>${datasource.driver.class}</rice.server.datasource.driver.class>
+<rice.server.datasource.url>${datasource.url}</rice.server.datasource.url>
+
+<!-- Handling init-rice-properties target outcome -->
+<kim.mode>local</kim.mode>
+<kew.mode>local</kew.mode>
+<rice.url>${application.url}</rice.url>
+<rice.kr.url>${rice.url}/${rice.application}</rice.kr.url>
+<rice.kim.url>${rice.url}/${kim.application}</rice.kim.url>
+<rice.kew.url>${rice.url}/${kew.application}</rice.kew.url>
+<rice.externalizable.images.url>${application.url}/kr/static/images/</rice.externalizable.images.url>
+<use.quartz.scheduling>false</use.quartz.scheduling>
+<use.quartz.jdbc.jobstore>false</use.quartz.jdbc.jobstore>
+<rice.ksb.use.quartz.database>false</rice.ksb.use.quartz.database>
+<rice.ksb.message.persistence>false</rice.ksb.message.persistence>
+<rice.kew.exception.routing.immediate>false</rice.kew.exception.routing.immediate>
+
+<!-- Handling init-spring-properties target outcome -->
+<internal.contracts.and.grants.spring.files>${contracts.and.grants.spring.files}</internal.contracts.and.grants.spring.files>
+<internal.kuali.coeus.spring.files>${kuali.coeus.spring.files}</internal.kuali.coeus.spring.files>
+<internal.accounts.receivable.spring.files>${accounts.receivable.spring.files}</internal.accounts.receivable.spring.files>
+<internal.purchasing.spring.files>${purchasing.spring.files}</internal.purchasing.spring.files>
+<internal.capital.asset.spring.files>${capital.asset.spring.files}</internal.capital.asset.spring.files>
+<internal.labor.distribution.spring.files>${labor.distribution.spring.files}</internal.labor.distribution.spring.files>
+<internal.endowment.spring.files>${endowment.spring.files}</internal.endowment.spring.files>
+<internal.contracts.and.grants.spring.test.files>${contracts.and.grants.spring.test.files}</internal.contracts.and.grants.spring.test.files>
+<internal.accounts.receivable.spring.test.files>${accounts.receivable.spring.test.files}</internal.accounts.receivable.spring.test.files>
+<internal.purchasing.spring.test.files>${purchasing.spring.test.files}</internal.purchasing.spring.test.files>
+<internal.capital.asset.spring.test.files>${capital.asset.spring.test.files}</internal.capital.asset.spring.test.files>
+<internal.labor.distribution.spring.test.files>${labor.distribution.spring.test.files}</internal.labor.distribution.spring.test.files>
+<internal.endowment.spring.test.files>${endowment.spring.test.files}</internal.endowment.spring.test.files>
+<internal.access.security.core.spring.files>${access.security.core.spring.files}</internal.access.security.core.spring.files>
+<internal.access.security.ld.spring.files>${access.security.ld.spring.files}</internal.access.security.ld.spring.files>
+<internal.access.security.purap.spring.files>${access.security.purap.spring.files}</internal.access.security.purap.spring.files>
+<internal.access.security.rice.spring.files>${access.security.rice.spring.files}</internal.access.security.rice.spring.files>
+<internal.batch.spring.files>${batch.spring.files}</internal.batch.spring.files>
+
+<optional.module.spring.source.files>${internal.contracts.and.grants.spring.files}${internal.kuali.coeus.spring.files}${internal.accounts.receivable.spring.files}${internal.purchasing.spring.files}${internal.access.security.purap.spring.files}${internal.capital.asset.spring.files}${internal.labor.distribution.spring.files}${internal.access.security.ld.spring.files}${internal.endowment.spring.files}</optional.module.spring.source.files>
+<optional.module.spring.test.files>${internal.contracts.and.grants.spring.test.files}${internal.accounts.receivable.spring.test.files}${internal.purchasing.spring.test.files}${internal.capital.asset.spring.test.files}${internal.labor.distribution.spring.test.files}${internal.endowment.spring.test.files}</optional.module.spring.test.files>
+<spring.source.files>${core.spring.source.files}${internal.access.security.core.spring.files}${integration.spring.files}${optional.module.spring.source.files}${institution.spring.source.files}</spring.source.files>
+<spring.test.files>{core.spring.test.files}${optional.module.spring.test.files}${institution.spring.test.files}</spring.test.files>
+<kfs.rice.override.spring.files>${base.kfs.rice.override.spring.files}${internal.access.security.rice.spring.files}${internal.batch.spring.files}</kfs.rice.override.spring.files>
 </properties>
+
+<profiles>
+  <!-- standalone rice properties -->
+  <profile>
+      <id>standalone</id>
+      <!--
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      -->
+      <properties>
+        <dev.mode>false</dev.mode>
+        <kim.mode>embedded</kim.mode>
+        <kew.mode>embedded</kew.mode>
+        <rice.url>${appserver.url}/${rice.application}-${build.environment}</rice.url>
+        <rice.ksb.message.persistence>true</rice.ksb.message.persistence>
+      </properties>
+  </profile>
+
+  <!-- Profile for properties overridden at production -->
+  <profile>
+    <id>production</id>
+    
+
+    <properties>
+      <b2b.purchase.order.identity></b2b.purchase.order.identity>
+      <b2b.purchase.order.password></b2b.purchase.order.password>
+      <b2b.shopping.identity></b2b.shopping.identity>
+      <b2b.shopping.password></b2b.shopping.password>
+      <b2b.purchase.order.url></b2b.purchase.order.url>
+      <b2b.punch.back.url></b2b.punch.back.url>
+      <b2b.punch.out.url></b2b.punch.out.url>
+    </properties>
+  </profile>
+
+  <!-- A profile that enables p6spy -->
+  <profile>
+    <id>p6spy</id>
+    
+    <properties>
+      <datasource.ojb.platform>${p6spy.ojb.platform}</datasource.ojb.platform>
+      <datasource.driver.class>${p6spy.driver.class}</datasource.driver.class>
+    </properties>
+  </profile>
+
+  <!-- Things are setup by default to run under oracle. Use this to run mysql -->
+  <profile>
+    <id>mysql</id>
+    <properties>
+      <datasource.ojb.platform>${mysql.ojb.platform}</datasource.ojb.platform>
+      <datasource.driver.class>${mysql.driver.class}</datasource.driver.class>
+      <p6spy.real.driver.class>${mysql.driver.class}</p6spy.real.driver.class>
+      <datasource.ojb.sequence.manager>${mysql.ojb.sequence.manager}</datasource.ojb.sequence.manager>
+    </properties>
+  </profile>
+
+</profiles>
 
 
 </project>
