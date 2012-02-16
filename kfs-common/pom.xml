@@ -39,7 +39,7 @@
 <!-- Properties later populated into configuration.properties -->
 <properties>
   <!-- For the site plugin -->
-  <maven-site-plugin.version>3.0.4</maven-site-plugin.version>
+  <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
   <maven.version>3.0.4</maven.version>
   <maven-antrun-plugin.version>1.6</maven-antrun-plugin.version>
   <maven-assembly-plugin.version>2.2</maven-assembly-plugin.version>
