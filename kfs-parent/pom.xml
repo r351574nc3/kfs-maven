@@ -892,4 +892,12 @@
         <url>gitsite:git@github.com/r351574nc3/kfs-maven</url>
       </site>
     </distributionManagement>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>maven-central</id>
+      <url>http://repo1.maven.org/maven2/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
 </project>
