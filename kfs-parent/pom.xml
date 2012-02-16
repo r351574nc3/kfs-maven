@@ -43,7 +43,7 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>${maven-site-plugin.version}</version>
           <configuration>
-            <generateReports>${lbcopy-site.generateReports}</generateReports>
+            <generateReports>${kfs-site.generateReports}</generateReports>
             <reportPlugins>
               <plugin>
                 <artifactId>maven-changelog-plugin</artifactId>
