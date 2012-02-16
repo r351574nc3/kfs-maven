@@ -1124,6 +1124,7 @@ scripts/rice-overrides.js</core.javascript.files>
 <rice.server.datasource.ojb.platform>${datasource.ojb.platform}</rice.server.datasource.ojb.platform>
 <rice.server.datasource.driver.class>${datasource.driver.class}</rice.server.datasource.driver.class>
 <rice.server.datasource.url>${datasource.url}</rice.server.datasource.url>
+<rice.server.datasource.platform>${oracle.server.datasource.platform}</rice.server.datasource.platform>
 
 <!-- Handling init-rice-properties target outcome -->
 <kim.mode>local</kim.mode>
@@ -1218,6 +1219,7 @@ scripts/rice-overrides.js</core.javascript.files>
       <datasource.driver.class>${mysql.driver.class}</datasource.driver.class>
       <p6spy.real.driver.class>${mysql.driver.class}</p6spy.real.driver.class>
       <datasource.ojb.sequence.manager>${mysql.ojb.sequence.manager}</datasource.ojb.sequence.manager>
+      <rice.server.datasource.platform>${mysql.server.datasource.platform}</rice.server.datasource.platform>
     </properties>
   </profile>
 
