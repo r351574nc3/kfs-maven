@@ -20,10 +20,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.kuali.kfs</groupId>
-    <artifactId>kfs-parent</artifactId>
+    <artifactId>kfs-module</artifactId>
     <version>4.1.1-maven-SNAPSHOT</version>
   </parent>
-  <artifactId>kfs-endow</artifactId>
+  <artifactId>kfs-module-endow</artifactId>
 
   <dependencies>
     <dependency>
