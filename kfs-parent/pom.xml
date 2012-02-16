@@ -796,4 +796,16 @@
     <module>web</module>
   </modules>
 
+    <scm>
+      <connection>scm:git:git://github.com/r351574nc3/kfs-maven.git</connection>
+      <developerConnection>scm:git:git://github.com/r351574nc3/kfs-maven.git</developerConnection>
+      <url>http://www.github.com/r351574nc3/kfs-maven</url>
+    </scm>
+    
+    <distributionManagement>
+      <site>
+        <id>github-project-site</id>
+        <url>gitsite:git@github.com/r351574nc3/kfs-maven</url>
+      </site>
+    </distributionManagement>
 </project>
