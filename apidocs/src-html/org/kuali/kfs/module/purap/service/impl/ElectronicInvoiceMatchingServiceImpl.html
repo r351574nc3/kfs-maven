@@ -1,0 +1,788 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.purap.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.math.BigDecimal;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Collection;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.HashMap;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.HashSet;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.List;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Map;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.Set;<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.apache.commons.lang.ArrayUtils;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.apache.commons.lang.math.NumberUtils;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.apache.log4j.Logger;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.module.purap.PurapConstants;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.module.purap.PurapKeyConstants;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.module.purap.PurapParameterConstants;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.module.purap.batch.ElectronicInvoiceStep;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.module.purap.businessobject.ElectronicInvoice;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceDetailRequestSummary;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReason;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReasonType;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.kfs.module.purap.businessobject.PurApItem;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.kfs.module.purap.service.ElectronicInvoiceMatchingService;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import org.kuali.kfs.module.purap.util.PurApItemUtils;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import org.kuali.kfs.sys.service.TaxService;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import org.kuali.kfs.sys.service.impl.KfsParameterConstants;<a name="line.46"></a>
+<FONT color="green">047</FONT>    import org.kuali.kfs.vnd.businessobject.PurchaseOrderCostSource;<a name="line.47"></a>
+<FONT color="green">048</FONT>    import org.kuali.kfs.vnd.businessobject.VendorDetail;<a name="line.48"></a>
+<FONT color="green">049</FONT>    import org.kuali.kfs.vnd.document.service.VendorService;<a name="line.49"></a>
+<FONT color="green">050</FONT>    import org.kuali.rice.kns.service.BusinessObjectService;<a name="line.50"></a>
+<FONT color="green">051</FONT>    import org.kuali.rice.kns.service.DateTimeService;<a name="line.51"></a>
+<FONT color="green">052</FONT>    import org.kuali.rice.kns.service.ParameterService;<a name="line.52"></a>
+<FONT color="green">053</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.53"></a>
+<FONT color="green">054</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>    public class ElectronicInvoiceMatchingServiceImpl implements ElectronicInvoiceMatchingService {<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>        private Logger LOG = Logger.getLogger(ElectronicInvoiceMatchingServiceImpl.class);<a name="line.58"></a>
+<FONT color="green">059</FONT>        <a name="line.59"></a>
+<FONT color="green">060</FONT>        private Map&lt;String,ElectronicInvoiceRejectReasonType&gt; rejectReasonTypes;<a name="line.60"></a>
+<FONT color="green">061</FONT>        private VendorService vendorService;<a name="line.61"></a>
+<FONT color="green">062</FONT>        private TaxService taxService;<a name="line.62"></a>
+<FONT color="green">063</FONT>        private DateTimeService dateTimeService;<a name="line.63"></a>
+<FONT color="green">064</FONT>        <a name="line.64"></a>
+<FONT color="green">065</FONT>        String upperVariancePercentString;<a name="line.65"></a>
+<FONT color="green">066</FONT>        String lowerVariancePercentString; <a name="line.66"></a>
+<FONT color="green">067</FONT>        <a name="line.67"></a>
+<FONT color="green">068</FONT>        public void doMatchingProcess(ElectronicInvoiceOrderHolder orderHolder) {<a name="line.68"></a>
+<FONT color="green">069</FONT>            <a name="line.69"></a>
+<FONT color="green">070</FONT>            if (LOG.isInfoEnabled()){<a name="line.70"></a>
+<FONT color="green">071</FONT>                LOG.info("Matching process started");<a name="line.71"></a>
+<FONT color="green">072</FONT>            }<a name="line.72"></a>
+<FONT color="green">073</FONT>            <a name="line.73"></a>
+<FONT color="green">074</FONT>            upperVariancePercentString = SpringContext.getBean(ParameterService.class).getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.SALES_TAX_UPPER_VARIANCE_PERCENT);<a name="line.74"></a>
+<FONT color="green">075</FONT>            lowerVariancePercentString = SpringContext.getBean(ParameterService.class).getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.SALES_TAX_LOWER_VARIANCE_PERCENT);;<a name="line.75"></a>
+<FONT color="green">076</FONT>            <a name="line.76"></a>
+<FONT color="green">077</FONT>            try {<a name="line.77"></a>
+<FONT color="green">078</FONT>                if (orderHolder.isValidateHeaderInformation()) {<a name="line.78"></a>
+<FONT color="green">079</FONT>                    <a name="line.79"></a>
+<FONT color="green">080</FONT>                    validateHeaderInformation(orderHolder);<a name="line.80"></a>
+<FONT color="green">081</FONT>                    <a name="line.81"></a>
+<FONT color="green">082</FONT>                    if (orderHolder.isInvoiceRejected()) {<a name="line.82"></a>
+<FONT color="green">083</FONT>                        if (LOG.isInfoEnabled()){<a name="line.83"></a>
+<FONT color="green">084</FONT>                            LOG.info("Matching process failed at header validation");<a name="line.84"></a>
+<FONT color="green">085</FONT>                        }<a name="line.85"></a>
+<FONT color="green">086</FONT>                        return;<a name="line.86"></a>
+<FONT color="green">087</FONT>                    }<a name="line.87"></a>
+<FONT color="green">088</FONT>                }<a name="line.88"></a>
+<FONT color="green">089</FONT>                <a name="line.89"></a>
+<FONT color="green">090</FONT>                validateInvoiceDetails(orderHolder);<a name="line.90"></a>
+<FONT color="green">091</FONT>                <a name="line.91"></a>
+<FONT color="green">092</FONT>                if (orderHolder.isInvoiceRejected()) {<a name="line.92"></a>
+<FONT color="green">093</FONT>                    if (LOG.isInfoEnabled()){<a name="line.93"></a>
+<FONT color="green">094</FONT>                        LOG.info("Matching process failed at order detail validation");<a name="line.94"></a>
+<FONT color="green">095</FONT>                    }<a name="line.95"></a>
+<FONT color="green">096</FONT>                    return;<a name="line.96"></a>
+<FONT color="green">097</FONT>                }<a name="line.97"></a>
+<FONT color="green">098</FONT>                <a name="line.98"></a>
+<FONT color="green">099</FONT>            }<a name="line.99"></a>
+<FONT color="green">100</FONT>            catch (NumberFormatException e) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                if (LOG.isInfoEnabled()){<a name="line.101"></a>
+<FONT color="green">102</FONT>                    LOG.info("Matching process matching failed due to number format exception " + e.getMessage());<a name="line.102"></a>
+<FONT color="green">103</FONT>                }<a name="line.103"></a>
+<FONT color="green">104</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVALID_NUMBER_FORMAT, e.getMessage(), orderHolder.getFileName());<a name="line.104"></a>
+<FONT color="green">105</FONT>                orderHolder.addInvoiceHeaderRejectReason(rejectReason);<a name="line.105"></a>
+<FONT color="green">106</FONT>                return;<a name="line.106"></a>
+<FONT color="green">107</FONT>            }<a name="line.107"></a>
+<FONT color="green">108</FONT>            <a name="line.108"></a>
+<FONT color="green">109</FONT>            if (LOG.isInfoEnabled()){<a name="line.109"></a>
+<FONT color="green">110</FONT>                LOG.info("Matching process ended successfully");<a name="line.110"></a>
+<FONT color="green">111</FONT>            }<a name="line.111"></a>
+<FONT color="green">112</FONT>        }<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>        protected void validateHeaderInformation(ElectronicInvoiceOrderHolder orderHolder){<a name="line.114"></a>
+<FONT color="green">115</FONT>            <a name="line.115"></a>
+<FONT color="green">116</FONT>            String dunsField = PurapConstants.ElectronicInvoice.RejectDocumentFields.VENDOR_DUNS_NUMBER;<a name="line.116"></a>
+<FONT color="green">117</FONT>            String applnResourceKeyName = PurapKeyConstants.ERROR_REJECT_INVALID_DUNS;<a name="line.117"></a>
+<FONT color="green">118</FONT>            <a name="line.118"></a>
+<FONT color="green">119</FONT>            if (StringUtils.isEmpty(orderHolder.getDunsNumber())){<a name="line.119"></a>
+<FONT color="green">120</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUNS_NOT_FOUND,null,orderHolder.getFileName());<a name="line.120"></a>
+<FONT color="green">121</FONT>                orderHolder.addInvoiceHeaderRejectReason(rejectReason,dunsField,applnResourceKeyName);<a name="line.121"></a>
+<FONT color="green">122</FONT>                return;<a name="line.122"></a>
+<FONT color="green">123</FONT>            }<a name="line.123"></a>
+<FONT color="green">124</FONT>            <a name="line.124"></a>
+<FONT color="green">125</FONT>            if (orderHolder.isRejectDocumentHolder()){<a name="line.125"></a>
+<FONT color="green">126</FONT>                VendorDetail vendorDetail = SpringContext.getBean(VendorService.class).getVendorByDunsNumber(orderHolder.getDunsNumber());<a name="line.126"></a>
+<FONT color="green">127</FONT>                if (vendorDetail == null){<a name="line.127"></a>
+<FONT color="green">128</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUNS_INVALID, null, orderHolder.getFileName());<a name="line.128"></a>
+<FONT color="green">129</FONT>                    orderHolder.addInvoiceHeaderRejectReason(rejectReason,dunsField,applnResourceKeyName);<a name="line.129"></a>
+<FONT color="green">130</FONT>                    return;<a name="line.130"></a>
+<FONT color="green">131</FONT>                }<a name="line.131"></a>
+<FONT color="green">132</FONT>            }else{<a name="line.132"></a>
+<FONT color="green">133</FONT>                if (orderHolder.getVendorHeaderId() == null &amp;&amp; orderHolder.getVendorDetailId() == null) {<a name="line.133"></a>
+<FONT color="green">134</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUNS_INVALID, null, orderHolder.getFileName());<a name="line.134"></a>
+<FONT color="green">135</FONT>                    orderHolder.addInvoiceHeaderRejectReason(rejectReason,dunsField,applnResourceKeyName);<a name="line.135"></a>
+<FONT color="green">136</FONT>                    return;<a name="line.136"></a>
+<FONT color="green">137</FONT>                }<a name="line.137"></a>
+<FONT color="green">138</FONT>            }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>            String invoiceNumberField = PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_FILE_NUMBER;<a name="line.140"></a>
+<FONT color="green">141</FONT>            if (!orderHolder.isInvoiceNumberAcceptIndicatorEnabled()){<a name="line.141"></a>
+<FONT color="green">142</FONT>                if (StringUtils.isEmpty(orderHolder.getInvoiceNumber())){<a name="line.142"></a>
+<FONT color="green">143</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_ID_EMPTY,null,orderHolder.getFileName());<a name="line.143"></a>
+<FONT color="green">144</FONT>                    orderHolder.addInvoiceHeaderRejectReason(rejectReason,invoiceNumberField,PurapKeyConstants.ERROR_REJECT_INVOICE_NUMBER_EMPTY);<a name="line.144"></a>
+<FONT color="green">145</FONT>                    return;<a name="line.145"></a>
+<FONT color="green">146</FONT>                }<a name="line.146"></a>
+<FONT color="green">147</FONT>            }<a name="line.147"></a>
+<FONT color="green">148</FONT>            <a name="line.148"></a>
+<FONT color="green">149</FONT>            String invoiceDateField = PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_FILE_DATE;<a name="line.149"></a>
+<FONT color="green">150</FONT>            <a name="line.150"></a>
+<FONT color="green">151</FONT>            if (StringUtils.isEmpty(orderHolder.getInvoiceDateString()) || orderHolder.getInvoiceDate() == null){<a name="line.151"></a>
+<FONT color="green">152</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_DATE_INVALID,null,orderHolder.getFileName());<a name="line.152"></a>
+<FONT color="green">153</FONT>                orderHolder.addInvoiceHeaderRejectReason(rejectReason,invoiceDateField,PurapKeyConstants.ERROR_REJECT_INVOICE_DATE_INVALID);<a name="line.153"></a>
+<FONT color="green">154</FONT>                return;<a name="line.154"></a>
+<FONT color="green">155</FONT>            }else if (orderHolder.getInvoiceDate().after(dateTimeService.getCurrentDate())) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_DATE_GREATER,null,orderHolder.getFileName()); <a name="line.156"></a>
+<FONT color="green">157</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,invoiceDateField,PurapKeyConstants.ERROR_REJECT_INVOICE_DATE_GREATER);<a name="line.157"></a>
+<FONT color="green">158</FONT>                return;<a name="line.158"></a>
+<FONT color="green">159</FONT>            }<a name="line.159"></a>
+<FONT color="green">160</FONT>            <a name="line.160"></a>
+<FONT color="green">161</FONT>            if (orderHolder.isInformationOnly()){<a name="line.161"></a>
+<FONT color="green">162</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INFORMATION_ONLY,null,orderHolder.getFileName());<a name="line.162"></a>
+<FONT color="green">163</FONT>                orderHolder.addInvoiceHeaderRejectReason(rejectReason);<a name="line.163"></a>
+<FONT color="green">164</FONT>                return;<a name="line.164"></a>
+<FONT color="green">165</FONT>            }<a name="line.165"></a>
+<FONT color="green">166</FONT>            <a name="line.166"></a>
+<FONT color="green">167</FONT>            validateSummaryAmounts(orderHolder);<a name="line.167"></a>
+<FONT color="green">168</FONT>                <a name="line.168"></a>
+<FONT color="green">169</FONT>            if (orderHolder.isInvoiceRejected()) {<a name="line.169"></a>
+<FONT color="green">170</FONT>                return;<a name="line.170"></a>
+<FONT color="green">171</FONT>            }<a name="line.171"></a>
+<FONT color="green">172</FONT>            <a name="line.172"></a>
+<FONT color="green">173</FONT>            validateItemTypes(orderHolder);<a name="line.173"></a>
+<FONT color="green">174</FONT>            <a name="line.174"></a>
+<FONT color="green">175</FONT>            if (orderHolder.isInvoiceRejected()) {<a name="line.175"></a>
+<FONT color="green">176</FONT>                return;<a name="line.176"></a>
+<FONT color="green">177</FONT>            }<a name="line.177"></a>
+<FONT color="green">178</FONT>            <a name="line.178"></a>
+<FONT color="green">179</FONT>        }<a name="line.179"></a>
+<FONT color="green">180</FONT>    <a name="line.180"></a>
+<FONT color="green">181</FONT>        protected void validateSummaryAmounts(ElectronicInvoiceOrderHolder orderHolder) {<a name="line.181"></a>
+<FONT color="green">182</FONT>            <a name="line.182"></a>
+<FONT color="green">183</FONT>            if (orderHolder.isRejectDocumentHolder()){<a name="line.183"></a>
+<FONT color="green">184</FONT>                /**<a name="line.184"></a>
+<FONT color="green">185</FONT>                 * If there are any rejects related to the summary, we're retaining it since <a name="line.185"></a>
+<FONT color="green">186</FONT>                 * it's not possible to get the summary amount totals from the reject doc<a name="line.186"></a>
+<FONT color="green">187</FONT>                 */<a name="line.187"></a>
+<FONT color="green">188</FONT>                return;<a name="line.188"></a>
+<FONT color="green">189</FONT>            }<a name="line.189"></a>
+<FONT color="green">190</FONT>    <a name="line.190"></a>
+<FONT color="green">191</FONT>            ElectronicInvoiceDetailRequestSummary summary = orderHolder.getElectronicInvoice().getInvoiceDetailRequestSummary();<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>            boolean enableSalesTaxInd = SpringContext.getBean(ParameterService.class).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);<a name="line.193"></a>
+<FONT color="green">194</FONT>            <a name="line.194"></a>
+<FONT color="green">195</FONT>            boolean salesTaxUsed = false;<a name="line.195"></a>
+<FONT color="green">196</FONT>            PurchaseOrderDocument poDoc = orderHolder.getPurchaseOrderDocument();<a name="line.196"></a>
+<FONT color="green">197</FONT>            if (poDoc != null) {  // we handle bad PO's in the eInvoice later, so just skip this<a name="line.197"></a>
+<FONT color="green">198</FONT>                List&lt;PurApItem&gt; items = PurApItemUtils.getAboveTheLineOnly(poDoc.getItems());<a name="line.198"></a>
+<FONT color="green">199</FONT>                for (PurApItem  item : items) {<a name="line.199"></a>
+<FONT color="green">200</FONT>                    if (item.getItemType().isTaxableIndicator()) {<a name="line.200"></a>
+<FONT color="green">201</FONT>                        salesTaxUsed = true;<a name="line.201"></a>
+<FONT color="green">202</FONT>                        break;<a name="line.202"></a>
+<FONT color="green">203</FONT>                    }<a name="line.203"></a>
+<FONT color="green">204</FONT>                }<a name="line.204"></a>
+<FONT color="green">205</FONT>                <a name="line.205"></a>
+<FONT color="green">206</FONT>                boolean useTaxUsed = poDoc.isUseTaxIndicator();<a name="line.206"></a>
+<FONT color="green">207</FONT>                enableSalesTaxInd &amp;= (salesTaxUsed || useTaxUsed);<a name="line.207"></a>
+<FONT color="green">208</FONT>                <a name="line.208"></a>
+<FONT color="green">209</FONT>                BigDecimal summaryTaxAmount = summary.getInvoiceTaxAmount();<a name="line.209"></a>
+<FONT color="green">210</FONT>                if (!enableSalesTaxInd) {<a name="line.210"></a>
+<FONT color="green">211</FONT>                    // if sales tax is disabled, total tax amount shall be zero <a name="line.211"></a>
+<FONT color="green">212</FONT>                    if (summaryTaxAmount.compareTo(new BigDecimal(0)) != 0) {<a name="line.212"></a>
+<FONT color="green">213</FONT>                        String extraDescription = "Summary Tax Amount:" + summaryTaxAmount;<a name="line.213"></a>
+<FONT color="green">214</FONT>                        ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.TAX_SUMMARY_AMT_EXISTS, extraDescription, orderHolder.getFileName());<a name="line.214"></a>
+<FONT color="green">215</FONT>                        orderHolder.addInvoiceHeaderRejectReason(rejectReason);      <a name="line.215"></a>
+<FONT color="green">216</FONT>                    }<a name="line.216"></a>
+<FONT color="green">217</FONT>                }<a name="line.217"></a>
+<FONT color="green">218</FONT>                else if (orderHolder.isTaxInLine()) {<a name="line.218"></a>
+<FONT color="green">219</FONT>                    validateSummaryAmount(orderHolder, summaryTaxAmount, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_TAX, PurapConstants.ElectronicInvoice.TAX_SUMMARY_AMT_MISMATCH);<a name="line.219"></a>
+<FONT color="green">220</FONT>                }<a name="line.220"></a>
+<FONT color="green">221</FONT>            }<a name="line.221"></a>
+<FONT color="green">222</FONT>    <a name="line.222"></a>
+<FONT color="green">223</FONT>            if (orderHolder.isShippingInLine()) {<a name="line.223"></a>
+<FONT color="green">224</FONT>                validateSummaryAmount(orderHolder, summary.getInvoiceShippingAmount(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SHIPPING, PurapConstants.ElectronicInvoice.SHIPPING_SUMMARY_AMT_MISMATCH);<a name="line.224"></a>
+<FONT color="green">225</FONT>            }<a name="line.225"></a>
+<FONT color="green">226</FONT>    <a name="line.226"></a>
+<FONT color="green">227</FONT>            if (orderHolder.isSpecialHandlingInLine()) {<a name="line.227"></a>
+<FONT color="green">228</FONT>                validateSummaryAmount(orderHolder, summary.getInvoiceSpecialHandlingAmount(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SPECIAL_HANDLING, PurapConstants.ElectronicInvoice.SPL_HANDLING_SUMMARY_AMT_MISMATCH);<a name="line.228"></a>
+<FONT color="green">229</FONT>            }<a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>            if (orderHolder.isDiscountInLine()) {<a name="line.231"></a>
+<FONT color="green">232</FONT>                validateSummaryAmount(orderHolder, summary.getInvoiceDiscountAmount(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT, PurapConstants.ElectronicInvoice.DISCOUNT_SUMMARY_AMT_MISMATCH);<a name="line.232"></a>
+<FONT color="green">233</FONT>            }<a name="line.233"></a>
+<FONT color="green">234</FONT>            <a name="line.234"></a>
+<FONT color="green">235</FONT>        }<a name="line.235"></a>
+<FONT color="green">236</FONT>    <a name="line.236"></a>
+<FONT color="green">237</FONT>        protected void validateSummaryAmount(ElectronicInvoiceOrderHolder orderHolder, <a name="line.237"></a>
+<FONT color="green">238</FONT>                                           BigDecimal summaryAmount, <a name="line.238"></a>
+<FONT color="green">239</FONT>                                           String invoiceLineItemTypeCode, <a name="line.239"></a>
+<FONT color="green">240</FONT>                                           String rejectDescriptionCode) {<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>            BigDecimal lineItemTotalAmount = orderHolder.getElectronicInvoice().getFileTotalAmountForInLineItems(invoiceLineItemTypeCode);<a name="line.242"></a>
+<FONT color="green">243</FONT>    <a name="line.243"></a>
+<FONT color="green">244</FONT>    //        if (lineItemTotalAmount.compareTo(BigDecimal.ZERO) != 0) { // old way, but it's not needed<a name="line.244"></a>
+<FONT color="green">245</FONT>                if ((lineItemTotalAmount.compareTo(summaryAmount)) != 0) {<a name="line.245"></a>
+<FONT color="green">246</FONT>                    String extraDescription = "Line Total Amount:" + lineItemTotalAmount + ",Summary Total Amount:" + summaryAmount;<a name="line.246"></a>
+<FONT color="green">247</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(rejectDescriptionCode, extraDescription, orderHolder.getFileName());<a name="line.247"></a>
+<FONT color="green">248</FONT>                    orderHolder.addInvoiceHeaderRejectReason(rejectReason);<a name="line.248"></a>
+<FONT color="green">249</FONT>                }<a name="line.249"></a>
+<FONT color="green">250</FONT>    //        }<a name="line.250"></a>
+<FONT color="green">251</FONT>        }<a name="line.251"></a>
+<FONT color="green">252</FONT>    <a name="line.252"></a>
+<FONT color="green">253</FONT>        protected void validateItemTypes(ElectronicInvoiceOrderHolder orderHolder) {<a name="line.253"></a>
+<FONT color="green">254</FONT>            <a name="line.254"></a>
+<FONT color="green">255</FONT>            validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_ITEM);<a name="line.255"></a>
+<FONT color="green">256</FONT>            validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_TAX);<a name="line.256"></a>
+<FONT color="green">257</FONT>            validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SHIPPING);<a name="line.257"></a>
+<FONT color="green">258</FONT>            validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SPECIAL_HANDLING);<a name="line.258"></a>
+<FONT color="green">259</FONT>            validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT);<a name="line.259"></a>
+<FONT color="green">260</FONT>            validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_EXMT);<a name="line.260"></a>
+<FONT color="green">261</FONT>    <a name="line.261"></a>
+<FONT color="green">262</FONT>        }<a name="line.262"></a>
+<FONT color="green">263</FONT>    <a name="line.263"></a>
+<FONT color="green">264</FONT>        protected void validateItemMapping(ElectronicInvoiceOrderHolder orderHolder, String kualiItemTypeCode) {<a name="line.264"></a>
+<FONT color="green">265</FONT>    <a name="line.265"></a>
+<FONT color="green">266</FONT>            if (!orderHolder.isItemTypeAvailableInItemMapping(kualiItemTypeCode)) {<a name="line.266"></a>
+<FONT color="green">267</FONT>                String extraDescription = kualiItemTypeCode;<a name="line.267"></a>
+<FONT color="green">268</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.ITEM_MAPPING_NOT_AVAILABLE, extraDescription, orderHolder.getFileName());<a name="line.268"></a>
+<FONT color="green">269</FONT>                orderHolder.addInvoiceHeaderRejectReason(rejectReason);<a name="line.269"></a>
+<FONT color="green">270</FONT>                return;<a name="line.270"></a>
+<FONT color="green">271</FONT>            }<a name="line.271"></a>
+<FONT color="green">272</FONT>            <a name="line.272"></a>
+<FONT color="green">273</FONT>        }<a name="line.273"></a>
+<FONT color="green">274</FONT>        <a name="line.274"></a>
+<FONT color="green">275</FONT>        protected void validateInvoiceDetails(ElectronicInvoiceOrderHolder orderHolder){<a name="line.275"></a>
+<FONT color="green">276</FONT>            <a name="line.276"></a>
+<FONT color="green">277</FONT>            validatePurchaseOrderMatch(orderHolder);<a name="line.277"></a>
+<FONT color="green">278</FONT>            <a name="line.278"></a>
+<FONT color="green">279</FONT>            if (orderHolder.isInvoiceRejected()){<a name="line.279"></a>
+<FONT color="green">280</FONT>                return;<a name="line.280"></a>
+<FONT color="green">281</FONT>            }<a name="line.281"></a>
+<FONT color="green">282</FONT>            <a name="line.282"></a>
+<FONT color="green">283</FONT>            validateInvoiceItems(orderHolder);<a name="line.283"></a>
+<FONT color="green">284</FONT>            <a name="line.284"></a>
+<FONT color="green">285</FONT>            if (LOG.isInfoEnabled()){<a name="line.285"></a>
+<FONT color="green">286</FONT>                if (!orderHolder.isInvoiceRejected()){<a name="line.286"></a>
+<FONT color="green">287</FONT>                    LOG.info("Purchase order document match done successfully");<a name="line.287"></a>
+<FONT color="green">288</FONT>                }<a name="line.288"></a>
+<FONT color="green">289</FONT>            }<a name="line.289"></a>
+<FONT color="green">290</FONT>        }<a name="line.290"></a>
+<FONT color="green">291</FONT>        <a name="line.291"></a>
+<FONT color="green">292</FONT>        protected void validatePurchaseOrderMatch(ElectronicInvoiceOrderHolder orderHolder){<a name="line.292"></a>
+<FONT color="green">293</FONT>            <a name="line.293"></a>
+<FONT color="green">294</FONT>            String poIDFieldName = PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_PO_ID;<a name="line.294"></a>
+<FONT color="green">295</FONT>            String poID = orderHolder.getInvoicePurchaseOrderID();<a name="line.295"></a>
+<FONT color="green">296</FONT>            <a name="line.296"></a>
+<FONT color="green">297</FONT>            if (StringUtils.isEmpty(poID)){<a name="line.297"></a>
+<FONT color="green">298</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ID_EMPTY,null,orderHolder.getFileName());<a name="line.298"></a>
+<FONT color="green">299</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,poIDFieldName,PurapKeyConstants.ERROR_REJECT_INVOICE_POID_EMPTY);<a name="line.299"></a>
+<FONT color="green">300</FONT>                return;<a name="line.300"></a>
+<FONT color="green">301</FONT>            }<a name="line.301"></a>
+<FONT color="green">302</FONT>            <a name="line.302"></a>
+<FONT color="green">303</FONT>            String extraDesc = "Invoice Order ID:" + poID;<a name="line.303"></a>
+<FONT color="green">304</FONT>            <a name="line.304"></a>
+<FONT color="green">305</FONT>            if (!NumberUtils.isDigits(poID)){<a name="line.305"></a>
+<FONT color="green">306</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ID_INVALID_FORMAT,extraDesc,orderHolder.getFileName());<a name="line.306"></a>
+<FONT color="green">307</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,poIDFieldName,PurapKeyConstants.ERROR_REJECT_INVOICE_POID_INVALID);<a name="line.307"></a>
+<FONT color="green">308</FONT>                return;<a name="line.308"></a>
+<FONT color="green">309</FONT>            }<a name="line.309"></a>
+<FONT color="green">310</FONT>            <a name="line.310"></a>
+<FONT color="green">311</FONT>            PurchaseOrderDocument poDoc = orderHolder.getPurchaseOrderDocument();<a name="line.311"></a>
+<FONT color="green">312</FONT>            <a name="line.312"></a>
+<FONT color="green">313</FONT>            if (poDoc == null){<a name="line.313"></a>
+<FONT color="green">314</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_NOT_EXISTS,extraDesc,orderHolder.getFileName());<a name="line.314"></a>
+<FONT color="green">315</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,poIDFieldName,PurapKeyConstants.ERROR_REJECT_INVOICE__PO_NOT_EXISTS);<a name="line.315"></a>
+<FONT color="green">316</FONT>                return;<a name="line.316"></a>
+<FONT color="green">317</FONT>            }<a name="line.317"></a>
+<FONT color="green">318</FONT>            <a name="line.318"></a>
+<FONT color="green">319</FONT>            if (poDoc.getVendorHeaderGeneratedIdentifier() == null || <a name="line.319"></a>
+<FONT color="green">320</FONT>                poDoc.getVendorDetailAssignedIdentifier() == null || <a name="line.320"></a>
+<FONT color="green">321</FONT>                    !(poDoc.getVendorHeaderGeneratedIdentifier().equals(orderHolder.getVendorHeaderId()) &amp;&amp;<a name="line.321"></a>
+<FONT color="green">322</FONT>                      poDoc.getVendorDetailAssignedIdentifier().equals(orderHolder.getVendorDetailId()))){<a name="line.322"></a>
+<FONT color="green">323</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR,null,orderHolder.getFileName());<a name="line.323"></a>
+<FONT color="green">324</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason);<a name="line.324"></a>
+<FONT color="green">325</FONT>                return;<a name="line.325"></a>
+<FONT color="green">326</FONT>            }<a name="line.326"></a>
+<FONT color="green">327</FONT>            <a name="line.327"></a>
+<FONT color="green">328</FONT>        }<a name="line.328"></a>
+<FONT color="green">329</FONT>        <a name="line.329"></a>
+<FONT color="green">330</FONT>        protected void validateInvoiceItems(ElectronicInvoiceOrderHolder orderHolder){<a name="line.330"></a>
+<FONT color="green">331</FONT>            <a name="line.331"></a>
+<FONT color="green">332</FONT>            Set poLineNumbers = new HashSet();<a name="line.332"></a>
+<FONT color="green">333</FONT>            <a name="line.333"></a>
+<FONT color="green">334</FONT>            ElectronicInvoiceItemHolder[] itemHolders = orderHolder.getItems();  <a name="line.334"></a>
+<FONT color="green">335</FONT>            if (itemHolders != null){<a name="line.335"></a>
+<FONT color="green">336</FONT>                for (int i = 0; i &lt; itemHolders.length; i++) {<a name="line.336"></a>
+<FONT color="green">337</FONT>                    validateInvoiceItem(itemHolders[i],poLineNumbers);<a name="line.337"></a>
+<FONT color="green">338</FONT>                }<a name="line.338"></a>
+<FONT color="green">339</FONT>            }<a name="line.339"></a>
+<FONT color="green">340</FONT>        }<a name="line.340"></a>
+<FONT color="green">341</FONT>        <a name="line.341"></a>
+<FONT color="green">342</FONT>        protected void validateInvoiceItem(ElectronicInvoiceItemHolder itemHolder,<a name="line.342"></a>
+<FONT color="green">343</FONT>                                         Set poLineNumbers){<a name="line.343"></a>
+<FONT color="green">344</FONT>            <a name="line.344"></a>
+<FONT color="green">345</FONT>            PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();<a name="line.345"></a>
+<FONT color="green">346</FONT>            ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();<a name="line.346"></a>
+<FONT color="green">347</FONT>            <a name="line.347"></a>
+<FONT color="green">348</FONT>            if (poItem == null){<a name="line.348"></a>
+<FONT color="green">349</FONT>                String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.349"></a>
+<FONT color="green">350</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.NO_MATCHING_PO_ITEM,extraDescription,orderHolder.getFileName());<a name="line.350"></a>
+<FONT color="green">351</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_INVOICE__ITEM_NOMATCH);<a name="line.351"></a>
+<FONT color="green">352</FONT>                return;<a name="line.352"></a>
+<FONT color="green">353</FONT>            }<a name="line.353"></a>
+<FONT color="green">354</FONT>            <a name="line.354"></a>
+<FONT color="green">355</FONT>            if (poLineNumbers.contains(itemHolder.getInvoiceItemLineNumber())){<a name="line.355"></a>
+<FONT color="green">356</FONT>                String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.356"></a>
+<FONT color="green">357</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUPLIATE_INVOICE_LINE_ITEM,extraDescription,orderHolder.getFileName());<a name="line.357"></a>
+<FONT color="green">358</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_PO_ITEM_DUPLICATE);<a name="line.358"></a>
+<FONT color="green">359</FONT>                return;<a name="line.359"></a>
+<FONT color="green">360</FONT>            }else{<a name="line.360"></a>
+<FONT color="green">361</FONT>                poLineNumbers.add(itemHolder.getInvoiceItemLineNumber());<a name="line.361"></a>
+<FONT color="green">362</FONT>            }<a name="line.362"></a>
+<FONT color="green">363</FONT>            <a name="line.363"></a>
+<FONT color="green">364</FONT>            if (!poItem.isItemActiveIndicator()){<a name="line.364"></a>
+<FONT color="green">365</FONT>                String extraDescription = "PO Item Line Number:" + poItem.getItemLineNumber();<a name="line.365"></a>
+<FONT color="green">366</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INACTIVE_LINE_ITEM,extraDescription,orderHolder.getFileName());<a name="line.366"></a>
+<FONT color="green">367</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_PO_ITEM_INACTIVE);<a name="line.367"></a>
+<FONT color="green">368</FONT>                return; <a name="line.368"></a>
+<FONT color="green">369</FONT>            }<a name="line.369"></a>
+<FONT color="green">370</FONT>    <a name="line.370"></a>
+<FONT color="green">371</FONT>            if (!itemHolder.isCatalogNumberAcceptIndicatorEnabled()){<a name="line.371"></a>
+<FONT color="green">372</FONT>                validateCatalogNumber(itemHolder);<a name="line.372"></a>
+<FONT color="green">373</FONT>                if (orderHolder.isInvoiceRejected()){<a name="line.373"></a>
+<FONT color="green">374</FONT>                    return;<a name="line.374"></a>
+<FONT color="green">375</FONT>                }<a name="line.375"></a>
+<FONT color="green">376</FONT>            }<a name="line.376"></a>
+<FONT color="green">377</FONT>            <a name="line.377"></a>
+<FONT color="green">378</FONT>            if (!itemHolder.isUnitOfMeasureAcceptIndicatorEnabled()){<a name="line.378"></a>
+<FONT color="green">379</FONT>                if (!StringUtils.equals(poItem.getItemUnitOfMeasureCode(), itemHolder.getInvoiceItemUnitOfMeasureCode())){<a name="line.379"></a>
+<FONT color="green">380</FONT>                    String extraDescription = "Invoice UOM:" + itemHolder.getInvoiceItemUnitOfMeasureCode() + ", PO UOM:" + poItem.getItemUnitOfMeasureCode();<a name="line.380"></a>
+<FONT color="green">381</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.UNIT_OF_MEASURE_MISMATCH,extraDescription,orderHolder.getFileName());<a name="line.381"></a>
+<FONT color="green">382</FONT>                    orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_UOM,PurapKeyConstants.ERROR_REJECT_UOM_MISMATCH);<a name="line.382"></a>
+<FONT color="green">383</FONT>                    return; <a name="line.383"></a>
+<FONT color="green">384</FONT>                }<a name="line.384"></a>
+<FONT color="green">385</FONT>            }<a name="line.385"></a>
+<FONT color="green">386</FONT>            <a name="line.386"></a>
+<FONT color="green">387</FONT>            validateUnitPrice(itemHolder);<a name="line.387"></a>
+<FONT color="green">388</FONT>                <a name="line.388"></a>
+<FONT color="green">389</FONT>            if (orderHolder.isInvoiceRejected()){<a name="line.389"></a>
+<FONT color="green">390</FONT>                return;<a name="line.390"></a>
+<FONT color="green">391</FONT>            }<a name="line.391"></a>
+<FONT color="green">392</FONT>            <a name="line.392"></a>
+<FONT color="green">393</FONT>            validateSalesTax(itemHolder);<a name="line.393"></a>
+<FONT color="green">394</FONT>            <a name="line.394"></a>
+<FONT color="green">395</FONT>            if (orderHolder.isInvoiceRejected()){<a name="line.395"></a>
+<FONT color="green">396</FONT>                return;<a name="line.396"></a>
+<FONT color="green">397</FONT>            }<a name="line.397"></a>
+<FONT color="green">398</FONT>            <a name="line.398"></a>
+<FONT color="green">399</FONT>            if (poItem.getItemQuantity() != null) {<a name="line.399"></a>
+<FONT color="green">400</FONT>                validateQtyBasedItem(itemHolder);<a name="line.400"></a>
+<FONT color="green">401</FONT>            }else{<a name="line.401"></a>
+<FONT color="green">402</FONT>                validateNonQtyBasedItem(itemHolder);<a name="line.402"></a>
+<FONT color="green">403</FONT>            }<a name="line.403"></a>
+<FONT color="green">404</FONT>            <a name="line.404"></a>
+<FONT color="green">405</FONT>        }<a name="line.405"></a>
+<FONT color="green">406</FONT>        <a name="line.406"></a>
+<FONT color="green">407</FONT>        protected void validateCatalogNumber(ElectronicInvoiceItemHolder itemHolder){<a name="line.407"></a>
+<FONT color="green">408</FONT>            <a name="line.408"></a>
+<FONT color="green">409</FONT>            PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();<a name="line.409"></a>
+<FONT color="green">410</FONT>            ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();<a name="line.410"></a>
+<FONT color="green">411</FONT>            <a name="line.411"></a>
+<FONT color="green">412</FONT>            String invoiceCatalogNumberStripped = itemHolder.getCatalogNumberStripped();<a name="line.412"></a>
+<FONT color="green">413</FONT>            String poCatalogNumberStripped = ElectronicInvoiceUtils.stripSplChars(poItem.getItemCatalogNumber());<a name="line.413"></a>
+<FONT color="green">414</FONT>            <a name="line.414"></a>
+<FONT color="green">415</FONT>            /**<a name="line.415"></a>
+<FONT color="green">416</FONT>             * If Catalog number in invoice and po are not empty, create reject reason if it doesn't match <a name="line.416"></a>
+<FONT color="green">417</FONT>             */<a name="line.417"></a>
+<FONT color="green">418</FONT>            if (StringUtils.isNotBlank(invoiceCatalogNumberStripped) &amp;&amp;<a name="line.418"></a>
+<FONT color="green">419</FONT>                StringUtils.isNotBlank(poCatalogNumberStripped)){<a name="line.419"></a>
+<FONT color="green">420</FONT>                <a name="line.420"></a>
+<FONT color="green">421</FONT>                if (!StringUtils.equals(poCatalogNumberStripped, invoiceCatalogNumberStripped)){<a name="line.421"></a>
+<FONT color="green">422</FONT>                    <a name="line.422"></a>
+<FONT color="green">423</FONT>                    String extraDescription = "Invoice Catalog No:" + invoiceCatalogNumberStripped + ", PO Catalog No:" + poCatalogNumberStripped;<a name="line.423"></a>
+<FONT color="green">424</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.CATALOG_NUMBER_MISMATCH,extraDescription,orderHolder.getFileName());<a name="line.424"></a>
+<FONT color="green">425</FONT>                    orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_CATALOG_NUMBER,PurapKeyConstants.ERROR_REJECT_CATALOG_MISMATCH);<a name="line.425"></a>
+<FONT color="green">426</FONT>                }<a name="line.426"></a>
+<FONT color="green">427</FONT>                <a name="line.427"></a>
+<FONT color="green">428</FONT>            }else{<a name="line.428"></a>
+<FONT color="green">429</FONT>                <a name="line.429"></a>
+<FONT color="green">430</FONT>                /**<a name="line.430"></a>
+<FONT color="green">431</FONT>                 * If catalog number is empty in PO/&amp;Invoice, check whether the catalog check is required for the requisition source.<a name="line.431"></a>
+<FONT color="green">432</FONT>                 * If exists in param, create reject reason.<a name="line.432"></a>
+<FONT color="green">433</FONT>                 * If not exists, continue with UOM and unit price match.<a name="line.433"></a>
+<FONT color="green">434</FONT>                 */<a name="line.434"></a>
+<FONT color="green">435</FONT>                String reqSourceRequiringCatalogMatch = SpringContext.getBean(ParameterService.class).getParameterValue(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.REQUISITION_SOURCES_REQUIRING_CATALOG_MATCHING);<a name="line.435"></a>
+<FONT color="green">436</FONT>                String requisitionSourceCodeInPO = orderHolder.getPurchaseOrderDocument().getRequisitionSourceCode();<a name="line.436"></a>
+<FONT color="green">437</FONT>                <a name="line.437"></a>
+<FONT color="green">438</FONT>                if (StringUtils.isNotEmpty(reqSourceRequiringCatalogMatch)){<a name="line.438"></a>
+<FONT color="green">439</FONT>                    String[] requisitionSourcesFromParam = StringUtils.split(reqSourceRequiringCatalogMatch,';');<a name="line.439"></a>
+<FONT color="green">440</FONT>                    if (ArrayUtils.contains(requisitionSourcesFromParam, requisitionSourceCodeInPO)){<a name="line.440"></a>
+<FONT color="green">441</FONT>                        String extraDescription = "Invoice Catalog No:" + invoiceCatalogNumberStripped + ", PO Catalog No:" + poItem.getItemCatalogNumber();<a name="line.441"></a>
+<FONT color="green">442</FONT>                        ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.CATALOG_NUMBER_MISMATCH,extraDescription,orderHolder.getFileName());<a name="line.442"></a>
+<FONT color="green">443</FONT>                        orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_CATALOG_NUMBER,PurapKeyConstants.ERROR_REJECT_CATALOG_MISMATCH);<a name="line.443"></a>
+<FONT color="green">444</FONT>                    }<a name="line.444"></a>
+<FONT color="green">445</FONT>                }<a name="line.445"></a>
+<FONT color="green">446</FONT>            }<a name="line.446"></a>
+<FONT color="green">447</FONT>        }<a name="line.447"></a>
+<FONT color="green">448</FONT>        <a name="line.448"></a>
+<FONT color="green">449</FONT>        protected void validateQtyBasedItem(ElectronicInvoiceItemHolder itemHolder){<a name="line.449"></a>
+<FONT color="green">450</FONT>            <a name="line.450"></a>
+<FONT color="green">451</FONT>            PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();<a name="line.451"></a>
+<FONT color="green">452</FONT>            <a name="line.452"></a>
+<FONT color="green">453</FONT>            String fileName = itemHolder.getInvoiceOrderHolder().getFileName();<a name="line.453"></a>
+<FONT color="green">454</FONT>            ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();<a name="line.454"></a>
+<FONT color="green">455</FONT>            <a name="line.455"></a>
+<FONT color="green">456</FONT>            if (KualiDecimal.ZERO.compareTo(poItem.getItemOutstandingEncumberedQuantity()) &gt;= 0) {<a name="line.456"></a>
+<FONT color="green">457</FONT>                //we have no quantity left encumbered on the po item<a name="line.457"></a>
+<FONT color="green">458</FONT>                String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.458"></a>
+<FONT color="green">459</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.OUTSTANDING_ENCUMBERED_QTY_AVAILABLE,extraDescription,orderHolder.getFileName());<a name="line.459"></a>
+<FONT color="green">460</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_QUANTITY,PurapKeyConstants.ERROR_REJECT_POITEM_OUTSTANDING_QTY);<a name="line.460"></a>
+<FONT color="green">461</FONT>                return;<a name="line.461"></a>
+<FONT color="green">462</FONT>            }<a name="line.462"></a>
+<FONT color="green">463</FONT>            <a name="line.463"></a>
+<FONT color="green">464</FONT>            if (itemHolder.getInvoiceItemQuantity() == null){<a name="line.464"></a>
+<FONT color="green">465</FONT>                //we have quantity entered on the PO Item but the Invoice has no quantity<a name="line.465"></a>
+<FONT color="green">466</FONT>                String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.466"></a>
+<FONT color="green">467</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_QTY_EMPTY,extraDescription,orderHolder.getFileName());<a name="line.467"></a>
+<FONT color="green">468</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_QUANTITY,PurapKeyConstants.ERROR_REJECT_POITEM_INVOICE_QTY_EMPTY);<a name="line.468"></a>
+<FONT color="green">469</FONT>                return;<a name="line.469"></a>
+<FONT color="green">470</FONT>            }else{<a name="line.470"></a>
+<FONT color="green">471</FONT>                <a name="line.471"></a>
+<FONT color="green">472</FONT>                if(!itemHolder.getInvoiceOrderHolder().getPurchaseOrderDocument().isReceivingDocumentRequiredIndicator()){ <a name="line.472"></a>
+<FONT color="green">473</FONT>    <a name="line.473"></a>
+<FONT color="green">474</FONT>                    if ((itemHolder.getInvoiceItemQuantity().compareTo(poItem.getItemOutstandingEncumberedQuantity().bigDecimalValue())) &gt; 0) {<a name="line.474"></a>
+<FONT color="green">475</FONT>                        //we have more quantity on the e-invoice than left outstanding encumbered on the PO item<a name="line.475"></a>
+<FONT color="green">476</FONT>                        String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.476"></a>
+<FONT color="green">477</FONT>                        ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ITEM_QTY_LESSTHAN_INVOICE_ITEM_QTY,extraDescription,orderHolder.getFileName());<a name="line.477"></a>
+<FONT color="green">478</FONT>                        orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_QUANTITY,PurapKeyConstants.ERROR_REJECT_POITEM_LESS_OUTSTANDING_QTY);<a name="line.478"></a>
+<FONT color="green">479</FONT>                        return;<a name="line.479"></a>
+<FONT color="green">480</FONT>                    }<a name="line.480"></a>
+<FONT color="green">481</FONT>                }<a name="line.481"></a>
+<FONT color="green">482</FONT>            }<a name="line.482"></a>
+<FONT color="green">483</FONT>            <a name="line.483"></a>
+<FONT color="green">484</FONT>        }<a name="line.484"></a>
+<FONT color="green">485</FONT>        <a name="line.485"></a>
+<FONT color="green">486</FONT>        protected void validateNonQtyBasedItem(ElectronicInvoiceItemHolder itemHolder){<a name="line.486"></a>
+<FONT color="green">487</FONT>            <a name="line.487"></a>
+<FONT color="green">488</FONT>            PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();<a name="line.488"></a>
+<FONT color="green">489</FONT>            <a name="line.489"></a>
+<FONT color="green">490</FONT>            String fileName = itemHolder.getInvoiceOrderHolder().getFileName();<a name="line.490"></a>
+<FONT color="green">491</FONT>            ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();<a name="line.491"></a>
+<FONT color="green">492</FONT>            <a name="line.492"></a>
+<FONT color="green">493</FONT>            if ((KualiDecimal.ZERO.compareTo(poItem.getItemOutstandingEncumberedAmount())) &gt;= 0) {<a name="line.493"></a>
+<FONT color="green">494</FONT>                //we have no dollars left encumbered on the po item<a name="line.494"></a>
+<FONT color="green">495</FONT>                String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.495"></a>
+<FONT color="green">496</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.OUTSTANDING_ENCUMBERED_AMT_AVAILABLE,extraDescription,orderHolder.getFileName());<a name="line.496"></a>
+<FONT color="green">497</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_POITEM_OUTSTANDING_EMCUMBERED_AMOUNT);<a name="line.497"></a>
+<FONT color="green">498</FONT>                return;<a name="line.498"></a>
+<FONT color="green">499</FONT>            }else{<a name="line.499"></a>
+<FONT color="green">500</FONT>                //we have encumbered dollars left on PO<a name="line.500"></a>
+<FONT color="green">501</FONT>                if (((itemHolder.getInvoiceItemSubTotalAmount().setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue())) &gt; 0) {<a name="line.501"></a>
+<FONT color="green">502</FONT>                    String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.502"></a>
+<FONT color="green">503</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ITEM_AMT_LESSTHAN_INVOICE_ITEM_AMT,extraDescription,orderHolder.getFileName());<a name="line.503"></a>
+<FONT color="green">504</FONT>                    orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_POITEM_LESS_OUTSTANDING_EMCUMBERED_AMOUNT);<a name="line.504"></a>
+<FONT color="green">505</FONT>                    return;<a name="line.505"></a>
+<FONT color="green">506</FONT>                }<a name="line.506"></a>
+<FONT color="green">507</FONT>                <a name="line.507"></a>
+<FONT color="green">508</FONT>            }<a name="line.508"></a>
+<FONT color="green">509</FONT>        }<a name="line.509"></a>
+<FONT color="green">510</FONT>        <a name="line.510"></a>
+<FONT color="green">511</FONT>        protected void validateUnitPrice(ElectronicInvoiceItemHolder itemHolder){<a name="line.511"></a>
+<FONT color="green">512</FONT>            <a name="line.512"></a>
+<FONT color="green">513</FONT>            PurchaseOrderCostSource costSource = itemHolder.getInvoiceOrderHolder().getPurchaseOrderDocument().getPurchaseOrderCostSource();<a name="line.513"></a>
+<FONT color="green">514</FONT>            PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();<a name="line.514"></a>
+<FONT color="green">515</FONT>            ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();<a name="line.515"></a>
+<FONT color="green">516</FONT>            <a name="line.516"></a>
+<FONT color="green">517</FONT>            String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();<a name="line.517"></a>
+<FONT color="green">518</FONT>            <a name="line.518"></a>
+<FONT color="green">519</FONT>            BigDecimal actualVariance = itemHolder.getInvoiceItemUnitPrice().subtract(poItem.getItemUnitPrice());<a name="line.519"></a>
+<FONT color="green">520</FONT>            <a name="line.520"></a>
+<FONT color="green">521</FONT>            BigDecimal lowerPercentage = null;<a name="line.521"></a>
+<FONT color="green">522</FONT>            if (costSource.getItemUnitPriceLowerVariancePercent() != null){<a name="line.522"></a>
+<FONT color="green">523</FONT>                //Checking for lower variance<a name="line.523"></a>
+<FONT color="green">524</FONT>                lowerPercentage = costSource.getItemUnitPriceLowerVariancePercent();<a name="line.524"></a>
+<FONT color="green">525</FONT>            }<a name="line.525"></a>
+<FONT color="green">526</FONT>            else {<a name="line.526"></a>
+<FONT color="green">527</FONT>                //If the cost source itemUnitPriceLowerVariancePercent is null then<a name="line.527"></a>
+<FONT color="green">528</FONT>                //we'll use the exact match (100%).<a name="line.528"></a>
+<FONT color="green">529</FONT>                lowerPercentage = new BigDecimal(100);<a name="line.529"></a>
+<FONT color="green">530</FONT>            }<a name="line.530"></a>
+<FONT color="green">531</FONT>            <a name="line.531"></a>
+<FONT color="green">532</FONT>            BigDecimal lowerAcceptableVariance = (lowerPercentage.divide(new BigDecimal(100))).multiply(poItem.getItemUnitPrice()).negate();<a name="line.532"></a>
+<FONT color="green">533</FONT>    <a name="line.533"></a>
+<FONT color="green">534</FONT>            if (lowerAcceptableVariance.compareTo(actualVariance) &gt; 0) {<a name="line.534"></a>
+<FONT color="green">535</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_AMT_LESSER_THAN_LOWER_VARIANCE, extraDescription, orderHolder.getFileName());<a name="line.535"></a>
+<FONT color="green">536</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason, PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_REJECT_UNITPRICE_LOWERVARIANCE);<a name="line.536"></a>
+<FONT color="green">537</FONT>            }<a name="line.537"></a>
+<FONT color="green">538</FONT>            <a name="line.538"></a>
+<FONT color="green">539</FONT>            BigDecimal upperPercentage = null;<a name="line.539"></a>
+<FONT color="green">540</FONT>            <a name="line.540"></a>
+<FONT color="green">541</FONT>            if (costSource.getItemUnitPriceUpperVariancePercent() != null){<a name="line.541"></a>
+<FONT color="green">542</FONT>                //Checking for upper variance<a name="line.542"></a>
+<FONT color="green">543</FONT>                upperPercentage = costSource.getItemUnitPriceUpperVariancePercent();<a name="line.543"></a>
+<FONT color="green">544</FONT>            }<a name="line.544"></a>
+<FONT color="green">545</FONT>            else {<a name="line.545"></a>
+<FONT color="green">546</FONT>                //If the cost source itemUnitPriceLowerVariancePercent is null then<a name="line.546"></a>
+<FONT color="green">547</FONT>                //we'll use the exact match (100%).<a name="line.547"></a>
+<FONT color="green">548</FONT>                upperPercentage = new BigDecimal(100);<a name="line.548"></a>
+<FONT color="green">549</FONT>            }<a name="line.549"></a>
+<FONT color="green">550</FONT>            BigDecimal upperAcceptableVariance = (upperPercentage.divide(new BigDecimal(100))).multiply(poItem.getItemUnitPrice());<a name="line.550"></a>
+<FONT color="green">551</FONT>    <a name="line.551"></a>
+<FONT color="green">552</FONT>            if (upperAcceptableVariance.compareTo(actualVariance) &lt; 0) {<a name="line.552"></a>
+<FONT color="green">553</FONT>                ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_AMT_GREATER_THAN_UPPER_VARIANCE, extraDescription, orderHolder.getFileName());<a name="line.553"></a>
+<FONT color="green">554</FONT>                orderHolder.addInvoiceOrderRejectReason(rejectReason, PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_REJECT_UNITPRICE_UPPERVARIANCE);<a name="line.554"></a>
+<FONT color="green">555</FONT>            }<a name="line.555"></a>
+<FONT color="green">556</FONT>            <a name="line.556"></a>
+<FONT color="green">557</FONT>        }<a name="line.557"></a>
+<FONT color="green">558</FONT>        <a name="line.558"></a>
+<FONT color="green">559</FONT>        protected void validateSalesTax(ElectronicInvoiceItemHolder itemHolder){<a name="line.559"></a>
+<FONT color="green">560</FONT>    <a name="line.560"></a>
+<FONT color="green">561</FONT>            if (LOG.isInfoEnabled()){<a name="line.561"></a>
+<FONT color="green">562</FONT>                LOG.info("Validating sales tax");<a name="line.562"></a>
+<FONT color="green">563</FONT>            }<a name="line.563"></a>
+<FONT color="green">564</FONT>    <a name="line.564"></a>
+<FONT color="green">565</FONT>            ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();<a name="line.565"></a>
+<FONT color="green">566</FONT>            PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();<a name="line.566"></a>
+<FONT color="green">567</FONT>            KualiDecimal invoiceSalesTaxAmount = new KualiDecimal(itemHolder.getTaxAmount());<a name="line.567"></a>
+<FONT color="green">568</FONT>            <a name="line.568"></a>
+<FONT color="green">569</FONT>            boolean enableSalesTaxInd = SpringContext.getBean(ParameterService.class).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);<a name="line.569"></a>
+<FONT color="green">570</FONT>            <a name="line.570"></a>
+<FONT color="green">571</FONT>            boolean salesTaxUsed = false;<a name="line.571"></a>
+<FONT color="green">572</FONT>            PurchaseOrderDocument poDoc = orderHolder.getPurchaseOrderDocument();<a name="line.572"></a>
+<FONT color="green">573</FONT>            List&lt;PurApItem&gt; items = PurApItemUtils.getAboveTheLineOnly(poDoc.getItems());<a name="line.573"></a>
+<FONT color="green">574</FONT>            for (PurApItem  item : items) {<a name="line.574"></a>
+<FONT color="green">575</FONT>                if (item.getItemType().isTaxableIndicator()) {<a name="line.575"></a>
+<FONT color="green">576</FONT>                    salesTaxUsed = true;<a name="line.576"></a>
+<FONT color="green">577</FONT>                    break;<a name="line.577"></a>
+<FONT color="green">578</FONT>                }<a name="line.578"></a>
+<FONT color="green">579</FONT>            }<a name="line.579"></a>
+<FONT color="green">580</FONT>            boolean useTaxUsed = poDoc.isUseTaxIndicator();<a name="line.580"></a>
+<FONT color="green">581</FONT>            enableSalesTaxInd &amp;= (poItem.getItemType().isTaxableIndicator() &amp;&amp; (salesTaxUsed || useTaxUsed));<a name="line.581"></a>
+<FONT color="green">582</FONT>            <a name="line.582"></a>
+<FONT color="green">583</FONT>            if (LOG.isInfoEnabled()){<a name="line.583"></a>
+<FONT color="green">584</FONT>                LOG.info("Sales Tax Enable Indicator - " + enableSalesTaxInd);<a name="line.584"></a>
+<FONT color="green">585</FONT>                LOG.info("Invoice item tax amount - " + invoiceSalesTaxAmount);<a name="line.585"></a>
+<FONT color="green">586</FONT>            }<a name="line.586"></a>
+<FONT color="green">587</FONT>            if (!enableSalesTaxInd) {<a name="line.587"></a>
+<FONT color="green">588</FONT>                // if sales tax is disabled, item tax amount shall be zero <a name="line.588"></a>
+<FONT color="green">589</FONT>                if (invoiceSalesTaxAmount.compareTo(KualiDecimal.ZERO) != 0) {<a name="line.589"></a>
+<FONT color="green">590</FONT>                    String extraDescription = "Item Tax Amount:" + invoiceSalesTaxAmount;<a name="line.590"></a>
+<FONT color="green">591</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.TAX_SUMMARY_AMT_EXISTS, extraDescription, orderHolder.getFileName());<a name="line.591"></a>
+<FONT color="green">592</FONT>                    orderHolder.addInvoiceHeaderRejectReason(rejectReason);      <a name="line.592"></a>
+<FONT color="green">593</FONT>                }<a name="line.593"></a>
+<FONT color="green">594</FONT>                return;<a name="line.594"></a>
+<FONT color="green">595</FONT>            }<a name="line.595"></a>
+<FONT color="green">596</FONT>    <a name="line.596"></a>
+<FONT color="green">597</FONT>            // For reject doc, trans date should be the einvoice processed date.<a name="line.597"></a>
+<FONT color="green">598</FONT>            java.sql.Date transTaxDate = itemHolder.getInvoiceOrderHolder().getInvoiceProcessedDate();<a name="line.598"></a>
+<FONT color="green">599</FONT>            String deliveryPostalCode = poItem.getPurchaseOrder().getDeliveryPostalCode();<a name="line.599"></a>
+<FONT color="green">600</FONT>            KualiDecimal extendedPrice = new KualiDecimal(getExtendedPrice(itemHolder).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR));<a name="line.600"></a>
+<FONT color="green">601</FONT>            <a name="line.601"></a>
+<FONT color="green">602</FONT>            KualiDecimal salesTaxAmountCalculated = taxService.getTotalSalesTaxAmount(transTaxDate, deliveryPostalCode, extendedPrice);<a name="line.602"></a>
+<FONT color="green">603</FONT>            KualiDecimal actualVariance = invoiceSalesTaxAmount.subtract(salesTaxAmountCalculated);<a name="line.603"></a>
+<FONT color="green">604</FONT>            <a name="line.604"></a>
+<FONT color="green">605</FONT>            if (LOG.isInfoEnabled()){<a name="line.605"></a>
+<FONT color="green">606</FONT>                LOG.info("Sales Tax Upper Variance param - " + upperVariancePercentString);<a name="line.606"></a>
+<FONT color="green">607</FONT>                LOG.info("Sales Tax Lower Variance param - " + lowerVariancePercentString);<a name="line.607"></a>
+<FONT color="green">608</FONT>                LOG.info("Trans date (from invoice/rejectdoc) - " + transTaxDate);<a name="line.608"></a>
+<FONT color="green">609</FONT>                LOG.info("Delivery Postal Code - " + deliveryPostalCode);<a name="line.609"></a>
+<FONT color="green">610</FONT>                LOG.info("Extended price - " + extendedPrice);<a name="line.610"></a>
+<FONT color="green">611</FONT>                LOG.info("Sales Tax amount (from sales tax service) - " + salesTaxAmountCalculated);<a name="line.611"></a>
+<FONT color="green">612</FONT>            }<a name="line.612"></a>
+<FONT color="green">613</FONT>            <a name="line.613"></a>
+<FONT color="green">614</FONT>            if (StringUtils.isNotEmpty(upperVariancePercentString)){<a name="line.614"></a>
+<FONT color="green">615</FONT>                <a name="line.615"></a>
+<FONT color="green">616</FONT>                KualiDecimal upperVariancePercent = new KualiDecimal(upperVariancePercentString);<a name="line.616"></a>
+<FONT color="green">617</FONT>                BigDecimal upperAcceptableVariance = (upperVariancePercent.divide(new KualiDecimal(100))).multiply(salesTaxAmountCalculated).bigDecimalValue();<a name="line.617"></a>
+<FONT color="green">618</FONT>                <a name="line.618"></a>
+<FONT color="green">619</FONT>                if (upperAcceptableVariance.compareTo(actualVariance.bigDecimalValue()) &lt; 0){<a name="line.619"></a>
+<FONT color="green">620</FONT>                    ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.SALES_TAX_AMT_GREATER_THAN_UPPER_VARIANCE,null,orderHolder.getFileName());<a name="line.620"></a>
+<FONT color="green">621</FONT>                    orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_TAX_AMT,PurapKeyConstants.ERROR_REJECT_TAXAMOUNT_UPPERVARIANCE);<a name="line.621"></a>
+<FONT color="green">622</FONT>                    return;<a name="line.622"></a>
+<FONT color="green">623</FONT>                }<a name="line.623"></a>
+<FONT color="green">624</FONT>                <a name="line.624"></a>
+<FONT color="green">625</FONT>            }<a name="line.625"></a>
+<FONT color="green">626</FONT>            <a name="line.626"></a>
+<FONT color="green">627</FONT>            if (StringUtils.isNotEmpty(lowerVariancePercentString)){<a name="line.627"></a>
+<FONT color="green">628</FONT>                <a name="line.628"></a>
+<FONT color="green">629</FONT>                KualiDecimal lowerVariancePercent = new KualiDecimal(lowerVariancePercentString);<a name="line.629"></a>
+<FONT color="green">630</FONT>                BigDecimal lowerAcceptableVariance = (lowerVariancePercent.divide(new KualiDecimal(100))).multiply(salesTaxAmountCalculated).bigDecimalValue().negate();<a name="line.630"></a>
+<FONT color="green">631</FONT>                <a name="line.631"></a>
+<FONT color="green">632</FONT>                if (lowerAcceptableVariance.compareTo(BigDecimal.ZERO) &gt;= 0 &amp;&amp; <a name="line.632"></a>
+<FONT color="green">633</FONT>                    actualVariance.compareTo(KualiDecimal.ZERO) &gt;= 0){<a name="line.633"></a>
+<FONT color="green">634</FONT>                    if (actualVariance.bigDecimalValue().compareTo(lowerAcceptableVariance) &gt; 0){<a name="line.634"></a>
+<FONT color="green">635</FONT>                        ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.SALES_TAX_AMT_LESSER_THAN_LOWER_VARIANCE,null,orderHolder.getFileName());<a name="line.635"></a>
+<FONT color="green">636</FONT>                        orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_TAX_AMT,PurapKeyConstants.ERROR_REJECT_TAXAMOUNT_LOWERVARIANCE);<a name="line.636"></a>
+<FONT color="green">637</FONT>                    }<a name="line.637"></a>
+<FONT color="green">638</FONT>                }else{<a name="line.638"></a>
+<FONT color="green">639</FONT>                    if (actualVariance.bigDecimalValue().compareTo(lowerAcceptableVariance) &lt; 0){<a name="line.639"></a>
+<FONT color="green">640</FONT>                        ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.SALES_TAX_AMT_LESSER_THAN_LOWER_VARIANCE,null,orderHolder.getFileName());<a name="line.640"></a>
+<FONT color="green">641</FONT>                        orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_TAX_AMT,PurapKeyConstants.ERROR_REJECT_TAXAMOUNT_LOWERVARIANCE);<a name="line.641"></a>
+<FONT color="green">642</FONT>                    }<a name="line.642"></a>
+<FONT color="green">643</FONT>                }<a name="line.643"></a>
+<FONT color="green">644</FONT>            }<a name="line.644"></a>
+<FONT color="green">645</FONT>            <a name="line.645"></a>
+<FONT color="green">646</FONT>        }<a name="line.646"></a>
+<FONT color="green">647</FONT>        <a name="line.647"></a>
+<FONT color="green">648</FONT>        <a name="line.648"></a>
+<FONT color="green">649</FONT>        <a name="line.649"></a>
+<FONT color="green">650</FONT>        //Copied from PurApItemBase.calculateExtendedPrice<a name="line.650"></a>
+<FONT color="green">651</FONT>        protected BigDecimal getExtendedPrice(ElectronicInvoiceItemHolder itemHolder){<a name="line.651"></a>
+<FONT color="green">652</FONT>            if (itemHolder.getPurchaseOrderItem().getItemType().isAmountBasedGeneralLedgerIndicator()) {<a name="line.652"></a>
+<FONT color="green">653</FONT>                // SERVICE ITEM: return unit price as extended price<a name="line.653"></a>
+<FONT color="green">654</FONT>                return itemHolder.getUnitPrice();<a name="line.654"></a>
+<FONT color="green">655</FONT>            }<a name="line.655"></a>
+<FONT color="green">656</FONT>            else if (ObjectUtils.isNotNull(itemHolder.getQuantity())) { // qty wont be null since it's defined as a reqd field in xsd <a name="line.656"></a>
+<FONT color="green">657</FONT>                BigDecimal calcExtendedPrice = itemHolder.getUnitPrice().multiply(itemHolder.getQuantity());<a name="line.657"></a>
+<FONT color="green">658</FONT>                // ITEM TYPE (qty driven): return (unitPrice x qty)<a name="line.658"></a>
+<FONT color="green">659</FONT>                return calcExtendedPrice;<a name="line.659"></a>
+<FONT color="green">660</FONT>            }<a name="line.660"></a>
+<FONT color="green">661</FONT>            return BigDecimal.ZERO;<a name="line.661"></a>
+<FONT color="green">662</FONT>        }<a name="line.662"></a>
+<FONT color="green">663</FONT>        <a name="line.663"></a>
+<FONT color="green">664</FONT>        public ElectronicInvoiceRejectReason createRejectReason(String rejectReasonTypeCode, String extraDescription, String fileName) {<a name="line.664"></a>
+<FONT color="green">665</FONT>            <a name="line.665"></a>
+<FONT color="green">666</FONT>            ElectronicInvoiceRejectReasonType rejectReasonType = getElectronicInvoiceRejectReasonType(rejectReasonTypeCode);<a name="line.666"></a>
+<FONT color="green">667</FONT>            ElectronicInvoiceRejectReason eInvoiceRejectReason = new ElectronicInvoiceRejectReason();<a name="line.667"></a>
+<FONT color="green">668</FONT>    <a name="line.668"></a>
+<FONT color="green">669</FONT>            if (rejectReasonType == null){<a name="line.669"></a>
+<FONT color="green">670</FONT>                throw new NullPointerException("Reject reason type for " + rejectReasonTypeCode + " not available in DB");<a name="line.670"></a>
+<FONT color="green">671</FONT>            }<a name="line.671"></a>
+<FONT color="green">672</FONT>            eInvoiceRejectReason.setInvoiceFileName(fileName);<a name="line.672"></a>
+<FONT color="green">673</FONT>            eInvoiceRejectReason.setInvoiceRejectReasonTypeCode(rejectReasonTypeCode);<a name="line.673"></a>
+<FONT color="green">674</FONT>    <a name="line.674"></a>
+<FONT color="green">675</FONT>            if (StringUtils.isNotEmpty(extraDescription)) {<a name="line.675"></a>
+<FONT color="green">676</FONT>                eInvoiceRejectReason.setInvoiceRejectReasonDescription(rejectReasonType.getInvoiceRejectReasonTypeDescription() + " (" + extraDescription + ")");<a name="line.676"></a>
+<FONT color="green">677</FONT>            }<a name="line.677"></a>
+<FONT color="green">678</FONT>            else {<a name="line.678"></a>
+<FONT color="green">679</FONT>                eInvoiceRejectReason.setInvoiceRejectReasonDescription(rejectReasonType.getInvoiceRejectReasonTypeDescription());<a name="line.679"></a>
+<FONT color="green">680</FONT>            }<a name="line.680"></a>
+<FONT color="green">681</FONT>    <a name="line.681"></a>
+<FONT color="green">682</FONT>            return eInvoiceRejectReason;<a name="line.682"></a>
+<FONT color="green">683</FONT>            <a name="line.683"></a>
+<FONT color="green">684</FONT>        }<a name="line.684"></a>
+<FONT color="green">685</FONT>        <a name="line.685"></a>
+<FONT color="green">686</FONT>        public ElectronicInvoiceRejectReasonType getElectronicInvoiceRejectReasonType(String rejectReasonTypeCode){<a name="line.686"></a>
+<FONT color="green">687</FONT>            if (rejectReasonTypes == null){<a name="line.687"></a>
+<FONT color="green">688</FONT>                rejectReasonTypes = getElectronicInvoiceRejectReasonTypes();<a name="line.688"></a>
+<FONT color="green">689</FONT>            }<a name="line.689"></a>
+<FONT color="green">690</FONT>            return rejectReasonTypes.get(rejectReasonTypeCode);<a name="line.690"></a>
+<FONT color="green">691</FONT>        }<a name="line.691"></a>
+<FONT color="green">692</FONT>    <a name="line.692"></a>
+<FONT color="green">693</FONT>        protected Map&lt;String, ElectronicInvoiceRejectReasonType&gt; getElectronicInvoiceRejectReasonTypes(){<a name="line.693"></a>
+<FONT color="green">694</FONT>            <a name="line.694"></a>
+<FONT color="green">695</FONT>            Collection&lt;ElectronicInvoiceRejectReasonType&gt; collection = SpringContext.getBean(BusinessObjectService.class).findAll(ElectronicInvoiceRejectReasonType.class);<a name="line.695"></a>
+<FONT color="green">696</FONT>            Map rejectReasonTypesMap = new HashMap&lt;String, ElectronicInvoiceRejectReasonType&gt;();<a name="line.696"></a>
+<FONT color="green">697</FONT>            <a name="line.697"></a>
+<FONT color="green">698</FONT>            if (collection != null &amp;&amp;<a name="line.698"></a>
+<FONT color="green">699</FONT>                collection.size() &gt; 0){<a name="line.699"></a>
+<FONT color="green">700</FONT>                ElectronicInvoiceRejectReasonType[] rejectReasonTypesArr = new ElectronicInvoiceRejectReasonType[collection.size()];<a name="line.700"></a>
+<FONT color="green">701</FONT>                collection.toArray(rejectReasonTypesArr);<a name="line.701"></a>
+<FONT color="green">702</FONT>                for (int i = 0; i &lt; rejectReasonTypesArr.length; i++) {<a name="line.702"></a>
+<FONT color="green">703</FONT>                    rejectReasonTypesMap.put(rejectReasonTypesArr[i].getInvoiceRejectReasonTypeCode(), rejectReasonTypesArr[i]);<a name="line.703"></a>
+<FONT color="green">704</FONT>                }<a name="line.704"></a>
+<FONT color="green">705</FONT>            }<a name="line.705"></a>
+<FONT color="green">706</FONT>            <a name="line.706"></a>
+<FONT color="green">707</FONT>            return rejectReasonTypesMap;<a name="line.707"></a>
+<FONT color="green">708</FONT>        }<a name="line.708"></a>
+<FONT color="green">709</FONT>    <a name="line.709"></a>
+<FONT color="green">710</FONT>        public void setVendorService(VendorService vendorService) {<a name="line.710"></a>
+<FONT color="green">711</FONT>            this.vendorService = vendorService;<a name="line.711"></a>
+<FONT color="green">712</FONT>        }<a name="line.712"></a>
+<FONT color="green">713</FONT>    <a name="line.713"></a>
+<FONT color="green">714</FONT>        public void setTaxService(TaxService taxService) {<a name="line.714"></a>
+<FONT color="green">715</FONT>            this.taxService = taxService;<a name="line.715"></a>
+<FONT color="green">716</FONT>        }<a name="line.716"></a>
+<FONT color="green">717</FONT>    <a name="line.717"></a>
+<FONT color="green">718</FONT>        public void setDateTimeService(DateTimeService dateTimeService) {<a name="line.718"></a>
+<FONT color="green">719</FONT>            this.dateTimeService = dateTimeService;<a name="line.719"></a>
+<FONT color="green">720</FONT>        }<a name="line.720"></a>
+<FONT color="green">721</FONT>    <a name="line.721"></a>
+<FONT color="green">722</FONT>    }<a name="line.722"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,230 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.sys.document.datadictionary;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import org.kuali.kfs.sys.businessobject.AccountingLine;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.kuali.kfs.sys.document.service.AccountingLineRenderingService;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.sys.document.web.AccountingLineViewCurrentBaseAmount;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.sys.document.web.TableJoining;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.rice.kns.datadictionary.BusinessObjectEntry;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.rice.kns.datadictionary.DataDictionary;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.rice.kns.datadictionary.MaintainableFieldDefinition;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.rice.kns.datadictionary.exception.AttributeValidationException;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.rice.kns.service.DataDictionaryService;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.rice.kns.util.FieldUtils;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.web.ui.Field;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kns.web.ui.FieldBridge;<a name="line.31"></a>
+<FONT color="green">032</FONT>    <a name="line.32"></a>
+<FONT color="green">033</FONT>    /**<a name="line.33"></a>
+<FONT color="green">034</FONT>     * The definition for an amount field which reports both current and base amounts<a name="line.34"></a>
+<FONT color="green">035</FONT>     */<a name="line.35"></a>
+<FONT color="green">036</FONT>    public class AccountingLineViewCurrentBaseAmountFieldDefinition extends MaintainableFieldDefinition implements AccountingLineViewRenderableElementDefinition {<a name="line.36"></a>
+<FONT color="green">037</FONT>        private String currentAmountPropertyName;<a name="line.37"></a>
+<FONT color="green">038</FONT>        private String baseAmountPropertyName;<a name="line.38"></a>
+<FONT color="green">039</FONT>        private boolean useShortLabels = false;<a name="line.39"></a>
+<FONT color="green">040</FONT>        <a name="line.40"></a>
+<FONT color="green">041</FONT>        /**<a name="line.41"></a>
+<FONT color="green">042</FONT>         * Creates a property initiated AccountingLineViewCurrentBaseAmount element<a name="line.42"></a>
+<FONT color="green">043</FONT>         * @see org.kuali.kfs.sys.document.datadictionary.AccountingLineViewRenderableElementDefinition#createLayoutElement(java.lang.Class)<a name="line.43"></a>
+<FONT color="green">044</FONT>         */<a name="line.44"></a>
+<FONT color="green">045</FONT>        public TableJoining createLayoutElement(Class&lt;? extends AccountingLine&gt; accountingLineClass) {<a name="line.45"></a>
+<FONT color="green">046</FONT>            AccountingLineViewCurrentBaseAmount layoutElement = new AccountingLineViewCurrentBaseAmount();<a name="line.46"></a>
+<FONT color="green">047</FONT>            <a name="line.47"></a>
+<FONT color="green">048</FONT>            layoutElement.setBaseAmountField(createFieldForPropertyName(baseAmountPropertyName, accountingLineClass));<a name="line.48"></a>
+<FONT color="green">049</FONT>            layoutElement.setBaseAmountFieldDefinition(createFieldDefinitionForProperty(baseAmountPropertyName));<a name="line.49"></a>
+<FONT color="green">050</FONT>            <a name="line.50"></a>
+<FONT color="green">051</FONT>            layoutElement.setCurrentAmountField(createFieldForPropertyName(currentAmountPropertyName, accountingLineClass));<a name="line.51"></a>
+<FONT color="green">052</FONT>            layoutElement.setCurrentAmountFieldDefinition(createFieldDefinitionForProperty(currentAmountPropertyName));<a name="line.52"></a>
+<FONT color="green">053</FONT>            <a name="line.53"></a>
+<FONT color="green">054</FONT>            layoutElement.setDefinition(this);<a name="line.54"></a>
+<FONT color="green">055</FONT>            <a name="line.55"></a>
+<FONT color="green">056</FONT>            return layoutElement;<a name="line.56"></a>
+<FONT color="green">057</FONT>        }<a name="line.57"></a>
+<FONT color="green">058</FONT>        <a name="line.58"></a>
+<FONT color="green">059</FONT>        /**<a name="line.59"></a>
+<FONT color="green">060</FONT>         * Creates a field for the given AccountingLine class and property name<a name="line.60"></a>
+<FONT color="green">061</FONT>         * @param propertyName the name of the property to create a Field for<a name="line.61"></a>
+<FONT color="green">062</FONT>         * @param accountingLineClass the Class of the AccountingLine we're planning on rendering<a name="line.62"></a>
+<FONT color="green">063</FONT>         * @return an appropriately created Field<a name="line.63"></a>
+<FONT color="green">064</FONT>         */<a name="line.64"></a>
+<FONT color="green">065</FONT>        protected Field createFieldForPropertyName(String propertyName, Class&lt;? extends AccountingLine&gt; accountingLineClass) {<a name="line.65"></a>
+<FONT color="green">066</FONT>            Field realField = FieldUtils.getPropertyField(accountingLineClass, propertyName, false);<a name="line.66"></a>
+<FONT color="green">067</FONT>            FieldBridge.setupField(realField, this, null);<a name="line.67"></a>
+<FONT color="green">068</FONT>            if (useShortLabels) {<a name="line.68"></a>
+<FONT color="green">069</FONT>                BusinessObjectEntry boEntry = SpringContext.getBean(DataDictionaryService.class).getDataDictionary().getBusinessObjectEntry(accountingLineClass.getName());<a name="line.69"></a>
+<FONT color="green">070</FONT>                realField.setFieldLabel(boEntry.getAttributeDefinition(propertyName).getShortLabel());<a name="line.70"></a>
+<FONT color="green">071</FONT>            }<a name="line.71"></a>
+<FONT color="green">072</FONT>            return realField;<a name="line.72"></a>
+<FONT color="green">073</FONT>        }<a name="line.73"></a>
+<FONT color="green">074</FONT>        <a name="line.74"></a>
+<FONT color="green">075</FONT>        /**<a name="line.75"></a>
+<FONT color="green">076</FONT>         * Creates an AccountingLineViewFieldDefinition for the given property name<a name="line.76"></a>
+<FONT color="green">077</FONT>         * @param propertyName the name of the field property that we're creating a definition for<a name="line.77"></a>
+<FONT color="green">078</FONT>         * @return an appropriately created AccountingLineViewFieldDefinition<a name="line.78"></a>
+<FONT color="green">079</FONT>         */<a name="line.79"></a>
+<FONT color="green">080</FONT>        protected AccountingLineViewFieldDefinition createFieldDefinitionForProperty(String propertyName) {<a name="line.80"></a>
+<FONT color="green">081</FONT>            AccountingLineViewFieldDefinition fieldDefinition = SpringContext.getBean(AccountingLineRenderingService.class).createGenericAccountingLineViewFieldDefinition(this);<a name="line.81"></a>
+<FONT color="green">082</FONT>            fieldDefinition.setName(propertyName);<a name="line.82"></a>
+<FONT color="green">083</FONT>            return fieldDefinition;<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>        <a name="line.85"></a>
+<FONT color="green">086</FONT>        /**<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @see org.kuali.rice.kns.datadictionary.MaintainableFieldDefinition#completeValidation(java.lang.Class, java.lang.Class)<a name="line.87"></a>
+<FONT color="green">088</FONT>         */<a name="line.88"></a>
+<FONT color="green">089</FONT>        @Override<a name="line.89"></a>
+<FONT color="green">090</FONT>        public void completeValidation(Class rootBusinessObjectClass, Class otherBusinessObjectClass) {<a name="line.90"></a>
+<FONT color="green">091</FONT>            if (StringUtils.isBlank(currentAmountPropertyName)) {<a name="line.91"></a>
+<FONT color="green">092</FONT>                throw new AttributeValidationException("The currentAmountPropertyName property must be specified on the AccountingLineView-CurentBaseAmountField definition for "+rootBusinessObjectClass.getName());<a name="line.92"></a>
+<FONT color="green">093</FONT>            }<a name="line.93"></a>
+<FONT color="green">094</FONT>            <a name="line.94"></a>
+<FONT color="green">095</FONT>            if (StringUtils.isBlank(baseAmountPropertyName)) {<a name="line.95"></a>
+<FONT color="green">096</FONT>                throw new AttributeValidationException("The baseAmountPropertyName property must be specified on the AccountingLineView-CurentBaseAmountField definition for "+rootBusinessObjectClass.getName());<a name="line.96"></a>
+<FONT color="green">097</FONT>            }<a name="line.97"></a>
+<FONT color="green">098</FONT>            <a name="line.98"></a>
+<FONT color="green">099</FONT>            if (!StringUtils.isBlank(getName())) {<a name="line.99"></a>
+<FONT color="green">100</FONT>                throw new AttributeValidationException("please do not specify name on the AccountingLineView-CurentBaseAmountField definition for "+rootBusinessObjectClass.getName());<a name="line.100"></a>
+<FONT color="green">101</FONT>            }<a name="line.101"></a>
+<FONT color="green">102</FONT>            <a name="line.102"></a>
+<FONT color="green">103</FONT>            if (!DataDictionary.isPropertyOf(rootBusinessObjectClass, getCurrentAmountPropertyName())) {<a name="line.103"></a>
+<FONT color="green">104</FONT>                throw new AttributeValidationException("unable to find attribute or collection named '" + getCurrentAmountPropertyName() + "' in rootBusinessObjectClass '" + rootBusinessObjectClass.getName() + "' (" + "" + ")");<a name="line.104"></a>
+<FONT color="green">105</FONT>            }<a name="line.105"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>            if (!DataDictionary.isPropertyOf(rootBusinessObjectClass, getBaseAmountPropertyName())) {<a name="line.107"></a>
+<FONT color="green">108</FONT>                throw new AttributeValidationException("unable to find attribute or collection named '" + getBaseAmountPropertyName() + "' in rootBusinessObjectClass '" + rootBusinessObjectClass.getName() + "' (" + "" + ")");<a name="line.108"></a>
+<FONT color="green">109</FONT>            }<a name="line.109"></a>
+<FONT color="green">110</FONT>            <a name="line.110"></a>
+<FONT color="green">111</FONT>            if (defaultValueFinderClass != null &amp;&amp; defaultValue != null) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                throw new AttributeValidationException("Both defaultValue and defaultValueFinderClass can not be specified on attribute " + getName() + " in rootBusinessObjectClass " + rootBusinessObjectClass.getName());<a name="line.112"></a>
+<FONT color="green">113</FONT>            }<a name="line.113"></a>
+<FONT color="green">114</FONT>        }<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>        /**<a name="line.116"></a>
+<FONT color="green">117</FONT>         * Gets the baseAmountPropertyName attribute. <a name="line.117"></a>
+<FONT color="green">118</FONT>         * @return Returns the baseAmountPropertyName.<a name="line.118"></a>
+<FONT color="green">119</FONT>         */<a name="line.119"></a>
+<FONT color="green">120</FONT>        public String getBaseAmountPropertyName() {<a name="line.120"></a>
+<FONT color="green">121</FONT>            return baseAmountPropertyName;<a name="line.121"></a>
+<FONT color="green">122</FONT>        }<a name="line.122"></a>
+<FONT color="green">123</FONT>    <a name="line.123"></a>
+<FONT color="green">124</FONT>        /**<a name="line.124"></a>
+<FONT color="green">125</FONT>         * Sets the baseAmountPropertyName attribute value.<a name="line.125"></a>
+<FONT color="green">126</FONT>         * @param baseAmountPropertyName The baseAmountPropertyName to set.<a name="line.126"></a>
+<FONT color="green">127</FONT>         */<a name="line.127"></a>
+<FONT color="green">128</FONT>        public void setBaseAmountPropertyName(String baseAmountPropertyName) {<a name="line.128"></a>
+<FONT color="green">129</FONT>            this.baseAmountPropertyName = baseAmountPropertyName;<a name="line.129"></a>
+<FONT color="green">130</FONT>        }<a name="line.130"></a>
+<FONT color="green">131</FONT>    <a name="line.131"></a>
+<FONT color="green">132</FONT>        /**<a name="line.132"></a>
+<FONT color="green">133</FONT>         * Gets the currentAmountPropertyName attribute. <a name="line.133"></a>
+<FONT color="green">134</FONT>         * @return Returns the currentAmountPropertyName.<a name="line.134"></a>
+<FONT color="green">135</FONT>         */<a name="line.135"></a>
+<FONT color="green">136</FONT>        public String getCurrentAmountPropertyName() {<a name="line.136"></a>
+<FONT color="green">137</FONT>            return currentAmountPropertyName;<a name="line.137"></a>
+<FONT color="green">138</FONT>        }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>        /**<a name="line.140"></a>
+<FONT color="green">141</FONT>         * Sets the currentAmountPropertyName attribute value.<a name="line.141"></a>
+<FONT color="green">142</FONT>         * @param currentAmountPropertyName The currentAmountPropertyName to set.<a name="line.142"></a>
+<FONT color="green">143</FONT>         */<a name="line.143"></a>
+<FONT color="green">144</FONT>        public void setCurrentAmountPropertyName(String currentAmountPropertyName) {<a name="line.144"></a>
+<FONT color="green">145</FONT>            this.currentAmountPropertyName = currentAmountPropertyName;<a name="line.145"></a>
+<FONT color="green">146</FONT>        }<a name="line.146"></a>
+<FONT color="green">147</FONT>    <a name="line.147"></a>
+<FONT color="green">148</FONT>        /**<a name="line.148"></a>
+<FONT color="green">149</FONT>         * Gets the useShortLabels attribute. <a name="line.149"></a>
+<FONT color="green">150</FONT>         * @return Returns the useShortLabels.<a name="line.150"></a>
+<FONT color="green">151</FONT>         */<a name="line.151"></a>
+<FONT color="green">152</FONT>        public boolean isUseShortLabels() {<a name="line.152"></a>
+<FONT color="green">153</FONT>            return useShortLabels;<a name="line.153"></a>
+<FONT color="green">154</FONT>        }<a name="line.154"></a>
+<FONT color="green">155</FONT>    <a name="line.155"></a>
+<FONT color="green">156</FONT>        /**<a name="line.156"></a>
+<FONT color="green">157</FONT>         * Sets the useShortLabels attribute value.<a name="line.157"></a>
+<FONT color="green">158</FONT>         * @param useShortLabels The useShortLabels to set.<a name="line.158"></a>
+<FONT color="green">159</FONT>         */<a name="line.159"></a>
+<FONT color="green">160</FONT>        public void setUseShortLabels(boolean useShortLabels) {<a name="line.160"></a>
+<FONT color="green">161</FONT>            this.useShortLabels = useShortLabels;<a name="line.161"></a>
+<FONT color="green">162</FONT>        }<a name="line.162"></a>
+<FONT color="green">163</FONT>        <a name="line.163"></a>
+<FONT color="green">164</FONT>    }<a name="line.164"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

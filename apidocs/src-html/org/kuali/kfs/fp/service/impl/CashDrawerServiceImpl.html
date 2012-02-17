@@ -1,0 +1,399 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.fp.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.HashMap;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Map;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.fp.businessobject.CashDrawer;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.fp.service.CashDrawerService;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.rice.kns.service.BusinessObjectService;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.springframework.transaction.annotation.Transactional;<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>    /**<a name="line.30"></a>
+<FONT color="green">031</FONT>     * This is the default implementation of the CashDrawerService interface.<a name="line.31"></a>
+<FONT color="green">032</FONT>     */<a name="line.32"></a>
+<FONT color="green">033</FONT>    @Transactional<a name="line.33"></a>
+<FONT color="green">034</FONT>    public class CashDrawerServiceImpl implements CashDrawerService {<a name="line.34"></a>
+<FONT color="green">035</FONT>        private BusinessObjectService businessObjectService;<a name="line.35"></a>
+<FONT color="green">036</FONT>        private static final String CAMPUS_CODE_PROPERTY = "campusCode";<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        /**<a name="line.39"></a>
+<FONT color="green">040</FONT>         * Retrieves the CashDrawer associated with the campus code provided and sets the state of the drawer to closed.<a name="line.40"></a>
+<FONT color="green">041</FONT>         * <a name="line.41"></a>
+<FONT color="green">042</FONT>         * @param campusCode The code of the campus associated with the cash drawer being retrieved.<a name="line.42"></a>
+<FONT color="green">043</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#closeCashDrawer(java.lang.String)<a name="line.43"></a>
+<FONT color="green">044</FONT>         */<a name="line.44"></a>
+<FONT color="green">045</FONT>        public void closeCashDrawer(String campusCode) {<a name="line.45"></a>
+<FONT color="green">046</FONT>            CashDrawer drawer = getByCampusCode(campusCode);<a name="line.46"></a>
+<FONT color="green">047</FONT>            this.closeCashDrawer(drawer);<a name="line.47"></a>
+<FONT color="green">048</FONT>        }<a name="line.48"></a>
+<FONT color="green">049</FONT>        <a name="line.49"></a>
+<FONT color="green">050</FONT>        /**<a name="line.50"></a>
+<FONT color="green">051</FONT>         * Sets the status of the drawer provided to closed and saves the new state.<a name="line.51"></a>
+<FONT color="green">052</FONT>         * <a name="line.52"></a>
+<FONT color="green">053</FONT>         * @param drawer The instance of the cash drawer to be closed.<a name="line.53"></a>
+<FONT color="green">054</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#closeCashDrawer(org.kuali.kfs.fp.businessobject.CashDrawer)<a name="line.54"></a>
+<FONT color="green">055</FONT>         */<a name="line.55"></a>
+<FONT color="green">056</FONT>        public void closeCashDrawer(CashDrawer drawer) {<a name="line.56"></a>
+<FONT color="green">057</FONT>            drawer.setStatusCode(KFSConstants.CashDrawerConstants.STATUS_CLOSED);<a name="line.57"></a>
+<FONT color="green">058</FONT>            drawer.setReferenceFinancialDocumentNumber(null);<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>            save(drawer);<a name="line.60"></a>
+<FONT color="green">061</FONT>        }<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>        /**<a name="line.63"></a>
+<FONT color="green">064</FONT>         * Retrieves an instance of a cash drawer based on the parameters provided and sets the status of the drawer to open, <a name="line.64"></a>
+<FONT color="green">065</FONT>         * persists the state change and then returns an instance of the drawer in it's new state.<a name="line.65"></a>
+<FONT color="green">066</FONT>         * <a name="line.66"></a>
+<FONT color="green">067</FONT>         * @param campusCode The campus code associated with the cash drawer we wish to retrieve and open.<a name="line.67"></a>
+<FONT color="green">068</FONT>         * @param documentId The id of the reference document linked to the drawer.<a name="line.68"></a>
+<FONT color="green">069</FONT>         * @return  A new instance of the cash drawer in open status.<a name="line.69"></a>
+<FONT color="green">070</FONT>         * <a name="line.70"></a>
+<FONT color="green">071</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#openCashDrawer(java.lang.String, java.lang.String)<a name="line.71"></a>
+<FONT color="green">072</FONT>         */<a name="line.72"></a>
+<FONT color="green">073</FONT>        public CashDrawer openCashDrawer(String campusCode, String documentId) {<a name="line.73"></a>
+<FONT color="green">074</FONT>            if (StringUtils.isBlank(documentId)) {<a name="line.74"></a>
+<FONT color="green">075</FONT>                throw new IllegalArgumentException("invalid (blank) documentId");<a name="line.75"></a>
+<FONT color="green">076</FONT>            }<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>            CashDrawer drawer = getByCampusCode(campusCode);<a name="line.78"></a>
+<FONT color="green">079</FONT>            return this.openCashDrawer(drawer, documentId);<a name="line.79"></a>
+<FONT color="green">080</FONT>        }<a name="line.80"></a>
+<FONT color="green">081</FONT>        <a name="line.81"></a>
+<FONT color="green">082</FONT>        /**<a name="line.82"></a>
+<FONT color="green">083</FONT>         * Sets the status of the cash drawer provided to open, persists this new state and returns the drawer.<a name="line.83"></a>
+<FONT color="green">084</FONT>         * <a name="line.84"></a>
+<FONT color="green">085</FONT>         * @param drawer An instance of the drawer being opened.<a name="line.85"></a>
+<FONT color="green">086</FONT>         * @param documentId The id of the reference document linked to the drawer.<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @return An instance of the cash drawer with a status of open.<a name="line.87"></a>
+<FONT color="green">088</FONT>         * <a name="line.88"></a>
+<FONT color="green">089</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#openCashDrawer(org.kuali.kfs.fp.businessobject.CashDrawer, java.lang.String)<a name="line.89"></a>
+<FONT color="green">090</FONT>         */<a name="line.90"></a>
+<FONT color="green">091</FONT>        public CashDrawer openCashDrawer(CashDrawer drawer, String documentId) {<a name="line.91"></a>
+<FONT color="green">092</FONT>            if (StringUtils.isBlank(documentId)) {<a name="line.92"></a>
+<FONT color="green">093</FONT>                throw new IllegalArgumentException("invalid (blank) documentId");<a name="line.93"></a>
+<FONT color="green">094</FONT>            }<a name="line.94"></a>
+<FONT color="green">095</FONT>    <a name="line.95"></a>
+<FONT color="green">096</FONT>            drawer.setStatusCode(KFSConstants.CashDrawerConstants.STATUS_OPEN);<a name="line.96"></a>
+<FONT color="green">097</FONT>            drawer.setReferenceFinancialDocumentNumber(documentId);<a name="line.97"></a>
+<FONT color="green">098</FONT>    <a name="line.98"></a>
+<FONT color="green">099</FONT>            save(drawer);<a name="line.99"></a>
+<FONT color="green">100</FONT>            return drawer;<a name="line.100"></a>
+<FONT color="green">101</FONT>        }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>        /**<a name="line.103"></a>
+<FONT color="green">104</FONT>         * Retrieves a cash drawer using the campus code provided, updates the state to locked, then persists this state change.<a name="line.104"></a>
+<FONT color="green">105</FONT>         * <a name="line.105"></a>
+<FONT color="green">106</FONT>         * @param campusCode The campus code associated with the cash drawer.<a name="line.106"></a>
+<FONT color="green">107</FONT>         * @param documentId The reference document id to be set to the cash drawer.<a name="line.107"></a>
+<FONT color="green">108</FONT>         * <a name="line.108"></a>
+<FONT color="green">109</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#lockCashDrawer(java.lang.String,java.lang.String)<a name="line.109"></a>
+<FONT color="green">110</FONT>         */<a name="line.110"></a>
+<FONT color="green">111</FONT>        public void lockCashDrawer(String campusCode, String documentId) {<a name="line.111"></a>
+<FONT color="green">112</FONT>            if (StringUtils.isBlank(documentId)) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                throw new IllegalArgumentException("invalid (blank) documentId");<a name="line.113"></a>
+<FONT color="green">114</FONT>            }<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>            CashDrawer drawer = getByCampusCode(campusCode);<a name="line.116"></a>
+<FONT color="green">117</FONT>            this.lockCashDrawer(drawer, documentId);<a name="line.117"></a>
+<FONT color="green">118</FONT>        }<a name="line.118"></a>
+<FONT color="green">119</FONT>        <a name="line.119"></a>
+<FONT color="green">120</FONT>        /**<a name="line.120"></a>
+<FONT color="green">121</FONT>         * Sets the state of the cash drawer provided to locked and persists this new state.<a name="line.121"></a>
+<FONT color="green">122</FONT>         * <a name="line.122"></a>
+<FONT color="green">123</FONT>         * @param drawer The cash drawer to be locked.<a name="line.123"></a>
+<FONT color="green">124</FONT>         * @param documentId The reference document id to be set to the cash drawer.<a name="line.124"></a>
+<FONT color="green">125</FONT>         * <a name="line.125"></a>
+<FONT color="green">126</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#lockCashDrawer(org.kuali.kfs.fp.businessobject.CashDrawer, java.lang.String)<a name="line.126"></a>
+<FONT color="green">127</FONT>         */<a name="line.127"></a>
+<FONT color="green">128</FONT>        public void lockCashDrawer(CashDrawer drawer, String documentId) {<a name="line.128"></a>
+<FONT color="green">129</FONT>            if (StringUtils.isBlank(documentId)) {<a name="line.129"></a>
+<FONT color="green">130</FONT>                throw new IllegalArgumentException("invalid (blank) documentId");<a name="line.130"></a>
+<FONT color="green">131</FONT>            }<a name="line.131"></a>
+<FONT color="green">132</FONT>            <a name="line.132"></a>
+<FONT color="green">133</FONT>            if (!StringUtils.equals(KFSConstants.CashDrawerConstants.STATUS_OPEN, drawer.getStatusCode())) {<a name="line.133"></a>
+<FONT color="green">134</FONT>                throw new IllegalStateException("CashDrawer '" + drawer.getCampusCode() + "' cannot be locked because it is not open");<a name="line.134"></a>
+<FONT color="green">135</FONT>            }<a name="line.135"></a>
+<FONT color="green">136</FONT>            if (!StringUtils.equals(documentId, drawer.getReferenceFinancialDocumentNumber())) {<a name="line.136"></a>
+<FONT color="green">137</FONT>                throw new IllegalStateException("CashDrawer '" + drawer.getCampusCode() + "' cannot be locked because it was opened by document " + drawer.getReferenceFinancialDocumentNumber());<a name="line.137"></a>
+<FONT color="green">138</FONT>            }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>            drawer.setStatusCode(KFSConstants.CashDrawerConstants.STATUS_LOCKED);<a name="line.140"></a>
+<FONT color="green">141</FONT>            drawer.setReferenceFinancialDocumentNumber(documentId);<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>            save(drawer);<a name="line.143"></a>
+<FONT color="green">144</FONT>        }<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>        /**<a name="line.146"></a>
+<FONT color="green">147</FONT>         * Retrieves a cash drawer using the campus code provided, updates the state to open, then persists this state change.<a name="line.147"></a>
+<FONT color="green">148</FONT>         * <a name="line.148"></a>
+<FONT color="green">149</FONT>         * @param campusCode The campus code associated with the cash drawer.<a name="line.149"></a>
+<FONT color="green">150</FONT>         * @param documentId The reference document id to be set to the cash drawer.<a name="line.150"></a>
+<FONT color="green">151</FONT>         * <a name="line.151"></a>
+<FONT color="green">152</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#unlockCashDrawer(java.lang.String,java.lang.String)<a name="line.152"></a>
+<FONT color="green">153</FONT>         */<a name="line.153"></a>
+<FONT color="green">154</FONT>        public void unlockCashDrawer(String campusCode, String documentId) {<a name="line.154"></a>
+<FONT color="green">155</FONT>            if (StringUtils.isBlank(documentId)) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                throw new IllegalArgumentException("invalid (blank) documentId");<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>    <a name="line.158"></a>
+<FONT color="green">159</FONT>            CashDrawer drawer = getByCampusCode(campusCode);<a name="line.159"></a>
+<FONT color="green">160</FONT>            this.unlockCashDrawer(drawer, documentId);<a name="line.160"></a>
+<FONT color="green">161</FONT>        }<a name="line.161"></a>
+<FONT color="green">162</FONT>    <a name="line.162"></a>
+<FONT color="green">163</FONT>        /**<a name="line.163"></a>
+<FONT color="green">164</FONT>         * Sets the state of the cash drawer provided to open and persists this new state.<a name="line.164"></a>
+<FONT color="green">165</FONT>         * <a name="line.165"></a>
+<FONT color="green">166</FONT>         * @param drawer The cash drawer to be unlocked.<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @param documentId The reference document id to be set to the cash drawer.<a name="line.167"></a>
+<FONT color="green">168</FONT>         * <a name="line.168"></a>
+<FONT color="green">169</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#unlockCashDrawer(org.kuali.kfs.fp.businessobject.CashDrawer, java.lang.String)<a name="line.169"></a>
+<FONT color="green">170</FONT>         */<a name="line.170"></a>
+<FONT color="green">171</FONT>        public void unlockCashDrawer(CashDrawer drawer, String documentId) {<a name="line.171"></a>
+<FONT color="green">172</FONT>            if (StringUtils.isBlank(documentId)) {<a name="line.172"></a>
+<FONT color="green">173</FONT>                throw new IllegalArgumentException("invalid (blank) documentId");<a name="line.173"></a>
+<FONT color="green">174</FONT>            }<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>            if (!StringUtils.equals(KFSConstants.CashDrawerConstants.STATUS_LOCKED, drawer.getStatusCode())) {<a name="line.176"></a>
+<FONT color="green">177</FONT>                throw new IllegalStateException("CashDrawer '" + drawer.getCampusCode() + "' cannot be unlocked because it is not locked");<a name="line.177"></a>
+<FONT color="green">178</FONT>            }<a name="line.178"></a>
+<FONT color="green">179</FONT>            if (!StringUtils.equals(documentId, drawer.getReferenceFinancialDocumentNumber())) {<a name="line.179"></a>
+<FONT color="green">180</FONT>                throw new IllegalStateException("CashDrawer '" + drawer.getCampusCode() + "' cannot be unlocked because it was locked by document " + drawer.getReferenceFinancialDocumentNumber());<a name="line.180"></a>
+<FONT color="green">181</FONT>            }<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>            drawer.setStatusCode(KFSConstants.CashDrawerConstants.STATUS_OPEN);<a name="line.183"></a>
+<FONT color="green">184</FONT>            drawer.setReferenceFinancialDocumentNumber(documentId);<a name="line.184"></a>
+<FONT color="green">185</FONT>    <a name="line.185"></a>
+<FONT color="green">186</FONT>            save(drawer);<a name="line.186"></a>
+<FONT color="green">187</FONT>        }<a name="line.187"></a>
+<FONT color="green">188</FONT>    <a name="line.188"></a>
+<FONT color="green">189</FONT>        /**<a name="line.189"></a>
+<FONT color="green">190</FONT>         * This method retrieves a cash drawer instance using the campus code provided as a search parameter.  If no drawer can<a name="line.190"></a>
+<FONT color="green">191</FONT>         * be found for the campus provided and the autocreate flag is set to true, then a new instance of a cash drawer will<a name="line.191"></a>
+<FONT color="green">192</FONT>         * be generated and returned.  If the autocreate flag is false, then a null value will be returned.<a name="line.192"></a>
+<FONT color="green">193</FONT>         * <a name="line.193"></a>
+<FONT color="green">194</FONT>         * NOTE: The new instance created if autocreate is set to true is an unpersisted instance.<a name="line.194"></a>
+<FONT color="green">195</FONT>         * <a name="line.195"></a>
+<FONT color="green">196</FONT>         * @param campusCode The campus code used to retrieve the cash drawer.<a name="line.196"></a>
+<FONT color="green">197</FONT>         * @return An instance of a cash drawer matching the value provided.<a name="line.197"></a>
+<FONT color="green">198</FONT>         * <a name="line.198"></a>
+<FONT color="green">199</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#findByCampusCode(java.lang.String)<a name="line.199"></a>
+<FONT color="green">200</FONT>         */<a name="line.200"></a>
+<FONT color="green">201</FONT>        public CashDrawer getByCampusCode(String campusCode) {<a name="line.201"></a>
+<FONT color="green">202</FONT>            if (StringUtils.isBlank(campusCode)) {<a name="line.202"></a>
+<FONT color="green">203</FONT>                throw new IllegalArgumentException("invalid (blank) campusCode");<a name="line.203"></a>
+<FONT color="green">204</FONT>            }<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>            return (CashDrawer)businessObjectService.findByPrimaryKey(CashDrawer.class, buildPrimaryKeyMap(campusCode));<a name="line.206"></a>
+<FONT color="green">207</FONT>        }<a name="line.207"></a>
+<FONT color="green">208</FONT>    <a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>        /**<a name="line.210"></a>
+<FONT color="green">211</FONT>         * Persists the given CashDrawer instance.<a name="line.211"></a>
+<FONT color="green">212</FONT>         * <a name="line.212"></a>
+<FONT color="green">213</FONT>         * @param cashDrawer The cash drawer to be persisted.<a name="line.213"></a>
+<FONT color="green">214</FONT>         */<a name="line.214"></a>
+<FONT color="green">215</FONT>        protected void save(CashDrawer cashDrawer) {<a name="line.215"></a>
+<FONT color="green">216</FONT>            if (cashDrawer == null) {<a name="line.216"></a>
+<FONT color="green">217</FONT>                throw new IllegalArgumentException("invalid (null) cashDrawer");<a name="line.217"></a>
+<FONT color="green">218</FONT>            }<a name="line.218"></a>
+<FONT color="green">219</FONT>    <a name="line.219"></a>
+<FONT color="green">220</FONT>            businessObjectService.save(cashDrawer);<a name="line.220"></a>
+<FONT color="green">221</FONT>        }<a name="line.221"></a>
+<FONT color="green">222</FONT>    <a name="line.222"></a>
+<FONT color="green">223</FONT>        /**<a name="line.223"></a>
+<FONT color="green">224</FONT>         * This method creates a primary key map by adding the associated campus code to a new map instance and returning <a name="line.224"></a>
+<FONT color="green">225</FONT>         * this map new instance.<a name="line.225"></a>
+<FONT color="green">226</FONT>         * <a name="line.226"></a>
+<FONT color="green">227</FONT>         * @param campusCode The campus code to be added to the map.<a name="line.227"></a>
+<FONT color="green">228</FONT>         * @return Map suitable for use with primaryKey-related OJB methods<a name="line.228"></a>
+<FONT color="green">229</FONT>         */<a name="line.229"></a>
+<FONT color="green">230</FONT>        protected Map buildPrimaryKeyMap(String campusCode) {<a name="line.230"></a>
+<FONT color="green">231</FONT>            Map keyMap = new HashMap();<a name="line.231"></a>
+<FONT color="green">232</FONT>            keyMap.put(CAMPUS_CODE_PROPERTY, campusCode);<a name="line.232"></a>
+<FONT color="green">233</FONT>            return keyMap;<a name="line.233"></a>
+<FONT color="green">234</FONT>        }<a name="line.234"></a>
+<FONT color="green">235</FONT>    <a name="line.235"></a>
+<FONT color="green">236</FONT>        /**<a name="line.236"></a>
+<FONT color="green">237</FONT>         * This method calculates the total of all the coins in the cash drawer.  This is accomplished by totaling the values from<a name="line.237"></a>
+<FONT color="green">238</FONT>         * each of the *CentAmount() methods (ie. getFinancialDocumentHundredCentAmount()) from the drawer and returning the resulting <a name="line.238"></a>
+<FONT color="green">239</FONT>         * value.<a name="line.239"></a>
+<FONT color="green">240</FONT>         * <a name="line.240"></a>
+<FONT color="green">241</FONT>         * @param drawer The drawer being totaled.<a name="line.241"></a>
+<FONT color="green">242</FONT>         * @return The sum of all the coin amounts in the drawer.<a name="line.242"></a>
+<FONT color="green">243</FONT>         * <a name="line.243"></a>
+<FONT color="green">244</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#getCoinTotal(org.kuali.kfs.fp.businessobject.CashDrawer)<a name="line.244"></a>
+<FONT color="green">245</FONT>         */<a name="line.245"></a>
+<FONT color="green">246</FONT>        public KualiDecimal getCoinTotal(CashDrawer drawer) {<a name="line.246"></a>
+<FONT color="green">247</FONT>            KualiDecimal sum = new KualiDecimal(0.0);<a name="line.247"></a>
+<FONT color="green">248</FONT>            if (drawer != null) {<a name="line.248"></a>
+<FONT color="green">249</FONT>                if (drawer.getFinancialDocumentHundredCentAmount() != null) {<a name="line.249"></a>
+<FONT color="green">250</FONT>                    sum.add(drawer.getFinancialDocumentHundredCentAmount());<a name="line.250"></a>
+<FONT color="green">251</FONT>                }<a name="line.251"></a>
+<FONT color="green">252</FONT>                if (drawer.getFinancialDocumentFiftyCentAmount() != null) {<a name="line.252"></a>
+<FONT color="green">253</FONT>                    sum.add(drawer.getFinancialDocumentFiftyCentAmount());<a name="line.253"></a>
+<FONT color="green">254</FONT>                }<a name="line.254"></a>
+<FONT color="green">255</FONT>                if (drawer.getFinancialDocumentTwentyFiveCentAmount() != null) {<a name="line.255"></a>
+<FONT color="green">256</FONT>                    sum.add(drawer.getFinancialDocumentTwentyFiveCentAmount());<a name="line.256"></a>
+<FONT color="green">257</FONT>                }<a name="line.257"></a>
+<FONT color="green">258</FONT>                if (drawer.getFinancialDocumentTenCentAmount() != null) {<a name="line.258"></a>
+<FONT color="green">259</FONT>                    sum.add(drawer.getFinancialDocumentTenCentAmount());<a name="line.259"></a>
+<FONT color="green">260</FONT>                }<a name="line.260"></a>
+<FONT color="green">261</FONT>                if (drawer.getFinancialDocumentFiveCentAmount() != null) {<a name="line.261"></a>
+<FONT color="green">262</FONT>                    sum.add(drawer.getFinancialDocumentFiveCentAmount());<a name="line.262"></a>
+<FONT color="green">263</FONT>                }<a name="line.263"></a>
+<FONT color="green">264</FONT>                if (drawer.getFinancialDocumentOneCentAmount() != null) {<a name="line.264"></a>
+<FONT color="green">265</FONT>                    sum.add(drawer.getFinancialDocumentOneCentAmount());<a name="line.265"></a>
+<FONT color="green">266</FONT>                }<a name="line.266"></a>
+<FONT color="green">267</FONT>                if (drawer.getFinancialDocumentOtherCentAmount() != null) {<a name="line.267"></a>
+<FONT color="green">268</FONT>                    sum.add(drawer.getFinancialDocumentOtherCentAmount());<a name="line.268"></a>
+<FONT color="green">269</FONT>                }<a name="line.269"></a>
+<FONT color="green">270</FONT>            }<a name="line.270"></a>
+<FONT color="green">271</FONT>            return sum;<a name="line.271"></a>
+<FONT color="green">272</FONT>        }<a name="line.272"></a>
+<FONT color="green">273</FONT>    <a name="line.273"></a>
+<FONT color="green">274</FONT>        /**<a name="line.274"></a>
+<FONT color="green">275</FONT>         * This method calculates the total of all the currency in the cash drawer.  This is accomplished by totaling the values from<a name="line.275"></a>
+<FONT color="green">276</FONT>         * each of the *DollarAmount() methods (ie. getFinancialDocumentHundredDollarAmount()) from the drawer and returning the resulting <a name="line.276"></a>
+<FONT color="green">277</FONT>         * value.<a name="line.277"></a>
+<FONT color="green">278</FONT>         * <a name="line.278"></a>
+<FONT color="green">279</FONT>         * @param drawer The drawer being totaled.<a name="line.279"></a>
+<FONT color="green">280</FONT>         * @return The sum of all the currency amounts in the drawer.<a name="line.280"></a>
+<FONT color="green">281</FONT>         * <a name="line.281"></a>
+<FONT color="green">282</FONT>         * @see org.kuali.kfs.fp.service.CashDrawerService#getCurrencyTotal(org.kuali.kfs.fp.businessobject.CashDrawer)<a name="line.282"></a>
+<FONT color="green">283</FONT>         */<a name="line.283"></a>
+<FONT color="green">284</FONT>        public KualiDecimal getCurrencyTotal(CashDrawer drawer) {<a name="line.284"></a>
+<FONT color="green">285</FONT>            KualiDecimal sum = new KualiDecimal(0.0);<a name="line.285"></a>
+<FONT color="green">286</FONT>            if (drawer != null) {<a name="line.286"></a>
+<FONT color="green">287</FONT>                if (drawer.getFinancialDocumentHundredDollarAmount() != null) {<a name="line.287"></a>
+<FONT color="green">288</FONT>                    sum.add(drawer.getFinancialDocumentHundredDollarAmount());<a name="line.288"></a>
+<FONT color="green">289</FONT>                }<a name="line.289"></a>
+<FONT color="green">290</FONT>                if (drawer.getFinancialDocumentFiftyDollarAmount() != null) {<a name="line.290"></a>
+<FONT color="green">291</FONT>                    sum.add(drawer.getFinancialDocumentFiftyDollarAmount());<a name="line.291"></a>
+<FONT color="green">292</FONT>                }<a name="line.292"></a>
+<FONT color="green">293</FONT>                if (drawer.getFinancialDocumentTwentyDollarAmount() != null) {<a name="line.293"></a>
+<FONT color="green">294</FONT>                    sum.add(drawer.getFinancialDocumentTwentyDollarAmount());<a name="line.294"></a>
+<FONT color="green">295</FONT>                }<a name="line.295"></a>
+<FONT color="green">296</FONT>                if (drawer.getFinancialDocumentTenDollarAmount() != null) {<a name="line.296"></a>
+<FONT color="green">297</FONT>                    sum.add(drawer.getFinancialDocumentTenDollarAmount());<a name="line.297"></a>
+<FONT color="green">298</FONT>                }<a name="line.298"></a>
+<FONT color="green">299</FONT>                if (drawer.getFinancialDocumentFiveDollarAmount() != null) {<a name="line.299"></a>
+<FONT color="green">300</FONT>                    sum.add(drawer.getFinancialDocumentFiveDollarAmount());<a name="line.300"></a>
+<FONT color="green">301</FONT>                }<a name="line.301"></a>
+<FONT color="green">302</FONT>                if (drawer.getFinancialDocumentTwoDollarAmount() != null) {<a name="line.302"></a>
+<FONT color="green">303</FONT>                    sum.add(drawer.getFinancialDocumentTwoDollarAmount());<a name="line.303"></a>
+<FONT color="green">304</FONT>                }<a name="line.304"></a>
+<FONT color="green">305</FONT>                if (drawer.getFinancialDocumentOneDollarAmount() != null) {<a name="line.305"></a>
+<FONT color="green">306</FONT>                    sum.add(drawer.getFinancialDocumentOneDollarAmount());<a name="line.306"></a>
+<FONT color="green">307</FONT>                }<a name="line.307"></a>
+<FONT color="green">308</FONT>                if (drawer.getFinancialDocumentOtherDollarAmount() != null) {<a name="line.308"></a>
+<FONT color="green">309</FONT>                    sum.add(drawer.getFinancialDocumentOtherDollarAmount());<a name="line.309"></a>
+<FONT color="green">310</FONT>                }<a name="line.310"></a>
+<FONT color="green">311</FONT>            }<a name="line.311"></a>
+<FONT color="green">312</FONT>            return sum;<a name="line.312"></a>
+<FONT color="green">313</FONT>        }<a name="line.313"></a>
+<FONT color="green">314</FONT>    <a name="line.314"></a>
+<FONT color="green">315</FONT>        // Spring injection<a name="line.315"></a>
+<FONT color="green">316</FONT>        /**<a name="line.316"></a>
+<FONT color="green">317</FONT>         * Gets the businessObjectService attribute value.<a name="line.317"></a>
+<FONT color="green">318</FONT>         * <a name="line.318"></a>
+<FONT color="green">319</FONT>         * @return The current value of businessObjectService.<a name="line.319"></a>
+<FONT color="green">320</FONT>         */<a name="line.320"></a>
+<FONT color="green">321</FONT>        public BusinessObjectService getBusinessObjectService() {<a name="line.321"></a>
+<FONT color="green">322</FONT>            return businessObjectService;<a name="line.322"></a>
+<FONT color="green">323</FONT>        }<a name="line.323"></a>
+<FONT color="green">324</FONT>    <a name="line.324"></a>
+<FONT color="green">325</FONT>        /**<a name="line.325"></a>
+<FONT color="green">326</FONT>         * Sets the businessObjectService attribute value.<a name="line.326"></a>
+<FONT color="green">327</FONT>         * <a name="line.327"></a>
+<FONT color="green">328</FONT>         * @param businessObjectService The businessObjectService to set.<a name="line.328"></a>
+<FONT color="green">329</FONT>         */<a name="line.329"></a>
+<FONT color="green">330</FONT>        public void setBusinessObjectService(BusinessObjectService businessObjectService) {<a name="line.330"></a>
+<FONT color="green">331</FONT>            this.businessObjectService = businessObjectService;<a name="line.331"></a>
+<FONT color="green">332</FONT>        }<a name="line.332"></a>
+<FONT color="green">333</FONT>    }<a name="line.333"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

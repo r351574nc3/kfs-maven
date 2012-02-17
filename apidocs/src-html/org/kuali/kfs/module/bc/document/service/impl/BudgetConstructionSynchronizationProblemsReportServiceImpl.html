@@ -1,0 +1,258 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.bc.document.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.ArrayList;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Collection;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.HashMap;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.List;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.Map;<a name="line.22"></a>
+<FONT color="green">023</FONT>    <a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.module.bc.BCConstants;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.bc.BCKeyConstants;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionOrgSynchronizationProblemsReport;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionPositionFunding;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionSynchronizationProblemsReportDao;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.module.bc.document.service.BudgetConstructionOrganizationReportsService;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.module.bc.document.service.BudgetConstructionSynchronizationProblemsReportService;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.rice.kns.service.BusinessObjectService;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.rice.kns.service.KualiConfigurationService;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.springframework.transaction.annotation.Transactional;<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>    /**<a name="line.38"></a>
+<FONT color="green">039</FONT>     * Service implementation of BudgetConstructionAccountSummaryReportService.<a name="line.39"></a>
+<FONT color="green">040</FONT>     */<a name="line.40"></a>
+<FONT color="green">041</FONT>    @Transactional<a name="line.41"></a>
+<FONT color="green">042</FONT>    public class BudgetConstructionSynchronizationProblemsReportServiceImpl implements BudgetConstructionSynchronizationProblemsReportService {<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        BudgetConstructionSynchronizationProblemsReportDao budgetConstructionSynchronizationProblemsReportDao;<a name="line.44"></a>
+<FONT color="green">045</FONT>        BudgetConstructionOrganizationReportsService budgetConstructionOrganizationReportsService;<a name="line.45"></a>
+<FONT color="green">046</FONT>        KualiConfigurationService kualiConfigurationService;<a name="line.46"></a>
+<FONT color="green">047</FONT>        BusinessObjectService businessObjectService;<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        public void updateSynchronizationProblemsReport(String principalName) {<a name="line.50"></a>
+<FONT color="green">051</FONT>            budgetConstructionSynchronizationProblemsReportDao.updateReportsSynchronizationProblemsTable(principalName);<a name="line.51"></a>
+<FONT color="green">052</FONT>    <a name="line.52"></a>
+<FONT color="green">053</FONT>        }<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>        public Collection&lt;BudgetConstructionOrgSynchronizationProblemsReport&gt; buildReports(Integer universityFiscalYear, String principalName) {<a name="line.55"></a>
+<FONT color="green">056</FONT>            Collection&lt;BudgetConstructionOrgSynchronizationProblemsReport&gt; reportSet = new ArrayList();<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>    <a name="line.58"></a>
+<FONT color="green">059</FONT>            BudgetConstructionOrgSynchronizationProblemsReport orgSynchronizationProblemsReportEntry;<a name="line.59"></a>
+<FONT color="green">060</FONT>            // build searchCriteria<a name="line.60"></a>
+<FONT color="green">061</FONT>            Map searchCriteria = new HashMap();<a name="line.61"></a>
+<FONT color="green">062</FONT>            searchCriteria.put(KFSPropertyConstants.KUALI_USER_PERSON_UNIVERSAL_IDENTIFIER, principalName);<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>            // build order list<a name="line.64"></a>
+<FONT color="green">065</FONT>            List&lt;String&gt; orderList = buildOrderByList();<a name="line.65"></a>
+<FONT color="green">066</FONT>            Collection&lt;BudgetConstructionPositionFunding&gt; synchronizationProblemsList = budgetConstructionOrganizationReportsService.getBySearchCriteriaOrderByList(BudgetConstructionPositionFunding.class, searchCriteria, orderList);<a name="line.66"></a>
+<FONT color="green">067</FONT>            Map positionMap = new HashMap();<a name="line.67"></a>
+<FONT color="green">068</FONT>            for (BudgetConstructionPositionFunding positionFundingEntry : synchronizationProblemsList) {<a name="line.68"></a>
+<FONT color="green">069</FONT>                BudgetConstructionPosition budgetConstructionPosition = getBudgetConstructionPosition(universityFiscalYear, positionFundingEntry.getPendingAppointmentFunding());<a name="line.69"></a>
+<FONT color="green">070</FONT>                positionMap.put(positionFundingEntry, budgetConstructionPosition);<a name="line.70"></a>
+<FONT color="green">071</FONT>            }<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>            for (BudgetConstructionPositionFunding positionFundingEntry : synchronizationProblemsList) {<a name="line.73"></a>
+<FONT color="green">074</FONT>                orgSynchronizationProblemsReportEntry = new BudgetConstructionOrgSynchronizationProblemsReport();<a name="line.74"></a>
+<FONT color="green">075</FONT>                buildReportsHeader(universityFiscalYear, orgSynchronizationProblemsReportEntry, positionFundingEntry);<a name="line.75"></a>
+<FONT color="green">076</FONT>                buildReportsBody(orgSynchronizationProblemsReportEntry, positionFundingEntry, positionMap);<a name="line.76"></a>
+<FONT color="green">077</FONT>                reportSet.add(orgSynchronizationProblemsReportEntry);<a name="line.77"></a>
+<FONT color="green">078</FONT>            }<a name="line.78"></a>
+<FONT color="green">079</FONT>    <a name="line.79"></a>
+<FONT color="green">080</FONT>            return reportSet;<a name="line.80"></a>
+<FONT color="green">081</FONT>        }<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>        public void buildReportsHeader(Integer universityFiscalYear, BudgetConstructionOrgSynchronizationProblemsReport orgSynchronizationProblemsReportEntry, BudgetConstructionPositionFunding positionFunding) {<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>            String chartDesc = positionFunding.getSelectedOrganizationChartOfAccounts().getFinChartOfAccountDescription();<a name="line.86"></a>
+<FONT color="green">087</FONT>            String orgName = positionFunding.getSelectedOrganization().getOrganizationName();<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>            Integer prevFiscalyear = universityFiscalYear - 1;<a name="line.89"></a>
+<FONT color="green">090</FONT>            orgSynchronizationProblemsReportEntry.setChartOfAccountsCode(positionFunding.getSelectedOrganizationChartOfAccountsCode());<a name="line.90"></a>
+<FONT color="green">091</FONT>            orgSynchronizationProblemsReportEntry.setOrganizationCode(positionFunding.getSelectedOrganizationCode());<a name="line.91"></a>
+<FONT color="green">092</FONT>            if (chartDesc == null) {<a name="line.92"></a>
+<FONT color="green">093</FONT>                orgSynchronizationProblemsReportEntry.setChartOfAccountDescription(kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_CHART_DESCRIPTION));<a name="line.93"></a>
+<FONT color="green">094</FONT>            }<a name="line.94"></a>
+<FONT color="green">095</FONT>            else {<a name="line.95"></a>
+<FONT color="green">096</FONT>                orgSynchronizationProblemsReportEntry.setChartOfAccountDescription(chartDesc);<a name="line.96"></a>
+<FONT color="green">097</FONT>            }<a name="line.97"></a>
+<FONT color="green">098</FONT>            if (orgName == null) {<a name="line.98"></a>
+<FONT color="green">099</FONT>                orgSynchronizationProblemsReportEntry.setOrganizationName(kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_ORGANIZATION_NAME));<a name="line.99"></a>
+<FONT color="green">100</FONT>            }<a name="line.100"></a>
+<FONT color="green">101</FONT>            else {<a name="line.101"></a>
+<FONT color="green">102</FONT>                orgSynchronizationProblemsReportEntry.setOrganizationName(orgName);<a name="line.102"></a>
+<FONT color="green">103</FONT>            }<a name="line.103"></a>
+<FONT color="green">104</FONT>            orgSynchronizationProblemsReportEntry.setFiscalYear(prevFiscalyear.toString() + "-" + universityFiscalYear.toString().substring(2, 4));<a name="line.104"></a>
+<FONT color="green">105</FONT>        }<a name="line.105"></a>
+<FONT color="green">106</FONT>        <a name="line.106"></a>
+<FONT color="green">107</FONT>        <a name="line.107"></a>
+<FONT color="green">108</FONT>        public void buildReportsBody(BudgetConstructionOrgSynchronizationProblemsReport orgSynchronizationProblemsReportEntry, BudgetConstructionPositionFunding positionFunding, Map positionMap) {<a name="line.108"></a>
+<FONT color="green">109</FONT>            <a name="line.109"></a>
+<FONT color="green">110</FONT>            orgSynchronizationProblemsReportEntry.setBodyChartOfAccountsCode(positionFunding.getChartOfAccountsCode());<a name="line.110"></a>
+<FONT color="green">111</FONT>            orgSynchronizationProblemsReportEntry.setAccountNumber(positionFunding.getAccountNumber());<a name="line.111"></a>
+<FONT color="green">112</FONT>            orgSynchronizationProblemsReportEntry.setSubAccountNumber(positionFunding.getSubAccountNumber());<a name="line.112"></a>
+<FONT color="green">113</FONT>            orgSynchronizationProblemsReportEntry.setFinancialObjectCode(positionFunding.getFinancialObjectCode());<a name="line.113"></a>
+<FONT color="green">114</FONT>            orgSynchronizationProblemsReportEntry.setFinancialSubObjectCode(positionFunding.getFinancialSubObjectCode());<a name="line.114"></a>
+<FONT color="green">115</FONT>            orgSynchronizationProblemsReportEntry.setPositionNumber(positionFunding.getPositionNumber());<a name="line.115"></a>
+<FONT color="green">116</FONT>            orgSynchronizationProblemsReportEntry.setEmplid(positionFunding.getEmplid());<a name="line.116"></a>
+<FONT color="green">117</FONT>            orgSynchronizationProblemsReportEntry.setName(positionFunding.getName());<a name="line.117"></a>
+<FONT color="green">118</FONT>            <a name="line.118"></a>
+<FONT color="green">119</FONT>            orgSynchronizationProblemsReportEntry.setPositionObjectChangeIndicator(booleanToString(positionFunding.getPendingAppointmentFunding().isPositionObjectChangeIndicator()));<a name="line.119"></a>
+<FONT color="green">120</FONT>            orgSynchronizationProblemsReportEntry.setPositionSalaryChangeIndicator(booleanToString(positionFunding.getPendingAppointmentFunding().isPositionSalaryChangeIndicator()));<a name="line.120"></a>
+<FONT color="green">121</FONT>            <a name="line.121"></a>
+<FONT color="green">122</FONT>            BudgetConstructionPosition budgetConstructionPosition = (BudgetConstructionPosition) positionMap.get(positionFunding);<a name="line.122"></a>
+<FONT color="green">123</FONT>            orgSynchronizationProblemsReportEntry.setPositionEffectiveStatus(budgetConstructionPosition.getPositionEffectiveStatus());<a name="line.123"></a>
+<FONT color="green">124</FONT>            orgSynchronizationProblemsReportEntry.setBudgetedPosition(booleanToString(budgetConstructionPosition.isBudgetedPosition()));<a name="line.124"></a>
+<FONT color="green">125</FONT>        }<a name="line.125"></a>
+<FONT color="green">126</FONT>        <a name="line.126"></a>
+<FONT color="green">127</FONT>        protected String booleanToString(boolean boo){<a name="line.127"></a>
+<FONT color="green">128</FONT>            if (boo){<a name="line.128"></a>
+<FONT color="green">129</FONT>                return BCConstants.Report.YES;<a name="line.129"></a>
+<FONT color="green">130</FONT>            } else { return BCConstants.Report.NO; }<a name="line.130"></a>
+<FONT color="green">131</FONT>            <a name="line.131"></a>
+<FONT color="green">132</FONT>        }<a name="line.132"></a>
+<FONT color="green">133</FONT>        <a name="line.133"></a>
+<FONT color="green">134</FONT>        <a name="line.134"></a>
+<FONT color="green">135</FONT>        <a name="line.135"></a>
+<FONT color="green">136</FONT>        <a name="line.136"></a>
+<FONT color="green">137</FONT>        <a name="line.137"></a>
+<FONT color="green">138</FONT>        <a name="line.138"></a>
+<FONT color="green">139</FONT>        <a name="line.139"></a>
+<FONT color="green">140</FONT>        <a name="line.140"></a>
+<FONT color="green">141</FONT>        <a name="line.141"></a>
+<FONT color="green">142</FONT>        <a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>        protected BudgetConstructionPosition getBudgetConstructionPosition(Integer universityFiscalYear, PendingBudgetConstructionAppointmentFunding appointmentFundingEntry) {<a name="line.145"></a>
+<FONT color="green">146</FONT>            Map searchCriteria = new HashMap();<a name="line.146"></a>
+<FONT color="green">147</FONT>            searchCriteria.put(KFSPropertyConstants.POSITION_NUMBER, appointmentFundingEntry.getPositionNumber());<a name="line.147"></a>
+<FONT color="green">148</FONT>            searchCriteria.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, universityFiscalYear);<a name="line.148"></a>
+<FONT color="green">149</FONT>            return (BudgetConstructionPosition) businessObjectService.findByPrimaryKey(BudgetConstructionPosition.class, searchCriteria);<a name="line.149"></a>
+<FONT color="green">150</FONT>        }<a name="line.150"></a>
+<FONT color="green">151</FONT>    <a name="line.151"></a>
+<FONT color="green">152</FONT>    <a name="line.152"></a>
+<FONT color="green">153</FONT>        /**<a name="line.153"></a>
+<FONT color="green">154</FONT>         * builds orderByList for sort order.<a name="line.154"></a>
+<FONT color="green">155</FONT>         * <a name="line.155"></a>
+<FONT color="green">156</FONT>         * @return returnList<a name="line.156"></a>
+<FONT color="green">157</FONT>         */<a name="line.157"></a>
+<FONT color="green">158</FONT>        public List&lt;String&gt; buildOrderByList() {<a name="line.158"></a>
+<FONT color="green">159</FONT>            List&lt;String&gt; returnList = new ArrayList();<a name="line.159"></a>
+<FONT color="green">160</FONT>            returnList.add(KFSPropertyConstants.PERSON_UNIVERSAL_IDENTIFIER);<a name="line.160"></a>
+<FONT color="green">161</FONT>            returnList.add(KFSPropertyConstants.SELECTED_ORGANIZATION_CHART_OF_ACCOUNTS_CODE);<a name="line.161"></a>
+<FONT color="green">162</FONT>            returnList.add(KFSPropertyConstants.SELECTED_ORGANIZATION_CODE);<a name="line.162"></a>
+<FONT color="green">163</FONT>            returnList.add(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);<a name="line.163"></a>
+<FONT color="green">164</FONT>            returnList.add(KFSPropertyConstants.ACCOUNT_NUMBER);<a name="line.164"></a>
+<FONT color="green">165</FONT>            returnList.add(KFSPropertyConstants.SUB_ACCOUNT_NUMBER);<a name="line.165"></a>
+<FONT color="green">166</FONT>            returnList.add(KFSPropertyConstants.FINANCIAL_OBJECT_CODE);<a name="line.166"></a>
+<FONT color="green">167</FONT>            returnList.add(KFSPropertyConstants.FINANCIAL_SUB_OBJECT_CODE);<a name="line.167"></a>
+<FONT color="green">168</FONT>            returnList.add(KFSPropertyConstants.PERSON_NAME);<a name="line.168"></a>
+<FONT color="green">169</FONT>            returnList.add(KFSPropertyConstants.POSITION_NUMBER);<a name="line.169"></a>
+<FONT color="green">170</FONT>            return returnList;<a name="line.170"></a>
+<FONT color="green">171</FONT>        }<a name="line.171"></a>
+<FONT color="green">172</FONT>    <a name="line.172"></a>
+<FONT color="green">173</FONT>    <a name="line.173"></a>
+<FONT color="green">174</FONT>        public void setBudgetConstructionSynchronizationProblemsReportDao(BudgetConstructionSynchronizationProblemsReportDao budgetConstructionSynchronizationProblemsReportDao) {<a name="line.174"></a>
+<FONT color="green">175</FONT>            this.budgetConstructionSynchronizationProblemsReportDao = budgetConstructionSynchronizationProblemsReportDao;<a name="line.175"></a>
+<FONT color="green">176</FONT>        }<a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>        public void setBudgetConstructionOrganizationReportsService(BudgetConstructionOrganizationReportsService budgetConstructionOrganizationReportsService) {<a name="line.178"></a>
+<FONT color="green">179</FONT>            this.budgetConstructionOrganizationReportsService = budgetConstructionOrganizationReportsService;<a name="line.179"></a>
+<FONT color="green">180</FONT>        }<a name="line.180"></a>
+<FONT color="green">181</FONT>    <a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>        public void setBusinessObjectService(BusinessObjectService businessObjectService) {<a name="line.183"></a>
+<FONT color="green">184</FONT>            this.businessObjectService = businessObjectService;<a name="line.184"></a>
+<FONT color="green">185</FONT>        }<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>        public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {<a name="line.187"></a>
+<FONT color="green">188</FONT>            this.kualiConfigurationService = kualiConfigurationService;<a name="line.188"></a>
+<FONT color="green">189</FONT>        }<a name="line.189"></a>
+<FONT color="green">190</FONT>    <a name="line.190"></a>
+<FONT color="green">191</FONT>    }<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

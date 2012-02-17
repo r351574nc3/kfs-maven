@@ -1,0 +1,150 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.sys.spring.datadictionary;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import org.springframework.beans.factory.support.BeanDefinitionBuilder;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import org.springframework.beans.factory.xml.ParserContext;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.springframework.util.StringUtils;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.w3c.dom.Element;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    public class FieldBeanDefinitionParser extends KualiBeanDefinitionParserBase {<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>        @Override<a name="line.25"></a>
+<FONT color="green">026</FONT>        protected String getBaseBeanTypeParent(Element element) {<a name="line.26"></a>
+<FONT color="green">027</FONT>            return "FieldDefinition";<a name="line.27"></a>
+<FONT color="green">028</FONT>        }<a name="line.28"></a>
+<FONT color="green">029</FONT>        <a name="line.29"></a>
+<FONT color="green">030</FONT>        @Override<a name="line.30"></a>
+<FONT color="green">031</FONT>        protected void doParse(Element element, ParserContext context, BeanDefinitionBuilder bean) {<a name="line.31"></a>
+<FONT color="green">032</FONT>            // get all attributes<a name="line.32"></a>
+<FONT color="green">033</FONT>            String attributeName = element.getAttribute("attributeName");<a name="line.33"></a>
+<FONT color="green">034</FONT>            String required = element.getAttribute("required");<a name="line.34"></a>
+<FONT color="green">035</FONT>            String inquiry = element.getAttribute("inquiry");<a name="line.35"></a>
+<FONT color="green">036</FONT>            String lookup = element.getAttribute("lookup");<a name="line.36"></a>
+<FONT color="green">037</FONT>            String defaultValue = element.getAttribute("defaultValue");<a name="line.37"></a>
+<FONT color="green">038</FONT>            String defaultValueFinderClass = element.getAttribute("defaultValueFinderClass");<a name="line.38"></a>
+<FONT color="green">039</FONT>            String maxLength = element.getAttribute("maxLength");<a name="line.39"></a>
+<FONT color="green">040</FONT>            String useShortLabel = element.getAttribute("useShortLabel");<a name="line.40"></a>
+<FONT color="green">041</FONT>            String hidden = element.getAttribute("hidden");<a name="line.41"></a>
+<FONT color="green">042</FONT>            String readOnly = element.getAttribute("readOnly");<a name="line.42"></a>
+<FONT color="green">043</FONT>            <a name="line.43"></a>
+<FONT color="green">044</FONT>            // now, set on the bean definition<a name="line.44"></a>
+<FONT color="green">045</FONT>            if ( StringUtils.hasText(attributeName) ) {<a name="line.45"></a>
+<FONT color="green">046</FONT>                bean.addPropertyValue("attributeName", attributeName);<a name="line.46"></a>
+<FONT color="green">047</FONT>            }<a name="line.47"></a>
+<FONT color="green">048</FONT>            if ( StringUtils.hasText(required) ) {<a name="line.48"></a>
+<FONT color="green">049</FONT>                bean.addPropertyValue("required", Boolean.parseBoolean(required));<a name="line.49"></a>
+<FONT color="green">050</FONT>            }<a name="line.50"></a>
+<FONT color="green">051</FONT>            if ( StringUtils.hasText(defaultValue) ) {<a name="line.51"></a>
+<FONT color="green">052</FONT>                bean.addPropertyValue("defaultValue", defaultValue);<a name="line.52"></a>
+<FONT color="green">053</FONT>            } else if ( StringUtils.hasText(defaultValueFinderClass) ) {<a name="line.53"></a>
+<FONT color="green">054</FONT>                bean.addPropertyValue("defaultValueFinderClass", defaultValueFinderClass);<a name="line.54"></a>
+<FONT color="green">055</FONT>            }<a name="line.55"></a>
+<FONT color="green">056</FONT>            if ( StringUtils.hasText(maxLength) ) {<a name="line.56"></a>
+<FONT color="green">057</FONT>                bean.addPropertyValue("maxLength", Integer.parseInt(maxLength));<a name="line.57"></a>
+<FONT color="green">058</FONT>            }<a name="line.58"></a>
+<FONT color="green">059</FONT>            if ( inquiry.equals( "no" ) ) {<a name="line.59"></a>
+<FONT color="green">060</FONT>                bean.addPropertyValue("noInquiry", Boolean.TRUE);<a name="line.60"></a>
+<FONT color="green">061</FONT>            } else if ( inquiry.equals( "force" ) ) {<a name="line.61"></a>
+<FONT color="green">062</FONT>                bean.addPropertyValue("forceInquiry", Boolean.TRUE);<a name="line.62"></a>
+<FONT color="green">063</FONT>            }<a name="line.63"></a>
+<FONT color="green">064</FONT>            if ( lookup.equals( "no" ) ) {<a name="line.64"></a>
+<FONT color="green">065</FONT>                bean.addPropertyValue("noLookup", Boolean.TRUE);<a name="line.65"></a>
+<FONT color="green">066</FONT>            } else if ( lookup.equals( "force" ) ) {<a name="line.66"></a>
+<FONT color="green">067</FONT>                bean.addPropertyValue("forceLookup", Boolean.TRUE);<a name="line.67"></a>
+<FONT color="green">068</FONT>            }<a name="line.68"></a>
+<FONT color="green">069</FONT>            if ( StringUtils.hasText(useShortLabel) ) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                bean.addPropertyValue("useShortLabel", Boolean.parseBoolean(useShortLabel));<a name="line.70"></a>
+<FONT color="green">071</FONT>            }<a name="line.71"></a>
+<FONT color="green">072</FONT>            if ( StringUtils.hasText(hidden)) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                bean.addPropertyValue("hidden", Boolean.parseBoolean(hidden));<a name="line.73"></a>
+<FONT color="green">074</FONT>            }<a name="line.74"></a>
+<FONT color="green">075</FONT>            if ( StringUtils.hasText(readOnly)) {<a name="line.75"></a>
+<FONT color="green">076</FONT>                bean.addPropertyValue("readOnly", Boolean.parseBoolean(readOnly));<a name="line.76"></a>
+<FONT color="green">077</FONT>            }<a name="line.77"></a>
+<FONT color="green">078</FONT>            <a name="line.78"></a>
+<FONT color="green">079</FONT>            // handle any other simple child properties<a name="line.79"></a>
+<FONT color="green">080</FONT>            parseEmbeddedPropertyElements(element, bean);<a name="line.80"></a>
+<FONT color="green">081</FONT>        }<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>        <a name="line.83"></a>
+<FONT color="green">084</FONT>    }<a name="line.84"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

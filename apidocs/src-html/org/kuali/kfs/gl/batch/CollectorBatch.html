@@ -1,0 +1,799 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.gl.batch;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.io.BufferedReader;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.io.FileReader;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.io.IOException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.io.PrintStream;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.sql.Date;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.text.SimpleDateFormat;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.ArrayList;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.LinkedHashMap;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.util.List;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.util.Map;<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.apache.commons.io.IOUtils;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.coa.businessobject.Chart;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.coa.businessobject.Organization;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.gl.GeneralLedgerConstants;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.gl.batch.service.RunDateService;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.gl.batch.service.impl.OriginEntryTotals;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.gl.businessobject.CollectorDetail;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.kfs.gl.businessobject.CollectorHeader;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.kfs.gl.businessobject.OriginEntryFull;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.kfs.gl.businessobject.OriginEntryGroup;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.kfs.gl.businessobject.OriginEntrySource;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.kfs.gl.report.CollectorReportData;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.kuali.kfs.gl.service.CollectorDetailService;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import org.kuali.kfs.sys.KFSKeyConstants;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import org.kuali.kfs.sys.ObjectUtil;<a name="line.46"></a>
+<FONT color="green">047</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.47"></a>
+<FONT color="green">048</FONT>    import org.kuali.kfs.sys.exception.ParseException;<a name="line.48"></a>
+<FONT color="green">049</FONT>    import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;<a name="line.49"></a>
+<FONT color="green">050</FONT>    import org.kuali.rice.kns.service.BusinessObjectDictionaryService;<a name="line.50"></a>
+<FONT color="green">051</FONT>    import org.kuali.rice.kns.service.BusinessObjectService;<a name="line.51"></a>
+<FONT color="green">052</FONT>    import org.kuali.rice.kns.service.DataDictionaryService;<a name="line.52"></a>
+<FONT color="green">053</FONT>    import org.kuali.rice.kns.service.DateTimeService;<a name="line.53"></a>
+<FONT color="green">054</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.54"></a>
+<FONT color="green">055</FONT>    import org.kuali.rice.kns.util.MessageMap;<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>    /**<a name="line.57"></a>
+<FONT color="green">058</FONT>     * Object representation of collector xml input.<a name="line.58"></a>
+<FONT color="green">059</FONT>     */<a name="line.59"></a>
+<FONT color="green">060</FONT>    public class CollectorBatch extends PersistableBusinessObjectBase {<a name="line.60"></a>
+<FONT color="green">061</FONT>        // way to distinguish this batch from others<a name="line.61"></a>
+<FONT color="green">062</FONT>        private String batchName;<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>        // common field for header records and trailer records<a name="line.64"></a>
+<FONT color="green">065</FONT>        private String universityFiscalYear;<a name="line.65"></a>
+<FONT color="green">066</FONT>        private String chartOfAccountsCode;<a name="line.66"></a>
+<FONT color="green">067</FONT>        private String organizationCode;<a name="line.67"></a>
+<FONT color="green">068</FONT>        private Date transmissionDate;<a name="line.68"></a>
+<FONT color="green">069</FONT>        private String recordType;<a name="line.69"></a>
+<FONT color="green">070</FONT>        <a name="line.70"></a>
+<FONT color="green">071</FONT>        // header record additional fields<a name="line.71"></a>
+<FONT color="green">072</FONT>        private String personUserID;<a name="line.72"></a>
+<FONT color="green">073</FONT>        private Integer batchSequenceNumber;<a name="line.73"></a>
+<FONT color="green">074</FONT>        private String emailAddress;<a name="line.74"></a>
+<FONT color="green">075</FONT>        private String campusCode;<a name="line.75"></a>
+<FONT color="green">076</FONT>        private String phoneNumber;<a name="line.76"></a>
+<FONT color="green">077</FONT>        private String mailingAddress;<a name="line.77"></a>
+<FONT color="green">078</FONT>        private String departmentName;<a name="line.78"></a>
+<FONT color="green">079</FONT>    <a name="line.79"></a>
+<FONT color="green">080</FONT>        private List&lt;OriginEntryFull&gt; originEntries;<a name="line.80"></a>
+<FONT color="green">081</FONT>        private List&lt;CollectorDetail&gt; collectorDetails;<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>        // trailer records<a name="line.83"></a>
+<FONT color="green">084</FONT>        private String firstEmptyField; //first,second,third Empty Fields are dummy fields to read the spaces in the file using dd<a name="line.84"></a>
+<FONT color="green">085</FONT>        private String secondEmptyField;<a name="line.85"></a>
+<FONT color="green">086</FONT>        private Integer totalRecords;<a name="line.86"></a>
+<FONT color="green">087</FONT>        private KualiDecimal totalAmount;<a name="line.87"></a>
+<FONT color="green">088</FONT>        <a name="line.88"></a>
+<FONT color="green">089</FONT>        private MessageMap messageMap;<a name="line.89"></a>
+<FONT color="green">090</FONT>        private OriginEntryTotals originEntryTotals;<a name="line.90"></a>
+<FONT color="green">091</FONT>        <a name="line.91"></a>
+<FONT color="green">092</FONT>        private boolean headerlessBatch;<a name="line.92"></a>
+<FONT color="green">093</FONT>        <a name="line.93"></a>
+<FONT color="green">094</FONT>        private static CollectorBatchHeaderFieldUtil collectorBatchHeaderFieldUtil;<a name="line.94"></a>
+<FONT color="green">095</FONT>        private static CollectorBatchTrailerRecordFieldUtil collectorBatchTrailerRecordFieldUtil;<a name="line.95"></a>
+<FONT color="green">096</FONT>        <a name="line.96"></a>
+<FONT color="green">097</FONT>        /**<a name="line.97"></a>
+<FONT color="green">098</FONT>         * Constructs a CollectorBatch<a name="line.98"></a>
+<FONT color="green">099</FONT>         */<a name="line.99"></a>
+<FONT color="green">100</FONT>        public CollectorBatch() {<a name="line.100"></a>
+<FONT color="green">101</FONT>            originEntries = new ArrayList();<a name="line.101"></a>
+<FONT color="green">102</FONT>            collectorDetails = new ArrayList();<a name="line.102"></a>
+<FONT color="green">103</FONT>            messageMap = new MessageMap();<a name="line.103"></a>
+<FONT color="green">104</FONT>            originEntryTotals = null;<a name="line.104"></a>
+<FONT color="green">105</FONT>            totalRecords = 0;<a name="line.105"></a>
+<FONT color="green">106</FONT>            headerlessBatch = false;<a name="line.106"></a>
+<FONT color="green">107</FONT>        }<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>        /**<a name="line.109"></a>
+<FONT color="green">110</FONT>         * Gets the universityFiscalYear attribute. <a name="line.110"></a>
+<FONT color="green">111</FONT>         */<a name="line.111"></a>
+<FONT color="green">112</FONT>        public String getUniversityFiscalYear() {<a name="line.112"></a>
+<FONT color="green">113</FONT>            return universityFiscalYear;<a name="line.113"></a>
+<FONT color="green">114</FONT>        }<a name="line.114"></a>
+<FONT color="green">115</FONT>        <a name="line.115"></a>
+<FONT color="green">116</FONT>        /**<a name="line.116"></a>
+<FONT color="green">117</FONT>         * Sets the universityFiscalYear attribute<a name="line.117"></a>
+<FONT color="green">118</FONT>         */<a name="line.118"></a>
+<FONT color="green">119</FONT>        public void setUniversityFiscalYear(String universityFiscalYear) {<a name="line.119"></a>
+<FONT color="green">120</FONT>            this.universityFiscalYear = universityFiscalYear;<a name="line.120"></a>
+<FONT color="green">121</FONT>        }<a name="line.121"></a>
+<FONT color="green">122</FONT>        <a name="line.122"></a>
+<FONT color="green">123</FONT>        /**<a name="line.123"></a>
+<FONT color="green">124</FONT>         * Gets the batchSequenceNumber attribute.<a name="line.124"></a>
+<FONT color="green">125</FONT>         */<a name="line.125"></a>
+<FONT color="green">126</FONT>        public Integer getBatchSequenceNumber() {<a name="line.126"></a>
+<FONT color="green">127</FONT>            return batchSequenceNumber;<a name="line.127"></a>
+<FONT color="green">128</FONT>        }<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>        /**<a name="line.130"></a>
+<FONT color="green">131</FONT>         * Sets the batchSequenceNumber attribute value.<a name="line.131"></a>
+<FONT color="green">132</FONT>         */<a name="line.132"></a>
+<FONT color="green">133</FONT>        public void setBatchSequenceNumber(Integer batchSequenceNumber) {<a name="line.133"></a>
+<FONT color="green">134</FONT>            this.batchSequenceNumber = batchSequenceNumber;<a name="line.134"></a>
+<FONT color="green">135</FONT>        }<a name="line.135"></a>
+<FONT color="green">136</FONT>    <a name="line.136"></a>
+<FONT color="green">137</FONT>        /**<a name="line.137"></a>
+<FONT color="green">138</FONT>         * Gets the chartOfAccountsCode attribute.<a name="line.138"></a>
+<FONT color="green">139</FONT>         */<a name="line.139"></a>
+<FONT color="green">140</FONT>        public String getChartOfAccountsCode() {<a name="line.140"></a>
+<FONT color="green">141</FONT>            return chartOfAccountsCode;<a name="line.141"></a>
+<FONT color="green">142</FONT>        }<a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>        /**<a name="line.144"></a>
+<FONT color="green">145</FONT>         * Sets the chartOfAccountsCode attribute value.<a name="line.145"></a>
+<FONT color="green">146</FONT>         */<a name="line.146"></a>
+<FONT color="green">147</FONT>        public void setChartOfAccountsCode(String chartOfAccountsCode) {<a name="line.147"></a>
+<FONT color="green">148</FONT>            this.chartOfAccountsCode = chartOfAccountsCode;<a name="line.148"></a>
+<FONT color="green">149</FONT>        }<a name="line.149"></a>
+<FONT color="green">150</FONT>    <a name="line.150"></a>
+<FONT color="green">151</FONT>        /**<a name="line.151"></a>
+<FONT color="green">152</FONT>         * Gets the organizationCode attribute.<a name="line.152"></a>
+<FONT color="green">153</FONT>         */<a name="line.153"></a>
+<FONT color="green">154</FONT>        public String getOrganizationCode() {<a name="line.154"></a>
+<FONT color="green">155</FONT>            return organizationCode;<a name="line.155"></a>
+<FONT color="green">156</FONT>        }<a name="line.156"></a>
+<FONT color="green">157</FONT>    <a name="line.157"></a>
+<FONT color="green">158</FONT>        /**<a name="line.158"></a>
+<FONT color="green">159</FONT>         * Sets the organizationCode attribute value.<a name="line.159"></a>
+<FONT color="green">160</FONT>         */<a name="line.160"></a>
+<FONT color="green">161</FONT>        public void setOrganizationCode(String organizationCode) {<a name="line.161"></a>
+<FONT color="green">162</FONT>            this.organizationCode = organizationCode;<a name="line.162"></a>
+<FONT color="green">163</FONT>        }<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>        /**<a name="line.165"></a>
+<FONT color="green">166</FONT>         * Gets the totalAmount attribute.<a name="line.166"></a>
+<FONT color="green">167</FONT>         */<a name="line.167"></a>
+<FONT color="green">168</FONT>        public KualiDecimal getTotalAmount() {<a name="line.168"></a>
+<FONT color="green">169</FONT>            return totalAmount;<a name="line.169"></a>
+<FONT color="green">170</FONT>        }<a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>        /**<a name="line.172"></a>
+<FONT color="green">173</FONT>         * Sets the totalAmount attribute value.<a name="line.173"></a>
+<FONT color="green">174</FONT>         */<a name="line.174"></a>
+<FONT color="green">175</FONT>        public void setTotalAmount(KualiDecimal totalAmount) {<a name="line.175"></a>
+<FONT color="green">176</FONT>            this.totalAmount = totalAmount;<a name="line.176"></a>
+<FONT color="green">177</FONT>        }<a name="line.177"></a>
+<FONT color="green">178</FONT>    <a name="line.178"></a>
+<FONT color="green">179</FONT>        /**<a name="line.179"></a>
+<FONT color="green">180</FONT>         * Sets the total amount from the String.<a name="line.180"></a>
+<FONT color="green">181</FONT>         */<a name="line.181"></a>
+<FONT color="green">182</FONT>        public void setTotalAmount(String totalAmount) {<a name="line.182"></a>
+<FONT color="green">183</FONT>            this.totalAmount = new KualiDecimal(totalAmount);<a name="line.183"></a>
+<FONT color="green">184</FONT>        }<a name="line.184"></a>
+<FONT color="green">185</FONT>    <a name="line.185"></a>
+<FONT color="green">186</FONT>        /**<a name="line.186"></a>
+<FONT color="green">187</FONT>         * Sets the total amount field to null.<a name="line.187"></a>
+<FONT color="green">188</FONT>         */<a name="line.188"></a>
+<FONT color="green">189</FONT>        public void clearTotalAmount() {<a name="line.189"></a>
+<FONT color="green">190</FONT>            this.totalAmount = null;<a name="line.190"></a>
+<FONT color="green">191</FONT>        }<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>        /**<a name="line.193"></a>
+<FONT color="green">194</FONT>         * Gets the secondEmptyField attribute<a name="line.194"></a>
+<FONT color="green">195</FONT>         */<a name="line.195"></a>
+<FONT color="green">196</FONT>        public String getSecondEmptyField() {<a name="line.196"></a>
+<FONT color="green">197</FONT>            return secondEmptyField;<a name="line.197"></a>
+<FONT color="green">198</FONT>        }<a name="line.198"></a>
+<FONT color="green">199</FONT>        <a name="line.199"></a>
+<FONT color="green">200</FONT>        /**<a name="line.200"></a>
+<FONT color="green">201</FONT>         * Sets the secondEmptyField attribute<a name="line.201"></a>
+<FONT color="green">202</FONT>         */<a name="line.202"></a>
+<FONT color="green">203</FONT>        public void setSecondEmptyField(String secondEmptyField) {<a name="line.203"></a>
+<FONT color="green">204</FONT>            this.secondEmptyField = secondEmptyField;<a name="line.204"></a>
+<FONT color="green">205</FONT>        }<a name="line.205"></a>
+<FONT color="green">206</FONT>        <a name="line.206"></a>
+<FONT color="green">207</FONT>        /**<a name="line.207"></a>
+<FONT color="green">208</FONT>         * Gets the firstEmptyField attribute<a name="line.208"></a>
+<FONT color="green">209</FONT>         */<a name="line.209"></a>
+<FONT color="green">210</FONT>        public String getFirstEmptyField() {<a name="line.210"></a>
+<FONT color="green">211</FONT>            return firstEmptyField;<a name="line.211"></a>
+<FONT color="green">212</FONT>        }<a name="line.212"></a>
+<FONT color="green">213</FONT>        <a name="line.213"></a>
+<FONT color="green">214</FONT>        /**<a name="line.214"></a>
+<FONT color="green">215</FONT>         * Sets the firstEmptyField attribute<a name="line.215"></a>
+<FONT color="green">216</FONT>         */<a name="line.216"></a>
+<FONT color="green">217</FONT>        public void setFirstEmptyField(String firstEmptyField) {<a name="line.217"></a>
+<FONT color="green">218</FONT>            this.firstEmptyField = firstEmptyField;<a name="line.218"></a>
+<FONT color="green">219</FONT>        }<a name="line.219"></a>
+<FONT color="green">220</FONT>    <a name="line.220"></a>
+<FONT color="green">221</FONT>        /**<a name="line.221"></a>
+<FONT color="green">222</FONT>         * Gets the totalRecords attribute.<a name="line.222"></a>
+<FONT color="green">223</FONT>         */<a name="line.223"></a>
+<FONT color="green">224</FONT>        public Integer getTotalRecords() {<a name="line.224"></a>
+<FONT color="green">225</FONT>            return totalRecords;<a name="line.225"></a>
+<FONT color="green">226</FONT>        }<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>        /**<a name="line.228"></a>
+<FONT color="green">229</FONT>         * Sets the totalRecords attribute value.<a name="line.229"></a>
+<FONT color="green">230</FONT>         */<a name="line.230"></a>
+<FONT color="green">231</FONT>        public void setTotalRecords(Integer totalRecords) {<a name="line.231"></a>
+<FONT color="green">232</FONT>            this.totalRecords = totalRecords;<a name="line.232"></a>
+<FONT color="green">233</FONT>        }<a name="line.233"></a>
+<FONT color="green">234</FONT>    <a name="line.234"></a>
+<FONT color="green">235</FONT>        /**<a name="line.235"></a>
+<FONT color="green">236</FONT>         * Gets the transmissionDate attribute.<a name="line.236"></a>
+<FONT color="green">237</FONT>         */<a name="line.237"></a>
+<FONT color="green">238</FONT>        public Date getTransmissionDate() {<a name="line.238"></a>
+<FONT color="green">239</FONT>            return transmissionDate;<a name="line.239"></a>
+<FONT color="green">240</FONT>        }<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>        /**<a name="line.242"></a>
+<FONT color="green">243</FONT>         * Sets the transmissionDate attribute value.<a name="line.243"></a>
+<FONT color="green">244</FONT>         */<a name="line.244"></a>
+<FONT color="green">245</FONT>        public void setTransmissionDate(Date transmissionDate) {<a name="line.245"></a>
+<FONT color="green">246</FONT>            this.transmissionDate = transmissionDate;<a name="line.246"></a>
+<FONT color="green">247</FONT>        }<a name="line.247"></a>
+<FONT color="green">248</FONT>    <a name="line.248"></a>
+<FONT color="green">249</FONT>        /**<a name="line.249"></a>
+<FONT color="green">250</FONT>         * Gets the recordType attribute.<a name="line.250"></a>
+<FONT color="green">251</FONT>         */<a name="line.251"></a>
+<FONT color="green">252</FONT>        public String getRecordType() {<a name="line.252"></a>
+<FONT color="green">253</FONT>            return recordType;<a name="line.253"></a>
+<FONT color="green">254</FONT>        }<a name="line.254"></a>
+<FONT color="green">255</FONT>        <a name="line.255"></a>
+<FONT color="green">256</FONT>        /**<a name="line.256"></a>
+<FONT color="green">257</FONT>         * Sets the recordType attribute.<a name="line.257"></a>
+<FONT color="green">258</FONT>         */<a name="line.258"></a>
+<FONT color="green">259</FONT>        public void setRecordType(String recordType) {<a name="line.259"></a>
+<FONT color="green">260</FONT>            this.recordType = recordType;<a name="line.260"></a>
+<FONT color="green">261</FONT>        }<a name="line.261"></a>
+<FONT color="green">262</FONT>            <a name="line.262"></a>
+<FONT color="green">263</FONT>        /**<a name="line.263"></a>
+<FONT color="green">264</FONT>         * Gets the emailAddress attribute.<a name="line.264"></a>
+<FONT color="green">265</FONT>         */<a name="line.265"></a>
+<FONT color="green">266</FONT>        public String getEmailAddress() {<a name="line.266"></a>
+<FONT color="green">267</FONT>            return emailAddress;<a name="line.267"></a>
+<FONT color="green">268</FONT>        }<a name="line.268"></a>
+<FONT color="green">269</FONT>    <a name="line.269"></a>
+<FONT color="green">270</FONT>        /**<a name="line.270"></a>
+<FONT color="green">271</FONT>         * Sets the emailAddress attribute value.<a name="line.271"></a>
+<FONT color="green">272</FONT>         */<a name="line.272"></a>
+<FONT color="green">273</FONT>        public void setEmailAddress(String emailAddress) {<a name="line.273"></a>
+<FONT color="green">274</FONT>            this.emailAddress = emailAddress;<a name="line.274"></a>
+<FONT color="green">275</FONT>        }<a name="line.275"></a>
+<FONT color="green">276</FONT>    <a name="line.276"></a>
+<FONT color="green">277</FONT>        /**<a name="line.277"></a>
+<FONT color="green">278</FONT>         * Gets the personUserID attribute.<a name="line.278"></a>
+<FONT color="green">279</FONT>         */<a name="line.279"></a>
+<FONT color="green">280</FONT>        public String getPersonUserID() {<a name="line.280"></a>
+<FONT color="green">281</FONT>            return personUserID;<a name="line.281"></a>
+<FONT color="green">282</FONT>        }<a name="line.282"></a>
+<FONT color="green">283</FONT>    <a name="line.283"></a>
+<FONT color="green">284</FONT>        /**<a name="line.284"></a>
+<FONT color="green">285</FONT>         * Sets the personUserID attribute value.<a name="line.285"></a>
+<FONT color="green">286</FONT>         */<a name="line.286"></a>
+<FONT color="green">287</FONT>        public void setPersonUserID(String personUserID) {<a name="line.287"></a>
+<FONT color="green">288</FONT>            this.personUserID = personUserID;<a name="line.288"></a>
+<FONT color="green">289</FONT>        }<a name="line.289"></a>
+<FONT color="green">290</FONT>    <a name="line.290"></a>
+<FONT color="green">291</FONT>        /**<a name="line.291"></a>
+<FONT color="green">292</FONT>         * Gets the idBillings attribute.<a name="line.292"></a>
+<FONT color="green">293</FONT>         */<a name="line.293"></a>
+<FONT color="green">294</FONT>        public List&lt;CollectorDetail&gt; getCollectorDetails() {<a name="line.294"></a>
+<FONT color="green">295</FONT>            return collectorDetails;<a name="line.295"></a>
+<FONT color="green">296</FONT>        }<a name="line.296"></a>
+<FONT color="green">297</FONT>    <a name="line.297"></a>
+<FONT color="green">298</FONT>        /**<a name="line.298"></a>
+<FONT color="green">299</FONT>         * Sets the idBillings attribute value.<a name="line.299"></a>
+<FONT color="green">300</FONT>         */<a name="line.300"></a>
+<FONT color="green">301</FONT>        public void setCollectorDetails(List&lt;CollectorDetail&gt; idDetails) {<a name="line.301"></a>
+<FONT color="green">302</FONT>            this.collectorDetails = idDetails;<a name="line.302"></a>
+<FONT color="green">303</FONT>        }<a name="line.303"></a>
+<FONT color="green">304</FONT>    <a name="line.304"></a>
+<FONT color="green">305</FONT>        /**<a name="line.305"></a>
+<FONT color="green">306</FONT>         * Gets the originEntries attribute.<a name="line.306"></a>
+<FONT color="green">307</FONT>         */<a name="line.307"></a>
+<FONT color="green">308</FONT>        public List&lt;OriginEntryFull&gt; getOriginEntries() {<a name="line.308"></a>
+<FONT color="green">309</FONT>            return originEntries;<a name="line.309"></a>
+<FONT color="green">310</FONT>        }<a name="line.310"></a>
+<FONT color="green">311</FONT>    <a name="line.311"></a>
+<FONT color="green">312</FONT>        /**<a name="line.312"></a>
+<FONT color="green">313</FONT>         * Sets the originEntries attribute value.<a name="line.313"></a>
+<FONT color="green">314</FONT>         */<a name="line.314"></a>
+<FONT color="green">315</FONT>        public void setOriginEntries(List&lt;OriginEntryFull&gt; batchOriginEntry) {<a name="line.315"></a>
+<FONT color="green">316</FONT>            this.originEntries = batchOriginEntry;<a name="line.316"></a>
+<FONT color="green">317</FONT>        }<a name="line.317"></a>
+<FONT color="green">318</FONT>    <a name="line.318"></a>
+<FONT color="green">319</FONT>        /**<a name="line.319"></a>
+<FONT color="green">320</FONT>         * Adds a processed origin entry to the list.<a name="line.320"></a>
+<FONT color="green">321</FONT>         */<a name="line.321"></a>
+<FONT color="green">322</FONT>        public void addOriginEntry(OriginEntryFull orginEntry) {<a name="line.322"></a>
+<FONT color="green">323</FONT>            this.originEntries.add(orginEntry);<a name="line.323"></a>
+<FONT color="green">324</FONT>        }<a name="line.324"></a>
+<FONT color="green">325</FONT>    <a name="line.325"></a>
+<FONT color="green">326</FONT>        /**<a name="line.326"></a>
+<FONT color="green">327</FONT>         * Adds a processed id billing to the list.<a name="line.327"></a>
+<FONT color="green">328</FONT>         */<a name="line.328"></a>
+<FONT color="green">329</FONT>        public void addCollectorDetail(CollectorDetail collectorDetail) {<a name="line.329"></a>
+<FONT color="green">330</FONT>            this.collectorDetails.add(collectorDetail);<a name="line.330"></a>
+<FONT color="green">331</FONT>        }<a name="line.331"></a>
+<FONT color="green">332</FONT>    <a name="line.332"></a>
+<FONT color="green">333</FONT>        /**<a name="line.333"></a>
+<FONT color="green">334</FONT>         * Attempts to retrieve a collector header already exists with the primary key values given for this object<a name="line.334"></a>
+<FONT color="green">335</FONT>         * <a name="line.335"></a>
+<FONT color="green">336</FONT>         * @return the CollectorHeader found in the database<a name="line.336"></a>
+<FONT color="green">337</FONT>         */<a name="line.337"></a>
+<FONT color="green">338</FONT>        public CollectorHeader retrieveDuplicateHeader() {<a name="line.338"></a>
+<FONT color="green">339</FONT>            // checkHeader is used to check whether a record with the same PK values exist already (i.e. only PK values are filled in).<a name="line.339"></a>
+<FONT color="green">340</FONT>            CollectorHeader checkHeader = createCollectorHeaderWithPKValuesOnly();<a name="line.340"></a>
+<FONT color="green">341</FONT>    <a name="line.341"></a>
+<FONT color="green">342</FONT>            CollectorHeader foundHeader = (CollectorHeader) SpringContext.getBean(BusinessObjectService.class).retrieve(checkHeader);<a name="line.342"></a>
+<FONT color="green">343</FONT>            return foundHeader;<a name="line.343"></a>
+<FONT color="green">344</FONT>        }<a name="line.344"></a>
+<FONT color="green">345</FONT>    <a name="line.345"></a>
+<FONT color="green">346</FONT>        /**<a name="line.346"></a>
+<FONT color="green">347</FONT>         * Sets defaults for fields not populated from file. Store an origin entry group, all gl entries and id billing entries from the<a name="line.347"></a>
+<FONT color="green">348</FONT>         * processed file. Also write the header for the duplicate file check.<a name="line.348"></a>
+<FONT color="green">349</FONT>         * <a name="line.349"></a>
+<FONT color="green">350</FONT>         * @param originEntryGroup the group into which to store the origin entries<a name="line.350"></a>
+<FONT color="green">351</FONT>         * @param collectorReportData report data<a name="line.351"></a>
+<FONT color="green">352</FONT>         */<a name="line.352"></a>
+<FONT color="green">353</FONT>        public void setDefaultsAndStore(CollectorReportData collectorReportData, String demergerOutputFileName, PrintStream originEntryOutputPs) {<a name="line.353"></a>
+<FONT color="green">354</FONT>            BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);  <a name="line.354"></a>
+<FONT color="green">355</FONT>            CollectorDetailService collectorDetailService = SpringContext.getBean(CollectorDetailService.class);<a name="line.355"></a>
+<FONT color="green">356</FONT>            <a name="line.356"></a>
+<FONT color="green">357</FONT>            // persistHeader is used to persist a collector header record into the DB<a name="line.357"></a>
+<FONT color="green">358</FONT>            CollectorHeader persistHeader = createCollectorHeaderForStorage();<a name="line.358"></a>
+<FONT color="green">359</FONT>            CollectorHeader foundHeader = retrieveDuplicateHeader();<a name="line.359"></a>
+<FONT color="green">360</FONT>    <a name="line.360"></a>
+<FONT color="green">361</FONT>            if (foundHeader != null) {<a name="line.361"></a>
+<FONT color="green">362</FONT>                // update the version number to prevent OptimisticLockingExceptions<a name="line.362"></a>
+<FONT color="green">363</FONT>                persistHeader.setVersionNumber(foundHeader.getVersionNumber());<a name="line.363"></a>
+<FONT color="green">364</FONT>            }<a name="line.364"></a>
+<FONT color="green">365</FONT>            businessObjectService.save(persistHeader);<a name="line.365"></a>
+<FONT color="green">366</FONT>                  <a name="line.366"></a>
+<FONT color="green">367</FONT>            // store origin entries by using the demerger output file<a name="line.367"></a>
+<FONT color="green">368</FONT>            <a name="line.368"></a>
+<FONT color="green">369</FONT>            BufferedReader inputFileReader = null;<a name="line.369"></a>
+<FONT color="green">370</FONT>            try {<a name="line.370"></a>
+<FONT color="green">371</FONT>                inputFileReader = new BufferedReader(new FileReader(demergerOutputFileName));<a name="line.371"></a>
+<FONT color="green">372</FONT>                String line = null;<a name="line.372"></a>
+<FONT color="green">373</FONT>                while ((line = inputFileReader.readLine()) != null) {<a name="line.373"></a>
+<FONT color="green">374</FONT>                    originEntryOutputPs.printf("%s\n", line);<a name="line.374"></a>
+<FONT color="green">375</FONT>                }<a name="line.375"></a>
+<FONT color="green">376</FONT>            }<a name="line.376"></a>
+<FONT color="green">377</FONT>            catch (IOException e) {<a name="line.377"></a>
+<FONT color="green">378</FONT>                throw new RuntimeException("IO Error encountered trying to persist collector batch.", e);<a name="line.378"></a>
+<FONT color="green">379</FONT>            }<a name="line.379"></a>
+<FONT color="green">380</FONT>            finally {<a name="line.380"></a>
+<FONT color="green">381</FONT>                IOUtils.closeQuietly(inputFileReader);<a name="line.381"></a>
+<FONT color="green">382</FONT>                inputFileReader = null;<a name="line.382"></a>
+<FONT color="green">383</FONT>            }  <a name="line.383"></a>
+<FONT color="green">384</FONT>            Date nowDate  = new Date(SpringContext.getBean(DateTimeService.class).getCurrentDate().getTime());<a name="line.384"></a>
+<FONT color="green">385</FONT>            RunDateService runDateService = SpringContext.getBean(RunDateService.class);<a name="line.385"></a>
+<FONT color="green">386</FONT>            Date createDate = new java.sql.Date((runDateService.calculateRunDate(nowDate).getTime()));<a name="line.386"></a>
+<FONT color="green">387</FONT>            <a name="line.387"></a>
+<FONT color="green">388</FONT>            Integer sequenceNumber = new Integer(0);<a name="line.388"></a>
+<FONT color="green">389</FONT>            Integer nextSequence = collectorDetailService.getNextCreateSequence(createDate);<a name="line.389"></a>
+<FONT color="green">390</FONT>            if (nextSequence != null) {<a name="line.390"></a>
+<FONT color="green">391</FONT>                sequenceNumber = nextSequence;<a name="line.391"></a>
+<FONT color="green">392</FONT>            }<a name="line.392"></a>
+<FONT color="green">393</FONT>            int countOfdetails = collectorDetails.size();<a name="line.393"></a>
+<FONT color="green">394</FONT>            for (int numSavedDetails = 0; numSavedDetails &lt; countOfdetails; numSavedDetails++) {<a name="line.394"></a>
+<FONT color="green">395</FONT>                CollectorDetail idDetail = this.collectorDetails.get(numSavedDetails);           <a name="line.395"></a>
+<FONT color="green">396</FONT>              //  setDefaultsCollectorDetail(idDetail);<a name="line.396"></a>
+<FONT color="green">397</FONT>             <a name="line.397"></a>
+<FONT color="green">398</FONT>                idDetail.setTransactionLedgerEntrySequenceNumber( ++sequenceNumber);<a name="line.398"></a>
+<FONT color="green">399</FONT>                idDetail.setCreateDate(createDate);<a name="line.399"></a>
+<FONT color="green">400</FONT>                CollectorDetail foundIdDetail = (CollectorDetail) businessObjectService.retrieve(idDetail);<a name="line.400"></a>
+<FONT color="green">401</FONT>                if (foundIdDetail != null) {<a name="line.401"></a>
+<FONT color="green">402</FONT>                    idDetail.setVersionNumber(foundIdDetail.getVersionNumber());<a name="line.402"></a>
+<FONT color="green">403</FONT>                }<a name="line.403"></a>
+<FONT color="green">404</FONT>    <a name="line.404"></a>
+<FONT color="green">405</FONT>                businessObjectService.save(idDetail);<a name="line.405"></a>
+<FONT color="green">406</FONT>            }<a name="line.406"></a>
+<FONT color="green">407</FONT>            <a name="line.407"></a>
+<FONT color="green">408</FONT>            collectorReportData.setNumSavedDetails(this, countOfdetails);<a name="line.408"></a>
+<FONT color="green">409</FONT>        }<a name="line.409"></a>
+<FONT color="green">410</FONT>    <a name="line.410"></a>
+<FONT color="green">411</FONT>        /**<a name="line.411"></a>
+<FONT color="green">412</FONT>         * Uppercases the appropriate fields in the batch, if told to do so by the data dictionary<a name="line.412"></a>
+<FONT color="green">413</FONT>         */<a name="line.413"></a>
+<FONT color="green">414</FONT>        public void prepareDataForStorage() {<a name="line.414"></a>
+<FONT color="green">415</FONT>            BusinessObjectDictionaryService businessObjectDictionaryService = SpringContext.getBean(BusinessObjectDictionaryService.class);<a name="line.415"></a>
+<FONT color="green">416</FONT>            DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);<a name="line.416"></a>
+<FONT color="green">417</FONT>    <a name="line.417"></a>
+<FONT color="green">418</FONT>            // uppercase the data used to generate the collector header<a name="line.418"></a>
+<FONT color="green">419</FONT>            if (dataDictionaryService.getAttributeForceUppercase(Chart.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE)) {<a name="line.419"></a>
+<FONT color="green">420</FONT>                setChartOfAccountsCode(getChartOfAccountsCode().toUpperCase());<a name="line.420"></a>
+<FONT color="green">421</FONT>            }<a name="line.421"></a>
+<FONT color="green">422</FONT>            if (dataDictionaryService.getAttributeForceUppercase(Organization.class, KFSPropertyConstants.ORGANIZATION_CODE)) {<a name="line.422"></a>
+<FONT color="green">423</FONT>                setOrganizationCode(getOrganizationCode().toUpperCase());<a name="line.423"></a>
+<FONT color="green">424</FONT>            }<a name="line.424"></a>
+<FONT color="green">425</FONT>    <a name="line.425"></a>
+<FONT color="green">426</FONT>            // now uppercase all of the origin entry data<a name="line.426"></a>
+<FONT color="green">427</FONT>            for (OriginEntryFull entry : originEntries) {<a name="line.427"></a>
+<FONT color="green">428</FONT>                businessObjectDictionaryService.performForceUppercase(entry);<a name="line.428"></a>
+<FONT color="green">429</FONT>            }<a name="line.429"></a>
+<FONT color="green">430</FONT>    <a name="line.430"></a>
+<FONT color="green">431</FONT>            // uppercase the id billing entries<a name="line.431"></a>
+<FONT color="green">432</FONT>            for (CollectorDetail collectorDetail : collectorDetails) {<a name="line.432"></a>
+<FONT color="green">433</FONT>                businessObjectDictionaryService.performForceUppercase(collectorDetail);<a name="line.433"></a>
+<FONT color="green">434</FONT>            }<a name="line.434"></a>
+<FONT color="green">435</FONT>        }<a name="line.435"></a>
+<FONT color="green">436</FONT>    <a name="line.436"></a>
+<FONT color="green">437</FONT>        /**<a name="line.437"></a>
+<FONT color="green">438</FONT>         * Creates origin entry group from header fields.<a name="line.438"></a>
+<FONT color="green">439</FONT>         * <a name="line.439"></a>
+<FONT color="green">440</FONT>         * @return OriginEntryGroup<a name="line.440"></a>
+<FONT color="green">441</FONT>         */<a name="line.441"></a>
+<FONT color="green">442</FONT>        private OriginEntryGroup createOriginEntryGroup() {<a name="line.442"></a>
+<FONT color="green">443</FONT>            OriginEntryGroup group = new OriginEntryGroup();<a name="line.443"></a>
+<FONT color="green">444</FONT>    <a name="line.444"></a>
+<FONT color="green">445</FONT>            group.setSourceCode(OriginEntrySource.COLLECTOR);<a name="line.445"></a>
+<FONT color="green">446</FONT>            group.setDate(new java.sql.Date(SpringContext.getBean(DateTimeService.class).getCurrentDate().getTime()));<a name="line.446"></a>
+<FONT color="green">447</FONT>            group.setProcess(new Boolean(true));<a name="line.447"></a>
+<FONT color="green">448</FONT>            group.setScrub(new Boolean(true));<a name="line.448"></a>
+<FONT color="green">449</FONT>            group.setValid(new Boolean(true));<a name="line.449"></a>
+<FONT color="green">450</FONT>    <a name="line.450"></a>
+<FONT color="green">451</FONT>            return group;<a name="line.451"></a>
+<FONT color="green">452</FONT>        }<a name="line.452"></a>
+<FONT color="green">453</FONT>    <a name="line.453"></a>
+<FONT color="green">454</FONT>        /**<a name="line.454"></a>
+<FONT color="green">455</FONT>         * Creates a CollectorHeader from the batch to be used for storage<a name="line.455"></a>
+<FONT color="green">456</FONT>         * <a name="line.456"></a>
+<FONT color="green">457</FONT>         * @return CollectorHeader<a name="line.457"></a>
+<FONT color="green">458</FONT>         */<a name="line.458"></a>
+<FONT color="green">459</FONT>        public CollectorHeader createCollectorHeaderForStorage() {<a name="line.459"></a>
+<FONT color="green">460</FONT>            CollectorHeader header = new CollectorHeader();<a name="line.460"></a>
+<FONT color="green">461</FONT>    <a name="line.461"></a>
+<FONT color="green">462</FONT>            header.setChartOfAccountsCode(getChartOfAccountsCode());<a name="line.462"></a>
+<FONT color="green">463</FONT>            header.setOrganizationCode(getOrganizationCode());<a name="line.463"></a>
+<FONT color="green">464</FONT>            header.setProcessTransmissionDate(getTransmissionDate());<a name="line.464"></a>
+<FONT color="green">465</FONT>            header.setProcessBatchSequenceNumber(getBatchSequenceNumber());<a name="line.465"></a>
+<FONT color="green">466</FONT>            header.setProcessTotalRecordCount(getTotalRecords());<a name="line.466"></a>
+<FONT color="green">467</FONT>            header.setProcessTotalAmount(getTotalAmount());<a name="line.467"></a>
+<FONT color="green">468</FONT>            header.setContactCampusCode(getCampusCode());<a name="line.468"></a>
+<FONT color="green">469</FONT>            header.setContactPersonPhoneNumber(getPhoneNumber());<a name="line.469"></a>
+<FONT color="green">470</FONT>            header.setContactMailingAddress(getMailingAddress());<a name="line.470"></a>
+<FONT color="green">471</FONT>            header.setContactDepartmentName(getDepartmentName());<a name="line.471"></a>
+<FONT color="green">472</FONT>    <a name="line.472"></a>
+<FONT color="green">473</FONT>            return header;<a name="line.473"></a>
+<FONT color="green">474</FONT>        }<a name="line.474"></a>
+<FONT color="green">475</FONT>    <a name="line.475"></a>
+<FONT color="green">476</FONT>        /**<a name="line.476"></a>
+<FONT color="green">477</FONT>         * Creates an origin entry record with the PK values filled in only. This is useful to check for duplicate headers.<a name="line.477"></a>
+<FONT color="green">478</FONT>         * <a name="line.478"></a>
+<FONT color="green">479</FONT>         * @return CollectorHeader with chart of accounts code, organization code, process transmission date, batch sequence number<a name="line.479"></a>
+<FONT color="green">480</FONT>         * total record count, and process total amount from this CollectorBatch<a name="line.480"></a>
+<FONT color="green">481</FONT>         */<a name="line.481"></a>
+<FONT color="green">482</FONT>        public CollectorHeader createCollectorHeaderWithPKValuesOnly() {<a name="line.482"></a>
+<FONT color="green">483</FONT>            CollectorHeader header = new CollectorHeader();<a name="line.483"></a>
+<FONT color="green">484</FONT>    <a name="line.484"></a>
+<FONT color="green">485</FONT>            header.setChartOfAccountsCode(getChartOfAccountsCode());<a name="line.485"></a>
+<FONT color="green">486</FONT>            header.setOrganizationCode(getOrganizationCode());<a name="line.486"></a>
+<FONT color="green">487</FONT>            header.setProcessTransmissionDate(getTransmissionDate());<a name="line.487"></a>
+<FONT color="green">488</FONT>            header.setProcessBatchSequenceNumber(getBatchSequenceNumber());<a name="line.488"></a>
+<FONT color="green">489</FONT>            header.setProcessTotalRecordCount(getTotalRecords());<a name="line.489"></a>
+<FONT color="green">490</FONT>            header.setProcessTotalAmount(getTotalAmount());<a name="line.490"></a>
+<FONT color="green">491</FONT>    <a name="line.491"></a>
+<FONT color="green">492</FONT>            return header;<a name="line.492"></a>
+<FONT color="green">493</FONT>        }<a name="line.493"></a>
+<FONT color="green">494</FONT>    <a name="line.494"></a>
+<FONT color="green">495</FONT>    //    /**<a name="line.495"></a>
+<FONT color="green">496</FONT>    //     * Sets defaults for missing id billing fields.<a name="line.496"></a>
+<FONT color="green">497</FONT>    //     * <a name="line.497"></a>
+<FONT color="green">498</FONT>    //     * @param idDetail CollectorDetail object which has its create date being set<a name="line.498"></a>
+<FONT color="green">499</FONT>    //     */<a name="line.499"></a>
+<FONT color="green">500</FONT>    //    private void setDefaultsCollectorDetail(CollectorDetail idDetail) {<a name="line.500"></a>
+<FONT color="green">501</FONT>    //        // TODO: Get current fiscal year and period if blank?<a name="line.501"></a>
+<FONT color="green">502</FONT>    //        // idBilling.setUniversityFiscalPeriodCode(String.valueOf(RandomUtils.nextInt(2)));<a name="line.502"></a>
+<FONT color="green">503</FONT>    //        // idBilling.setCreateSequence(String.valueOf(RandomUtils.nextInt(2)));<a name="line.503"></a>
+<FONT color="green">504</FONT>    //        // idBilling.setInterDepartmentalBillingSequenceNumber(String.valueOf(RandomUtils.nextInt(2)));<a name="line.504"></a>
+<FONT color="green">505</FONT>    //        idDetail.setCreateDate(new Date(SpringContext.getBean(DateTimeService.class).getCurrentDate().getTime()));<a name="line.505"></a>
+<FONT color="green">506</FONT>    //        <a name="line.506"></a>
+<FONT color="green">507</FONT>    //    }<a name="line.507"></a>
+<FONT color="green">508</FONT>    <a name="line.508"></a>
+<FONT color="green">509</FONT>        /**<a name="line.509"></a>
+<FONT color="green">510</FONT>         * Gets the campusCode attribute.<a name="line.510"></a>
+<FONT color="green">511</FONT>         * <a name="line.511"></a>
+<FONT color="green">512</FONT>         * @return Returns the campusCode.<a name="line.512"></a>
+<FONT color="green">513</FONT>         */<a name="line.513"></a>
+<FONT color="green">514</FONT>        public String getCampusCode() {<a name="line.514"></a>
+<FONT color="green">515</FONT>            return campusCode;<a name="line.515"></a>
+<FONT color="green">516</FONT>        }<a name="line.516"></a>
+<FONT color="green">517</FONT>    <a name="line.517"></a>
+<FONT color="green">518</FONT>        /**<a name="line.518"></a>
+<FONT color="green">519</FONT>         * Sets the campusCode attribute value.<a name="line.519"></a>
+<FONT color="green">520</FONT>         * <a name="line.520"></a>
+<FONT color="green">521</FONT>         * @param campusCode The campusCode to set.<a name="line.521"></a>
+<FONT color="green">522</FONT>         */<a name="line.522"></a>
+<FONT color="green">523</FONT>        public void setCampusCode(String campusCode) {<a name="line.523"></a>
+<FONT color="green">524</FONT>            this.campusCode = campusCode;<a name="line.524"></a>
+<FONT color="green">525</FONT>        }<a name="line.525"></a>
+<FONT color="green">526</FONT>    <a name="line.526"></a>
+<FONT color="green">527</FONT>        /**<a name="line.527"></a>
+<FONT color="green">528</FONT>         * Gets the departmentName attribute.<a name="line.528"></a>
+<FONT color="green">529</FONT>         * <a name="line.529"></a>
+<FONT color="green">530</FONT>         * @return Returns the departmentName.<a name="line.530"></a>
+<FONT color="green">531</FONT>         */<a name="line.531"></a>
+<FONT color="green">532</FONT>        public String getDepartmentName() {<a name="line.532"></a>
+<FONT color="green">533</FONT>            return departmentName;<a name="line.533"></a>
+<FONT color="green">534</FONT>        }<a name="line.534"></a>
+<FONT color="green">535</FONT>    <a name="line.535"></a>
+<FONT color="green">536</FONT>        /**<a name="line.536"></a>
+<FONT color="green">537</FONT>         * Sets the departmentName attribute value.<a name="line.537"></a>
+<FONT color="green">538</FONT>         * <a name="line.538"></a>
+<FONT color="green">539</FONT>         * @param departmentName The departmentName to set.<a name="line.539"></a>
+<FONT color="green">540</FONT>         */<a name="line.540"></a>
+<FONT color="green">541</FONT>        public void setDepartmentName(String departmentName) {<a name="line.541"></a>
+<FONT color="green">542</FONT>            this.departmentName = departmentName;<a name="line.542"></a>
+<FONT color="green">543</FONT>        }<a name="line.543"></a>
+<FONT color="green">544</FONT>    <a name="line.544"></a>
+<FONT color="green">545</FONT>        /**<a name="line.545"></a>
+<FONT color="green">546</FONT>         * Gets the mailingAddress attribute.<a name="line.546"></a>
+<FONT color="green">547</FONT>         * <a name="line.547"></a>
+<FONT color="green">548</FONT>         * @return Returns the mailingAddress.<a name="line.548"></a>
+<FONT color="green">549</FONT>         */<a name="line.549"></a>
+<FONT color="green">550</FONT>        public String getMailingAddress() {<a name="line.550"></a>
+<FONT color="green">551</FONT>            return mailingAddress;<a name="line.551"></a>
+<FONT color="green">552</FONT>        }<a name="line.552"></a>
+<FONT color="green">553</FONT>    <a name="line.553"></a>
+<FONT color="green">554</FONT>        /**<a name="line.554"></a>
+<FONT color="green">555</FONT>         * Sets the mailingAddress attribute value.<a name="line.555"></a>
+<FONT color="green">556</FONT>         * <a name="line.556"></a>
+<FONT color="green">557</FONT>         * @param mailingAddress The mailingAddress to set.<a name="line.557"></a>
+<FONT color="green">558</FONT>         */<a name="line.558"></a>
+<FONT color="green">559</FONT>        public void setMailingAddress(String mailingAddress) {<a name="line.559"></a>
+<FONT color="green">560</FONT>            this.mailingAddress = mailingAddress;<a name="line.560"></a>
+<FONT color="green">561</FONT>        }<a name="line.561"></a>
+<FONT color="green">562</FONT>    <a name="line.562"></a>
+<FONT color="green">563</FONT>        /**<a name="line.563"></a>
+<FONT color="green">564</FONT>         * Gets the phoneNumber attribute.<a name="line.564"></a>
+<FONT color="green">565</FONT>         * <a name="line.565"></a>
+<FONT color="green">566</FONT>         * @return Returns the phoneNumber.<a name="line.566"></a>
+<FONT color="green">567</FONT>         */<a name="line.567"></a>
+<FONT color="green">568</FONT>        public String getPhoneNumber() {<a name="line.568"></a>
+<FONT color="green">569</FONT>            return phoneNumber;<a name="line.569"></a>
+<FONT color="green">570</FONT>        }<a name="line.570"></a>
+<FONT color="green">571</FONT>    <a name="line.571"></a>
+<FONT color="green">572</FONT>        /**<a name="line.572"></a>
+<FONT color="green">573</FONT>         * Sets the phoneNumber attribute value.<a name="line.573"></a>
+<FONT color="green">574</FONT>         * <a name="line.574"></a>
+<FONT color="green">575</FONT>         * @param phoneNumber The phoneNumber to set.<a name="line.575"></a>
+<FONT color="green">576</FONT>         */<a name="line.576"></a>
+<FONT color="green">577</FONT>        public void setPhoneNumber(String phoneNumber) {<a name="line.577"></a>
+<FONT color="green">578</FONT>            this.phoneNumber = phoneNumber;<a name="line.578"></a>
+<FONT color="green">579</FONT>        }<a name="line.579"></a>
+<FONT color="green">580</FONT>    <a name="line.580"></a>
+<FONT color="green">581</FONT>        /**<a name="line.581"></a>
+<FONT color="green">582</FONT>         * Gets the batchName attribute.<a name="line.582"></a>
+<FONT color="green">583</FONT>         * <a name="line.583"></a>
+<FONT color="green">584</FONT>         * @return Returns the batchName.<a name="line.584"></a>
+<FONT color="green">585</FONT>         */<a name="line.585"></a>
+<FONT color="green">586</FONT>        public String getBatchName() {<a name="line.586"></a>
+<FONT color="green">587</FONT>            return batchName;<a name="line.587"></a>
+<FONT color="green">588</FONT>        }<a name="line.588"></a>
+<FONT color="green">589</FONT>    <a name="line.589"></a>
+<FONT color="green">590</FONT>        /**<a name="line.590"></a>
+<FONT color="green">591</FONT>         * Sets the batchName attribute value.<a name="line.591"></a>
+<FONT color="green">592</FONT>         * <a name="line.592"></a>
+<FONT color="green">593</FONT>         * @param batchName The batchName to set.<a name="line.593"></a>
+<FONT color="green">594</FONT>         */<a name="line.594"></a>
+<FONT color="green">595</FONT>        public void setBatchName(String batchName) {<a name="line.595"></a>
+<FONT color="green">596</FONT>            this.batchName = batchName;<a name="line.596"></a>
+<FONT color="green">597</FONT>        }<a name="line.597"></a>
+<FONT color="green">598</FONT>    <a name="line.598"></a>
+<FONT color="green">599</FONT>        public MessageMap getMessageMap() {<a name="line.599"></a>
+<FONT color="green">600</FONT>            return messageMap;<a name="line.600"></a>
+<FONT color="green">601</FONT>        }<a name="line.601"></a>
+<FONT color="green">602</FONT>    <a name="line.602"></a>
+<FONT color="green">603</FONT>        public void setMessageMap(MessageMap messageMap) {<a name="line.603"></a>
+<FONT color="green">604</FONT>            if (messageMap == null) {<a name="line.604"></a>
+<FONT color="green">605</FONT>                throw new NullPointerException("messageMap is null");<a name="line.605"></a>
+<FONT color="green">606</FONT>            }<a name="line.606"></a>
+<FONT color="green">607</FONT>            if (this.messageMap.hasMessages()) {<a name="line.607"></a>
+<FONT color="green">608</FONT>                throw new RuntimeException("Cannot reset MessageMap unless original instance has no messages.");<a name="line.608"></a>
+<FONT color="green">609</FONT>            }<a name="line.609"></a>
+<FONT color="green">610</FONT>            this.messageMap = messageMap;<a name="line.610"></a>
+<FONT color="green">611</FONT>        }<a name="line.611"></a>
+<FONT color="green">612</FONT>    <a name="line.612"></a>
+<FONT color="green">613</FONT>        public OriginEntryTotals getOriginEntryTotals() {<a name="line.613"></a>
+<FONT color="green">614</FONT>            return originEntryTotals;<a name="line.614"></a>
+<FONT color="green">615</FONT>        }<a name="line.615"></a>
+<FONT color="green">616</FONT>    <a name="line.616"></a>
+<FONT color="green">617</FONT>        public void setOriginEntryTotals(OriginEntryTotals originEntryTotals) {<a name="line.617"></a>
+<FONT color="green">618</FONT>            this.originEntryTotals = originEntryTotals;<a name="line.618"></a>
+<FONT color="green">619</FONT>        }<a name="line.619"></a>
+<FONT color="green">620</FONT>    <a name="line.620"></a>
+<FONT color="green">621</FONT>        public boolean isHeaderlessBatch() {<a name="line.621"></a>
+<FONT color="green">622</FONT>            return headerlessBatch;<a name="line.622"></a>
+<FONT color="green">623</FONT>        }<a name="line.623"></a>
+<FONT color="green">624</FONT>    <a name="line.624"></a>
+<FONT color="green">625</FONT>        public void setHeaderlessBatch(boolean headerlessBatch) {<a name="line.625"></a>
+<FONT color="green">626</FONT>            this.headerlessBatch = headerlessBatch;<a name="line.626"></a>
+<FONT color="green">627</FONT>        }<a name="line.627"></a>
+<FONT color="green">628</FONT>        <a name="line.628"></a>
+<FONT color="green">629</FONT>        protected LinkedHashMap toStringMapper() {<a name="line.629"></a>
+<FONT color="green">630</FONT>            LinkedHashMap map = new LinkedHashMap();<a name="line.630"></a>
+<FONT color="green">631</FONT>            map.put("chartOfAccountsCode", getChartOfAccountsCode());<a name="line.631"></a>
+<FONT color="green">632</FONT>            map.put("organizationCode", getOrganizationCode());<a name="line.632"></a>
+<FONT color="green">633</FONT>            map.put("transmissionDate", getTransmissionDate());<a name="line.633"></a>
+<FONT color="green">634</FONT>            map.put("personUserID", getPersonUserID());<a name="line.634"></a>
+<FONT color="green">635</FONT>            map.put("batchSequenceNumber", getBatchSequenceNumber());<a name="line.635"></a>
+<FONT color="green">636</FONT>            map.put("emailAddress", getEmailAddress());<a name="line.636"></a>
+<FONT color="green">637</FONT>            map.put("campusCode", getCampusCode());<a name="line.637"></a>
+<FONT color="green">638</FONT>            map.put("phoneNumber", getPhoneNumber());<a name="line.638"></a>
+<FONT color="green">639</FONT>            map.put("mailingAddress", getMailingAddress());<a name="line.639"></a>
+<FONT color="green">640</FONT>            map.put("departmentName", getDepartmentName());<a name="line.640"></a>
+<FONT color="green">641</FONT>            map.put("firstEmptyField", getFirstEmptyField());<a name="line.641"></a>
+<FONT color="green">642</FONT>            map.put("totalRecords", getTotalRecords());        <a name="line.642"></a>
+<FONT color="green">643</FONT>            map.put("secondEmptyField", getSecondEmptyField());<a name="line.643"></a>
+<FONT color="green">644</FONT>            map.put("totalAmount", getTotalAmount());<a name="line.644"></a>
+<FONT color="green">645</FONT>            <a name="line.645"></a>
+<FONT color="green">646</FONT>            return map;<a name="line.646"></a>
+<FONT color="green">647</FONT>        }<a name="line.647"></a>
+<FONT color="green">648</FONT>        <a name="line.648"></a>
+<FONT color="green">649</FONT>        protected Date parseSqlDate(String date) throws ParseException {<a name="line.649"></a>
+<FONT color="green">650</FONT>            try {<a name="line.650"></a>
+<FONT color="green">651</FONT>                return new Date(new SimpleDateFormat("yy-MM-dd").parse(date).getTime());<a name="line.651"></a>
+<FONT color="green">652</FONT>            }<a name="line.652"></a>
+<FONT color="green">653</FONT>            catch (java.text.ParseException e) {<a name="line.653"></a>
+<FONT color="green">654</FONT>                throw new ParseException(e.getMessage(), e);<a name="line.654"></a>
+<FONT color="green">655</FONT>            }<a name="line.655"></a>
+<FONT color="green">656</FONT>        }<a name="line.656"></a>
+<FONT color="green">657</FONT>        <a name="line.657"></a>
+<FONT color="green">658</FONT>        protected String getValue(String headerLine, int s, int e) {<a name="line.658"></a>
+<FONT color="green">659</FONT>              return org.springframework.util.StringUtils.trimTrailingWhitespace(StringUtils.substring(headerLine, s, e));<a name="line.659"></a>
+<FONT color="green">660</FONT>          }<a name="line.660"></a>
+<FONT color="green">661</FONT>        <a name="line.661"></a>
+<FONT color="green">662</FONT>        /**<a name="line.662"></a>
+<FONT color="green">663</FONT>         * @return the static instance of the CollectorBatchHeaderFieldUtil<a name="line.663"></a>
+<FONT color="green">664</FONT>         */<a name="line.664"></a>
+<FONT color="green">665</FONT>        protected static CollectorBatchHeaderFieldUtil getCollectorBatchHeaderFieldUtil() {<a name="line.665"></a>
+<FONT color="green">666</FONT>            if (collectorBatchHeaderFieldUtil == null) {<a name="line.666"></a>
+<FONT color="green">667</FONT>                collectorBatchHeaderFieldUtil = new CollectorBatchHeaderFieldUtil();<a name="line.667"></a>
+<FONT color="green">668</FONT>            }<a name="line.668"></a>
+<FONT color="green">669</FONT>            return collectorBatchHeaderFieldUtil;<a name="line.669"></a>
+<FONT color="green">670</FONT>        }<a name="line.670"></a>
+<FONT color="green">671</FONT>        <a name="line.671"></a>
+<FONT color="green">672</FONT>        public void setFromTextFileForCollectorBatch(String headerLine) {<a name="line.672"></a>
+<FONT color="green">673</FONT>            try{<a name="line.673"></a>
+<FONT color="green">674</FONT>                final Map&lt;String, Integer&gt; pMap = getCollectorBatchHeaderFieldUtil().getFieldBeginningPositionMap();<a name="line.674"></a>
+<FONT color="green">675</FONT>                <a name="line.675"></a>
+<FONT color="green">676</FONT>                headerLine = org.apache.commons.lang.StringUtils.rightPad(headerLine, GeneralLedgerConstants.getSpaceAllCollectorBatchHeaderFields().length(), ' ');<a name="line.676"></a>
+<FONT color="green">677</FONT>                <a name="line.677"></a>
+<FONT color="green">678</FONT>                setChartOfAccountsCode(getValue(headerLine, pMap.get(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), pMap.get(KFSPropertyConstants.ORGANIZATION_CODE)));<a name="line.678"></a>
+<FONT color="green">679</FONT>                setOrganizationCode(getValue(headerLine, pMap.get(KFSPropertyConstants.ORGANIZATION_CODE), pMap.get(KFSPropertyConstants.TRANSMISSION_DATE)));<a name="line.679"></a>
+<FONT color="green">680</FONT>    <a name="line.680"></a>
+<FONT color="green">681</FONT>                String transmissionDate = org.apache.commons.lang.StringUtils.trim(getValue(headerLine, pMap.get(KFSPropertyConstants.TRANSMISSION_DATE), pMap.get(KFSPropertyConstants.COLLECTOR_BATCH_RECORD_TYPE)));<a name="line.681"></a>
+<FONT color="green">682</FONT>                try {<a name="line.682"></a>
+<FONT color="green">683</FONT>                    setTransmissionDate(parseSqlDate(transmissionDate));<a name="line.683"></a>
+<FONT color="green">684</FONT>                }<a name="line.684"></a>
+<FONT color="green">685</FONT>                catch (ParseException e) {<a name="line.685"></a>
+<FONT color="green">686</FONT>                    getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.Collector.HEADER_BAD_TRANSMISSION_DATE_FORMAT, transmissionDate);<a name="line.686"></a>
+<FONT color="green">687</FONT>                    setTransmissionDate(null);<a name="line.687"></a>
+<FONT color="green">688</FONT>                }<a name="line.688"></a>
+<FONT color="green">689</FONT>                String batchNumber = org.apache.commons.lang.StringUtils.trim(getValue(headerLine, pMap.get(KFSPropertyConstants.BATCH_SEQUENCE_NUMBER), pMap.get(KFSPropertyConstants.EMAIL_ADDRESS)));<a name="line.689"></a>
+<FONT color="green">690</FONT>                <a name="line.690"></a>
+<FONT color="green">691</FONT>                if (ObjectUtil.isInteger(batchNumber)) { <a name="line.691"></a>
+<FONT color="green">692</FONT>                    setBatchSequenceNumber(new Integer(batchNumber));<a name="line.692"></a>
+<FONT color="green">693</FONT>                } else {<a name="line.693"></a>
+<FONT color="green">694</FONT>                    setBatchSequenceNumber(0);<a name="line.694"></a>
+<FONT color="green">695</FONT>                }<a name="line.695"></a>
+<FONT color="green">696</FONT>                setEmailAddress(getValue(headerLine, pMap.get(KFSPropertyConstants.EMAIL_ADDRESS), pMap.get(KFSPropertyConstants.COLLECTOR_BATCH_PERSON_USER_ID)));<a name="line.696"></a>
+<FONT color="green">697</FONT>                setPersonUserID(getValue(headerLine, pMap.get(KFSPropertyConstants.COLLECTOR_BATCH_PERSON_USER_ID), pMap.get(KFSPropertyConstants.DEPARTMENT_NAME)));<a name="line.697"></a>
+<FONT color="green">698</FONT>                setDepartmentName(getValue(headerLine, pMap.get(KFSPropertyConstants.DEPARTMENT_NAME), pMap.get(KFSPropertyConstants.MAILING_ADDRESS)));<a name="line.698"></a>
+<FONT color="green">699</FONT>                setMailingAddress(getValue(headerLine, pMap.get(KFSPropertyConstants.MAILING_ADDRESS), pMap.get(KFSPropertyConstants.CAMPUS_CODE)));<a name="line.699"></a>
+<FONT color="green">700</FONT>                setCampusCode(getValue(headerLine, pMap.get(KFSPropertyConstants.CAMPUS_CODE), pMap.get(KFSPropertyConstants.PHONE_NUMBER)));<a name="line.700"></a>
+<FONT color="green">701</FONT>                setPhoneNumber(org.apache.commons.lang.StringUtils.trim(getValue(headerLine, pMap.get(KFSPropertyConstants.PHONE_NUMBER), GeneralLedgerConstants.getSpaceAllCollectorBatchHeaderFields().length())));<a name="line.701"></a>
+<FONT color="green">702</FONT>            } catch (Exception e){<a name="line.702"></a>
+<FONT color="green">703</FONT>                throw new RuntimeException(e + " occurred in CollectorBatch.setFromTextFileForCollectorBatch()");<a name="line.703"></a>
+<FONT color="green">704</FONT>            }<a name="line.704"></a>
+<FONT color="green">705</FONT>        }<a name="line.705"></a>
+<FONT color="green">706</FONT>        <a name="line.706"></a>
+<FONT color="green">707</FONT>        /**<a name="line.707"></a>
+<FONT color="green">708</FONT>         * @return the static instance of the CollectorBatchTrailerRecordFieldUtil<a name="line.708"></a>
+<FONT color="green">709</FONT>         */<a name="line.709"></a>
+<FONT color="green">710</FONT>        protected static CollectorBatchTrailerRecordFieldUtil getCollectorBatchTrailerRecordFieldUtil() {<a name="line.710"></a>
+<FONT color="green">711</FONT>            if (collectorBatchTrailerRecordFieldUtil == null) {<a name="line.711"></a>
+<FONT color="green">712</FONT>                collectorBatchTrailerRecordFieldUtil = new CollectorBatchTrailerRecordFieldUtil();<a name="line.712"></a>
+<FONT color="green">713</FONT>            }<a name="line.713"></a>
+<FONT color="green">714</FONT>            return collectorBatchTrailerRecordFieldUtil;<a name="line.714"></a>
+<FONT color="green">715</FONT>        }<a name="line.715"></a>
+<FONT color="green">716</FONT>        <a name="line.716"></a>
+<FONT color="green">717</FONT>        public void setFromTextFileForCollectorBatchTrailerRecord(String trailerLine, int lineNumber) {<a name="line.717"></a>
+<FONT color="green">718</FONT>            final Map&lt;String, Integer&gt; pMap = getCollectorBatchTrailerRecordFieldUtil().getFieldBeginningPositionMap();<a name="line.718"></a>
+<FONT color="green">719</FONT>    <a name="line.719"></a>
+<FONT color="green">720</FONT>            trailerLine = org.apache.commons.lang.StringUtils.rightPad(trailerLine, GeneralLedgerConstants.getSpaceAllCollectorBatchTrailerFields().length(), ' ');<a name="line.720"></a>
+<FONT color="green">721</FONT>            setTotalRecords(new Integer(org.apache.commons.lang.StringUtils.trim(getValue(trailerLine, pMap.get(KFSPropertyConstants.TOTAL_RECORDS), pMap.get(KFSPropertyConstants.TRAILER_RECORD_SECOND_EMPTY_FIELD)))));<a name="line.721"></a>
+<FONT color="green">722</FONT>            <a name="line.722"></a>
+<FONT color="green">723</FONT>            String trailerAmount = org.apache.commons.lang.StringUtils.trim(getValue(trailerLine, pMap.get(KFSPropertyConstants.TOTAL_AMOUNT), GeneralLedgerConstants.getSpaceAllCollectorBatchTrailerFields().length()));<a name="line.723"></a>
+<FONT color="green">724</FONT>            <a name="line.724"></a>
+<FONT color="green">725</FONT>            try {<a name="line.725"></a>
+<FONT color="green">726</FONT>                setTotalAmount(trailerAmount);<a name="line.726"></a>
+<FONT color="green">727</FONT>            }<a name="line.727"></a>
+<FONT color="green">728</FONT>            catch (NumberFormatException e) {<a name="line.728"></a>
+<FONT color="green">729</FONT>                setTotalAmount(KualiDecimal.ZERO);<a name="line.729"></a>
+<FONT color="green">730</FONT>                getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, "Collector trailer total amount cannot be parsed on line " + lineNumber + " amount string " + trailerAmount);<a name="line.730"></a>
+<FONT color="green">731</FONT>            }<a name="line.731"></a>
+<FONT color="green">732</FONT>        }<a name="line.732"></a>
+<FONT color="green">733</FONT>    }<a name="line.733"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

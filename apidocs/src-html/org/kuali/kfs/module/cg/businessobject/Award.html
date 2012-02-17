@@ -1,0 +1,1279 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    <a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.kuali.kfs.module.cg.businessobject;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.sql.Date;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.sql.Timestamp;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.LinkedHashMap;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.List;<a name="line.22"></a>
+<FONT color="green">023</FONT>    <a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.apache.ojb.broker.PersistenceBroker;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.apache.ojb.broker.PersistenceBrokerException;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.integration.cg.ContractsAndGrantsAward;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.rice.kim.bo.Person;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.bo.Inactivateable;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kns.bo.PersistableBusinessObjectBase;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.rice.kns.service.KualiConfigurationService;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.rice.kns.util.TypedArrayList;<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>    /**<a name="line.37"></a>
+<FONT color="green">038</FONT>     * Defines a financial award object.<a name="line.38"></a>
+<FONT color="green">039</FONT>     */<a name="line.39"></a>
+<FONT color="green">040</FONT>    public class Award extends PersistableBusinessObjectBase implements Inactivateable, ContractsAndGrantsAward {<a name="line.40"></a>
+<FONT color="green">041</FONT>        private static final String AWARD_INQUIRY_TITLE_PROPERTY = "message.inquiry.award.title";<a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>        private Long proposalNumber;<a name="line.43"></a>
+<FONT color="green">044</FONT>        private Date awardBeginningDate;<a name="line.44"></a>
+<FONT color="green">045</FONT>        private Date awardEndingDate;<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>        /**<a name="line.47"></a>
+<FONT color="green">048</FONT>         * This field is for write-only to the database via OJB, not the corresponding property of this BO. OJB uses reflection to read<a name="line.48"></a>
+<FONT color="green">049</FONT>         * it, so the compiler warns because it doesn't know.<a name="line.49"></a>
+<FONT color="green">050</FONT>         * <a name="line.50"></a>
+<FONT color="green">051</FONT>         * @see #getAwardTotalAmount<a name="line.51"></a>
+<FONT color="green">052</FONT>         * @see #setAwardTotalAmount<a name="line.52"></a>
+<FONT color="green">053</FONT>         */<a name="line.53"></a>
+<FONT color="green">054</FONT>        @SuppressWarnings("unused")<a name="line.54"></a>
+<FONT color="green">055</FONT>        private KualiDecimal awardTotalAmount;<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>        private String awardAddendumNumber;<a name="line.57"></a>
+<FONT color="green">058</FONT>        private KualiDecimal awardAllocatedUniversityComputingServicesAmount;<a name="line.58"></a>
+<FONT color="green">059</FONT>        private KualiDecimal federalPassThroughFundedAmount;<a name="line.59"></a>
+<FONT color="green">060</FONT>        private Date awardEntryDate;<a name="line.60"></a>
+<FONT color="green">061</FONT>        private KualiDecimal agencyFuture1Amount;<a name="line.61"></a>
+<FONT color="green">062</FONT>        private KualiDecimal agencyFuture2Amount;<a name="line.62"></a>
+<FONT color="green">063</FONT>        private KualiDecimal agencyFuture3Amount;<a name="line.63"></a>
+<FONT color="green">064</FONT>        private String awardDocumentNumber;<a name="line.64"></a>
+<FONT color="green">065</FONT>        private Timestamp awardLastUpdateDate;<a name="line.65"></a>
+<FONT color="green">066</FONT>        private boolean federalPassThroughIndicator;<a name="line.66"></a>
+<FONT color="green">067</FONT>        private String oldProposalNumber;<a name="line.67"></a>
+<FONT color="green">068</FONT>        private KualiDecimal awardDirectCostAmount;<a name="line.68"></a>
+<FONT color="green">069</FONT>        private KualiDecimal awardIndirectCostAmount;<a name="line.69"></a>
+<FONT color="green">070</FONT>        private KualiDecimal federalFundedAmount;<a name="line.70"></a>
+<FONT color="green">071</FONT>        private Timestamp awardCreateTimestamp;<a name="line.71"></a>
+<FONT color="green">072</FONT>        private Date awardClosingDate;<a name="line.72"></a>
+<FONT color="green">073</FONT>        private String proposalAwardTypeCode;<a name="line.73"></a>
+<FONT color="green">074</FONT>        private String awardStatusCode;<a name="line.74"></a>
+<FONT color="green">075</FONT>        private String letterOfCreditFundGroupCode;<a name="line.75"></a>
+<FONT color="green">076</FONT>        private String grantDescriptionCode;<a name="line.76"></a>
+<FONT color="green">077</FONT>        private String agencyNumber;<a name="line.77"></a>
+<FONT color="green">078</FONT>        private String federalPassThroughAgencyNumber;<a name="line.78"></a>
+<FONT color="green">079</FONT>        private String agencyAnalystName;<a name="line.79"></a>
+<FONT color="green">080</FONT>        private String analystTelephoneNumber;<a name="line.80"></a>
+<FONT color="green">081</FONT>        private String awardProjectTitle;<a name="line.81"></a>
+<FONT color="green">082</FONT>        private String awardCommentText;<a name="line.82"></a>
+<FONT color="green">083</FONT>        private String awardPurposeCode;<a name="line.83"></a>
+<FONT color="green">084</FONT>        private boolean active;<a name="line.84"></a>
+<FONT color="green">085</FONT>        private String kimGroupNames;<a name="line.85"></a>
+<FONT color="green">086</FONT>        private List&lt;AwardProjectDirector&gt; awardProjectDirectors;<a name="line.86"></a>
+<FONT color="green">087</FONT>        private List&lt;AwardAccount&gt; awardAccounts;<a name="line.87"></a>
+<FONT color="green">088</FONT>        private List&lt;AwardSubcontractor&gt; awardSubcontractors;<a name="line.88"></a>
+<FONT color="green">089</FONT>        private List&lt;AwardOrganization&gt; awardOrganizations;<a name="line.89"></a>
+<FONT color="green">090</FONT>        private Proposal proposal;<a name="line.90"></a>
+<FONT color="green">091</FONT>        private ProposalAwardType proposalAwardType;<a name="line.91"></a>
+<FONT color="green">092</FONT>        private AwardStatus awardStatus;<a name="line.92"></a>
+<FONT color="green">093</FONT>        private LetterOfCreditFundGroup letterOfCreditFundGroup;<a name="line.93"></a>
+<FONT color="green">094</FONT>        private GrantDescription grantDescription;<a name="line.94"></a>
+<FONT color="green">095</FONT>        private Agency agency;<a name="line.95"></a>
+<FONT color="green">096</FONT>        private Agency federalPassThroughAgency;<a name="line.96"></a>
+<FONT color="green">097</FONT>        private ProposalPurpose awardPurpose;<a name="line.97"></a>
+<FONT color="green">098</FONT>        private AwardOrganization primaryAwardOrganization;<a name="line.98"></a>
+<FONT color="green">099</FONT>        private String routingOrg;<a name="line.99"></a>
+<FONT color="green">100</FONT>        private String routingChart;<a name="line.100"></a>
+<FONT color="green">101</FONT>        <a name="line.101"></a>
+<FONT color="green">102</FONT>        /** Dummy value used to facilitate lookups */<a name="line.102"></a>
+<FONT color="green">103</FONT>        private transient String lookupPersonUniversalIdentifier;<a name="line.103"></a>
+<FONT color="green">104</FONT>        private transient Person lookupPerson;<a name="line.104"></a>
+<FONT color="green">105</FONT>        <a name="line.105"></a>
+<FONT color="green">106</FONT>        private final String userLookupRoleNamespaceCode = KFSConstants.ParameterNamespaces.KFS;<a name="line.106"></a>
+<FONT color="green">107</FONT>        private final String userLookupRoleName = KFSConstants.SysKimConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR;<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>        /**<a name="line.109"></a>
+<FONT color="green">110</FONT>         * Default no-args constructor.<a name="line.110"></a>
+<FONT color="green">111</FONT>         */<a name="line.111"></a>
+<FONT color="green">112</FONT>        public Award() {<a name="line.112"></a>
+<FONT color="green">113</FONT>            // Must use TypedArrayList because its get() method automatically grows the array for Struts.<a name="line.113"></a>
+<FONT color="green">114</FONT>            awardProjectDirectors = new TypedArrayList(AwardProjectDirector.class);<a name="line.114"></a>
+<FONT color="green">115</FONT>            awardAccounts = new TypedArrayList(AwardAccount.class);<a name="line.115"></a>
+<FONT color="green">116</FONT>            awardSubcontractors = new TypedArrayList(AwardSubcontractor.class);<a name="line.116"></a>
+<FONT color="green">117</FONT>            awardOrganizations = new TypedArrayList(AwardOrganization.class);<a name="line.117"></a>
+<FONT color="green">118</FONT>        }<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>        /**<a name="line.120"></a>
+<FONT color="green">121</FONT>         * Creates a collection of lists within this award object that should be aware of when the deletion of one of their elements<a name="line.121"></a>
+<FONT color="green">122</FONT>         * occurs. This collection is used to refresh the display upon deletion of an element to ensure that the deleted element is not<a name="line.122"></a>
+<FONT color="green">123</FONT>         * longer visible on the interface.<a name="line.123"></a>
+<FONT color="green">124</FONT>         * <a name="line.124"></a>
+<FONT color="green">125</FONT>         * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()<a name="line.125"></a>
+<FONT color="green">126</FONT>         */<a name="line.126"></a>
+<FONT color="green">127</FONT>        @Override<a name="line.127"></a>
+<FONT color="green">128</FONT>        public List buildListOfDeletionAwareLists() {<a name="line.128"></a>
+<FONT color="green">129</FONT>            List&lt;List&gt; managedLists = super.buildListOfDeletionAwareLists();<a name="line.129"></a>
+<FONT color="green">130</FONT>            managedLists.add(getAwardAccounts());<a name="line.130"></a>
+<FONT color="green">131</FONT>            managedLists.add(getAwardOrganizations());<a name="line.131"></a>
+<FONT color="green">132</FONT>            managedLists.add(getAwardProjectDirectors());<a name="line.132"></a>
+<FONT color="green">133</FONT>            managedLists.add(getAwardSubcontractors());<a name="line.133"></a>
+<FONT color="green">134</FONT>            return managedLists;<a name="line.134"></a>
+<FONT color="green">135</FONT>        }<a name="line.135"></a>
+<FONT color="green">136</FONT>    <a name="line.136"></a>
+<FONT color="green">137</FONT>        /**<a name="line.137"></a>
+<FONT color="green">138</FONT>         * Constructs an Award.<a name="line.138"></a>
+<FONT color="green">139</FONT>         * <a name="line.139"></a>
+<FONT color="green">140</FONT>         * @param proposal The associated proposal that the award will be linked to.<a name="line.140"></a>
+<FONT color="green">141</FONT>         */<a name="line.141"></a>
+<FONT color="green">142</FONT>        public Award(Proposal proposal) {<a name="line.142"></a>
+<FONT color="green">143</FONT>            this();<a name="line.143"></a>
+<FONT color="green">144</FONT>            populateFromProposal(proposal);<a name="line.144"></a>
+<FONT color="green">145</FONT>        }<a name="line.145"></a>
+<FONT color="green">146</FONT>    <a name="line.146"></a>
+<FONT color="green">147</FONT>        /**<a name="line.147"></a>
+<FONT color="green">148</FONT>         * This method takes all the applicable attributes from the associated proposal object and sets those attributes into their<a name="line.148"></a>
+<FONT color="green">149</FONT>         * corresponding award attributes.<a name="line.149"></a>
+<FONT color="green">150</FONT>         * <a name="line.150"></a>
+<FONT color="green">151</FONT>         * @param proposal The associated proposal that the award will be linked to.<a name="line.151"></a>
+<FONT color="green">152</FONT>         */<a name="line.152"></a>
+<FONT color="green">153</FONT>        public void populateFromProposal(Proposal proposal) {<a name="line.153"></a>
+<FONT color="green">154</FONT>            if (ObjectUtils.isNotNull(proposal)) {<a name="line.154"></a>
+<FONT color="green">155</FONT>                setProposalNumber(proposal.getProposalNumber());<a name="line.155"></a>
+<FONT color="green">156</FONT>                setAgencyNumber(proposal.getAgencyNumber());<a name="line.156"></a>
+<FONT color="green">157</FONT>                setAwardProjectTitle(proposal.getProposalProjectTitle());<a name="line.157"></a>
+<FONT color="green">158</FONT>                setAwardDirectCostAmount(proposal.getProposalDirectCostAmount());<a name="line.158"></a>
+<FONT color="green">159</FONT>                setAwardIndirectCostAmount(proposal.getProposalIndirectCostAmount());<a name="line.159"></a>
+<FONT color="green">160</FONT>                setProposalAwardTypeCode(proposal.getProposalAwardTypeCode());<a name="line.160"></a>
+<FONT color="green">161</FONT>                setFederalPassThroughIndicator(proposal.getProposalFederalPassThroughIndicator());<a name="line.161"></a>
+<FONT color="green">162</FONT>                setFederalPassThroughAgencyNumber(proposal.getFederalPassThroughAgencyNumber());<a name="line.162"></a>
+<FONT color="green">163</FONT>                setAwardPurposeCode(proposal.getProposalPurposeCode());<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>                // copy proposal organizations to award organizations<a name="line.165"></a>
+<FONT color="green">166</FONT>                getAwardOrganizations().clear();<a name="line.166"></a>
+<FONT color="green">167</FONT>                for (ProposalOrganization pOrg : proposal.getProposalOrganizations()) {<a name="line.167"></a>
+<FONT color="green">168</FONT>                    AwardOrganization awardOrg = new AwardOrganization();<a name="line.168"></a>
+<FONT color="green">169</FONT>                    // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal<a name="line.169"></a>
+<FONT color="green">170</FONT>                    awardOrg.setNewCollectionRecord(true);<a name="line.170"></a>
+<FONT color="green">171</FONT>                    awardOrg.setProposalNumber(pOrg.getProposalNumber());<a name="line.171"></a>
+<FONT color="green">172</FONT>                    awardOrg.setChartOfAccountsCode(pOrg.getChartOfAccountsCode());<a name="line.172"></a>
+<FONT color="green">173</FONT>                    awardOrg.setOrganizationCode(pOrg.getOrganizationCode());<a name="line.173"></a>
+<FONT color="green">174</FONT>                    awardOrg.setAwardPrimaryOrganizationIndicator(pOrg.isProposalPrimaryOrganizationIndicator());<a name="line.174"></a>
+<FONT color="green">175</FONT>                    awardOrg.setActive(pOrg.isActive());<a name="line.175"></a>
+<FONT color="green">176</FONT>                    getAwardOrganizations().add(awardOrg);<a name="line.176"></a>
+<FONT color="green">177</FONT>                }<a name="line.177"></a>
+<FONT color="green">178</FONT>    <a name="line.178"></a>
+<FONT color="green">179</FONT>                // copy proposal subcontractors to award subcontractors<a name="line.179"></a>
+<FONT color="green">180</FONT>                getAwardSubcontractors().clear();<a name="line.180"></a>
+<FONT color="green">181</FONT>                for (ProposalSubcontractor pSubcontractor : proposal.getProposalSubcontractors()) {<a name="line.181"></a>
+<FONT color="green">182</FONT>                    AwardSubcontractor awardSubcontractor = new AwardSubcontractor();<a name="line.182"></a>
+<FONT color="green">183</FONT>                    // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal<a name="line.183"></a>
+<FONT color="green">184</FONT>                    awardSubcontractor.setNewCollectionRecord(true);<a name="line.184"></a>
+<FONT color="green">185</FONT>                    awardSubcontractor.setProposalNumber(pSubcontractor.getProposalNumber());<a name="line.185"></a>
+<FONT color="green">186</FONT>                    awardSubcontractor.setAwardSubcontractorNumber(pSubcontractor.getProposalSubcontractorNumber());<a name="line.186"></a>
+<FONT color="green">187</FONT>                    awardSubcontractor.setSubcontractorAmount(pSubcontractor.getProposalSubcontractorAmount());<a name="line.187"></a>
+<FONT color="green">188</FONT>                    awardSubcontractor.setAwardSubcontractorDescription(pSubcontractor.getProposalSubcontractorDescription());<a name="line.188"></a>
+<FONT color="green">189</FONT>                    awardSubcontractor.setSubcontractorNumber(pSubcontractor.getSubcontractorNumber());<a name="line.189"></a>
+<FONT color="green">190</FONT>                    awardSubcontractor.setActive(pSubcontractor.isActive());<a name="line.190"></a>
+<FONT color="green">191</FONT>                    getAwardSubcontractors().add(awardSubcontractor);<a name="line.191"></a>
+<FONT color="green">192</FONT>                }<a name="line.192"></a>
+<FONT color="green">193</FONT>    <a name="line.193"></a>
+<FONT color="green">194</FONT>                // copy proposal project directors to award propject directors<a name="line.194"></a>
+<FONT color="green">195</FONT>                getAwardProjectDirectors().clear();<a name="line.195"></a>
+<FONT color="green">196</FONT>                for (ProposalProjectDirector pDirector : proposal.getProposalProjectDirectors()) {<a name="line.196"></a>
+<FONT color="green">197</FONT>                    AwardProjectDirector awardDirector = new AwardProjectDirector();<a name="line.197"></a>
+<FONT color="green">198</FONT>                    // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal<a name="line.198"></a>
+<FONT color="green">199</FONT>                    awardDirector.setNewCollectionRecord(true);<a name="line.199"></a>
+<FONT color="green">200</FONT>                    awardDirector.setProposalNumber(pDirector.getProposalNumber());<a name="line.200"></a>
+<FONT color="green">201</FONT>                    awardDirector.setAwardPrimaryProjectDirectorIndicator(pDirector.isProposalPrimaryProjectDirectorIndicator());<a name="line.201"></a>
+<FONT color="green">202</FONT>                    awardDirector.setAwardProjectDirectorProjectTitle(pDirector.getProposalProjectDirectorProjectTitle());<a name="line.202"></a>
+<FONT color="green">203</FONT>                    awardDirector.setPrincipalId(pDirector.getPrincipalId());<a name="line.203"></a>
+<FONT color="green">204</FONT>                    awardDirector.setActive(pDirector.isActive());<a name="line.204"></a>
+<FONT color="green">205</FONT>                    getAwardProjectDirectors().add(awardDirector);<a name="line.205"></a>
+<FONT color="green">206</FONT>                }<a name="line.206"></a>
+<FONT color="green">207</FONT>            }<a name="line.207"></a>
+<FONT color="green">208</FONT>        }<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>        /**<a name="line.210"></a>
+<FONT color="green">211</FONT>         * Gets the proposalNumber attribute.<a name="line.211"></a>
+<FONT color="green">212</FONT>         * <a name="line.212"></a>
+<FONT color="green">213</FONT>         * @return Returns the proposalNumber<a name="line.213"></a>
+<FONT color="green">214</FONT>         */<a name="line.214"></a>
+<FONT color="green">215</FONT>        public Long getProposalNumber() {<a name="line.215"></a>
+<FONT color="green">216</FONT>            return proposalNumber;<a name="line.216"></a>
+<FONT color="green">217</FONT>        }<a name="line.217"></a>
+<FONT color="green">218</FONT>    <a name="line.218"></a>
+<FONT color="green">219</FONT>        /**<a name="line.219"></a>
+<FONT color="green">220</FONT>         * Sets the proposalNumber attribute.<a name="line.220"></a>
+<FONT color="green">221</FONT>         * <a name="line.221"></a>
+<FONT color="green">222</FONT>         * @param proposalNumber The proposalNumber to set.<a name="line.222"></a>
+<FONT color="green">223</FONT>         */<a name="line.223"></a>
+<FONT color="green">224</FONT>        public void setProposalNumber(Long proposalNumber) {<a name="line.224"></a>
+<FONT color="green">225</FONT>            this.proposalNumber = proposalNumber;<a name="line.225"></a>
+<FONT color="green">226</FONT>        }<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>        /**<a name="line.228"></a>
+<FONT color="green">229</FONT>         * Gets the awardBeginningDate attribute.<a name="line.229"></a>
+<FONT color="green">230</FONT>         * <a name="line.230"></a>
+<FONT color="green">231</FONT>         * @return Returns the awardBeginningDate<a name="line.231"></a>
+<FONT color="green">232</FONT>         */<a name="line.232"></a>
+<FONT color="green">233</FONT>        public Date getAwardBeginningDate() {<a name="line.233"></a>
+<FONT color="green">234</FONT>            return awardBeginningDate;<a name="line.234"></a>
+<FONT color="green">235</FONT>        }<a name="line.235"></a>
+<FONT color="green">236</FONT>    <a name="line.236"></a>
+<FONT color="green">237</FONT>        /**<a name="line.237"></a>
+<FONT color="green">238</FONT>         * Sets the awardBeginningDate attribute.<a name="line.238"></a>
+<FONT color="green">239</FONT>         * <a name="line.239"></a>
+<FONT color="green">240</FONT>         * @param awardBeginningDate The awardBeginningDate to set.<a name="line.240"></a>
+<FONT color="green">241</FONT>         */<a name="line.241"></a>
+<FONT color="green">242</FONT>        public void setAwardBeginningDate(Date awardBeginningDate) {<a name="line.242"></a>
+<FONT color="green">243</FONT>            this.awardBeginningDate = awardBeginningDate;<a name="line.243"></a>
+<FONT color="green">244</FONT>        }<a name="line.244"></a>
+<FONT color="green">245</FONT>    <a name="line.245"></a>
+<FONT color="green">246</FONT>        /**<a name="line.246"></a>
+<FONT color="green">247</FONT>         * Gets the awardEndingDate attribute.<a name="line.247"></a>
+<FONT color="green">248</FONT>         * <a name="line.248"></a>
+<FONT color="green">249</FONT>         * @return Returns the awardEndingDate<a name="line.249"></a>
+<FONT color="green">250</FONT>         */<a name="line.250"></a>
+<FONT color="green">251</FONT>        public Date getAwardEndingDate() {<a name="line.251"></a>
+<FONT color="green">252</FONT>            return awardEndingDate;<a name="line.252"></a>
+<FONT color="green">253</FONT>        }<a name="line.253"></a>
+<FONT color="green">254</FONT>    <a name="line.254"></a>
+<FONT color="green">255</FONT>        /**<a name="line.255"></a>
+<FONT color="green">256</FONT>         * Sets the awardEndingDate attribute.<a name="line.256"></a>
+<FONT color="green">257</FONT>         * <a name="line.257"></a>
+<FONT color="green">258</FONT>         * @param awardEndingDate The awardEndingDate to set.<a name="line.258"></a>
+<FONT color="green">259</FONT>         */<a name="line.259"></a>
+<FONT color="green">260</FONT>        public void setAwardEndingDate(Date awardEndingDate) {<a name="line.260"></a>
+<FONT color="green">261</FONT>            this.awardEndingDate = awardEndingDate;<a name="line.261"></a>
+<FONT color="green">262</FONT>        }<a name="line.262"></a>
+<FONT color="green">263</FONT>    <a name="line.263"></a>
+<FONT color="green">264</FONT>        /**<a name="line.264"></a>
+<FONT color="green">265</FONT>         * Gets the awardTotalAmount attribute.<a name="line.265"></a>
+<FONT color="green">266</FONT>         * <a name="line.266"></a>
+<FONT color="green">267</FONT>         * @return Returns the awardTotalAmount<a name="line.267"></a>
+<FONT color="green">268</FONT>         */<a name="line.268"></a>
+<FONT color="green">269</FONT>        public KualiDecimal getAwardTotalAmount() {<a name="line.269"></a>
+<FONT color="green">270</FONT>            KualiDecimal direct = getAwardDirectCostAmount();<a name="line.270"></a>
+<FONT color="green">271</FONT>            KualiDecimal indirect = getAwardIndirectCostAmount();<a name="line.271"></a>
+<FONT color="green">272</FONT>            return ObjectUtils.isNull(direct) || ObjectUtils.isNull(indirect) ? null : direct.add(indirect);<a name="line.272"></a>
+<FONT color="green">273</FONT>        }<a name="line.273"></a>
+<FONT color="green">274</FONT>    <a name="line.274"></a>
+<FONT color="green">275</FONT>        /**<a name="line.275"></a>
+<FONT color="green">276</FONT>         * Does nothing. This property is determined by the direct and indirect cost amounts. This setter is here only because without<a name="line.276"></a>
+<FONT color="green">277</FONT>         * it, the maintenance framework won't display this attribute.<a name="line.277"></a>
+<FONT color="green">278</FONT>         * <a name="line.278"></a>
+<FONT color="green">279</FONT>         * @param awardTotalAmount The awardTotalAmount to set.<a name="line.279"></a>
+<FONT color="green">280</FONT>         * @deprecated Should not be used. See method description above.<a name="line.280"></a>
+<FONT color="green">281</FONT>         */<a name="line.281"></a>
+<FONT color="green">282</FONT>        @Deprecated<a name="line.282"></a>
+<FONT color="green">283</FONT>        public void setAwardTotalAmount(KualiDecimal awardTotalAmount) {<a name="line.283"></a>
+<FONT color="green">284</FONT>            // do nothing<a name="line.284"></a>
+<FONT color="green">285</FONT>        }<a name="line.285"></a>
+<FONT color="green">286</FONT>    <a name="line.286"></a>
+<FONT color="green">287</FONT>        /**<a name="line.287"></a>
+<FONT color="green">288</FONT>         * OJB calls this method as the first operation before this BO is inserted into the database. The database contains<a name="line.288"></a>
+<FONT color="green">289</FONT>         * CGAWD_TOT_AMT, a denormalized column that Kuali does not use but needs to maintain with this method because OJB bypasses the<a name="line.289"></a>
+<FONT color="green">290</FONT>         * getter.<a name="line.290"></a>
+<FONT color="green">291</FONT>         * <a name="line.291"></a>
+<FONT color="green">292</FONT>         * @param persistenceBroker from OJB<a name="line.292"></a>
+<FONT color="green">293</FONT>         * @throws PersistenceBrokerException Thrown by call to super.beforeInsert();<a name="line.293"></a>
+<FONT color="green">294</FONT>         * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#beforeInsert(org.apache.ojb.broker.PersistenceBroker)<a name="line.294"></a>
+<FONT color="green">295</FONT>         */<a name="line.295"></a>
+<FONT color="green">296</FONT>        @Override<a name="line.296"></a>
+<FONT color="green">297</FONT>        public void beforeInsert(PersistenceBroker persistenceBroker) throws PersistenceBrokerException {<a name="line.297"></a>
+<FONT color="green">298</FONT>            super.beforeInsert(persistenceBroker);<a name="line.298"></a>
+<FONT color="green">299</FONT>            awardTotalAmount = getAwardTotalAmount();<a name="line.299"></a>
+<FONT color="green">300</FONT>        }<a name="line.300"></a>
+<FONT color="green">301</FONT>    <a name="line.301"></a>
+<FONT color="green">302</FONT>        /**<a name="line.302"></a>
+<FONT color="green">303</FONT>         * OJB calls this method as the first operation before this BO is updated to the database. The database contains CGAWD_TOT_AMT,<a name="line.303"></a>
+<FONT color="green">304</FONT>         * a denormalized column that Kuali does not use but needs to maintain with this method because OJB bypasses the getter.<a name="line.304"></a>
+<FONT color="green">305</FONT>         * <a name="line.305"></a>
+<FONT color="green">306</FONT>         * @param persistenceBroker from OJB<a name="line.306"></a>
+<FONT color="green">307</FONT>         * @throws PersistenceBrokerException Thrown by call to super.beforeUpdate();<a name="line.307"></a>
+<FONT color="green">308</FONT>         * @see org.kuali.rice.kns.bo.PersistableBusinessObjectBase#beforeUpdate(org.apache.ojb.broker.PersistenceBroker)<a name="line.308"></a>
+<FONT color="green">309</FONT>         */<a name="line.309"></a>
+<FONT color="green">310</FONT>        @Override<a name="line.310"></a>
+<FONT color="green">311</FONT>        public void beforeUpdate(PersistenceBroker persistenceBroker) throws PersistenceBrokerException {<a name="line.311"></a>
+<FONT color="green">312</FONT>            super.beforeUpdate(persistenceBroker);<a name="line.312"></a>
+<FONT color="green">313</FONT>            awardTotalAmount = getAwardTotalAmount();<a name="line.313"></a>
+<FONT color="green">314</FONT>        }<a name="line.314"></a>
+<FONT color="green">315</FONT>    <a name="line.315"></a>
+<FONT color="green">316</FONT>        /**<a name="line.316"></a>
+<FONT color="green">317</FONT>         * Gets the awardAddendumNumber attribute.<a name="line.317"></a>
+<FONT color="green">318</FONT>         * <a name="line.318"></a>
+<FONT color="green">319</FONT>         * @return Returns the awardAddendumNumber<a name="line.319"></a>
+<FONT color="green">320</FONT>         */<a name="line.320"></a>
+<FONT color="green">321</FONT>        public String getAwardAddendumNumber() {<a name="line.321"></a>
+<FONT color="green">322</FONT>            return awardAddendumNumber;<a name="line.322"></a>
+<FONT color="green">323</FONT>        }<a name="line.323"></a>
+<FONT color="green">324</FONT>    <a name="line.324"></a>
+<FONT color="green">325</FONT>        /**<a name="line.325"></a>
+<FONT color="green">326</FONT>         * Sets the awardAddendumNumber attribute.<a name="line.326"></a>
+<FONT color="green">327</FONT>         * <a name="line.327"></a>
+<FONT color="green">328</FONT>         * @param awardAddendumNumber The awardAddendumNumber to set.<a name="line.328"></a>
+<FONT color="green">329</FONT>         */<a name="line.329"></a>
+<FONT color="green">330</FONT>        public void setAwardAddendumNumber(String awardAddendumNumber) {<a name="line.330"></a>
+<FONT color="green">331</FONT>            this.awardAddendumNumber = awardAddendumNumber;<a name="line.331"></a>
+<FONT color="green">332</FONT>        }<a name="line.332"></a>
+<FONT color="green">333</FONT>    <a name="line.333"></a>
+<FONT color="green">334</FONT>        /**<a name="line.334"></a>
+<FONT color="green">335</FONT>         * Gets the awardAllocatedUniversityComputingServicesAmount attribute.<a name="line.335"></a>
+<FONT color="green">336</FONT>         * <a name="line.336"></a>
+<FONT color="green">337</FONT>         * @return Returns the awardAllocatedUniversityComputingServicesAmount<a name="line.337"></a>
+<FONT color="green">338</FONT>         */<a name="line.338"></a>
+<FONT color="green">339</FONT>        public KualiDecimal getAwardAllocatedUniversityComputingServicesAmount() {<a name="line.339"></a>
+<FONT color="green">340</FONT>            return awardAllocatedUniversityComputingServicesAmount;<a name="line.340"></a>
+<FONT color="green">341</FONT>        }<a name="line.341"></a>
+<FONT color="green">342</FONT>    <a name="line.342"></a>
+<FONT color="green">343</FONT>        /**<a name="line.343"></a>
+<FONT color="green">344</FONT>         * Sets the awardAllocatedUniversityComputingServicesAmount attribute.<a name="line.344"></a>
+<FONT color="green">345</FONT>         * <a name="line.345"></a>
+<FONT color="green">346</FONT>         * @param awardAllocatedUniversityComputingServicesAmount The awardAllocatedUniversityComputingServicesAmount to set.<a name="line.346"></a>
+<FONT color="green">347</FONT>         */<a name="line.347"></a>
+<FONT color="green">348</FONT>        public void setAwardAllocatedUniversityComputingServicesAmount(KualiDecimal awardAllocatedUniversityComputingServicesAmount) {<a name="line.348"></a>
+<FONT color="green">349</FONT>            this.awardAllocatedUniversityComputingServicesAmount = awardAllocatedUniversityComputingServicesAmount;<a name="line.349"></a>
+<FONT color="green">350</FONT>        }<a name="line.350"></a>
+<FONT color="green">351</FONT>    <a name="line.351"></a>
+<FONT color="green">352</FONT>        /**<a name="line.352"></a>
+<FONT color="green">353</FONT>         * Gets the federalPassThroughFundedAmount attribute.<a name="line.353"></a>
+<FONT color="green">354</FONT>         * <a name="line.354"></a>
+<FONT color="green">355</FONT>         * @return Returns the federalPassThroughFundedAmount<a name="line.355"></a>
+<FONT color="green">356</FONT>         */<a name="line.356"></a>
+<FONT color="green">357</FONT>        public KualiDecimal getFederalPassThroughFundedAmount() {<a name="line.357"></a>
+<FONT color="green">358</FONT>            return federalPassThroughFundedAmount;<a name="line.358"></a>
+<FONT color="green">359</FONT>        }<a name="line.359"></a>
+<FONT color="green">360</FONT>    <a name="line.360"></a>
+<FONT color="green">361</FONT>        /**<a name="line.361"></a>
+<FONT color="green">362</FONT>         * Sets the federalPassThroughFundedAmount attribute.<a name="line.362"></a>
+<FONT color="green">363</FONT>         * <a name="line.363"></a>
+<FONT color="green">364</FONT>         * @param federalPassThroughFundedAmount The federalPassThroughFundedAmount to set.<a name="line.364"></a>
+<FONT color="green">365</FONT>         */<a name="line.365"></a>
+<FONT color="green">366</FONT>        public void setFederalPassThroughFundedAmount(KualiDecimal federalPassThroughFundedAmount) {<a name="line.366"></a>
+<FONT color="green">367</FONT>            this.federalPassThroughFundedAmount = federalPassThroughFundedAmount;<a name="line.367"></a>
+<FONT color="green">368</FONT>        }<a name="line.368"></a>
+<FONT color="green">369</FONT>    <a name="line.369"></a>
+<FONT color="green">370</FONT>        /**<a name="line.370"></a>
+<FONT color="green">371</FONT>         * Gets the awardEntryDate attribute.<a name="line.371"></a>
+<FONT color="green">372</FONT>         * <a name="line.372"></a>
+<FONT color="green">373</FONT>         * @return Returns the awardEntryDate<a name="line.373"></a>
+<FONT color="green">374</FONT>         */<a name="line.374"></a>
+<FONT color="green">375</FONT>        public Date getAwardEntryDate() {<a name="line.375"></a>
+<FONT color="green">376</FONT>            return awardEntryDate;<a name="line.376"></a>
+<FONT color="green">377</FONT>        }<a name="line.377"></a>
+<FONT color="green">378</FONT>    <a name="line.378"></a>
+<FONT color="green">379</FONT>        /**<a name="line.379"></a>
+<FONT color="green">380</FONT>         * Sets the awardEntryDate attribute.<a name="line.380"></a>
+<FONT color="green">381</FONT>         * <a name="line.381"></a>
+<FONT color="green">382</FONT>         * @param awardEntryDate The awardEntryDate to set.<a name="line.382"></a>
+<FONT color="green">383</FONT>         */<a name="line.383"></a>
+<FONT color="green">384</FONT>        public void setAwardEntryDate(Date awardEntryDate) {<a name="line.384"></a>
+<FONT color="green">385</FONT>            this.awardEntryDate = awardEntryDate;<a name="line.385"></a>
+<FONT color="green">386</FONT>        }<a name="line.386"></a>
+<FONT color="green">387</FONT>    <a name="line.387"></a>
+<FONT color="green">388</FONT>        /**<a name="line.388"></a>
+<FONT color="green">389</FONT>         * Gets the agencyFuture1Amount attribute.<a name="line.389"></a>
+<FONT color="green">390</FONT>         * <a name="line.390"></a>
+<FONT color="green">391</FONT>         * @return Returns the agencyFuture1Amount<a name="line.391"></a>
+<FONT color="green">392</FONT>         */<a name="line.392"></a>
+<FONT color="green">393</FONT>        public KualiDecimal getAgencyFuture1Amount() {<a name="line.393"></a>
+<FONT color="green">394</FONT>            return agencyFuture1Amount;<a name="line.394"></a>
+<FONT color="green">395</FONT>        }<a name="line.395"></a>
+<FONT color="green">396</FONT>    <a name="line.396"></a>
+<FONT color="green">397</FONT>        /**<a name="line.397"></a>
+<FONT color="green">398</FONT>         * Sets the agencyFuture1Amount attribute.<a name="line.398"></a>
+<FONT color="green">399</FONT>         * <a name="line.399"></a>
+<FONT color="green">400</FONT>         * @param agencyFuture1Amount The agencyFuture1Amount to set.<a name="line.400"></a>
+<FONT color="green">401</FONT>         */<a name="line.401"></a>
+<FONT color="green">402</FONT>        public void setAgencyFuture1Amount(KualiDecimal agencyFuture1Amount) {<a name="line.402"></a>
+<FONT color="green">403</FONT>            this.agencyFuture1Amount = agencyFuture1Amount;<a name="line.403"></a>
+<FONT color="green">404</FONT>        }<a name="line.404"></a>
+<FONT color="green">405</FONT>    <a name="line.405"></a>
+<FONT color="green">406</FONT>    <a name="line.406"></a>
+<FONT color="green">407</FONT>        /**<a name="line.407"></a>
+<FONT color="green">408</FONT>         * Gets the agencyFuture2Amount attribute.<a name="line.408"></a>
+<FONT color="green">409</FONT>         * <a name="line.409"></a>
+<FONT color="green">410</FONT>         * @return Returns the agencyFuture2Amount<a name="line.410"></a>
+<FONT color="green">411</FONT>         */<a name="line.411"></a>
+<FONT color="green">412</FONT>        public KualiDecimal getAgencyFuture2Amount() {<a name="line.412"></a>
+<FONT color="green">413</FONT>            return agencyFuture2Amount;<a name="line.413"></a>
+<FONT color="green">414</FONT>        }<a name="line.414"></a>
+<FONT color="green">415</FONT>    <a name="line.415"></a>
+<FONT color="green">416</FONT>        /**<a name="line.416"></a>
+<FONT color="green">417</FONT>         * Sets the agencyFuture2Amount attribute.<a name="line.417"></a>
+<FONT color="green">418</FONT>         * <a name="line.418"></a>
+<FONT color="green">419</FONT>         * @param agencyFuture2Amount The agencyFuture2Amount to set.<a name="line.419"></a>
+<FONT color="green">420</FONT>         */<a name="line.420"></a>
+<FONT color="green">421</FONT>        public void setAgencyFuture2Amount(KualiDecimal agencyFuture2Amount) {<a name="line.421"></a>
+<FONT color="green">422</FONT>            this.agencyFuture2Amount = agencyFuture2Amount;<a name="line.422"></a>
+<FONT color="green">423</FONT>        }<a name="line.423"></a>
+<FONT color="green">424</FONT>    <a name="line.424"></a>
+<FONT color="green">425</FONT>        /**<a name="line.425"></a>
+<FONT color="green">426</FONT>         * Gets the agencyFuture3Amount attribute.<a name="line.426"></a>
+<FONT color="green">427</FONT>         * <a name="line.427"></a>
+<FONT color="green">428</FONT>         * @return Returns the agencyFuture3Amount<a name="line.428"></a>
+<FONT color="green">429</FONT>         */<a name="line.429"></a>
+<FONT color="green">430</FONT>        public KualiDecimal getAgencyFuture3Amount() {<a name="line.430"></a>
+<FONT color="green">431</FONT>            return agencyFuture3Amount;<a name="line.431"></a>
+<FONT color="green">432</FONT>        }<a name="line.432"></a>
+<FONT color="green">433</FONT>    <a name="line.433"></a>
+<FONT color="green">434</FONT>        /**<a name="line.434"></a>
+<FONT color="green">435</FONT>         * Sets the agencyFuture3Amount attribute.<a name="line.435"></a>
+<FONT color="green">436</FONT>         * <a name="line.436"></a>
+<FONT color="green">437</FONT>         * @param agencyFuture3Amount The agencyFuture3Amount to set.<a name="line.437"></a>
+<FONT color="green">438</FONT>         */<a name="line.438"></a>
+<FONT color="green">439</FONT>        public void setAgencyFuture3Amount(KualiDecimal agencyFuture3Amount) {<a name="line.439"></a>
+<FONT color="green">440</FONT>            this.agencyFuture3Amount = agencyFuture3Amount;<a name="line.440"></a>
+<FONT color="green">441</FONT>        }<a name="line.441"></a>
+<FONT color="green">442</FONT>    <a name="line.442"></a>
+<FONT color="green">443</FONT>        /**<a name="line.443"></a>
+<FONT color="green">444</FONT>         * Gets the awardDocumentNumber attribute.<a name="line.444"></a>
+<FONT color="green">445</FONT>         * <a name="line.445"></a>
+<FONT color="green">446</FONT>         * @return Returns the awardDocumentNumber<a name="line.446"></a>
+<FONT color="green">447</FONT>         */<a name="line.447"></a>
+<FONT color="green">448</FONT>        public String getAwardDocumentNumber() {<a name="line.448"></a>
+<FONT color="green">449</FONT>            return awardDocumentNumber;<a name="line.449"></a>
+<FONT color="green">450</FONT>        }<a name="line.450"></a>
+<FONT color="green">451</FONT>    <a name="line.451"></a>
+<FONT color="green">452</FONT>        /**<a name="line.452"></a>
+<FONT color="green">453</FONT>         * Sets the awardDocumentNumber attribute.<a name="line.453"></a>
+<FONT color="green">454</FONT>         * <a name="line.454"></a>
+<FONT color="green">455</FONT>         * @param awardDocumentNumber The awardDocumentNumber to set.<a name="line.455"></a>
+<FONT color="green">456</FONT>         */<a name="line.456"></a>
+<FONT color="green">457</FONT>        public void setAwardDocumentNumber(String awardDocumentNumber) {<a name="line.457"></a>
+<FONT color="green">458</FONT>            this.awardDocumentNumber = awardDocumentNumber;<a name="line.458"></a>
+<FONT color="green">459</FONT>        }<a name="line.459"></a>
+<FONT color="green">460</FONT>    <a name="line.460"></a>
+<FONT color="green">461</FONT>        /**<a name="line.461"></a>
+<FONT color="green">462</FONT>         * Gets the awardLastUpdateDate attribute.<a name="line.462"></a>
+<FONT color="green">463</FONT>         * <a name="line.463"></a>
+<FONT color="green">464</FONT>         * @return Returns the awardLastUpdateDate<a name="line.464"></a>
+<FONT color="green">465</FONT>         */<a name="line.465"></a>
+<FONT color="green">466</FONT>        public Timestamp getAwardLastUpdateDate() {<a name="line.466"></a>
+<FONT color="green">467</FONT>            return awardLastUpdateDate;<a name="line.467"></a>
+<FONT color="green">468</FONT>        }<a name="line.468"></a>
+<FONT color="green">469</FONT>    <a name="line.469"></a>
+<FONT color="green">470</FONT>        /**<a name="line.470"></a>
+<FONT color="green">471</FONT>         * Sets the awardLastUpdateDate attribute.<a name="line.471"></a>
+<FONT color="green">472</FONT>         * <a name="line.472"></a>
+<FONT color="green">473</FONT>         * @param awardLastUpdateDate The awardLastUpdateDate to set.<a name="line.473"></a>
+<FONT color="green">474</FONT>         */<a name="line.474"></a>
+<FONT color="green">475</FONT>        public void setAwardLastUpdateDate(Timestamp awardLastUpdateDate) {<a name="line.475"></a>
+<FONT color="green">476</FONT>            this.awardLastUpdateDate = awardLastUpdateDate;<a name="line.476"></a>
+<FONT color="green">477</FONT>        }<a name="line.477"></a>
+<FONT color="green">478</FONT>    <a name="line.478"></a>
+<FONT color="green">479</FONT>        /**<a name="line.479"></a>
+<FONT color="green">480</FONT>         * Gets the federalPassThroughIndicator attribute.<a name="line.480"></a>
+<FONT color="green">481</FONT>         * <a name="line.481"></a>
+<FONT color="green">482</FONT>         * @return Returns the federalPassThroughIndicator<a name="line.482"></a>
+<FONT color="green">483</FONT>         */<a name="line.483"></a>
+<FONT color="green">484</FONT>        public boolean getFederalPassThroughIndicator() {<a name="line.484"></a>
+<FONT color="green">485</FONT>            return federalPassThroughIndicator;<a name="line.485"></a>
+<FONT color="green">486</FONT>        }<a name="line.486"></a>
+<FONT color="green">487</FONT>    <a name="line.487"></a>
+<FONT color="green">488</FONT>        /**<a name="line.488"></a>
+<FONT color="green">489</FONT>         * Sets the federalPassThroughIndicator attribute.<a name="line.489"></a>
+<FONT color="green">490</FONT>         * <a name="line.490"></a>
+<FONT color="green">491</FONT>         * @param federalPassThroughIndicator The federalPassThroughIndicator to set.<a name="line.491"></a>
+<FONT color="green">492</FONT>         */<a name="line.492"></a>
+<FONT color="green">493</FONT>        public void setFederalPassThroughIndicator(boolean federalPassThroughIndicator) {<a name="line.493"></a>
+<FONT color="green">494</FONT>            this.federalPassThroughIndicator = federalPassThroughIndicator;<a name="line.494"></a>
+<FONT color="green">495</FONT>        }<a name="line.495"></a>
+<FONT color="green">496</FONT>    <a name="line.496"></a>
+<FONT color="green">497</FONT>        /**<a name="line.497"></a>
+<FONT color="green">498</FONT>         * Gets the oldProposalNumber attribute.<a name="line.498"></a>
+<FONT color="green">499</FONT>         * <a name="line.499"></a>
+<FONT color="green">500</FONT>         * @return Returns the oldProposalNumber<a name="line.500"></a>
+<FONT color="green">501</FONT>         */<a name="line.501"></a>
+<FONT color="green">502</FONT>        public String getOldProposalNumber() {<a name="line.502"></a>
+<FONT color="green">503</FONT>            return oldProposalNumber;<a name="line.503"></a>
+<FONT color="green">504</FONT>        }<a name="line.504"></a>
+<FONT color="green">505</FONT>    <a name="line.505"></a>
+<FONT color="green">506</FONT>        /**<a name="line.506"></a>
+<FONT color="green">507</FONT>         * Sets the oldProposalNumber attribute.<a name="line.507"></a>
+<FONT color="green">508</FONT>         * <a name="line.508"></a>
+<FONT color="green">509</FONT>         * @param oldProposalNumber The oldProposalNumber to set.<a name="line.509"></a>
+<FONT color="green">510</FONT>         */<a name="line.510"></a>
+<FONT color="green">511</FONT>        public void setOldProposalNumber(String oldProposalNumber) {<a name="line.511"></a>
+<FONT color="green">512</FONT>            this.oldProposalNumber = oldProposalNumber;<a name="line.512"></a>
+<FONT color="green">513</FONT>        }<a name="line.513"></a>
+<FONT color="green">514</FONT>    <a name="line.514"></a>
+<FONT color="green">515</FONT>        /**<a name="line.515"></a>
+<FONT color="green">516</FONT>         * Gets the awardDirectCostAmount attribute.<a name="line.516"></a>
+<FONT color="green">517</FONT>         * <a name="line.517"></a>
+<FONT color="green">518</FONT>         * @return Returns the awardDirectCostAmount<a name="line.518"></a>
+<FONT color="green">519</FONT>         */<a name="line.519"></a>
+<FONT color="green">520</FONT>        public KualiDecimal getAwardDirectCostAmount() {<a name="line.520"></a>
+<FONT color="green">521</FONT>            return awardDirectCostAmount;<a name="line.521"></a>
+<FONT color="green">522</FONT>        }<a name="line.522"></a>
+<FONT color="green">523</FONT>    <a name="line.523"></a>
+<FONT color="green">524</FONT>        /**<a name="line.524"></a>
+<FONT color="green">525</FONT>         * Sets the awardDirectCostAmount attribute.<a name="line.525"></a>
+<FONT color="green">526</FONT>         * <a name="line.526"></a>
+<FONT color="green">527</FONT>         * @param awardDirectCostAmount The awardDirectCostAmount to set.<a name="line.527"></a>
+<FONT color="green">528</FONT>         */<a name="line.528"></a>
+<FONT color="green">529</FONT>        public void setAwardDirectCostAmount(KualiDecimal awardDirectCostAmount) {<a name="line.529"></a>
+<FONT color="green">530</FONT>            this.awardDirectCostAmount = awardDirectCostAmount;<a name="line.530"></a>
+<FONT color="green">531</FONT>        }<a name="line.531"></a>
+<FONT color="green">532</FONT>    <a name="line.532"></a>
+<FONT color="green">533</FONT>        /**<a name="line.533"></a>
+<FONT color="green">534</FONT>         * Gets the awardIndirectCostAmount attribute.<a name="line.534"></a>
+<FONT color="green">535</FONT>         * <a name="line.535"></a>
+<FONT color="green">536</FONT>         * @return Returns the awardIndirectCostAmount<a name="line.536"></a>
+<FONT color="green">537</FONT>         */<a name="line.537"></a>
+<FONT color="green">538</FONT>        public KualiDecimal getAwardIndirectCostAmount() {<a name="line.538"></a>
+<FONT color="green">539</FONT>            return awardIndirectCostAmount;<a name="line.539"></a>
+<FONT color="green">540</FONT>        }<a name="line.540"></a>
+<FONT color="green">541</FONT>    <a name="line.541"></a>
+<FONT color="green">542</FONT>        /**<a name="line.542"></a>
+<FONT color="green">543</FONT>         * Sets the awardIndirectCostAmount attribute.<a name="line.543"></a>
+<FONT color="green">544</FONT>         * <a name="line.544"></a>
+<FONT color="green">545</FONT>         * @param awardIndirectCostAmount The awardIndirectCostAmount to set.<a name="line.545"></a>
+<FONT color="green">546</FONT>         */<a name="line.546"></a>
+<FONT color="green">547</FONT>        public void setAwardIndirectCostAmount(KualiDecimal awardIndirectCostAmount) {<a name="line.547"></a>
+<FONT color="green">548</FONT>            this.awardIndirectCostAmount = awardIndirectCostAmount;<a name="line.548"></a>
+<FONT color="green">549</FONT>        }<a name="line.549"></a>
+<FONT color="green">550</FONT>    <a name="line.550"></a>
+<FONT color="green">551</FONT>        /**<a name="line.551"></a>
+<FONT color="green">552</FONT>         * Gets the federalFundedAmount attribute.<a name="line.552"></a>
+<FONT color="green">553</FONT>         * <a name="line.553"></a>
+<FONT color="green">554</FONT>         * @return Returns the federalFundedAmount<a name="line.554"></a>
+<FONT color="green">555</FONT>         */<a name="line.555"></a>
+<FONT color="green">556</FONT>        public KualiDecimal getFederalFundedAmount() {<a name="line.556"></a>
+<FONT color="green">557</FONT>            return federalFundedAmount;<a name="line.557"></a>
+<FONT color="green">558</FONT>        }<a name="line.558"></a>
+<FONT color="green">559</FONT>    <a name="line.559"></a>
+<FONT color="green">560</FONT>        /**<a name="line.560"></a>
+<FONT color="green">561</FONT>         * Sets the federalFundedAmount attribute.<a name="line.561"></a>
+<FONT color="green">562</FONT>         * <a name="line.562"></a>
+<FONT color="green">563</FONT>         * @param federalFundedAmount The federalFundedAmount to set.<a name="line.563"></a>
+<FONT color="green">564</FONT>         */<a name="line.564"></a>
+<FONT color="green">565</FONT>        public void setFederalFundedAmount(KualiDecimal federalFundedAmount) {<a name="line.565"></a>
+<FONT color="green">566</FONT>            this.federalFundedAmount = federalFundedAmount;<a name="line.566"></a>
+<FONT color="green">567</FONT>        }<a name="line.567"></a>
+<FONT color="green">568</FONT>    <a name="line.568"></a>
+<FONT color="green">569</FONT>        /**<a name="line.569"></a>
+<FONT color="green">570</FONT>         * Gets the awardCreateTimestamp attribute.<a name="line.570"></a>
+<FONT color="green">571</FONT>         * <a name="line.571"></a>
+<FONT color="green">572</FONT>         * @return Returns the awardCreateTimestamp<a name="line.572"></a>
+<FONT color="green">573</FONT>         */<a name="line.573"></a>
+<FONT color="green">574</FONT>        public Timestamp getAwardCreateTimestamp() {<a name="line.574"></a>
+<FONT color="green">575</FONT>            return awardCreateTimestamp;<a name="line.575"></a>
+<FONT color="green">576</FONT>        }<a name="line.576"></a>
+<FONT color="green">577</FONT>    <a name="line.577"></a>
+<FONT color="green">578</FONT>        /**<a name="line.578"></a>
+<FONT color="green">579</FONT>         * Sets the awardCreateTimestamp attribute.<a name="line.579"></a>
+<FONT color="green">580</FONT>         * <a name="line.580"></a>
+<FONT color="green">581</FONT>         * @param awardCreateTimestamp The awardCreateTimestamp to set.<a name="line.581"></a>
+<FONT color="green">582</FONT>         */<a name="line.582"></a>
+<FONT color="green">583</FONT>        public void setAwardCreateTimestamp(Timestamp awardCreateTimestamp) {<a name="line.583"></a>
+<FONT color="green">584</FONT>            this.awardCreateTimestamp = awardCreateTimestamp;<a name="line.584"></a>
+<FONT color="green">585</FONT>        }<a name="line.585"></a>
+<FONT color="green">586</FONT>    <a name="line.586"></a>
+<FONT color="green">587</FONT>        /**<a name="line.587"></a>
+<FONT color="green">588</FONT>         * Gets the awardClosingDate attribute.<a name="line.588"></a>
+<FONT color="green">589</FONT>         * <a name="line.589"></a>
+<FONT color="green">590</FONT>         * @return Returns the awardClosingDate<a name="line.590"></a>
+<FONT color="green">591</FONT>         */<a name="line.591"></a>
+<FONT color="green">592</FONT>        public Date getAwardClosingDate() {<a name="line.592"></a>
+<FONT color="green">593</FONT>            return awardClosingDate;<a name="line.593"></a>
+<FONT color="green">594</FONT>        }<a name="line.594"></a>
+<FONT color="green">595</FONT>    <a name="line.595"></a>
+<FONT color="green">596</FONT>        /**<a name="line.596"></a>
+<FONT color="green">597</FONT>         * Sets the awardClosingDate attribute.<a name="line.597"></a>
+<FONT color="green">598</FONT>         * <a name="line.598"></a>
+<FONT color="green">599</FONT>         * @param awardClosingDate The awardClosingDate to set.<a name="line.599"></a>
+<FONT color="green">600</FONT>         */<a name="line.600"></a>
+<FONT color="green">601</FONT>        public void setAwardClosingDate(Date awardClosingDate) {<a name="line.601"></a>
+<FONT color="green">602</FONT>            this.awardClosingDate = awardClosingDate;<a name="line.602"></a>
+<FONT color="green">603</FONT>        }<a name="line.603"></a>
+<FONT color="green">604</FONT>    <a name="line.604"></a>
+<FONT color="green">605</FONT>        /**<a name="line.605"></a>
+<FONT color="green">606</FONT>         * Gets the proposalAwardTypeCode attribute.<a name="line.606"></a>
+<FONT color="green">607</FONT>         * <a name="line.607"></a>
+<FONT color="green">608</FONT>         * @return Returns the proposalAwardTypeCode<a name="line.608"></a>
+<FONT color="green">609</FONT>         */<a name="line.609"></a>
+<FONT color="green">610</FONT>        public String getProposalAwardTypeCode() {<a name="line.610"></a>
+<FONT color="green">611</FONT>            return proposalAwardTypeCode;<a name="line.611"></a>
+<FONT color="green">612</FONT>        }<a name="line.612"></a>
+<FONT color="green">613</FONT>    <a name="line.613"></a>
+<FONT color="green">614</FONT>        /**<a name="line.614"></a>
+<FONT color="green">615</FONT>         * Sets the proposalAwardTypeCode attribute.<a name="line.615"></a>
+<FONT color="green">616</FONT>         * <a name="line.616"></a>
+<FONT color="green">617</FONT>         * @param proposalAwardTypeCode The proposalAwardTypeCode to set.<a name="line.617"></a>
+<FONT color="green">618</FONT>         */<a name="line.618"></a>
+<FONT color="green">619</FONT>        public void setProposalAwardTypeCode(String proposalAwardTypeCode) {<a name="line.619"></a>
+<FONT color="green">620</FONT>            this.proposalAwardTypeCode = proposalAwardTypeCode;<a name="line.620"></a>
+<FONT color="green">621</FONT>        }<a name="line.621"></a>
+<FONT color="green">622</FONT>    <a name="line.622"></a>
+<FONT color="green">623</FONT>        /**<a name="line.623"></a>
+<FONT color="green">624</FONT>         * Gets the awardStatusCode attribute.<a name="line.624"></a>
+<FONT color="green">625</FONT>         * <a name="line.625"></a>
+<FONT color="green">626</FONT>         * @return Returns the awardStatusCode<a name="line.626"></a>
+<FONT color="green">627</FONT>         */<a name="line.627"></a>
+<FONT color="green">628</FONT>        public String getAwardStatusCode() {<a name="line.628"></a>
+<FONT color="green">629</FONT>            return awardStatusCode;<a name="line.629"></a>
+<FONT color="green">630</FONT>        }<a name="line.630"></a>
+<FONT color="green">631</FONT>    <a name="line.631"></a>
+<FONT color="green">632</FONT>        /**<a name="line.632"></a>
+<FONT color="green">633</FONT>         * Sets the awardStatusCode attribute.<a name="line.633"></a>
+<FONT color="green">634</FONT>         * <a name="line.634"></a>
+<FONT color="green">635</FONT>         * @param awardStatusCode The awardStatusCode to set.<a name="line.635"></a>
+<FONT color="green">636</FONT>         */<a name="line.636"></a>
+<FONT color="green">637</FONT>        public void setAwardStatusCode(String awardStatusCode) {<a name="line.637"></a>
+<FONT color="green">638</FONT>            this.awardStatusCode = awardStatusCode;<a name="line.638"></a>
+<FONT color="green">639</FONT>        }<a name="line.639"></a>
+<FONT color="green">640</FONT>    <a name="line.640"></a>
+<FONT color="green">641</FONT>        /**<a name="line.641"></a>
+<FONT color="green">642</FONT>         * Gets the letterOfCreditFundGroupCode attribute.<a name="line.642"></a>
+<FONT color="green">643</FONT>         * <a name="line.643"></a>
+<FONT color="green">644</FONT>         * @return Returns the letterOfCreditFundGroupCode<a name="line.644"></a>
+<FONT color="green">645</FONT>         */<a name="line.645"></a>
+<FONT color="green">646</FONT>        public String getLetterOfCreditFundGroupCode() {<a name="line.646"></a>
+<FONT color="green">647</FONT>            return letterOfCreditFundGroupCode;<a name="line.647"></a>
+<FONT color="green">648</FONT>        }<a name="line.648"></a>
+<FONT color="green">649</FONT>    <a name="line.649"></a>
+<FONT color="green">650</FONT>        /**<a name="line.650"></a>
+<FONT color="green">651</FONT>         * Sets the letterOfCreditFundGroupCode attribute.<a name="line.651"></a>
+<FONT color="green">652</FONT>         * <a name="line.652"></a>
+<FONT color="green">653</FONT>         * @param letterOfCreditFundGroupCode The letterOfCreditFundGroupCode to set.<a name="line.653"></a>
+<FONT color="green">654</FONT>         */<a name="line.654"></a>
+<FONT color="green">655</FONT>        public void setLetterOfCreditFundGroupCode(String letterOfCreditFundGroupCode) {<a name="line.655"></a>
+<FONT color="green">656</FONT>            this.letterOfCreditFundGroupCode = letterOfCreditFundGroupCode;<a name="line.656"></a>
+<FONT color="green">657</FONT>        }<a name="line.657"></a>
+<FONT color="green">658</FONT>    <a name="line.658"></a>
+<FONT color="green">659</FONT>        /**<a name="line.659"></a>
+<FONT color="green">660</FONT>         * Gets the grantDescriptionCode attribute.<a name="line.660"></a>
+<FONT color="green">661</FONT>         * <a name="line.661"></a>
+<FONT color="green">662</FONT>         * @return Returns the grantDescriptionCode<a name="line.662"></a>
+<FONT color="green">663</FONT>         */<a name="line.663"></a>
+<FONT color="green">664</FONT>        public String getGrantDescriptionCode() {<a name="line.664"></a>
+<FONT color="green">665</FONT>            return grantDescriptionCode;<a name="line.665"></a>
+<FONT color="green">666</FONT>        }<a name="line.666"></a>
+<FONT color="green">667</FONT>    <a name="line.667"></a>
+<FONT color="green">668</FONT>        /**<a name="line.668"></a>
+<FONT color="green">669</FONT>         * Sets the grantDescriptionCode attribute.<a name="line.669"></a>
+<FONT color="green">670</FONT>         * <a name="line.670"></a>
+<FONT color="green">671</FONT>         * @param grantDescriptionCode The grantDescriptionCode to set.<a name="line.671"></a>
+<FONT color="green">672</FONT>         */<a name="line.672"></a>
+<FONT color="green">673</FONT>        public void setGrantDescriptionCode(String grantDescriptionCode) {<a name="line.673"></a>
+<FONT color="green">674</FONT>            this.grantDescriptionCode = grantDescriptionCode;<a name="line.674"></a>
+<FONT color="green">675</FONT>        }<a name="line.675"></a>
+<FONT color="green">676</FONT>    <a name="line.676"></a>
+<FONT color="green">677</FONT>        /**<a name="line.677"></a>
+<FONT color="green">678</FONT>         * Gets the agencyNumber attribute.<a name="line.678"></a>
+<FONT color="green">679</FONT>         * <a name="line.679"></a>
+<FONT color="green">680</FONT>         * @return Returns the agencyNumber<a name="line.680"></a>
+<FONT color="green">681</FONT>         */<a name="line.681"></a>
+<FONT color="green">682</FONT>        public String getAgencyNumber() {<a name="line.682"></a>
+<FONT color="green">683</FONT>            return agencyNumber;<a name="line.683"></a>
+<FONT color="green">684</FONT>        }<a name="line.684"></a>
+<FONT color="green">685</FONT>    <a name="line.685"></a>
+<FONT color="green">686</FONT>        /**<a name="line.686"></a>
+<FONT color="green">687</FONT>         * Sets the agencyNumber attribute.<a name="line.687"></a>
+<FONT color="green">688</FONT>         * <a name="line.688"></a>
+<FONT color="green">689</FONT>         * @param agencyNumber The agencyNumber to set.<a name="line.689"></a>
+<FONT color="green">690</FONT>         */<a name="line.690"></a>
+<FONT color="green">691</FONT>        public void setAgencyNumber(String agencyNumber) {<a name="line.691"></a>
+<FONT color="green">692</FONT>            this.agencyNumber = agencyNumber;<a name="line.692"></a>
+<FONT color="green">693</FONT>        }<a name="line.693"></a>
+<FONT color="green">694</FONT>    <a name="line.694"></a>
+<FONT color="green">695</FONT>        /**<a name="line.695"></a>
+<FONT color="green">696</FONT>         * Gets the federalPassThroughAgencyNumber attribute.<a name="line.696"></a>
+<FONT color="green">697</FONT>         * <a name="line.697"></a>
+<FONT color="green">698</FONT>         * @return Returns the federalPassThroughAgencyNumber<a name="line.698"></a>
+<FONT color="green">699</FONT>         */<a name="line.699"></a>
+<FONT color="green">700</FONT>        public String getFederalPassThroughAgencyNumber() {<a name="line.700"></a>
+<FONT color="green">701</FONT>            return federalPassThroughAgencyNumber;<a name="line.701"></a>
+<FONT color="green">702</FONT>        }<a name="line.702"></a>
+<FONT color="green">703</FONT>    <a name="line.703"></a>
+<FONT color="green">704</FONT>        /**<a name="line.704"></a>
+<FONT color="green">705</FONT>         * Sets the federalPassThroughAgencyNumber attribute.<a name="line.705"></a>
+<FONT color="green">706</FONT>         * <a name="line.706"></a>
+<FONT color="green">707</FONT>         * @param federalPassThroughAgencyNumber The federalPassThroughAgencyNumber to set.<a name="line.707"></a>
+<FONT color="green">708</FONT>         */<a name="line.708"></a>
+<FONT color="green">709</FONT>        public void setFederalPassThroughAgencyNumber(String federalPassThroughAgencyNumber) {<a name="line.709"></a>
+<FONT color="green">710</FONT>            this.federalPassThroughAgencyNumber = federalPassThroughAgencyNumber;<a name="line.710"></a>
+<FONT color="green">711</FONT>        }<a name="line.711"></a>
+<FONT color="green">712</FONT>    <a name="line.712"></a>
+<FONT color="green">713</FONT>        /**<a name="line.713"></a>
+<FONT color="green">714</FONT>         * Gets the agencyAnalystName attribute.<a name="line.714"></a>
+<FONT color="green">715</FONT>         * <a name="line.715"></a>
+<FONT color="green">716</FONT>         * @return Returns the agencyAnalystName<a name="line.716"></a>
+<FONT color="green">717</FONT>         */<a name="line.717"></a>
+<FONT color="green">718</FONT>        public String getAgencyAnalystName() {<a name="line.718"></a>
+<FONT color="green">719</FONT>            return agencyAnalystName;<a name="line.719"></a>
+<FONT color="green">720</FONT>        }<a name="line.720"></a>
+<FONT color="green">721</FONT>    <a name="line.721"></a>
+<FONT color="green">722</FONT>        /**<a name="line.722"></a>
+<FONT color="green">723</FONT>         * Sets the agencyAnalystName attribute.<a name="line.723"></a>
+<FONT color="green">724</FONT>         * <a name="line.724"></a>
+<FONT color="green">725</FONT>         * @param agencyAnalystName The agencyAnalystName to set.<a name="line.725"></a>
+<FONT color="green">726</FONT>         */<a name="line.726"></a>
+<FONT color="green">727</FONT>        public void setAgencyAnalystName(String agencyAnalystName) {<a name="line.727"></a>
+<FONT color="green">728</FONT>            this.agencyAnalystName = agencyAnalystName;<a name="line.728"></a>
+<FONT color="green">729</FONT>        }<a name="line.729"></a>
+<FONT color="green">730</FONT>    <a name="line.730"></a>
+<FONT color="green">731</FONT>        /**<a name="line.731"></a>
+<FONT color="green">732</FONT>         * Gets the analystTelephoneNumber attribute.<a name="line.732"></a>
+<FONT color="green">733</FONT>         * <a name="line.733"></a>
+<FONT color="green">734</FONT>         * @return Returns the analystTelephoneNumber<a name="line.734"></a>
+<FONT color="green">735</FONT>         */<a name="line.735"></a>
+<FONT color="green">736</FONT>        public String getAnalystTelephoneNumber() {<a name="line.736"></a>
+<FONT color="green">737</FONT>            return analystTelephoneNumber;<a name="line.737"></a>
+<FONT color="green">738</FONT>        }<a name="line.738"></a>
+<FONT color="green">739</FONT>    <a name="line.739"></a>
+<FONT color="green">740</FONT>        /**<a name="line.740"></a>
+<FONT color="green">741</FONT>         * Sets the analystTelephoneNumber attribute.<a name="line.741"></a>
+<FONT color="green">742</FONT>         * <a name="line.742"></a>
+<FONT color="green">743</FONT>         * @param analystTelephoneNumber The analystTelephoneNumber to set.<a name="line.743"></a>
+<FONT color="green">744</FONT>         */<a name="line.744"></a>
+<FONT color="green">745</FONT>        public void setAnalystTelephoneNumber(String analystTelephoneNumber) {<a name="line.745"></a>
+<FONT color="green">746</FONT>            this.analystTelephoneNumber = analystTelephoneNumber;<a name="line.746"></a>
+<FONT color="green">747</FONT>        }<a name="line.747"></a>
+<FONT color="green">748</FONT>    <a name="line.748"></a>
+<FONT color="green">749</FONT>        /**<a name="line.749"></a>
+<FONT color="green">750</FONT>         * Gets the awardProjectTitle attribute.<a name="line.750"></a>
+<FONT color="green">751</FONT>         * <a name="line.751"></a>
+<FONT color="green">752</FONT>         * @return Returns the awardProjectTitle<a name="line.752"></a>
+<FONT color="green">753</FONT>         */<a name="line.753"></a>
+<FONT color="green">754</FONT>        public String getAwardProjectTitle() {<a name="line.754"></a>
+<FONT color="green">755</FONT>            return awardProjectTitle;<a name="line.755"></a>
+<FONT color="green">756</FONT>        }<a name="line.756"></a>
+<FONT color="green">757</FONT>    <a name="line.757"></a>
+<FONT color="green">758</FONT>        /**<a name="line.758"></a>
+<FONT color="green">759</FONT>         * Sets the awardProjectTitle attribute.<a name="line.759"></a>
+<FONT color="green">760</FONT>         * <a name="line.760"></a>
+<FONT color="green">761</FONT>         * @param awardProjectTitle The awardProjectTitle to set.<a name="line.761"></a>
+<FONT color="green">762</FONT>         */<a name="line.762"></a>
+<FONT color="green">763</FONT>        public void setAwardProjectTitle(String awardProjectTitle) {<a name="line.763"></a>
+<FONT color="green">764</FONT>            this.awardProjectTitle = awardProjectTitle;<a name="line.764"></a>
+<FONT color="green">765</FONT>        }<a name="line.765"></a>
+<FONT color="green">766</FONT>    <a name="line.766"></a>
+<FONT color="green">767</FONT>        /**<a name="line.767"></a>
+<FONT color="green">768</FONT>         * Gets the awardCommentText attribute.<a name="line.768"></a>
+<FONT color="green">769</FONT>         * <a name="line.769"></a>
+<FONT color="green">770</FONT>         * @return Returns the awardCommentText<a name="line.770"></a>
+<FONT color="green">771</FONT>         */<a name="line.771"></a>
+<FONT color="green">772</FONT>        public String getAwardCommentText() {<a name="line.772"></a>
+<FONT color="green">773</FONT>            return awardCommentText;<a name="line.773"></a>
+<FONT color="green">774</FONT>        }<a name="line.774"></a>
+<FONT color="green">775</FONT>    <a name="line.775"></a>
+<FONT color="green">776</FONT>        /**<a name="line.776"></a>
+<FONT color="green">777</FONT>         * Sets the awardCommentText attribute.<a name="line.777"></a>
+<FONT color="green">778</FONT>         * <a name="line.778"></a>
+<FONT color="green">779</FONT>         * @param awardCommentText The awardCommentText to set.<a name="line.779"></a>
+<FONT color="green">780</FONT>         */<a name="line.780"></a>
+<FONT color="green">781</FONT>        public void setAwardCommentText(String awardCommentText) {<a name="line.781"></a>
+<FONT color="green">782</FONT>            this.awardCommentText = awardCommentText;<a name="line.782"></a>
+<FONT color="green">783</FONT>        }<a name="line.783"></a>
+<FONT color="green">784</FONT>    <a name="line.784"></a>
+<FONT color="green">785</FONT>        /**<a name="line.785"></a>
+<FONT color="green">786</FONT>         * Gets the awardPurposeCode attribute.<a name="line.786"></a>
+<FONT color="green">787</FONT>         * <a name="line.787"></a>
+<FONT color="green">788</FONT>         * @return Returns the awardPurposeCode<a name="line.788"></a>
+<FONT color="green">789</FONT>         */<a name="line.789"></a>
+<FONT color="green">790</FONT>        public String getAwardPurposeCode() {<a name="line.790"></a>
+<FONT color="green">791</FONT>            return awardPurposeCode;<a name="line.791"></a>
+<FONT color="green">792</FONT>        }<a name="line.792"></a>
+<FONT color="green">793</FONT>    <a name="line.793"></a>
+<FONT color="green">794</FONT>        /**<a name="line.794"></a>
+<FONT color="green">795</FONT>         * Sets the awardPurposeCode attribute.<a name="line.795"></a>
+<FONT color="green">796</FONT>         * <a name="line.796"></a>
+<FONT color="green">797</FONT>         * @param awardPurposeCode The awardPurposeCode to set.<a name="line.797"></a>
+<FONT color="green">798</FONT>         */<a name="line.798"></a>
+<FONT color="green">799</FONT>        public void setAwardPurposeCode(String awardPurposeCode) {<a name="line.799"></a>
+<FONT color="green">800</FONT>            this.awardPurposeCode = awardPurposeCode;<a name="line.800"></a>
+<FONT color="green">801</FONT>        }<a name="line.801"></a>
+<FONT color="green">802</FONT>    <a name="line.802"></a>
+<FONT color="green">803</FONT>        /**<a name="line.803"></a>
+<FONT color="green">804</FONT>         * Gets the active attribute.<a name="line.804"></a>
+<FONT color="green">805</FONT>         * <a name="line.805"></a>
+<FONT color="green">806</FONT>         * @return Returns the active.<a name="line.806"></a>
+<FONT color="green">807</FONT>         */<a name="line.807"></a>
+<FONT color="green">808</FONT>        public boolean isActive() {<a name="line.808"></a>
+<FONT color="green">809</FONT>            return active;<a name="line.809"></a>
+<FONT color="green">810</FONT>        }<a name="line.810"></a>
+<FONT color="green">811</FONT>    <a name="line.811"></a>
+<FONT color="green">812</FONT>        /**<a name="line.812"></a>
+<FONT color="green">813</FONT>         * Sets the active attribute value.<a name="line.813"></a>
+<FONT color="green">814</FONT>         * <a name="line.814"></a>
+<FONT color="green">815</FONT>         * @param active The active to set.<a name="line.815"></a>
+<FONT color="green">816</FONT>         */<a name="line.816"></a>
+<FONT color="green">817</FONT>        public void setActive(boolean active) {<a name="line.817"></a>
+<FONT color="green">818</FONT>            this.active = active;<a name="line.818"></a>
+<FONT color="green">819</FONT>        }<a name="line.819"></a>
+<FONT color="green">820</FONT>    <a name="line.820"></a>
+<FONT color="green">821</FONT>        /**<a name="line.821"></a>
+<FONT color="green">822</FONT>         * Gets the proposal attribute.<a name="line.822"></a>
+<FONT color="green">823</FONT>         * <a name="line.823"></a>
+<FONT color="green">824</FONT>         * @return Returns the proposal<a name="line.824"></a>
+<FONT color="green">825</FONT>         */<a name="line.825"></a>
+<FONT color="green">826</FONT>        public Proposal getProposal() {<a name="line.826"></a>
+<FONT color="green">827</FONT>            return proposal;<a name="line.827"></a>
+<FONT color="green">828</FONT>        }<a name="line.828"></a>
+<FONT color="green">829</FONT>    <a name="line.829"></a>
+<FONT color="green">830</FONT>        /**<a name="line.830"></a>
+<FONT color="green">831</FONT>         * Sets the proposal attribute.<a name="line.831"></a>
+<FONT color="green">832</FONT>         * <a name="line.832"></a>
+<FONT color="green">833</FONT>         * @param proposal The proposal to set.<a name="line.833"></a>
+<FONT color="green">834</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.834"></a>
+<FONT color="green">835</FONT>         *             creation of the object and should not be changed.<a name="line.835"></a>
+<FONT color="green">836</FONT>         */<a name="line.836"></a>
+<FONT color="green">837</FONT>        @Deprecated<a name="line.837"></a>
+<FONT color="green">838</FONT>        public void setProposal(Proposal proposal) {<a name="line.838"></a>
+<FONT color="green">839</FONT>            this.proposal = proposal;<a name="line.839"></a>
+<FONT color="green">840</FONT>        }<a name="line.840"></a>
+<FONT color="green">841</FONT>    <a name="line.841"></a>
+<FONT color="green">842</FONT>        /**<a name="line.842"></a>
+<FONT color="green">843</FONT>         * Gets the proposalAwardType attribute.<a name="line.843"></a>
+<FONT color="green">844</FONT>         * <a name="line.844"></a>
+<FONT color="green">845</FONT>         * @return Returns the proposalAwardType<a name="line.845"></a>
+<FONT color="green">846</FONT>         */<a name="line.846"></a>
+<FONT color="green">847</FONT>        public ProposalAwardType getProposalAwardType() {<a name="line.847"></a>
+<FONT color="green">848</FONT>            return proposalAwardType;<a name="line.848"></a>
+<FONT color="green">849</FONT>        }<a name="line.849"></a>
+<FONT color="green">850</FONT>    <a name="line.850"></a>
+<FONT color="green">851</FONT>        /**<a name="line.851"></a>
+<FONT color="green">852</FONT>         * Sets the proposalAwardType attribute.<a name="line.852"></a>
+<FONT color="green">853</FONT>         * <a name="line.853"></a>
+<FONT color="green">854</FONT>         * @param proposalAwardType The proposalAwardType to set.<a name="line.854"></a>
+<FONT color="green">855</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.855"></a>
+<FONT color="green">856</FONT>         *             creation of the object and should not be changed.<a name="line.856"></a>
+<FONT color="green">857</FONT>         */<a name="line.857"></a>
+<FONT color="green">858</FONT>        @Deprecated<a name="line.858"></a>
+<FONT color="green">859</FONT>        public void setProposalAwardType(ProposalAwardType proposalAwardType) {<a name="line.859"></a>
+<FONT color="green">860</FONT>            this.proposalAwardType = proposalAwardType;<a name="line.860"></a>
+<FONT color="green">861</FONT>        }<a name="line.861"></a>
+<FONT color="green">862</FONT>    <a name="line.862"></a>
+<FONT color="green">863</FONT>        /**<a name="line.863"></a>
+<FONT color="green">864</FONT>         * Gets the awardStatus attribute.<a name="line.864"></a>
+<FONT color="green">865</FONT>         * <a name="line.865"></a>
+<FONT color="green">866</FONT>         * @return Returns the awardStatus<a name="line.866"></a>
+<FONT color="green">867</FONT>         */<a name="line.867"></a>
+<FONT color="green">868</FONT>        public AwardStatus getAwardStatus() {<a name="line.868"></a>
+<FONT color="green">869</FONT>            return awardStatus;<a name="line.869"></a>
+<FONT color="green">870</FONT>        }<a name="line.870"></a>
+<FONT color="green">871</FONT>    <a name="line.871"></a>
+<FONT color="green">872</FONT>        /**<a name="line.872"></a>
+<FONT color="green">873</FONT>         * Sets the awardStatus attribute.<a name="line.873"></a>
+<FONT color="green">874</FONT>         * <a name="line.874"></a>
+<FONT color="green">875</FONT>         * @param awardStatus The awardStatus to set.<a name="line.875"></a>
+<FONT color="green">876</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.876"></a>
+<FONT color="green">877</FONT>         *             creation of the object and should not be changed.<a name="line.877"></a>
+<FONT color="green">878</FONT>         */<a name="line.878"></a>
+<FONT color="green">879</FONT>        @Deprecated<a name="line.879"></a>
+<FONT color="green">880</FONT>        public void setAwardStatus(AwardStatus awardStatus) {<a name="line.880"></a>
+<FONT color="green">881</FONT>            this.awardStatus = awardStatus;<a name="line.881"></a>
+<FONT color="green">882</FONT>        }<a name="line.882"></a>
+<FONT color="green">883</FONT>    <a name="line.883"></a>
+<FONT color="green">884</FONT>        /**<a name="line.884"></a>
+<FONT color="green">885</FONT>         * Gets the letterOfCreditFundGroup attribute.<a name="line.885"></a>
+<FONT color="green">886</FONT>         * <a name="line.886"></a>
+<FONT color="green">887</FONT>         * @return Returns the letterOfCreditFundGroup<a name="line.887"></a>
+<FONT color="green">888</FONT>         */<a name="line.888"></a>
+<FONT color="green">889</FONT>        public LetterOfCreditFundGroup getLetterOfCreditFundGroup() {<a name="line.889"></a>
+<FONT color="green">890</FONT>            return letterOfCreditFundGroup;<a name="line.890"></a>
+<FONT color="green">891</FONT>        }<a name="line.891"></a>
+<FONT color="green">892</FONT>    <a name="line.892"></a>
+<FONT color="green">893</FONT>        /**<a name="line.893"></a>
+<FONT color="green">894</FONT>         * Sets the letterOfCreditFundGroup attribute.<a name="line.894"></a>
+<FONT color="green">895</FONT>         * <a name="line.895"></a>
+<FONT color="green">896</FONT>         * @param letterOfCreditFundGroup The letterOfCreditFundGroup to set.<a name="line.896"></a>
+<FONT color="green">897</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.897"></a>
+<FONT color="green">898</FONT>         *             creation of the object and should not be changed.<a name="line.898"></a>
+<FONT color="green">899</FONT>         */<a name="line.899"></a>
+<FONT color="green">900</FONT>        @Deprecated<a name="line.900"></a>
+<FONT color="green">901</FONT>        public void setLetterOfCreditFundGroup(LetterOfCreditFundGroup letterOfCreditFundGroup) {<a name="line.901"></a>
+<FONT color="green">902</FONT>            this.letterOfCreditFundGroup = letterOfCreditFundGroup;<a name="line.902"></a>
+<FONT color="green">903</FONT>        }<a name="line.903"></a>
+<FONT color="green">904</FONT>    <a name="line.904"></a>
+<FONT color="green">905</FONT>        /**<a name="line.905"></a>
+<FONT color="green">906</FONT>         * Gets the grantDescription attribute.<a name="line.906"></a>
+<FONT color="green">907</FONT>         * <a name="line.907"></a>
+<FONT color="green">908</FONT>         * @return Returns the grantDescription<a name="line.908"></a>
+<FONT color="green">909</FONT>         */<a name="line.909"></a>
+<FONT color="green">910</FONT>        public GrantDescription getGrantDescription() {<a name="line.910"></a>
+<FONT color="green">911</FONT>            return grantDescription;<a name="line.911"></a>
+<FONT color="green">912</FONT>        }<a name="line.912"></a>
+<FONT color="green">913</FONT>    <a name="line.913"></a>
+<FONT color="green">914</FONT>        /**<a name="line.914"></a>
+<FONT color="green">915</FONT>         * Sets the grantDescription attribute.<a name="line.915"></a>
+<FONT color="green">916</FONT>         * <a name="line.916"></a>
+<FONT color="green">917</FONT>         * @param grantDescription The grantDescription to set.<a name="line.917"></a>
+<FONT color="green">918</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.918"></a>
+<FONT color="green">919</FONT>         *             creation of the object and should not be changed.<a name="line.919"></a>
+<FONT color="green">920</FONT>         */<a name="line.920"></a>
+<FONT color="green">921</FONT>        @Deprecated<a name="line.921"></a>
+<FONT color="green">922</FONT>        public void setGrantDescription(GrantDescription grantDescription) {<a name="line.922"></a>
+<FONT color="green">923</FONT>            this.grantDescription = grantDescription;<a name="line.923"></a>
+<FONT color="green">924</FONT>        }<a name="line.924"></a>
+<FONT color="green">925</FONT>    <a name="line.925"></a>
+<FONT color="green">926</FONT>        /**<a name="line.926"></a>
+<FONT color="green">927</FONT>         * Gets the agency attribute.<a name="line.927"></a>
+<FONT color="green">928</FONT>         * <a name="line.928"></a>
+<FONT color="green">929</FONT>         * @return Returns the agency<a name="line.929"></a>
+<FONT color="green">930</FONT>         */<a name="line.930"></a>
+<FONT color="green">931</FONT>        public Agency getAgency() {<a name="line.931"></a>
+<FONT color="green">932</FONT>            return agency;<a name="line.932"></a>
+<FONT color="green">933</FONT>        }<a name="line.933"></a>
+<FONT color="green">934</FONT>    <a name="line.934"></a>
+<FONT color="green">935</FONT>        /**<a name="line.935"></a>
+<FONT color="green">936</FONT>         * Sets the agency attribute.<a name="line.936"></a>
+<FONT color="green">937</FONT>         * <a name="line.937"></a>
+<FONT color="green">938</FONT>         * @param agency The agency to set.<a name="line.938"></a>
+<FONT color="green">939</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.939"></a>
+<FONT color="green">940</FONT>         *             creation of the object and should not be changed.<a name="line.940"></a>
+<FONT color="green">941</FONT>         */<a name="line.941"></a>
+<FONT color="green">942</FONT>        @Deprecated<a name="line.942"></a>
+<FONT color="green">943</FONT>        public void setAgency(Agency agency) {<a name="line.943"></a>
+<FONT color="green">944</FONT>            this.agency = agency;<a name="line.944"></a>
+<FONT color="green">945</FONT>        }<a name="line.945"></a>
+<FONT color="green">946</FONT>    <a name="line.946"></a>
+<FONT color="green">947</FONT>        /**<a name="line.947"></a>
+<FONT color="green">948</FONT>         * Gets the federalPassThroughAgency attribute.<a name="line.948"></a>
+<FONT color="green">949</FONT>         * <a name="line.949"></a>
+<FONT color="green">950</FONT>         * @return Returns the federalPassThroughAgency<a name="line.950"></a>
+<FONT color="green">951</FONT>         */<a name="line.951"></a>
+<FONT color="green">952</FONT>        public Agency getFederalPassThroughAgency() {<a name="line.952"></a>
+<FONT color="green">953</FONT>            return federalPassThroughAgency;<a name="line.953"></a>
+<FONT color="green">954</FONT>        }<a name="line.954"></a>
+<FONT color="green">955</FONT>    <a name="line.955"></a>
+<FONT color="green">956</FONT>        /**<a name="line.956"></a>
+<FONT color="green">957</FONT>         * Sets the federalPassThroughAgency attribute.<a name="line.957"></a>
+<FONT color="green">958</FONT>         * <a name="line.958"></a>
+<FONT color="green">959</FONT>         * @param federalPassThroughAgency The federalPassThroughAgency to set.<a name="line.959"></a>
+<FONT color="green">960</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.960"></a>
+<FONT color="green">961</FONT>         *             creation of the object and should not be changed.<a name="line.961"></a>
+<FONT color="green">962</FONT>         */<a name="line.962"></a>
+<FONT color="green">963</FONT>        @Deprecated<a name="line.963"></a>
+<FONT color="green">964</FONT>        public void setFederalPassThroughAgency(Agency federalPassThroughAgency) {<a name="line.964"></a>
+<FONT color="green">965</FONT>            this.federalPassThroughAgency = federalPassThroughAgency;<a name="line.965"></a>
+<FONT color="green">966</FONT>        }<a name="line.966"></a>
+<FONT color="green">967</FONT>    <a name="line.967"></a>
+<FONT color="green">968</FONT>        /**<a name="line.968"></a>
+<FONT color="green">969</FONT>         * Gets the awardPurpose attribute.<a name="line.969"></a>
+<FONT color="green">970</FONT>         * <a name="line.970"></a>
+<FONT color="green">971</FONT>         * @return Returns the awardPurpose<a name="line.971"></a>
+<FONT color="green">972</FONT>         */<a name="line.972"></a>
+<FONT color="green">973</FONT>        public ProposalPurpose getAwardPurpose() {<a name="line.973"></a>
+<FONT color="green">974</FONT>            return awardPurpose;<a name="line.974"></a>
+<FONT color="green">975</FONT>        }<a name="line.975"></a>
+<FONT color="green">976</FONT>    <a name="line.976"></a>
+<FONT color="green">977</FONT>        /**<a name="line.977"></a>
+<FONT color="green">978</FONT>         * Sets the awardPurpose attribute.<a name="line.978"></a>
+<FONT color="green">979</FONT>         * <a name="line.979"></a>
+<FONT color="green">980</FONT>         * @param awardPurpose The awardPurpose to set.<a name="line.980"></a>
+<FONT color="green">981</FONT>         * @deprecated Setter is required by OJB, but should not be used to modify this attribute. This attribute is set on the initial<a name="line.981"></a>
+<FONT color="green">982</FONT>         *             creation of the object and should not be changed.<a name="line.982"></a>
+<FONT color="green">983</FONT>         */<a name="line.983"></a>
+<FONT color="green">984</FONT>        @Deprecated<a name="line.984"></a>
+<FONT color="green">985</FONT>        public void setAwardPurpose(ProposalPurpose awardPurpose) {<a name="line.985"></a>
+<FONT color="green">986</FONT>            this.awardPurpose = awardPurpose;<a name="line.986"></a>
+<FONT color="green">987</FONT>        }<a name="line.987"></a>
+<FONT color="green">988</FONT>    <a name="line.988"></a>
+<FONT color="green">989</FONT>        /**<a name="line.989"></a>
+<FONT color="green">990</FONT>         * Gets the awardProjectDirectors list.<a name="line.990"></a>
+<FONT color="green">991</FONT>         * <a name="line.991"></a>
+<FONT color="green">992</FONT>         * @return Returns the awardProjectDirectors list<a name="line.992"></a>
+<FONT color="green">993</FONT>         */<a name="line.993"></a>
+<FONT color="green">994</FONT>        public List&lt;AwardProjectDirector&gt; getAwardProjectDirectors() {<a name="line.994"></a>
+<FONT color="green">995</FONT>            return awardProjectDirectors;<a name="line.995"></a>
+<FONT color="green">996</FONT>        }<a name="line.996"></a>
+<FONT color="green">997</FONT>    <a name="line.997"></a>
+<FONT color="green">998</FONT>        /**<a name="line.998"></a>
+<FONT color="green">999</FONT>         * Sets the awardProjectDirectors list.<a name="line.999"></a>
+<FONT color="green">1000</FONT>         * <a name="line.1000"></a>
+<FONT color="green">1001</FONT>         * @param awardProjectDirectors The awardProjectDirectors list to set.<a name="line.1001"></a>
+<FONT color="green">1002</FONT>         */<a name="line.1002"></a>
+<FONT color="green">1003</FONT>        public void setAwardProjectDirectors(List&lt;AwardProjectDirector&gt; awardProjectDirectors) {<a name="line.1003"></a>
+<FONT color="green">1004</FONT>            this.awardProjectDirectors = awardProjectDirectors;<a name="line.1004"></a>
+<FONT color="green">1005</FONT>        }<a name="line.1005"></a>
+<FONT color="green">1006</FONT>    <a name="line.1006"></a>
+<FONT color="green">1007</FONT>        /**<a name="line.1007"></a>
+<FONT color="green">1008</FONT>         * Gets the awardAccounts list.<a name="line.1008"></a>
+<FONT color="green">1009</FONT>         * <a name="line.1009"></a>
+<FONT color="green">1010</FONT>         * @return Returns the awardAccounts.<a name="line.1010"></a>
+<FONT color="green">1011</FONT>         */<a name="line.1011"></a>
+<FONT color="green">1012</FONT>        public List&lt;AwardAccount&gt; getAwardAccounts() {<a name="line.1012"></a>
+<FONT color="green">1013</FONT>            return awardAccounts;<a name="line.1013"></a>
+<FONT color="green">1014</FONT>        }<a name="line.1014"></a>
+<FONT color="green">1015</FONT>    <a name="line.1015"></a>
+<FONT color="green">1016</FONT>        /**<a name="line.1016"></a>
+<FONT color="green">1017</FONT>         * Sets the awardAccounts list.<a name="line.1017"></a>
+<FONT color="green">1018</FONT>         * <a name="line.1018"></a>
+<FONT color="green">1019</FONT>         * @param awardAccounts The awardAccounts to set.<a name="line.1019"></a>
+<FONT color="green">1020</FONT>         */<a name="line.1020"></a>
+<FONT color="green">1021</FONT>        public void setAwardAccounts(List&lt;AwardAccount&gt; awardAccounts) {<a name="line.1021"></a>
+<FONT color="green">1022</FONT>            this.awardAccounts = awardAccounts;<a name="line.1022"></a>
+<FONT color="green">1023</FONT>        }<a name="line.1023"></a>
+<FONT color="green">1024</FONT>    <a name="line.1024"></a>
+<FONT color="green">1025</FONT>        /**<a name="line.1025"></a>
+<FONT color="green">1026</FONT>         * Gets the awardOrganizations list.<a name="line.1026"></a>
+<FONT color="green">1027</FONT>         * <a name="line.1027"></a>
+<FONT color="green">1028</FONT>         * @return Returns the awardOrganizations.<a name="line.1028"></a>
+<FONT color="green">1029</FONT>         */<a name="line.1029"></a>
+<FONT color="green">1030</FONT>        public List&lt;AwardOrganization&gt; getAwardOrganizations() {<a name="line.1030"></a>
+<FONT color="green">1031</FONT>            return awardOrganizations;<a name="line.1031"></a>
+<FONT color="green">1032</FONT>        }<a name="line.1032"></a>
+<FONT color="green">1033</FONT>    <a name="line.1033"></a>
+<FONT color="green">1034</FONT>        /**<a name="line.1034"></a>
+<FONT color="green">1035</FONT>         * Sets the awardOrganizations list.<a name="line.1035"></a>
+<FONT color="green">1036</FONT>         * <a name="line.1036"></a>
+<FONT color="green">1037</FONT>         * @param awardOrganizations The awardOrganizations to set.<a name="line.1037"></a>
+<FONT color="green">1038</FONT>         */<a name="line.1038"></a>
+<FONT color="green">1039</FONT>        public void setAwardOrganizations(List&lt;AwardOrganization&gt; awardOrganizations) {<a name="line.1039"></a>
+<FONT color="green">1040</FONT>            this.awardOrganizations = awardOrganizations;<a name="line.1040"></a>
+<FONT color="green">1041</FONT>        }<a name="line.1041"></a>
+<FONT color="green">1042</FONT>    <a name="line.1042"></a>
+<FONT color="green">1043</FONT>        /**<a name="line.1043"></a>
+<FONT color="green">1044</FONT>         * Gets the awardSubcontractors list.<a name="line.1044"></a>
+<FONT color="green">1045</FONT>         * <a name="line.1045"></a>
+<FONT color="green">1046</FONT>         * @return Returns the awardSubcontractors.<a name="line.1046"></a>
+<FONT color="green">1047</FONT>         */<a name="line.1047"></a>
+<FONT color="green">1048</FONT>        public List&lt;AwardSubcontractor&gt; getAwardSubcontractors() {<a name="line.1048"></a>
+<FONT color="green">1049</FONT>            return awardSubcontractors;<a name="line.1049"></a>
+<FONT color="green">1050</FONT>        }<a name="line.1050"></a>
+<FONT color="green">1051</FONT>    <a name="line.1051"></a>
+<FONT color="green">1052</FONT>        /**<a name="line.1052"></a>
+<FONT color="green">1053</FONT>         * Sets the awardSubcontractors list.<a name="line.1053"></a>
+<FONT color="green">1054</FONT>         * <a name="line.1054"></a>
+<FONT color="green">1055</FONT>         * @param awardSubcontractors The awardSubcontractors to set.<a name="line.1055"></a>
+<FONT color="green">1056</FONT>         */<a name="line.1056"></a>
+<FONT color="green">1057</FONT>        public void setAwardSubcontractors(List&lt;AwardSubcontractor&gt; awardSubcontractors) {<a name="line.1057"></a>
+<FONT color="green">1058</FONT>            this.awardSubcontractors = awardSubcontractors;<a name="line.1058"></a>
+<FONT color="green">1059</FONT>        }<a name="line.1059"></a>
+<FONT color="green">1060</FONT>    <a name="line.1060"></a>
+<FONT color="green">1061</FONT>        /**<a name="line.1061"></a>
+<FONT color="green">1062</FONT>         * This method gets the primary award organization.<a name="line.1062"></a>
+<FONT color="green">1063</FONT>         * <a name="line.1063"></a>
+<FONT color="green">1064</FONT>         * @return The award organization object marked as primary in the award organizations collection.<a name="line.1064"></a>
+<FONT color="green">1065</FONT>         */<a name="line.1065"></a>
+<FONT color="green">1066</FONT>        public AwardOrganization getPrimaryAwardOrganization() {<a name="line.1066"></a>
+<FONT color="green">1067</FONT>            for (AwardOrganization ao : awardOrganizations) {<a name="line.1067"></a>
+<FONT color="green">1068</FONT>                if (ao != null &amp;&amp; ao.isAwardPrimaryOrganizationIndicator()) {<a name="line.1068"></a>
+<FONT color="green">1069</FONT>                    setPrimaryAwardOrganization(ao);<a name="line.1069"></a>
+<FONT color="green">1070</FONT>                    break;<a name="line.1070"></a>
+<FONT color="green">1071</FONT>                }<a name="line.1071"></a>
+<FONT color="green">1072</FONT>            }<a name="line.1072"></a>
+<FONT color="green">1073</FONT>    <a name="line.1073"></a>
+<FONT color="green">1074</FONT>            return primaryAwardOrganization;<a name="line.1074"></a>
+<FONT color="green">1075</FONT>        }<a name="line.1075"></a>
+<FONT color="green">1076</FONT>    <a name="line.1076"></a>
+<FONT color="green">1077</FONT>        /**<a name="line.1077"></a>
+<FONT color="green">1078</FONT>         * This method sets the primary award organization.<a name="line.1078"></a>
+<FONT color="green">1079</FONT>         * <a name="line.1079"></a>
+<FONT color="green">1080</FONT>         * @param primaryAwardOrganization<a name="line.1080"></a>
+<FONT color="green">1081</FONT>         */<a name="line.1081"></a>
+<FONT color="green">1082</FONT>        public void setPrimaryAwardOrganization(AwardOrganization primaryAwardOrganization) {<a name="line.1082"></a>
+<FONT color="green">1083</FONT>            this.primaryAwardOrganization = primaryAwardOrganization;<a name="line.1083"></a>
+<FONT color="green">1084</FONT>            this.routingChart = primaryAwardOrganization.getChartOfAccountsCode();<a name="line.1084"></a>
+<FONT color="green">1085</FONT>            this.routingOrg = primaryAwardOrganization.getOrganizationCode();<a name="line.1085"></a>
+<FONT color="green">1086</FONT>        }<a name="line.1086"></a>
+<FONT color="green">1087</FONT>    <a name="line.1087"></a>
+<FONT color="green">1088</FONT>        /**<a name="line.1088"></a>
+<FONT color="green">1089</FONT>         * This method maps the proposal number into a hash map with "proposalNumber" as the identifier.<a name="line.1089"></a>
+<FONT color="green">1090</FONT>         * <a name="line.1090"></a>
+<FONT color="green">1091</FONT>         * @see org.kuali.rice.kns.bo.BusinessObjectBase#toStringMapper()<a name="line.1091"></a>
+<FONT color="green">1092</FONT>         */<a name="line.1092"></a>
+<FONT color="green">1093</FONT>        @Override<a name="line.1093"></a>
+<FONT color="green">1094</FONT>        @SuppressWarnings("unchecked")<a name="line.1094"></a>
+<FONT color="green">1095</FONT>        protected LinkedHashMap toStringMapper() {<a name="line.1095"></a>
+<FONT color="green">1096</FONT>            LinkedHashMap&lt;String, String&gt; m = new LinkedHashMap&lt;String, String&gt;();<a name="line.1096"></a>
+<FONT color="green">1097</FONT>            if (this.proposalNumber != null) {<a name="line.1097"></a>
+<FONT color="green">1098</FONT>                m.put("proposalNumber", this.proposalNumber.toString());<a name="line.1098"></a>
+<FONT color="green">1099</FONT>            }<a name="line.1099"></a>
+<FONT color="green">1100</FONT>            return m;<a name="line.1100"></a>
+<FONT color="green">1101</FONT>        }<a name="line.1101"></a>
+<FONT color="green">1102</FONT>    <a name="line.1102"></a>
+<FONT color="green">1103</FONT>        /**<a name="line.1103"></a>
+<FONT color="green">1104</FONT>         * Sums the total for all award subcontractors<a name="line.1104"></a>
+<FONT color="green">1105</FONT>         * <a name="line.1105"></a>
+<FONT color="green">1106</FONT>         * @return Returns the total of all the award subcontractor's amounts<a name="line.1106"></a>
+<FONT color="green">1107</FONT>         */<a name="line.1107"></a>
+<FONT color="green">1108</FONT>        public KualiDecimal getAwardSubcontractorsTotalAmount() {<a name="line.1108"></a>
+<FONT color="green">1109</FONT>            KualiDecimal total = KualiDecimal.ZERO;<a name="line.1109"></a>
+<FONT color="green">1110</FONT>            for (AwardSubcontractor subcontractor : getAwardSubcontractors()) {<a name="line.1110"></a>
+<FONT color="green">1111</FONT>                KualiDecimal amount = subcontractor.getSubcontractorAmount();<a name="line.1111"></a>
+<FONT color="green">1112</FONT>                if (ObjectUtils.isNotNull(amount)) {<a name="line.1112"></a>
+<FONT color="green">1113</FONT>                    total = total.add(amount);<a name="line.1113"></a>
+<FONT color="green">1114</FONT>                }<a name="line.1114"></a>
+<FONT color="green">1115</FONT>            }<a name="line.1115"></a>
+<FONT color="green">1116</FONT>            return total;<a name="line.1116"></a>
+<FONT color="green">1117</FONT>        }<a name="line.1117"></a>
+<FONT color="green">1118</FONT>    <a name="line.1118"></a>
+<FONT color="green">1119</FONT>        /**<a name="line.1119"></a>
+<FONT color="green">1120</FONT>         * @see org.kuali.kfs.sys.document.workflow.AlternateOrgReviewRouting#getRoutingChart()<a name="line.1120"></a>
+<FONT color="green">1121</FONT>         */<a name="line.1121"></a>
+<FONT color="green">1122</FONT>        public String getRoutingChart() {<a name="line.1122"></a>
+<FONT color="green">1123</FONT>            return routingChart;<a name="line.1123"></a>
+<FONT color="green">1124</FONT>        }<a name="line.1124"></a>
+<FONT color="green">1125</FONT>    <a name="line.1125"></a>
+<FONT color="green">1126</FONT>        /**<a name="line.1126"></a>
+<FONT color="green">1127</FONT>         * @see org.kuali.kfs.sys.document.workflow.AlternateOrgReviewRouting#setRoutingChart(java.lang.String)<a name="line.1127"></a>
+<FONT color="green">1128</FONT>         */<a name="line.1128"></a>
+<FONT color="green">1129</FONT>        public void setRoutingChart(String routingChart) {<a name="line.1129"></a>
+<FONT color="green">1130</FONT>            this.routingChart = routingChart;<a name="line.1130"></a>
+<FONT color="green">1131</FONT>        }<a name="line.1131"></a>
+<FONT color="green">1132</FONT>    <a name="line.1132"></a>
+<FONT color="green">1133</FONT>        /**<a name="line.1133"></a>
+<FONT color="green">1134</FONT>         * @see org.kuali.kfs.sys.document.workflow.AlternateOrgReviewRouting#getRoutingOrg()<a name="line.1134"></a>
+<FONT color="green">1135</FONT>         */<a name="line.1135"></a>
+<FONT color="green">1136</FONT>        public String getRoutingOrg() {<a name="line.1136"></a>
+<FONT color="green">1137</FONT>            return routingOrg;<a name="line.1137"></a>
+<FONT color="green">1138</FONT>        }<a name="line.1138"></a>
+<FONT color="green">1139</FONT>    <a name="line.1139"></a>
+<FONT color="green">1140</FONT>        /**<a name="line.1140"></a>
+<FONT color="green">1141</FONT>         * @see org.kuali.kfs.sys.document.workflow.AlternateOrgReviewRouting#setRoutingOrg(java.lang.String)<a name="line.1141"></a>
+<FONT color="green">1142</FONT>         */<a name="line.1142"></a>
+<FONT color="green">1143</FONT>        public void setRoutingOrg(String routingOrg) {<a name="line.1143"></a>
+<FONT color="green">1144</FONT>            this.routingOrg = routingOrg;<a name="line.1144"></a>
+<FONT color="green">1145</FONT>        }<a name="line.1145"></a>
+<FONT color="green">1146</FONT>        <a name="line.1146"></a>
+<FONT color="green">1147</FONT>        /**<a name="line.1147"></a>
+<FONT color="green">1148</FONT>         * Gets the lookup {@link Person}.<a name="line.1148"></a>
+<FONT color="green">1149</FONT>         * <a name="line.1149"></a>
+<FONT color="green">1150</FONT>         * @return the lookup {@link Person}<a name="line.1150"></a>
+<FONT color="green">1151</FONT>         */<a name="line.1151"></a>
+<FONT color="green">1152</FONT>        public Person getLookupPerson() {<a name="line.1152"></a>
+<FONT color="green">1153</FONT>            return lookupPerson;<a name="line.1153"></a>
+<FONT color="green">1154</FONT>        }<a name="line.1154"></a>
+<FONT color="green">1155</FONT>    <a name="line.1155"></a>
+<FONT color="green">1156</FONT>        /**<a name="line.1156"></a>
+<FONT color="green">1157</FONT>         * Sets the lookup {@link Person}<a name="line.1157"></a>
+<FONT color="green">1158</FONT>         * <a name="line.1158"></a>
+<FONT color="green">1159</FONT>         * @param lookupPerson<a name="line.1159"></a>
+<FONT color="green">1160</FONT>         */<a name="line.1160"></a>
+<FONT color="green">1161</FONT>        public void setLookupPerson(Person lookupPerson) {<a name="line.1161"></a>
+<FONT color="green">1162</FONT>            this.lookupPerson = lookupPerson;<a name="line.1162"></a>
+<FONT color="green">1163</FONT>        }<a name="line.1163"></a>
+<FONT color="green">1164</FONT>    <a name="line.1164"></a>
+<FONT color="green">1165</FONT>        /**<a name="line.1165"></a>
+<FONT color="green">1166</FONT>         * Gets the universal user id of the lookup person.<a name="line.1166"></a>
+<FONT color="green">1167</FONT>         * <a name="line.1167"></a>
+<FONT color="green">1168</FONT>         * @return the id of the lookup person<a name="line.1168"></a>
+<FONT color="green">1169</FONT>         */<a name="line.1169"></a>
+<FONT color="green">1170</FONT>        public String getLookupPersonUniversalIdentifier() {<a name="line.1170"></a>
+<FONT color="green">1171</FONT>            lookupPerson = SpringContext.getBean(org.kuali.rice.kim.service.PersonService.class).updatePersonIfNecessary(lookupPersonUniversalIdentifier, lookupPerson);<a name="line.1171"></a>
+<FONT color="green">1172</FONT>            return lookupPersonUniversalIdentifier;<a name="line.1172"></a>
+<FONT color="green">1173</FONT>        }<a name="line.1173"></a>
+<FONT color="green">1174</FONT>    <a name="line.1174"></a>
+<FONT color="green">1175</FONT>        /**<a name="line.1175"></a>
+<FONT color="green">1176</FONT>         * Sets the universal user id of the lookup person<a name="line.1176"></a>
+<FONT color="green">1177</FONT>         * <a name="line.1177"></a>
+<FONT color="green">1178</FONT>         * @param lookupPersonId the id of the lookup person<a name="line.1178"></a>
+<FONT color="green">1179</FONT>         */<a name="line.1179"></a>
+<FONT color="green">1180</FONT>        public void setLookupPersonUniversalIdentifier(String lookupPersonId) {<a name="line.1180"></a>
+<FONT color="green">1181</FONT>            this.lookupPersonUniversalIdentifier = lookupPersonId;<a name="line.1181"></a>
+<FONT color="green">1182</FONT>        }<a name="line.1182"></a>
+<FONT color="green">1183</FONT>        <a name="line.1183"></a>
+<FONT color="green">1184</FONT>        public String getUserLookupRoleNamespaceCode() {<a name="line.1184"></a>
+<FONT color="green">1185</FONT>            return userLookupRoleNamespaceCode;<a name="line.1185"></a>
+<FONT color="green">1186</FONT>        }<a name="line.1186"></a>
+<FONT color="green">1187</FONT>    <a name="line.1187"></a>
+<FONT color="green">1188</FONT>        public void setUserLookupRoleNamespaceCode(String userLookupRoleNamespaceCode) {<a name="line.1188"></a>
+<FONT color="green">1189</FONT>        }<a name="line.1189"></a>
+<FONT color="green">1190</FONT>    <a name="line.1190"></a>
+<FONT color="green">1191</FONT>        public String getUserLookupRoleName() {<a name="line.1191"></a>
+<FONT color="green">1192</FONT>            return userLookupRoleName;<a name="line.1192"></a>
+<FONT color="green">1193</FONT>        }<a name="line.1193"></a>
+<FONT color="green">1194</FONT>    <a name="line.1194"></a>
+<FONT color="green">1195</FONT>        public void setUserLookupRoleName(String userLookupRoleName) {<a name="line.1195"></a>
+<FONT color="green">1196</FONT>        }<a name="line.1196"></a>
+<FONT color="green">1197</FONT>        <a name="line.1197"></a>
+<FONT color="green">1198</FONT>        /**<a name="line.1198"></a>
+<FONT color="green">1199</FONT>         * @return a String to represent this field on the inquiry<a name="line.1199"></a>
+<FONT color="green">1200</FONT>         */<a name="line.1200"></a>
+<FONT color="green">1201</FONT>        public String getAwardInquiryTitle() {<a name="line.1201"></a>
+<FONT color="green">1202</FONT>            return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(AWARD_INQUIRY_TITLE_PROPERTY);<a name="line.1202"></a>
+<FONT color="green">1203</FONT>        }<a name="line.1203"></a>
+<FONT color="green">1204</FONT>        <a name="line.1204"></a>
+<FONT color="green">1205</FONT>        /**<a name="line.1205"></a>
+<FONT color="green">1206</FONT>         * Pretends to set the inquiry title<a name="line.1206"></a>
+<FONT color="green">1207</FONT>         */<a name="line.1207"></a>
+<FONT color="green">1208</FONT>        public void setAwardInquiryTitle(String inquiryTitle) {<a name="line.1208"></a>
+<FONT color="green">1209</FONT>            // ain't nothing to do<a name="line.1209"></a>
+<FONT color="green">1210</FONT>        }<a name="line.1210"></a>
+<FONT color="green">1211</FONT>    <a name="line.1211"></a>
+<FONT color="green">1212</FONT>    }<a name="line.1212"></a>
+<FONT color="green">1213</FONT>    <a name="line.1213"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,437 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.purap.document.service;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.sql.Date;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Collection;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.HashMap;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Iterator;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.List;<a name="line.22"></a>
+<FONT color="green">023</FONT>    <a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.module.purap.document.PaymentRequestDocument;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.module.purap.util.VendorGroupingHelper;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.vnd.businessobject.PaymentTermType;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.rice.kew.exception.WorkflowException;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>    /**<a name="line.32"></a>
+<FONT color="green">033</FONT>     * Defines methods that must be implemented by a PaymentRequestService implementation.<a name="line.33"></a>
+<FONT color="green">034</FONT>     */<a name="line.34"></a>
+<FONT color="green">035</FONT>    public interface PaymentRequestService extends AccountsPayableDocumentSpecificService {<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>        /**<a name="line.37"></a>
+<FONT color="green">038</FONT>         * Obtains a list of payment request documents given the purchase order id.<a name="line.38"></a>
+<FONT color="green">039</FONT>         * <a name="line.39"></a>
+<FONT color="green">040</FONT>         * @param poDocId  The purchase order id to be used to obtain a list of payment request documents.<a name="line.40"></a>
+<FONT color="green">041</FONT>         * @return         The List of payment request documents given the purchase order id.<a name="line.41"></a>
+<FONT color="green">042</FONT>         */<a name="line.42"></a>
+<FONT color="green">043</FONT>        public List&lt;PaymentRequestDocument&gt; getPaymentRequestsByPurchaseOrderId(Integer poDocId);<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>        /**<a name="line.45"></a>
+<FONT color="green">046</FONT>         * Obtains a list of payment request documents given the purchase order id, the invoice amount<a name="line.46"></a>
+<FONT color="green">047</FONT>         * and the invoice date.<a name="line.47"></a>
+<FONT color="green">048</FONT>         * <a name="line.48"></a>
+<FONT color="green">049</FONT>         * @param poId           The purchase order id used to obtain the payment request documents.<a name="line.49"></a>
+<FONT color="green">050</FONT>         * @param invoiceAmount  The invoice amount used to obtain the payment request documents.<a name="line.50"></a>
+<FONT color="green">051</FONT>         * @param invoiceDate    The invoice date used to obtain the payment request documents.<a name="line.51"></a>
+<FONT color="green">052</FONT>         * @return               The List of payment request documents that match the given criterias (purchase order id, invoice amount and invoice date).<a name="line.52"></a>
+<FONT color="green">053</FONT>         */<a name="line.53"></a>
+<FONT color="green">054</FONT>        public List getPaymentRequestsByPOIdInvoiceAmountInvoiceDate(Integer poId, KualiDecimal invoiceAmount, Date invoiceDate);<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        /**<a name="line.56"></a>
+<FONT color="green">057</FONT>         * Obtains a list of payment request documents given the vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier and the invoice number.<a name="line.57"></a>
+<FONT color="green">058</FONT>         *<a name="line.58"></a>
+<FONT color="green">059</FONT>         * @param vendorHeaderGeneratedIdentifier The vendorHeaderGeneratedIdentifier used to obtain the payment request documents.<a name="line.59"></a>
+<FONT color="green">060</FONT>         * @param vendorDetailAssignedIdentifier  The vendorDetailAssignedIdentifier used to obtain the payment request documents.<a name="line.60"></a>
+<FONT color="green">061</FONT>         * @return                                The List of payment request documents that match the given criterias.<a name="line.61"></a>
+<FONT color="green">062</FONT>         */<a name="line.62"></a>
+<FONT color="green">063</FONT>        public List getPaymentRequestsByVendorNumber(Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier);<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>        /**<a name="line.65"></a>
+<FONT color="green">066</FONT>         * Obtains a list of payment request documents given the vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier and the invoice number.<a name="line.66"></a>
+<FONT color="green">067</FONT>         *<a name="line.67"></a>
+<FONT color="green">068</FONT>         * @param vendorHeaderGeneratedIdentifier The vendorHeaderGeneratedIdentifier used to obtain the payment request documents.<a name="line.68"></a>
+<FONT color="green">069</FONT>         * @param vendorDetailAssignedIdentifier  The vendorDetailAssignedIdentifier used to obtain the payment request documents.<a name="line.69"></a>
+<FONT color="green">070</FONT>         * @param invoiceNumber                   The invoice number used to obtain the payment request documents.<a name="line.70"></a>
+<FONT color="green">071</FONT>         * @return                                The List of payment request documents that match the given criterias.<a name="line.71"></a>
+<FONT color="green">072</FONT>         */<a name="line.72"></a>
+<FONT color="green">073</FONT>        public List getPaymentRequestsByVendorNumberInvoiceNumber(Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String invoiceNumber);<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>        <a name="line.75"></a>
+<FONT color="green">076</FONT>        <a name="line.76"></a>
+<FONT color="green">077</FONT>        /**<a name="line.77"></a>
+<FONT color="green">078</FONT>         * Determines whether the invoice date is after today.<a name="line.78"></a>
+<FONT color="green">079</FONT>         * <a name="line.79"></a>
+<FONT color="green">080</FONT>         * @param invoiceDate  The invoice date to be determined whether it's after today.<a name="line.80"></a>
+<FONT color="green">081</FONT>         * @return             boolean true if the given invoice date is after today.<a name="line.81"></a>
+<FONT color="green">082</FONT>         */<a name="line.82"></a>
+<FONT color="green">083</FONT>        public boolean isInvoiceDateAfterToday(Date invoiceDate);<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        /**<a name="line.85"></a>
+<FONT color="green">086</FONT>         * Performs the processing to check whether the payment request is a duplicate and if so, adds<a name="line.86"></a>
+<FONT color="green">087</FONT>         * the information about the type of duplication into the resulting HashMap to be returned by this method.<a name="line.87"></a>
+<FONT color="green">088</FONT>         * <a name="line.88"></a>
+<FONT color="green">089</FONT>         * @param document  The payment request document to be processed/checked for duplicates.<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @return          The HashMap containing "PREQDuplicateInvoice" as the key and the string<a name="line.90"></a>
+<FONT color="green">091</FONT>         *                  describing the types of duplication as the value.<a name="line.91"></a>
+<FONT color="green">092</FONT>         */<a name="line.92"></a>
+<FONT color="green">093</FONT>        public HashMap&lt;String, String&gt; paymentRequestDuplicateMessages(PaymentRequestDocument document);<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * Calculate based on the terms and calculate a date 10 days from today. Pick the one that is the farthest out. We always<a name="line.96"></a>
+<FONT color="green">097</FONT>         * calculate the discount date, if there is one.<a name="line.97"></a>
+<FONT color="green">098</FONT>         * <a name="line.98"></a>
+<FONT color="green">099</FONT>         * @param invoiceDate  The invoice date to be used in the pay date calculation.<a name="line.99"></a>
+<FONT color="green">100</FONT>         * @param terms        The payment term type to be used in the pay date calculation.<a name="line.100"></a>
+<FONT color="green">101</FONT>         * @return             The resulting pay date given the invoice date and the terms.<a name="line.101"></a>
+<FONT color="green">102</FONT>         */<a name="line.102"></a>
+<FONT color="green">103</FONT>        public java.sql.Date calculatePayDate(Date invoiceDate, PaymentTermType terms);<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>        /**<a name="line.105"></a>
+<FONT color="green">106</FONT>         * Marks a payment request on hold.<a name="line.106"></a>
+<FONT color="green">107</FONT>         * <a name="line.107"></a>
+<FONT color="green">108</FONT>         * @param document    The payment request document to be marked as on hold.<a name="line.108"></a>
+<FONT color="green">109</FONT>         * @param note        The note to be added to the payment request document while being marked as on hold.<a name="line.109"></a>
+<FONT color="green">110</FONT>         * @return            The PaymentRequestDocument with updated information.<a name="line.110"></a>
+<FONT color="green">111</FONT>         * @throws Exception<a name="line.111"></a>
+<FONT color="green">112</FONT>         */<a name="line.112"></a>
+<FONT color="green">113</FONT>        public PaymentRequestDocument addHoldOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception;<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>        /**<a name="line.115"></a>
+<FONT color="green">116</FONT>         * Removes a hold on a payment request.<a name="line.116"></a>
+<FONT color="green">117</FONT>         * <a name="line.117"></a>
+<FONT color="green">118</FONT>         * @param document    The payment request document whose hold is to be removed.<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @param note        The note to be added to the payment request document while its hold is being removed.<a name="line.119"></a>
+<FONT color="green">120</FONT>         * @return            The PaymentRequestDocument with updated information.<a name="line.120"></a>
+<FONT color="green">121</FONT>         * @throws Exception<a name="line.121"></a>
+<FONT color="green">122</FONT>         */<a name="line.122"></a>
+<FONT color="green">123</FONT>        public PaymentRequestDocument removeHoldOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception;<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>        /**<a name="line.125"></a>
+<FONT color="green">126</FONT>         * Obtains the payment request document given the purapDocumentIdentifier.<a name="line.126"></a>
+<FONT color="green">127</FONT>         * <a name="line.127"></a>
+<FONT color="green">128</FONT>         * @param poDocId  The purapDocumentIdentifier of the payment request document to be obtained.<a name="line.128"></a>
+<FONT color="green">129</FONT>         * @return         The payment request document whose purapDocumentIdentifier matches with the input parameter.<a name="line.129"></a>
+<FONT color="green">130</FONT>         */<a name="line.130"></a>
+<FONT color="green">131</FONT>        public PaymentRequestDocument getPaymentRequestById(Integer poDocId);<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>        /**<a name="line.133"></a>
+<FONT color="green">134</FONT>         * Obtains the payment request document given the document number.<a name="line.134"></a>
+<FONT color="green">135</FONT>         * <a name="line.135"></a>
+<FONT color="green">136</FONT>         * @param documentNumber  The document number to be used to obtain the payment request document.<a name="line.136"></a>
+<FONT color="green">137</FONT>         * @return                The payment request document whose document number matches with the given input parameter.<a name="line.137"></a>
+<FONT color="green">138</FONT>         */<a name="line.138"></a>
+<FONT color="green">139</FONT>        public PaymentRequestDocument getPaymentRequestByDocumentNumber(String documentNumber);<a name="line.139"></a>
+<FONT color="green">140</FONT>    <a name="line.140"></a>
+<FONT color="green">141</FONT>        /**<a name="line.141"></a>
+<FONT color="green">142</FONT>         * Marks a payment request as requested to be canceled.<a name="line.142"></a>
+<FONT color="green">143</FONT>         * <a name="line.143"></a>
+<FONT color="green">144</FONT>         * @param document    The payment request document to be marked as requested to be canceled.<a name="line.144"></a>
+<FONT color="green">145</FONT>         * @param note        The note to be added to the payment request document while being marked as requested to be canceled.<a name="line.145"></a>
+<FONT color="green">146</FONT>         * @throws Exception<a name="line.146"></a>
+<FONT color="green">147</FONT>         */<a name="line.147"></a>
+<FONT color="green">148</FONT>        public void requestCancelOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception;<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>        /**<a name="line.150"></a>
+<FONT color="green">151</FONT>         * Returns true if the payment request has been extracted<a name="line.151"></a>
+<FONT color="green">152</FONT>         * <a name="line.152"></a>
+<FONT color="green">153</FONT>         * @param document  The payment request document to be determined whether it is extracted.<a name="line.153"></a>
+<FONT color="green">154</FONT>         * @return          boolean true if the payment request document is extracted.<a name="line.154"></a>
+<FONT color="green">155</FONT>         */<a name="line.155"></a>
+<FONT color="green">156</FONT>        public boolean isExtracted(PaymentRequestDocument document);<a name="line.156"></a>
+<FONT color="green">157</FONT>    <a name="line.157"></a>
+<FONT color="green">158</FONT>        /**<a name="line.158"></a>
+<FONT color="green">159</FONT>         * Removes a request cancel on payment request.<a name="line.159"></a>
+<FONT color="green">160</FONT>         * <a name="line.160"></a>
+<FONT color="green">161</FONT>         * @param document    The payment request document to be used for request cancel.<a name="line.161"></a>
+<FONT color="green">162</FONT>         * @param note        The note to be added to the payment request document upon the removal of the request cancel.<a name="line.162"></a>
+<FONT color="green">163</FONT>         * @throws Exception<a name="line.163"></a>
+<FONT color="green">164</FONT>         */<a name="line.164"></a>
+<FONT color="green">165</FONT>        public void removeRequestCancelOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception;<a name="line.165"></a>
+<FONT color="green">166</FONT>    <a name="line.166"></a>
+<FONT color="green">167</FONT>        /**<a name="line.167"></a>
+<FONT color="green">168</FONT>         * Resets a Payment Request that had an associated Payment Request or Credit Memo cancelled externally.<a name="line.168"></a>
+<FONT color="green">169</FONT>         * <a name="line.169"></a>
+<FONT color="green">170</FONT>         * @param paymentRequest  The extracted payment request document to be resetted.<a name="line.170"></a>
+<FONT color="green">171</FONT>         * @param note            The note to be added to the payment request document upon its reset.<a name="line.171"></a>
+<FONT color="green">172</FONT>         */<a name="line.172"></a>
+<FONT color="green">173</FONT>        public void resetExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note);<a name="line.173"></a>
+<FONT color="green">174</FONT>    <a name="line.174"></a>
+<FONT color="green">175</FONT>        /**<a name="line.175"></a>
+<FONT color="green">176</FONT>         * Cancels a PREQ that has already been extracted if allowed.<a name="line.176"></a>
+<FONT color="green">177</FONT>         * <a name="line.177"></a>
+<FONT color="green">178</FONT>         * @param paymentRequest  The extracted payment request document to be canceled.<a name="line.178"></a>
+<FONT color="green">179</FONT>         * @param note            The note to be added to the payment request document.<a name="line.179"></a>
+<FONT color="green">180</FONT>         */<a name="line.180"></a>
+<FONT color="green">181</FONT>        public void cancelExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note);<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>        /**<a name="line.183"></a>
+<FONT color="green">184</FONT>         * Get all the payment requests that are immediate and need to be extracted to PDP.<a name="line.184"></a>
+<FONT color="green">185</FONT>         * <a name="line.185"></a>
+<FONT color="green">186</FONT>         * @param chartCode  The chart code to be used as one of the criterias to retrieve the payment request documents. <a name="line.186"></a>
+<FONT color="green">187</FONT>         * @return           The iterator of the list of the resulting payment request documents returned by the paymentRequestDao.<a name="line.187"></a>
+<FONT color="green">188</FONT>         */<a name="line.188"></a>
+<FONT color="green">189</FONT>        public Collection&lt;PaymentRequestDocument&gt; getImmediatePaymentRequestsToExtract(String chartCode);<a name="line.189"></a>
+<FONT color="green">190</FONT>    <a name="line.190"></a>
+<FONT color="green">191</FONT>        /**<a name="line.191"></a>
+<FONT color="green">192</FONT>         * Get all the payment requests that match a credit memo.<a name="line.192"></a>
+<FONT color="green">193</FONT>         * <a name="line.193"></a>
+<FONT color="green">194</FONT>         * @param cmd   The credit memo document to be used to obtain the payment requests.<a name="line.194"></a>
+<FONT color="green">195</FONT>         * @return      The iterator of the resulting payment request documents returned by the paymentRequestDao.<a name="line.195"></a>
+<FONT color="green">196</FONT>         */<a name="line.196"></a>
+<FONT color="green">197</FONT>        public Iterator&lt;PaymentRequestDocument&gt; getPaymentRequestsToExtractByCM(String campusCode, VendorCreditMemoDocument cmd);<a name="line.197"></a>
+<FONT color="green">198</FONT>    <a name="line.198"></a>
+<FONT color="green">199</FONT>        /**<a name="line.199"></a>
+<FONT color="green">200</FONT>         * Get all the payment requests that match a vendor.<a name="line.200"></a>
+<FONT color="green">201</FONT>         * <a name="line.201"></a>
+<FONT color="green">202</FONT>         * @param vendor<a name="line.202"></a>
+<FONT color="green">203</FONT>         * @param onOrBeforePaymentRequestPayDate only payment requests with a pay date on or before this date will be extracted<a name="line.203"></a>
+<FONT color="green">204</FONT>         * @return Collection of the resulting payment request documents returned by the paymentRequestDao.<a name="line.204"></a>
+<FONT color="green">205</FONT>         */<a name="line.205"></a>
+<FONT color="green">206</FONT>        public Collection&lt;PaymentRequestDocument&gt; getPaymentRequestsToExtractByVendor(String campusCode, VendorGroupingHelper vendor, Date onOrBeforePaymentRequestPayDate);<a name="line.206"></a>
+<FONT color="green">207</FONT>        <a name="line.207"></a>
+<FONT color="green">208</FONT>        /**<a name="line.208"></a>
+<FONT color="green">209</FONT>         * Get all the payment requests that need to be extracted.<a name="line.209"></a>
+<FONT color="green">210</FONT>         * <a name="line.210"></a>
+<FONT color="green">211</FONT>         * @return The Collection of the resulting payment request documents returned by the paymentRequestDao.<a name="line.211"></a>
+<FONT color="green">212</FONT>         */<a name="line.212"></a>
+<FONT color="green">213</FONT>        public Collection&lt;PaymentRequestDocument&gt; getPaymentRequestsToExtract(Date onOrBeforePaymentRequestPayDate);<a name="line.213"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>        /**<a name="line.215"></a>
+<FONT color="green">216</FONT>         * Get all the special payment requests for a single chart that need to be extracted.<a name="line.216"></a>
+<FONT color="green">217</FONT>         * <a name="line.217"></a>
+<FONT color="green">218</FONT>         * @param chartCode  The chart code to be used as one of the criterias to retrieve the payment request documents. <a name="line.218"></a>
+<FONT color="green">219</FONT>         * @return           The Collection of the resulting payment request documents returned by the paymentRequestDao.<a name="line.219"></a>
+<FONT color="green">220</FONT>         */<a name="line.220"></a>
+<FONT color="green">221</FONT>        public Collection&lt;PaymentRequestDocument&gt; getPaymentRequestsToExtractSpecialPayments(String chartCode, Date onOrBeforePaymentRequestPayDate);<a name="line.221"></a>
+<FONT color="green">222</FONT>    <a name="line.222"></a>
+<FONT color="green">223</FONT>        /**<a name="line.223"></a>
+<FONT color="green">224</FONT>         * Get all the regular payment requests for a single campus.<a name="line.224"></a>
+<FONT color="green">225</FONT>         * <a name="line.225"></a>
+<FONT color="green">226</FONT>         * @param chartCode  The chart code to be used as one of the criterias to retrieve the payment request documents. <a name="line.226"></a>
+<FONT color="green">227</FONT>         * @return           The collection of the resulting payment request documents returned by the paymentRequestDao.<a name="line.227"></a>
+<FONT color="green">228</FONT>         */<a name="line.228"></a>
+<FONT color="green">229</FONT>        public Collection&lt;PaymentRequestDocument&gt; getPaymentRequestToExtractByChart(String chartCode, Date onOrBeforePaymentRequestPayDate);<a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>        /**<a name="line.231"></a>
+<FONT color="green">232</FONT>         * Recalculate the payment request.<a name="line.232"></a>
+<FONT color="green">233</FONT>         * <a name="line.233"></a>
+<FONT color="green">234</FONT>         * @param pr              The payment request document to be calculated.<a name="line.234"></a>
+<FONT color="green">235</FONT>         * @param updateDiscount  boolean true if we also want to calculate the discount items for the payment request.<a name="line.235"></a>
+<FONT color="green">236</FONT>         */<a name="line.236"></a>
+<FONT color="green">237</FONT>        public void calculatePaymentRequest(PaymentRequestDocument pr, boolean updateDiscount);<a name="line.237"></a>
+<FONT color="green">238</FONT>    <a name="line.238"></a>
+<FONT color="green">239</FONT>        /**<a name="line.239"></a>
+<FONT color="green">240</FONT>         * Performs calculations on the tax edit area, generates and adds NRA tax charge items as below the line items, with their accounting lines; <a name="line.240"></a>
+<FONT color="green">241</FONT>         * the calculation will activate updates on the account summary tab and the general ledger entries as well.<a name="line.241"></a>
+<FONT color="green">242</FONT>         *<a name="line.242"></a>
+<FONT color="green">243</FONT>         * The non-resident alien (NRA) tax lines consist of four possible sets of tax lines: <a name="line.243"></a>
+<FONT color="green">244</FONT>         * - Federal tax lines<a name="line.244"></a>
+<FONT color="green">245</FONT>         * - Federal Gross up tax lines<a name="line.245"></a>
+<FONT color="green">246</FONT>         * - State tax lines<a name="line.246"></a>
+<FONT color="green">247</FONT>         * - State Gross up tax lines<a name="line.247"></a>
+<FONT color="green">248</FONT>         * <a name="line.248"></a>
+<FONT color="green">249</FONT>         * Federal tax lines are generated if the federal tax rate in the payment request is not zero.<a name="line.249"></a>
+<FONT color="green">250</FONT>         * State tax lines are generated if the state tax rate in the payment request is not zero.<a name="line.250"></a>
+<FONT color="green">251</FONT>         * Gross up tax lines are generated if the tax gross up indicator is set on the payment request and the tax rate is not zero.<a name="line.251"></a>
+<FONT color="green">252</FONT>         * <a name="line.252"></a>
+<FONT color="green">253</FONT>         * @param preq The payment request the NRA tax lines will be added to.<a name="line.253"></a>
+<FONT color="green">254</FONT>         * <a name="line.254"></a>
+<FONT color="green">255</FONT>         */<a name="line.255"></a>
+<FONT color="green">256</FONT>        public void calculateTaxArea(PaymentRequestDocument preq);<a name="line.256"></a>
+<FONT color="green">257</FONT>        <a name="line.257"></a>
+<FONT color="green">258</FONT>        /**<a name="line.258"></a>
+<FONT color="green">259</FONT>         * Populate payment request.<a name="line.259"></a>
+<FONT color="green">260</FONT>         * <a name="line.260"></a>
+<FONT color="green">261</FONT>         * @param preq  The payment request document to be populated.<a name="line.261"></a>
+<FONT color="green">262</FONT>         */<a name="line.262"></a>
+<FONT color="green">263</FONT>        public void populatePaymentRequest(PaymentRequestDocument preq);<a name="line.263"></a>
+<FONT color="green">264</FONT>    <a name="line.264"></a>
+<FONT color="green">265</FONT>        /**<a name="line.265"></a>
+<FONT color="green">266</FONT>         * Populate and save payment request.<a name="line.266"></a>
+<FONT color="green">267</FONT>         * <a name="line.267"></a>
+<FONT color="green">268</FONT>         * @param preq  The payment request document to be populated and saved.<a name="line.268"></a>
+<FONT color="green">269</FONT>         */<a name="line.269"></a>
+<FONT color="green">270</FONT>        public void populateAndSavePaymentRequest(PaymentRequestDocument preq) throws WorkflowException;<a name="line.270"></a>
+<FONT color="green">271</FONT>    <a name="line.271"></a>
+<FONT color="green">272</FONT>        /**<a name="line.272"></a>
+<FONT color="green">273</FONT>         * Retrieve a list of PREQs that aren't approved, check to see if they match specific requirements, then auto-approve them if<a name="line.273"></a>
+<FONT color="green">274</FONT>         * possible.<a name="line.274"></a>
+<FONT color="green">275</FONT>         * <a name="line.275"></a>
+<FONT color="green">276</FONT>         * @return  boolean true if the auto approval of payment requests has at least one error.<a name="line.276"></a>
+<FONT color="green">277</FONT>         */<a name="line.277"></a>
+<FONT color="green">278</FONT>        public boolean autoApprovePaymentRequests();<a name="line.278"></a>
+<FONT color="green">279</FONT>        /**<a name="line.279"></a>
+<FONT color="green">280</FONT>         * Checks whether the payment request document is eligible for auto approval. If so, then updates<a name="line.280"></a>
+<FONT color="green">281</FONT>         * the status of the document to auto approved and calls the documentService to blanket approve<a name="line.281"></a>
+<FONT color="green">282</FONT>         * the document, then returns false.<a name="line.282"></a>
+<FONT color="green">283</FONT>         * If the document is not eligible for auto approval then returns true.<a name="line.283"></a>
+<FONT color="green">284</FONT>         * <a name="line.284"></a>
+<FONT color="green">285</FONT>         * @param docNumber            The payment request document number (not the payment request ID) to be auto approved.<a name="line.285"></a>
+<FONT color="green">286</FONT>         * @param defaultMinimumLimit  The default minimum limit amount to be used in determining the eligibility of the document to be auto approved.<a name="line.286"></a>
+<FONT color="green">287</FONT>         * @return                     boolean true if the payment request document is not eligible for auto approval.<a name="line.287"></a>
+<FONT color="green">288</FONT>         * @throws RuntimeException    To indicate to Spring transactional management that the transaction for this document should be rolled back<a name="line.288"></a>
+<FONT color="green">289</FONT>         */<a name="line.289"></a>
+<FONT color="green">290</FONT>        public boolean autoApprovePaymentRequest(String docNumber, KualiDecimal defaultMinimumLimit);<a name="line.290"></a>
+<FONT color="green">291</FONT>        <a name="line.291"></a>
+<FONT color="green">292</FONT>        /**<a name="line.292"></a>
+<FONT color="green">293</FONT>         * Checks whether the payment request document is eligible for auto approval. If so, then updates<a name="line.293"></a>
+<FONT color="green">294</FONT>         * the status of the document to auto approved and calls the documentService to blanket approve<a name="line.294"></a>
+<FONT color="green">295</FONT>         * the document, then returns false.<a name="line.295"></a>
+<FONT color="green">296</FONT>         * If the document is not eligible for auto approval then returns true.<a name="line.296"></a>
+<FONT color="green">297</FONT>         * <a name="line.297"></a>
+<FONT color="green">298</FONT>         * @param doc                  The payment request document to be auto approved.<a name="line.298"></a>
+<FONT color="green">299</FONT>         * @param defaultMinimumLimit  The default minimum limit amount to be used in determining the eligibility of the document to be auto approved.<a name="line.299"></a>
+<FONT color="green">300</FONT>         * @return                     boolean true if the payment request document is not eligible for auto approval.<a name="line.300"></a>
+<FONT color="green">301</FONT>         * @throws RuntimeException    To indicate to Spring transactional management that the transaction for this document should be rolled back<a name="line.301"></a>
+<FONT color="green">302</FONT>         */<a name="line.302"></a>
+<FONT color="green">303</FONT>        public boolean autoApprovePaymentRequest(PaymentRequestDocument doc, KualiDecimal defaultMinimumLimit);<a name="line.303"></a>
+<FONT color="green">304</FONT>    <a name="line.304"></a>
+<FONT color="green">305</FONT>        /**<a name="line.305"></a>
+<FONT color="green">306</FONT>         * Mark a payment request as being paid and set the payment request's paid date as the processDate.<a name="line.306"></a>
+<FONT color="green">307</FONT>         * <a name="line.307"></a>
+<FONT color="green">308</FONT>         * @param pr           The payment request document to be marked as paid and paid date to be set.<a name="line.308"></a>
+<FONT color="green">309</FONT>         * @param processDate  The date to be set as the payment request's paid date.<a name="line.309"></a>
+<FONT color="green">310</FONT>         */<a name="line.310"></a>
+<FONT color="green">311</FONT>        public void markPaid(PaymentRequestDocument pr, Date processDate);<a name="line.311"></a>
+<FONT color="green">312</FONT>    <a name="line.312"></a>
+<FONT color="green">313</FONT>        /**<a name="line.313"></a>
+<FONT color="green">314</FONT>         * This method specifies whether the payment request document has a discount item.<a name="line.314"></a>
+<FONT color="green">315</FONT>         * <a name="line.315"></a>
+<FONT color="green">316</FONT>         * @param preq  The payment request document to be verified whether it has a discount item.<a name="line.316"></a>
+<FONT color="green">317</FONT>         * @return      boolean true if the payment request document has at least one discount item.<a name="line.317"></a>
+<FONT color="green">318</FONT>         */<a name="line.318"></a>
+<FONT color="green">319</FONT>        public boolean hasDiscountItem(PaymentRequestDocument preq);<a name="line.319"></a>
+<FONT color="green">320</FONT>        <a name="line.320"></a>
+<FONT color="green">321</FONT>        /**<a name="line.321"></a>
+<FONT color="green">322</FONT>         * Changes the current vendor to the vendor passed in.<a name="line.322"></a>
+<FONT color="green">323</FONT>         * <a name="line.323"></a>
+<FONT color="green">324</FONT>         * @param preq<a name="line.324"></a>
+<FONT color="green">325</FONT>         * @param headerId<a name="line.325"></a>
+<FONT color="green">326</FONT>         * @param detailId<a name="line.326"></a>
+<FONT color="green">327</FONT>         * @param primaryHeaderId<a name="line.327"></a>
+<FONT color="green">328</FONT>         * @param primaryDetailId<a name="line.328"></a>
+<FONT color="green">329</FONT>         */<a name="line.329"></a>
+<FONT color="green">330</FONT>        public void changeVendor(PaymentRequestDocument preq, Integer headerId, Integer detailId);<a name="line.330"></a>
+<FONT color="green">331</FONT>        <a name="line.331"></a>
+<FONT color="green">332</FONT>        /**<a name="line.332"></a>
+<FONT color="green">333</FONT>         * A method to create the description for the payment request document.<a name="line.333"></a>
+<FONT color="green">334</FONT>         * <a name="line.334"></a>
+<FONT color="green">335</FONT>         * @param purchaseOrderIdentifier  The purchase order identifier to be used as part of the description.<a name="line.335"></a>
+<FONT color="green">336</FONT>         * @param vendorName               The vendor name to be used as part of the description.<a name="line.336"></a>
+<FONT color="green">337</FONT>         * @return                         The resulting description string for the payment request document.<a name="line.337"></a>
+<FONT color="green">338</FONT>         */<a name="line.338"></a>
+<FONT color="green">339</FONT>        public String createPreqDocumentDescription(Integer purchaseOrderIdentifier, String vendorName);<a name="line.339"></a>
+<FONT color="green">340</FONT>        <a name="line.340"></a>
+<FONT color="green">341</FONT>        /**<a name="line.341"></a>
+<FONT color="green">342</FONT>         * Determines if there are active payment requests for a purchase order.<a name="line.342"></a>
+<FONT color="green">343</FONT>         * <a name="line.343"></a>
+<FONT color="green">344</FONT>         * @param purchaseOrderIdentifier<a name="line.344"></a>
+<FONT color="green">345</FONT>         * @return<a name="line.345"></a>
+<FONT color="green">346</FONT>         */<a name="line.346"></a>
+<FONT color="green">347</FONT>        public boolean hasActivePaymentRequestsForPurchaseOrder(Integer purchaseOrderIdentifier);<a name="line.347"></a>
+<FONT color="green">348</FONT>        <a name="line.348"></a>
+<FONT color="green">349</FONT>        public void processPaymentRequestInReceivingStatus();<a name="line.349"></a>
+<FONT color="green">350</FONT>        <a name="line.350"></a>
+<FONT color="green">351</FONT>        /**<a name="line.351"></a>
+<FONT color="green">352</FONT>         * Payment Requests created in the previous fiscal year get backdated if we're at the beginning of the new fiscal year (i.e.<a name="line.352"></a>
+<FONT color="green">353</FONT>         * prior to first closing)<a name="line.353"></a>
+<FONT color="green">354</FONT>         * <a name="line.354"></a>
+<FONT color="green">355</FONT>         * @param paymentRequestDocument<a name="line.355"></a>
+<FONT color="green">356</FONT>         * @return<a name="line.356"></a>
+<FONT color="green">357</FONT>         */<a name="line.357"></a>
+<FONT color="green">358</FONT>        public boolean allowBackpost(PaymentRequestDocument paymentRequestDocument);<a name="line.358"></a>
+<FONT color="green">359</FONT>        <a name="line.359"></a>
+<FONT color="green">360</FONT>        public boolean isPurchaseOrderValidForPaymentRequestDocumentCreation(PaymentRequestDocument paymentRequestDocument,PurchaseOrderDocument po);<a name="line.360"></a>
+<FONT color="green">361</FONT>        <a name="line.361"></a>
+<FONT color="green">362</FONT>        /**<a name="line.362"></a>
+<FONT color="green">363</FONT>         * Removes additional charge items that are not eligible on the payment request document.<a name="line.363"></a>
+<FONT color="green">364</FONT>         * <a name="line.364"></a>
+<FONT color="green">365</FONT>         * @param document<a name="line.365"></a>
+<FONT color="green">366</FONT>         */<a name="line.366"></a>
+<FONT color="green">367</FONT>        public void removeIneligibleAdditionalCharges(PaymentRequestDocument document);<a name="line.367"></a>
+<FONT color="green">368</FONT>        <a name="line.368"></a>
+<FONT color="green">369</FONT>        public boolean encumberedItemExistsForInvoicing(PurchaseOrderDocument document);<a name="line.369"></a>
+<FONT color="green">370</FONT>    }<a name="line.370"></a>
+<FONT color="green">371</FONT>    <a name="line.371"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

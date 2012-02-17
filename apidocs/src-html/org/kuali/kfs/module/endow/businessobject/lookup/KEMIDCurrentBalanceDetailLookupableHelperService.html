@@ -1,0 +1,196 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.endow.businessobject.lookup;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.math.BigDecimal;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.HashMap;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.List;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Map;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.module.endow.EndowConstants;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.module.endow.EndowPropertyConstants;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.endow.businessobject.IncomePrincipalIndicator;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.endow.businessobject.KEMIDCurrentBalanceDetail;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.module.endow.businessobject.KemidCurrentCash;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.module.endow.document.service.impl.KemidCurrentCashServiceImpl;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.bo.BusinessObject;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>    public class KEMIDCurrentBalanceDetailLookupableHelperService extends KualiLookupableHelperServiceImpl {<a name="line.34"></a>
+<FONT color="green">035</FONT>    <a name="line.35"></a>
+<FONT color="green">036</FONT>        /**<a name="line.36"></a>
+<FONT color="green">037</FONT>         * @see org.kuali.rice.kns.lookup.KualiLookupableHelperServiceImpl#getSearchResults(java.util.Map)<a name="line.37"></a>
+<FONT color="green">038</FONT>         */<a name="line.38"></a>
+<FONT color="green">039</FONT>        public List&lt;? extends BusinessObject&gt; getSearchResults(Map&lt;String, String&gt; fieldValues) {<a name="line.39"></a>
+<FONT color="green">040</FONT>            List&lt;KEMIDCurrentBalanceDetail&gt; results = (List&lt;KEMIDCurrentBalanceDetail&gt;) super.getSearchResults(fieldValues);<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>            // check if there are entries with a CSHEQ reporting group in the results list<a name="line.42"></a>
+<FONT color="green">043</FONT>            boolean incCashEq = false;<a name="line.43"></a>
+<FONT color="green">044</FONT>            boolean princCashEq = false;<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>            for (KEMIDCurrentBalanceDetail balanceDetail : results) {<a name="line.46"></a>
+<FONT color="green">047</FONT>                if (EndowConstants.SecurityReportingGroups.CASH_EQUIVALENTS.equalsIgnoreCase(balanceDetail.getReportingGroupCode())) {<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>                    if (EndowConstants.IncomePrincipalIndicator.INCOME.equalsIgnoreCase(balanceDetail.getIncomePrincipalIndicator())) {<a name="line.49"></a>
+<FONT color="green">050</FONT>                        incCashEq = true;<a name="line.50"></a>
+<FONT color="green">051</FONT>                    }<a name="line.51"></a>
+<FONT color="green">052</FONT>                    else if (EndowConstants.IncomePrincipalIndicator.PRINCIPAL.equalsIgnoreCase(balanceDetail.getIncomePrincipalIndicator())) {<a name="line.52"></a>
+<FONT color="green">053</FONT>                        princCashEq = true;<a name="line.53"></a>
+<FONT color="green">054</FONT>                    }<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>                    if (incCashEq &amp;&amp; princCashEq) {<a name="line.56"></a>
+<FONT color="green">057</FONT>                        break;<a name="line.57"></a>
+<FONT color="green">058</FONT>                    }<a name="line.58"></a>
+<FONT color="green">059</FONT>                }<a name="line.59"></a>
+<FONT color="green">060</FONT>            }<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>            if (!incCashEq || !princCashEq) {<a name="line.62"></a>
+<FONT color="green">063</FONT>                String kemid = fieldValues.get(EndowPropertyConstants.KEMID);<a name="line.63"></a>
+<FONT color="green">064</FONT>                // check if there is current income/principal cash<a name="line.64"></a>
+<FONT color="green">065</FONT>                KemidCurrentCashServiceImpl kemidCurrentCashService = SpringContext.getBean(KemidCurrentCashServiceImpl.class);<a name="line.65"></a>
+<FONT color="green">066</FONT>                KemidCurrentCash currentCash = kemidCurrentCashService.getByPrimaryKey(kemid);<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>                if (ObjectUtils.isNotNull(currentCash)) {<a name="line.68"></a>
+<FONT color="green">069</FONT>                    // if there is an entry in the current cash for the kemid, and there is income current cash but there were no<a name="line.69"></a>
+<FONT color="green">070</FONT>                    // holdings for this kemid for CSHEQ reporting group add a new entry in the results list to show the current income<a name="line.70"></a>
+<FONT color="green">071</FONT>                    // cash<a name="line.71"></a>
+<FONT color="green">072</FONT>                    if (!incCashEq &amp;&amp; currentCash.getCurrentIncomeCash().isNonZero()) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                        KEMIDCurrentBalanceDetail balanceDetail = createCurrentBalanceDetailForCSHEQ(kemid, EndowConstants.IncomePrincipalIndicator.INCOME, currentCash);<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>                        results.add(balanceDetail);<a name="line.75"></a>
+<FONT color="green">076</FONT>                    }<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>                    // if there is an entry in the current cash for the kemid, and there is principal current cash but there were no<a name="line.78"></a>
+<FONT color="green">079</FONT>                    // holdings for this kemid for CSHEQ reporting group add a new entry in the results list to show the current<a name="line.79"></a>
+<FONT color="green">080</FONT>                    // principal cash<a name="line.80"></a>
+<FONT color="green">081</FONT>                    if (!princCashEq &amp;&amp; currentCash.getCurrentPrincipalCash().isNonZero()) {<a name="line.81"></a>
+<FONT color="green">082</FONT>                        KEMIDCurrentBalanceDetail balanceDetail = createCurrentBalanceDetailForCSHEQ(kemid, EndowConstants.IncomePrincipalIndicator.PRINCIPAL, currentCash);<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>                        results.add(balanceDetail);<a name="line.84"></a>
+<FONT color="green">085</FONT>                    }<a name="line.85"></a>
+<FONT color="green">086</FONT>                }<a name="line.86"></a>
+<FONT color="green">087</FONT>            }<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>            return results;<a name="line.89"></a>
+<FONT color="green">090</FONT>        }<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>        /**<a name="line.92"></a>
+<FONT color="green">093</FONT>         * Creates a new KEMIDCurrentBalanceDetail for CSHEQ reporting group. This method is used when there is an entry in the current<a name="line.93"></a>
+<FONT color="green">094</FONT>         * cash for the kemid but there are no holdings.<a name="line.94"></a>
+<FONT color="green">095</FONT>         * <a name="line.95"></a>
+<FONT color="green">096</FONT>         * @param kemid<a name="line.96"></a>
+<FONT color="green">097</FONT>         * @param incomeOrPrincipal<a name="line.97"></a>
+<FONT color="green">098</FONT>         * @param currentCash<a name="line.98"></a>
+<FONT color="green">099</FONT>         * @return a new KEMIDCurrentBalanceDetail<a name="line.99"></a>
+<FONT color="green">100</FONT>         */<a name="line.100"></a>
+<FONT color="green">101</FONT>        private KEMIDCurrentBalanceDetail createCurrentBalanceDetailForCSHEQ(String kemid, String incomeOrPrincipal, KemidCurrentCash currentCash) {<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>            KEMIDCurrentBalanceDetail balanceDetail = new KEMIDCurrentBalanceDetail();<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>            balanceDetail.setKemid(kemid);<a name="line.105"></a>
+<FONT color="green">106</FONT>            balanceDetail.setReportingGroupCode(EndowConstants.SecurityReportingGroups.CASH_EQUIVALENTS);<a name="line.106"></a>
+<FONT color="green">107</FONT>            balanceDetail.setIncomePrincipalIndicator(incomeOrPrincipal);<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>            if (EndowConstants.IncomePrincipalIndicator.INCOME.equalsIgnoreCase(incomeOrPrincipal)) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                balanceDetail.setValueAtMarket(currentCash.getCurrentIncomeCash().bigDecimalValue());<a name="line.111"></a>
+<FONT color="green">112</FONT>            }<a name="line.112"></a>
+<FONT color="green">113</FONT>            else {<a name="line.113"></a>
+<FONT color="green">114</FONT>                balanceDetail.setValueAtMarket(currentCash.getCurrentPrincipalCash().bigDecimalValue());<a name="line.114"></a>
+<FONT color="green">115</FONT>            }<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>            Map&lt;String, String&gt; keys = new HashMap&lt;String, String&gt;();<a name="line.117"></a>
+<FONT color="green">118</FONT>            keys.put(EndowPropertyConstants.KUALICODEBASE_CODE, incomeOrPrincipal);<a name="line.118"></a>
+<FONT color="green">119</FONT>            IncomePrincipalIndicator incomePrincipalIndicator = (IncomePrincipalIndicator) businessObjectService.findByPrimaryKey(IncomePrincipalIndicator.class, keys);<a name="line.119"></a>
+<FONT color="green">120</FONT>            balanceDetail.setIpIndicator(incomePrincipalIndicator);<a name="line.120"></a>
+<FONT color="green">121</FONT>    <a name="line.121"></a>
+<FONT color="green">122</FONT>            balanceDetail.setAnnualEstimatedIncome(BigDecimal.ZERO.setScale(2));<a name="line.122"></a>
+<FONT color="green">123</FONT>            balanceDetail.setNextFYEstimatedIncome(BigDecimal.ZERO.setScale(2));<a name="line.123"></a>
+<FONT color="green">124</FONT>            balanceDetail.setRemainderOfFYEstimatedIncome(BigDecimal.ZERO.setScale(2));<a name="line.124"></a>
+<FONT color="green">125</FONT>    <a name="line.125"></a>
+<FONT color="green">126</FONT>            balanceDetail.setNoDrillDownOnMarketVal(true);<a name="line.126"></a>
+<FONT color="green">127</FONT>    <a name="line.127"></a>
+<FONT color="green">128</FONT>            return balanceDetail;<a name="line.128"></a>
+<FONT color="green">129</FONT>        }<a name="line.129"></a>
+<FONT color="green">130</FONT>    }<a name="line.130"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
