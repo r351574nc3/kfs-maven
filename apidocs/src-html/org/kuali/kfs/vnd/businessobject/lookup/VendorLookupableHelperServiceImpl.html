@@ -1,0 +1,417 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.vnd.businessobject.lookup;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.ArrayList;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Collections;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.HashMap;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Iterator;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.List;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Map;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.Properties;<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.integration.purap.PurchasingAccountsPayableModuleService;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.vnd.VendorConstants;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.vnd.VendorKeyConstants;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.vnd.VendorParameterConstants;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.vnd.VendorPropertyConstants;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.vnd.businessobject.VendorAddress;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.vnd.businessobject.VendorDetail;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.vnd.document.service.VendorService;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.rice.kns.bo.BusinessObject;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.rice.kns.exception.ValidationException;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.rice.kns.lookup.CollectionIncomplete;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.rice.kns.lookup.HtmlData;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.kuali.rice.kns.lookup.HtmlData.AnchorHtmlData;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import org.kuali.rice.kns.service.ParameterService;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import org.kuali.rice.kns.util.BeanPropertyComparator;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import org.kuali.rice.kns.util.GlobalVariables;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import org.kuali.rice.kns.util.KNSConstants;<a name="line.46"></a>
+<FONT color="green">047</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.47"></a>
+<FONT color="green">048</FONT>    import org.kuali.rice.kns.util.UrlFactory;<a name="line.48"></a>
+<FONT color="green">049</FONT>    import org.kuali.rice.kns.web.format.Formatter;<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>    public class VendorLookupableHelperServiceImpl extends AbstractLookupableHelperServiceImpl {<a name="line.51"></a>
+<FONT color="green">052</FONT>        private VendorService vendorService;<a name="line.52"></a>
+<FONT color="green">053</FONT>        private ParameterService parameterService;<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>        /**<a name="line.55"></a>
+<FONT color="green">056</FONT>         * Add custom links to the vendor search results. One to Allow only active parent vendors to create new divisions. Another to<a name="line.56"></a>
+<FONT color="green">057</FONT>         * create a link for B2B shopping if PURAP service has been setup to allow for that.<a name="line.57"></a>
+<FONT color="green">058</FONT>         * <a name="line.58"></a>
+<FONT color="green">059</FONT>         * @see org.kuali.rice.kns.lookup.LookupableHelperService#getCustomActionUrls(org.kuali.rice.kns.bo.BusinessObject,<a name="line.59"></a>
+<FONT color="green">060</FONT>         *      java.util.List, java.util.List pkNames)<a name="line.60"></a>
+<FONT color="green">061</FONT>         */<a name="line.61"></a>
+<FONT color="green">062</FONT>        @Override<a name="line.62"></a>
+<FONT color="green">063</FONT>        public List&lt;HtmlData&gt; getCustomActionUrls(BusinessObject businessObject, List pkNames) {<a name="line.63"></a>
+<FONT color="green">064</FONT>            VendorDetail vendor = (VendorDetail) businessObject;<a name="line.64"></a>
+<FONT color="green">065</FONT>            List&lt;HtmlData&gt; anchorHtmlDataList = new ArrayList&lt;HtmlData&gt;();<a name="line.65"></a>
+<FONT color="green">066</FONT>    <a name="line.66"></a>
+<FONT color="green">067</FONT>            AnchorHtmlData anchorHtmlData = super.getUrlData(businessObject, KNSConstants.MAINTENANCE_EDIT_METHOD_TO_CALL, pkNames);<a name="line.67"></a>
+<FONT color="green">068</FONT>            anchorHtmlDataList.add(anchorHtmlData);<a name="line.68"></a>
+<FONT color="green">069</FONT>            if (vendor.isVendorParentIndicator() &amp;&amp; vendor.isActiveIndicator()) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                // only allow active parent vendors to create new divisions<a name="line.70"></a>
+<FONT color="green">071</FONT>                anchorHtmlDataList.add(super.getUrlData(businessObject, KFSConstants.MAINTENANCE_NEWWITHEXISTING_ACTION, VendorConstants.CREATE_DIVISION, pkNames));<a name="line.71"></a>
+<FONT color="green">072</FONT>            }<a name="line.72"></a>
+<FONT color="green">073</FONT>            <a name="line.73"></a>
+<FONT color="green">074</FONT>            //Adding a "Shopping" link for B2B vendors.<a name="line.74"></a>
+<FONT color="green">075</FONT>            String b2bUrlString = SpringContext.getBean(PurchasingAccountsPayableModuleService.class).getB2BUrlString();<a name="line.75"></a>
+<FONT color="green">076</FONT>            if (vendor.isB2BVendor() &amp;&amp; StringUtils.isNotBlank(b2bUrlString)) {<a name="line.76"></a>
+<FONT color="green">077</FONT>                Properties theProperties = new Properties();<a name="line.77"></a>
+<FONT color="green">078</FONT>                theProperties.put("channelTitle", "Shop Catalogs");<a name="line.78"></a>
+<FONT color="green">079</FONT>                String backLocation = this.getBackLocation();<a name="line.79"></a>
+<FONT color="green">080</FONT>                int lastSlash = backLocation.lastIndexOf("/");<a name="line.80"></a>
+<FONT color="green">081</FONT>                String returnUrlForShop = backLocation.substring(0, lastSlash+1) + "portal.do";<a name="line.81"></a>
+<FONT color="green">082</FONT>                String href = UrlFactory.parameterizeUrl(returnUrlForShop, theProperties);            <a name="line.82"></a>
+<FONT color="green">083</FONT>                anchorHtmlDataList.add(new AnchorHtmlData(href + b2bUrlString, null, "shop"));<a name="line.83"></a>
+<FONT color="green">084</FONT>            }<a name="line.84"></a>
+<FONT color="green">085</FONT>            return anchorHtmlDataList;<a name="line.85"></a>
+<FONT color="green">086</FONT>        }<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>        /**<a name="line.88"></a>
+<FONT color="green">089</FONT>         * Used by getActionUrls to print the url on the Vendor Lookup page for the links to edit a Vendor or to create a new division.<a name="line.89"></a>
+<FONT color="green">090</FONT>         * We won't provide a link to copy a vendor because we decided it wouldn't make sense to copy a vendor. We should display the<a name="line.90"></a>
+<FONT color="green">091</FONT>         * link to create a new division only if the vendor is a parent vendor, and also remove the vendor detail assigned id from the<a name="line.91"></a>
+<FONT color="green">092</FONT>         * query string in the link to create a new division. We'll add the vendor detail assigned id in the query string if the vendor<a name="line.92"></a>
+<FONT color="green">093</FONT>         * is not a parent, or if the vendor is a parent and the link is not the create new division link (i.e. if the link is "edit").<a name="line.93"></a>
+<FONT color="green">094</FONT>         * We'll always add the vendor header id in the query string in all links.<a name="line.94"></a>
+<FONT color="green">095</FONT>         *<a name="line.95"></a>
+<FONT color="green">096</FONT>         * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#getActionUrlHref(org.kuali.rice.kns.bo.BusinessObject, java.lang.String, java.util.List)<a name="line.96"></a>
+<FONT color="green">097</FONT>         */<a name="line.97"></a>
+<FONT color="green">098</FONT>        @Override<a name="line.98"></a>
+<FONT color="green">099</FONT>        protected String getActionUrlHref(BusinessObject businessObject, String methodToCall, List pkNames){<a name="line.99"></a>
+<FONT color="green">100</FONT>            if (!methodToCall.equals(KFSConstants.COPY_METHOD)) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                Properties parameters = new Properties();<a name="line.101"></a>
+<FONT color="green">102</FONT>                parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, methodToCall);<a name="line.102"></a>
+<FONT color="green">103</FONT>                parameters.put(KFSConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, businessObject.getClass().getName());<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>                for (Iterator&lt;String&gt; iter = pkNames.iterator(); iter.hasNext();) {<a name="line.105"></a>
+<FONT color="green">106</FONT>                    String fieldNm = iter.next();<a name="line.106"></a>
+<FONT color="green">107</FONT>                    if (!fieldNm.equals(VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID) ||<a name="line.107"></a>
+<FONT color="green">108</FONT>                            !((VendorDetail) businessObject).isVendorParentIndicator()<a name="line.108"></a>
+<FONT color="green">109</FONT>                            || (((VendorDetail) businessObject).isVendorParentIndicator())<a name="line.109"></a>
+<FONT color="green">110</FONT>                            &amp;&amp; !methodToCall.equals(KFSConstants.MAINTENANCE_NEWWITHEXISTING_ACTION)) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                        Object fieldVal = ObjectUtils.getPropertyValue(businessObject, fieldNm);<a name="line.111"></a>
+<FONT color="green">112</FONT>                        if (fieldVal == null) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                            fieldVal = KFSConstants.EMPTY_STRING;<a name="line.113"></a>
+<FONT color="green">114</FONT>                        }<a name="line.114"></a>
+<FONT color="green">115</FONT>                        if (fieldVal instanceof java.sql.Date) {<a name="line.115"></a>
+<FONT color="green">116</FONT>                            String formattedString = KFSConstants.EMPTY_STRING;<a name="line.116"></a>
+<FONT color="green">117</FONT>                            if (Formatter.findFormatter(fieldVal.getClass()) != null) {<a name="line.117"></a>
+<FONT color="green">118</FONT>                                Formatter formatter = Formatter.getFormatter(fieldVal.getClass());<a name="line.118"></a>
+<FONT color="green">119</FONT>                                formattedString = (String) formatter.format(fieldVal);<a name="line.119"></a>
+<FONT color="green">120</FONT>                                fieldVal = formattedString;<a name="line.120"></a>
+<FONT color="green">121</FONT>                            }<a name="line.121"></a>
+<FONT color="green">122</FONT>                        }<a name="line.122"></a>
+<FONT color="green">123</FONT>                        parameters.put(fieldNm, fieldVal.toString());<a name="line.123"></a>
+<FONT color="green">124</FONT>                    }<a name="line.124"></a>
+<FONT color="green">125</FONT>                }<a name="line.125"></a>
+<FONT color="green">126</FONT>                return UrlFactory.parameterizeUrl(KFSConstants.MAINTENANCE_ACTION, parameters);<a name="line.126"></a>
+<FONT color="green">127</FONT>            } else {<a name="line.127"></a>
+<FONT color="green">128</FONT>                return KFSConstants.EMPTY_STRING;<a name="line.128"></a>
+<FONT color="green">129</FONT>            }<a name="line.129"></a>
+<FONT color="green">130</FONT>        }<a name="line.130"></a>
+<FONT color="green">131</FONT>    <a name="line.131"></a>
+<FONT color="green">132</FONT>        /**<a name="line.132"></a>
+<FONT color="green">133</FONT>         * Overrides the getSearchResults in the super class so that we can do some customization in our vendor lookup. For example, for<a name="line.133"></a>
+<FONT color="green">134</FONT>         * vendor name as the search criteria, we want to search both the vendor detail table and the vendor alias table for the vendor<a name="line.134"></a>
+<FONT color="green">135</FONT>         * name. Display the vendor's default address state in the search results.<a name="line.135"></a>
+<FONT color="green">136</FONT>         *<a name="line.136"></a>
+<FONT color="green">137</FONT>         * @see org.kuali.rice.kns.lookup.Lookupable#getSearchResults(java.util.Map)<a name="line.137"></a>
+<FONT color="green">138</FONT>         */<a name="line.138"></a>
+<FONT color="green">139</FONT>        @Override<a name="line.139"></a>
+<FONT color="green">140</FONT>        public List&lt;BusinessObject&gt; getSearchResults(Map&lt;String, String&gt; fieldValues) {<a name="line.140"></a>
+<FONT color="green">141</FONT>            boolean unbounded = false;<a name="line.141"></a>
+<FONT color="green">142</FONT>            super.setBackLocation((String) fieldValues.get(KFSConstants.BACK_LOCATION));<a name="line.142"></a>
+<FONT color="green">143</FONT>            super.setDocFormKey((String) fieldValues.get(KFSConstants.DOC_FORM_KEY));<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>            String vendorName = fieldValues.get(VendorPropertyConstants.VENDOR_NAME);<a name="line.145"></a>
+<FONT color="green">146</FONT>    <a name="line.146"></a>
+<FONT color="green">147</FONT>            List&lt;BusinessObject&gt; searchResults = (List) getLookupService().findCollectionBySearchHelper(getBusinessObjectClass(), fieldValues, unbounded);<a name="line.147"></a>
+<FONT color="green">148</FONT>    <a name="line.148"></a>
+<FONT color="green">149</FONT>            // re-run the query against the vendor name alias field if necessary and merge the results<a name="line.149"></a>
+<FONT color="green">150</FONT>            // this could double the returned results for the search, but there is no alternative at present<a name="line.150"></a>
+<FONT color="green">151</FONT>            // without refactoring of the lookup service<a name="line.151"></a>
+<FONT color="green">152</FONT>            if (StringUtils.isNotEmpty(vendorName)) {<a name="line.152"></a>
+<FONT color="green">153</FONT>                // if searching by vendorName, also search in list of alias names<a name="line.153"></a>
+<FONT color="green">154</FONT>                fieldValues.put(VendorPropertyConstants.VENDOR_ALIAS_NAME_FULL_PATH, vendorName);<a name="line.154"></a>
+<FONT color="green">155</FONT>                // also make sure that we only use active aliases to match the query string<a name="line.155"></a>
+<FONT color="green">156</FONT>                fieldValues.put(VendorPropertyConstants.VENDOR_ALIAS_ACTIVE, "Y");<a name="line.156"></a>
+<FONT color="green">157</FONT>                fieldValues.remove(VendorPropertyConstants.VENDOR_NAME);<a name="line.157"></a>
+<FONT color="green">158</FONT>                List&lt;BusinessObject&gt; searchResults2 = (List) getLookupService().findCollectionBySearchHelper(getBusinessObjectClass(), fieldValues, unbounded);<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>                searchResults.addAll(searchResults2);<a name="line.160"></a>
+<FONT color="green">161</FONT>                if (searchResults instanceof CollectionIncomplete &amp;&amp; searchResults2 instanceof CollectionIncomplete) {<a name="line.161"></a>
+<FONT color="green">162</FONT>                    ((CollectionIncomplete) searchResults).setActualSizeIfTruncated(((CollectionIncomplete) searchResults).getActualSizeIfTruncated().longValue() + ((CollectionIncomplete) searchResults2).getActualSizeIfTruncated().longValue());<a name="line.162"></a>
+<FONT color="green">163</FONT>                }<a name="line.163"></a>
+<FONT color="green">164</FONT>            }<a name="line.164"></a>
+<FONT color="green">165</FONT>    <a name="line.165"></a>
+<FONT color="green">166</FONT>            List&lt;BusinessObject&gt; processedSearchResults = new ArrayList();<a name="line.166"></a>
+<FONT color="green">167</FONT>    <a name="line.167"></a>
+<FONT color="green">168</FONT>            // loop through results<a name="line.168"></a>
+<FONT color="green">169</FONT>            for (BusinessObject businessObject : searchResults) {<a name="line.169"></a>
+<FONT color="green">170</FONT>                VendorDetail vendor = (VendorDetail) businessObject;<a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>                // if its a top level vendor, search for its divisions and add them to the appropriate list then add the vendor to the<a name="line.172"></a>
+<FONT color="green">173</FONT>                // return results<a name="line.173"></a>
+<FONT color="green">174</FONT>                // if its a division, see if we already have the parent and if not, retrieve it and its divisions then add the parent to<a name="line.174"></a>
+<FONT color="green">175</FONT>                // the return results<a name="line.175"></a>
+<FONT color="green">176</FONT>    <a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>                // If this vendor is not already in the processedSearchResults, let's do further processing (e.g. setting the state for<a name="line.178"></a>
+<FONT color="green">179</FONT>                // lookup from default address, etc)<a name="line.179"></a>
+<FONT color="green">180</FONT>                // and then add it in the processedSearchResults.<a name="line.180"></a>
+<FONT color="green">181</FONT>                if (!processedSearchResults.contains(vendor)) {<a name="line.181"></a>
+<FONT color="green">182</FONT>                    Map&lt;String, String&gt; tmpValues = new HashMap&lt;String, String&gt;();<a name="line.182"></a>
+<FONT color="green">183</FONT>                    List&lt;VendorDetail&gt; relatedVendors = new ArrayList();<a name="line.183"></a>
+<FONT color="green">184</FONT>                    tmpValues.put(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, vendor.getVendorHeaderGeneratedIdentifier().toString());<a name="line.184"></a>
+<FONT color="green">185</FONT>                    relatedVendors = (List) getLookupService().findCollectionBySearchHelper(getBusinessObjectClass(), tmpValues, unbounded);<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>                    for (VendorDetail tmpVendor : relatedVendors) {<a name="line.187"></a>
+<FONT color="green">188</FONT>                        if (tmpVendor != null &amp;&amp; !processedSearchResults.contains(tmpVendor)) {<a name="line.188"></a>
+<FONT color="green">189</FONT>                            // populate state from default address<a name="line.189"></a>
+<FONT color="green">190</FONT>                            updateDefaultVendorAddress(tmpVendor);<a name="line.190"></a>
+<FONT color="green">191</FONT>                            processedSearchResults.add(tmpVendor);<a name="line.191"></a>
+<FONT color="green">192</FONT>                        }<a name="line.192"></a>
+<FONT color="green">193</FONT>                    }<a name="line.193"></a>
+<FONT color="green">194</FONT>    <a name="line.194"></a>
+<FONT color="green">195</FONT>                    if (!processedSearchResults.contains(vendor)) {<a name="line.195"></a>
+<FONT color="green">196</FONT>                        updateDefaultVendorAddress(vendor);<a name="line.196"></a>
+<FONT color="green">197</FONT>                        processedSearchResults.add(vendor);<a name="line.197"></a>
+<FONT color="green">198</FONT>                    }<a name="line.198"></a>
+<FONT color="green">199</FONT>                }<a name="line.199"></a>
+<FONT color="green">200</FONT>            }<a name="line.200"></a>
+<FONT color="green">201</FONT>    <a name="line.201"></a>
+<FONT color="green">202</FONT>            for (BusinessObject businessObject : processedSearchResults) {<a name="line.202"></a>
+<FONT color="green">203</FONT>                VendorDetail vendor = (VendorDetail) businessObject;<a name="line.203"></a>
+<FONT color="green">204</FONT>                if (!vendor.isVendorParentIndicator()) {<a name="line.204"></a>
+<FONT color="green">205</FONT>                    // find the parent object in the details collection and add that<a name="line.205"></a>
+<FONT color="green">206</FONT>                    for (BusinessObject tmpObject : processedSearchResults) {<a name="line.206"></a>
+<FONT color="green">207</FONT>                        VendorDetail tmpVendor = (VendorDetail) tmpObject;<a name="line.207"></a>
+<FONT color="green">208</FONT>                        if (tmpVendor.getVendorHeaderGeneratedIdentifier().equals(vendor.getVendorHeaderGeneratedIdentifier()) &amp;&amp; tmpVendor.isVendorParentIndicator()) {<a name="line.208"></a>
+<FONT color="green">209</FONT>                            vendor.setVendorName(tmpVendor.getVendorName() + " &gt; " + vendor.getVendorName());<a name="line.209"></a>
+<FONT color="green">210</FONT>                            break;<a name="line.210"></a>
+<FONT color="green">211</FONT>                        }<a name="line.211"></a>
+<FONT color="green">212</FONT>                    }<a name="line.212"></a>
+<FONT color="green">213</FONT>                }<a name="line.213"></a>
+<FONT color="green">214</FONT>            }<a name="line.214"></a>
+<FONT color="green">215</FONT>    <a name="line.215"></a>
+<FONT color="green">216</FONT>            searchResults.clear();<a name="line.216"></a>
+<FONT color="green">217</FONT>            searchResults.addAll(processedSearchResults);<a name="line.217"></a>
+<FONT color="green">218</FONT>    <a name="line.218"></a>
+<FONT color="green">219</FONT>            // sort list if default sort column given<a name="line.219"></a>
+<FONT color="green">220</FONT>            List&lt;String&gt; defaultSortColumns = getDefaultSortColumns();<a name="line.220"></a>
+<FONT color="green">221</FONT>            if (defaultSortColumns.size() &gt; 0) {<a name="line.221"></a>
+<FONT color="green">222</FONT>                Collections.sort(searchResults, new BeanPropertyComparator(getDefaultSortColumns(), true));<a name="line.222"></a>
+<FONT color="green">223</FONT>            }<a name="line.223"></a>
+<FONT color="green">224</FONT>    <a name="line.224"></a>
+<FONT color="green">225</FONT>            return searchResults;<a name="line.225"></a>
+<FONT color="green">226</FONT>        }<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>        /**<a name="line.228"></a>
+<FONT color="green">229</FONT>         * Populates address fields from default address<a name="line.229"></a>
+<FONT color="green">230</FONT>         *<a name="line.230"></a>
+<FONT color="green">231</FONT>         * @param vendor venodrDetail<a name="line.231"></a>
+<FONT color="green">232</FONT>         */<a name="line.232"></a>
+<FONT color="green">233</FONT>        private void updateDefaultVendorAddress(VendorDetail vendor) {<a name="line.233"></a>
+<FONT color="green">234</FONT>            VendorAddress defaultAddress = vendorService.getVendorDefaultAddress(vendor.getVendorAddresses(), vendor.getVendorHeader().getVendorType().getAddressType().getVendorAddressTypeCode(), "");<a name="line.234"></a>
+<FONT color="green">235</FONT>            if (defaultAddress != null ) {<a name="line.235"></a>
+<FONT color="green">236</FONT>                if (defaultAddress.getVendorState() != null) {<a name="line.236"></a>
+<FONT color="green">237</FONT>                    vendor.setVendorStateForLookup(defaultAddress.getVendorState().getPostalStateName());<a name="line.237"></a>
+<FONT color="green">238</FONT>                }<a name="line.238"></a>
+<FONT color="green">239</FONT>                vendor.setDefaultAddressLine1(defaultAddress.getVendorLine1Address());<a name="line.239"></a>
+<FONT color="green">240</FONT>                vendor.setDefaultAddressLine2(defaultAddress.getVendorLine2Address());<a name="line.240"></a>
+<FONT color="green">241</FONT>                vendor.setDefaultAddressCity(defaultAddress.getVendorCityName());<a name="line.241"></a>
+<FONT color="green">242</FONT>                vendor.setDefaultAddressPostalCode(defaultAddress.getVendorZipCode());<a name="line.242"></a>
+<FONT color="green">243</FONT>                vendor.setDefaultAddressStateCode(defaultAddress.getVendorStateCode());<a name="line.243"></a>
+<FONT color="green">244</FONT>                vendor.setDefaultAddressInternationalProvince(defaultAddress.getVendorAddressInternationalProvinceName());<a name="line.244"></a>
+<FONT color="green">245</FONT>                vendor.setDefaultAddressCountryCode(defaultAddress.getVendorCountryCode());<a name="line.245"></a>
+<FONT color="green">246</FONT>                vendor.setDefaultFaxNumber(defaultAddress.getVendorFaxNumber());<a name="line.246"></a>
+<FONT color="green">247</FONT>            }<a name="line.247"></a>
+<FONT color="green">248</FONT>        }<a name="line.248"></a>
+<FONT color="green">249</FONT>    <a name="line.249"></a>
+<FONT color="green">250</FONT>        /**<a name="line.250"></a>
+<FONT color="green">251</FONT>         * Overrides a method of the superclass and is now called instead of that one by the Search method of KualiLookupAction when the<a name="line.251"></a>
+<FONT color="green">252</FONT>         * Lookupable is of this class. This method first calls the method from the superclass, which should do all the required field<a name="line.252"></a>
+<FONT color="green">253</FONT>         * checking, and then goes through all the specific validations which aren't done in at the JSP level. Both the superclass<a name="line.253"></a>
+<FONT color="green">254</FONT>         * method and the various validation methods side-effect the adding of errors to the global error map when the input is found to<a name="line.254"></a>
+<FONT color="green">255</FONT>         * have an issue.<a name="line.255"></a>
+<FONT color="green">256</FONT>         *<a name="line.256"></a>
+<FONT color="green">257</FONT>         * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)<a name="line.257"></a>
+<FONT color="green">258</FONT>         */<a name="line.258"></a>
+<FONT color="green">259</FONT>        @Override<a name="line.259"></a>
+<FONT color="green">260</FONT>        public void validateSearchParameters(Map fieldValues) {<a name="line.260"></a>
+<FONT color="green">261</FONT>            super.validateSearchParameters(fieldValues);<a name="line.261"></a>
+<FONT color="green">262</FONT>    <a name="line.262"></a>
+<FONT color="green">263</FONT>            validateVendorNumber(fieldValues);<a name="line.263"></a>
+<FONT color="green">264</FONT>            validateTaxNumber(fieldValues);<a name="line.264"></a>
+<FONT color="green">265</FONT>    <a name="line.265"></a>
+<FONT color="green">266</FONT>            if (!GlobalVariables.getMessageMap().isEmpty()) {<a name="line.266"></a>
+<FONT color="green">267</FONT>                throw new ValidationException("Error(s) in search criteria");<a name="line.267"></a>
+<FONT color="green">268</FONT>            }<a name="line.268"></a>
+<FONT color="green">269</FONT>        }<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>        /**<a name="line.271"></a>
+<FONT color="green">272</FONT>         * Validates that the Vendor Number has no more than one dash in it, and does not consist solely of one dash. Then it calls<a name="line.272"></a>
+<FONT color="green">273</FONT>         * extractVendorNumberToVendorIds to obtain vendorHeaderGeneratedId and vendorDetailAssignedId and if either one of the ids<a name="line.273"></a>
+<FONT color="green">274</FONT>         * cannot be converted to integers, it will add error that the vendor number must be numerics or numerics separated by a dash.<a name="line.274"></a>
+<FONT color="green">275</FONT>         *<a name="line.275"></a>
+<FONT color="green">276</FONT>         * @param fieldValues a Map containing only those key-value pairs that have been filled in on the lookup<a name="line.276"></a>
+<FONT color="green">277</FONT>         */<a name="line.277"></a>
+<FONT color="green">278</FONT>        private void validateVendorNumber(Map fieldValues) {<a name="line.278"></a>
+<FONT color="green">279</FONT>            String vendorNumber = (String) fieldValues.get(VendorPropertyConstants.VENDOR_NUMBER);<a name="line.279"></a>
+<FONT color="green">280</FONT>            if (StringUtils.isNotBlank(vendorNumber)) {<a name="line.280"></a>
+<FONT color="green">281</FONT>                int dashPos1 = vendorNumber.indexOf(VendorConstants.DASH);<a name="line.281"></a>
+<FONT color="green">282</FONT>                if (dashPos1 &gt; -1) { // There's a dash in the number.<a name="line.282"></a>
+<FONT color="green">283</FONT>                    if (vendorNumber.indexOf(VendorConstants.DASH, dashPos1 + 1) &gt; -1) { // There can't be more than one.<a name="line.283"></a>
+<FONT color="green">284</FONT>                        GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_NUMBER, VendorKeyConstants.ERROR_VENDOR_LOOKUP_VNDR_NUM_TOO_MANY_DASHES);<a name="line.284"></a>
+<FONT color="green">285</FONT>                    }<a name="line.285"></a>
+<FONT color="green">286</FONT>                    if (vendorNumber.matches("\\-*")) {<a name="line.286"></a>
+<FONT color="green">287</FONT>                        GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_NUMBER, VendorKeyConstants.ERROR_VENDOR_LOOKUP_VNDR_NUM_DASHES_ONLY);<a name="line.287"></a>
+<FONT color="green">288</FONT>                    }<a name="line.288"></a>
+<FONT color="green">289</FONT>                }<a name="line.289"></a>
+<FONT color="green">290</FONT>                extractVendorNumberToVendorIds(fieldValues, vendorNumber);<a name="line.290"></a>
+<FONT color="green">291</FONT>            }<a name="line.291"></a>
+<FONT color="green">292</FONT>        }<a name="line.292"></a>
+<FONT color="green">293</FONT>    <a name="line.293"></a>
+<FONT color="green">294</FONT>        /**<a name="line.294"></a>
+<FONT color="green">295</FONT>         * Parses the vendorNumber string into vendorHeaderGeneratedIdentifier and vendorDetailAssignedIdentifier, validates that both<a name="line.295"></a>
+<FONT color="green">296</FONT>         * fields would be able to be converted into integers, if so it will add both fields into the search criterias map in the<a name="line.296"></a>
+<FONT color="green">297</FONT>         * fieldValues and remove the vendorNumber from the fieldValues. If the two fields cannot be converted into integers, this<a name="line.297"></a>
+<FONT color="green">298</FONT>         * method will add error message to the errorMap in GlobalVariables that the vendor number must be numeric or numerics separated<a name="line.298"></a>
+<FONT color="green">299</FONT>         * by a dash.<a name="line.299"></a>
+<FONT color="green">300</FONT>         *<a name="line.300"></a>
+<FONT color="green">301</FONT>         * @param fieldValues a Map containing only those key-value pairs that have been filled in on the lookup<a name="line.301"></a>
+<FONT color="green">302</FONT>         * @param vendorNumber vendor number String<a name="line.302"></a>
+<FONT color="green">303</FONT>         */<a name="line.303"></a>
+<FONT color="green">304</FONT>        private void extractVendorNumberToVendorIds(Map fieldValues, String vendorNumber) {<a name="line.304"></a>
+<FONT color="green">305</FONT>            String vendorHeaderGeneratedIdentifier = null;<a name="line.305"></a>
+<FONT color="green">306</FONT>            String vendorDetailAssignedIdentifier = null;<a name="line.306"></a>
+<FONT color="green">307</FONT>            int indexOfDash = vendorNumber.indexOf(VendorConstants.DASH);<a name="line.307"></a>
+<FONT color="green">308</FONT>            if (indexOfDash &lt; 0) {<a name="line.308"></a>
+<FONT color="green">309</FONT>                vendorHeaderGeneratedIdentifier = vendorNumber;<a name="line.309"></a>
+<FONT color="green">310</FONT>            }<a name="line.310"></a>
+<FONT color="green">311</FONT>            else {<a name="line.311"></a>
+<FONT color="green">312</FONT>                vendorHeaderGeneratedIdentifier = vendorNumber.substring(0, indexOfDash);<a name="line.312"></a>
+<FONT color="green">313</FONT>                vendorDetailAssignedIdentifier = vendorNumber.substring(indexOfDash + 1, vendorNumber.length());<a name="line.313"></a>
+<FONT color="green">314</FONT>            }<a name="line.314"></a>
+<FONT color="green">315</FONT>            try {<a name="line.315"></a>
+<FONT color="green">316</FONT>                if (StringUtils.isNotEmpty(vendorHeaderGeneratedIdentifier)) {<a name="line.316"></a>
+<FONT color="green">317</FONT>                    Integer.parseInt(vendorHeaderGeneratedIdentifier);<a name="line.317"></a>
+<FONT color="green">318</FONT>                }<a name="line.318"></a>
+<FONT color="green">319</FONT>                if (StringUtils.isNotEmpty(vendorDetailAssignedIdentifier)) {<a name="line.319"></a>
+<FONT color="green">320</FONT>                    Integer.parseInt(vendorDetailAssignedIdentifier);<a name="line.320"></a>
+<FONT color="green">321</FONT>                }<a name="line.321"></a>
+<FONT color="green">322</FONT>                fieldValues.remove(VendorPropertyConstants.VENDOR_NUMBER);<a name="line.322"></a>
+<FONT color="green">323</FONT>                fieldValues.put(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, vendorHeaderGeneratedIdentifier);<a name="line.323"></a>
+<FONT color="green">324</FONT>                fieldValues.put(VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, vendorDetailAssignedIdentifier);<a name="line.324"></a>
+<FONT color="green">325</FONT>            }<a name="line.325"></a>
+<FONT color="green">326</FONT>            catch (NumberFormatException headerExc) {<a name="line.326"></a>
+<FONT color="green">327</FONT>                GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_NUMBER, VendorKeyConstants.ERROR_VENDOR_LOOKUP_VNDR_NUM_NUMERIC_DASH_SEPARATED);<a name="line.327"></a>
+<FONT color="green">328</FONT>            }<a name="line.328"></a>
+<FONT color="green">329</FONT>        }<a name="line.329"></a>
+<FONT color="green">330</FONT>    <a name="line.330"></a>
+<FONT color="green">331</FONT>        /**<a name="line.331"></a>
+<FONT color="green">332</FONT>         * Validates that the tax number is 9 digits long.<a name="line.332"></a>
+<FONT color="green">333</FONT>         *<a name="line.333"></a>
+<FONT color="green">334</FONT>         * @param fieldValues a Map containing only those key-value pairs that have been filled in on the lookup<a name="line.334"></a>
+<FONT color="green">335</FONT>         */<a name="line.335"></a>
+<FONT color="green">336</FONT>        private void validateTaxNumber(Map fieldValues) {<a name="line.336"></a>
+<FONT color="green">337</FONT>            String taxNumber = (String) fieldValues.get(VendorPropertyConstants.VENDOR_TAX_NUMBER);<a name="line.337"></a>
+<FONT color="green">338</FONT>            if (StringUtils.isNotBlank(taxNumber) &amp;&amp; (!StringUtils.isNumeric(taxNumber) || taxNumber.length() != 9)) {<a name="line.338"></a>
+<FONT color="green">339</FONT>                GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_TAX_NUMBER, VendorKeyConstants.ERROR_VENDOR_LOOKUP_TAX_NUM_INVALID);<a name="line.339"></a>
+<FONT color="green">340</FONT>            }<a name="line.340"></a>
+<FONT color="green">341</FONT>        }<a name="line.341"></a>
+<FONT color="green">342</FONT>    <a name="line.342"></a>
+<FONT color="green">343</FONT>        public void setVendorService(VendorService vendorService) {<a name="line.343"></a>
+<FONT color="green">344</FONT>            this.vendorService = vendorService;<a name="line.344"></a>
+<FONT color="green">345</FONT>        }<a name="line.345"></a>
+<FONT color="green">346</FONT>    <a name="line.346"></a>
+<FONT color="green">347</FONT>        public void setParameterService(ParameterService parameterService) {<a name="line.347"></a>
+<FONT color="green">348</FONT>            this.parameterService = parameterService;<a name="line.348"></a>
+<FONT color="green">349</FONT>        }<a name="line.349"></a>
+<FONT color="green">350</FONT>    <a name="line.350"></a>
+<FONT color="green">351</FONT>    }<a name="line.351"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

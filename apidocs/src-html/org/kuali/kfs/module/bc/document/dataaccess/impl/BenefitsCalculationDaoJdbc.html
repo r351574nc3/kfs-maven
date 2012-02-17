@@ -1,0 +1,505 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.bc.document.dataaccess.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.ArrayList;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.kuali.kfs.module.bc.batch.dataaccess.impl.SQLForStep;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.kuali.kfs.module.bc.document.dataaccess.BenefitsCalculationDao;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.rice.kns.service.PersistenceService;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.rice.kns.util.Guid;<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>    /**<a name="line.26"></a>
+<FONT color="green">027</FONT>     * <a name="line.27"></a>
+<FONT color="green">028</FONT>     * implements the SQL procedures to calculate benefits for the personnel object codes in the budget.  <a name="line.28"></a>
+<FONT color="green">029</FONT>     * apply the appropriate percentage to each object type in the general ledger, and split the result out into the monthly budget lines <a name="line.29"></a>
+<FONT color="green">030</FONT>     * if monthly budgets exist for the accounting key.<a name="line.30"></a>
+<FONT color="green">031</FONT>     */<a name="line.31"></a>
+<FONT color="green">032</FONT>    <a name="line.32"></a>
+<FONT color="green">033</FONT>    public class BenefitsCalculationDaoJdbc extends BudgetConstructionDaoJdbcBase implements BenefitsCalculationDao {<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        private static ArrayList&lt;SQLForStep&gt; sqlAnnualSteps  = new ArrayList&lt;SQLForStep&gt;(6);<a name="line.35"></a>
+<FONT color="green">036</FONT>        private static ArrayList&lt;SQLForStep&gt; sqlMonthlySteps = new ArrayList&lt;SQLForStep&gt;(4);<a name="line.36"></a>
+<FONT color="green">037</FONT>        <a name="line.37"></a>
+<FONT color="green">038</FONT>        private PersistenceService persistenceService;<a name="line.38"></a>
+<FONT color="green">039</FONT>        <a name="line.39"></a>
+<FONT color="green">040</FONT>        <a name="line.40"></a>
+<FONT color="green">041</FONT>        /**<a name="line.41"></a>
+<FONT color="green">042</FONT>         *  these will be set to constant values in the constructor and used throughout SQL for the various steps.<a name="line.42"></a>
+<FONT color="green">043</FONT>         */<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>        public BenefitsCalculationDaoJdbc() {<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>            //this is a bean constructor, so it is dangerous to access static constants defined in other classes here.  the other classes may not have been loaded yet.<a name="line.47"></a>
+<FONT color="green">048</FONT>            //so, we use insertion points to indicate where such constants should be placed in the SQL, and we splice them in a run time.  we also use insertion points to splice in run time constants from SH_PARM_T.<a name="line.48"></a>
+<FONT color="green">049</FONT>            StringBuilder sqlBuilder = new StringBuilder(2500);<a name="line.49"></a>
+<FONT color="green">050</FONT>            ArrayList&lt;Integer&gt; insertionPoints = new ArrayList&lt;Integer&gt;();<a name="line.50"></a>
+<FONT color="green">051</FONT>            /**<a name="line.51"></a>
+<FONT color="green">052</FONT>             * this needs to be done before we can get rid of annual fringe benefits objects with no base.<a name="line.52"></a>
+<FONT color="green">053</FONT>             * LD_BNCSTR_MNTH_T has an RI child constraint on LD_PND_BCNSTR_GL_T.  So, before we eliminate any Budget Construction<a name="line.53"></a>
+<FONT color="green">054</FONT>             * general ledger rows, we have to get rid of any dependent Budget Construction Monthly rows.  If we call this set of<a name="line.54"></a>
+<FONT color="green">055</FONT>             * queries to rebuild budgeted benefits for the general ledger, the next set of queries will also have to be called if<a name="line.55"></a>
+<FONT color="green">056</FONT>             * monthly budgets exist.  If no monthly budgets exist, the query below will not do anything.  In that case, calling the<a name="line.56"></a>
+<FONT color="green">057</FONT>             * Budget Construction general ledger benefits calculation routine without calling the monthly benefits calculation <a name="line.57"></a>
+<FONT color="green">058</FONT>             * routine will be acceptable. <a name="line.58"></a>
+<FONT color="green">059</FONT>             */<a name="line.59"></a>
+<FONT color="green">060</FONT>            sqlBuilder.append("DELETE FROM LD_BCNSTR_MONTH_T\n");<a name="line.60"></a>
+<FONT color="green">061</FONT>            sqlBuilder.append("WHERE (LD_BCNSTR_MONTH_T.FDOC_NBR = ?)\n");<a name="line.61"></a>
+<FONT color="green">062</FONT>            sqlBuilder.append("AND (LD_BCNSTR_MONTH_T.UNIV_FISCAL_YR = ?)\n");<a name="line.62"></a>
+<FONT color="green">063</FONT>            sqlBuilder.append("AND (LD_BCNSTR_MONTH_T.FIN_COA_CD = ?)\n");<a name="line.63"></a>
+<FONT color="green">064</FONT>            sqlBuilder.append("AND (LD_BCNSTR_MONTH_T.ACCOUNT_NBR = ?)\n");<a name="line.64"></a>
+<FONT color="green">065</FONT>            sqlBuilder.append("AND (LD_BCNSTR_MONTH_T.SUB_ACCT_NBR = ?)\n");<a name="line.65"></a>
+<FONT color="green">066</FONT>            sqlBuilder.append("AND (EXISTS (SELECT 1\n");<a name="line.66"></a>
+<FONT color="green">067</FONT>            sqlBuilder.append("       FROM (LD_PND_BCNSTR_GL_T INNER JOIN LD_BENEFITS_CALC_T\n");<a name="line.67"></a>
+<FONT color="green">068</FONT>            sqlBuilder.append("       ON ((LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR = LD_BENEFITS_CALC_T.UNIV_FISCAL_YR)\n");<a name="line.68"></a>
+<FONT color="green">069</FONT>            sqlBuilder.append("           AND (LD_PND_BCNSTR_GL_T.FIN_COA_CD = LD_BENEFITS_CALC_T.FIN_COA_CD)\n");<a name="line.69"></a>
+<FONT color="green">070</FONT>            sqlBuilder.append("           AND (LD_PND_BCNSTR_GL_T.FIN_OBJECT_CD = LD_BENEFITS_CALC_T.POS_FRNGBEN_OBJ_CD)))\n");<a name="line.70"></a>
+<FONT color="green">071</FONT>            sqlBuilder.append("       WHERE (LD_BCNSTR_MONTH_T.UNIV_FISCAL_YR = LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR)\n");<a name="line.71"></a>
+<FONT color="green">072</FONT>            sqlBuilder.append("         AND (LD_BCNSTR_MONTH_T.FDOC_NBR = LD_PND_BCNSTR_GL_T.FDOC_NBR)\n");<a name="line.72"></a>
+<FONT color="green">073</FONT>            sqlBuilder.append("         AND (LD_BCNSTR_MONTH_T.FIN_COA_CD = LD_PND_BCNSTR_GL_T.FIN_COA_CD)\n");<a name="line.73"></a>
+<FONT color="green">074</FONT>            sqlBuilder.append("         AND (LD_BCNSTR_MONTH_T.ACCOUNT_NBR = LD_PND_BCNSTR_GL_T.ACCOUNT_NBR)\n");<a name="line.74"></a>
+<FONT color="green">075</FONT>            sqlBuilder.append("         AND (LD_BCNSTR_MONTH_T.SUB_ACCT_NBR = LD_PND_BCNSTR_GL_T.SUB_ACCT_NBR)\n");<a name="line.75"></a>
+<FONT color="green">076</FONT>            sqlBuilder.append("         AND (LD_BCNSTR_MONTH_T.FIN_OBJECT_CD = LD_PND_BCNSTR_GL_T.FIN_OBJECT_CD)\n");<a name="line.76"></a>
+<FONT color="green">077</FONT>            sqlBuilder.append("         AND (LD_PND_BCNSTR_GL_T.FIN_BEG_BAL_LN_AMT = 0)))\n");<a name="line.77"></a>
+<FONT color="green">078</FONT>            sqlAnnualSteps.add(new SQLForStep(sqlBuilder));<a name="line.78"></a>
+<FONT color="green">079</FONT>            sqlBuilder.delete(0,sqlBuilder.length());<a name="line.79"></a>
+<FONT color="green">080</FONT>            /**<a name="line.80"></a>
+<FONT color="green">081</FONT>             * get rid of fringe benefits objects with no base<a name="line.81"></a>
+<FONT color="green">082</FONT>             */<a name="line.82"></a>
+<FONT color="green">083</FONT>            sqlBuilder.append("DELETE FROM LD_PND_BCNSTR_GL_T\n");<a name="line.83"></a>
+<FONT color="green">084</FONT>            sqlBuilder.append("WHERE (LD_PND_BCNSTR_GL_T.FDOC_NBR = ?)\n");<a name="line.84"></a>
+<FONT color="green">085</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR =?)\n ");<a name="line.85"></a>
+<FONT color="green">086</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.FIN_COA_CD = ?)\n");<a name="line.86"></a>
+<FONT color="green">087</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.ACCOUNT_NBR = ?)\n");<a name="line.87"></a>
+<FONT color="green">088</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.SUB_ACCT_NBR = ?)\n");<a name="line.88"></a>
+<FONT color="green">089</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.FIN_BEG_BAL_LN_AMT = 0)\n");<a name="line.89"></a>
+<FONT color="green">090</FONT>            sqlBuilder.append("  AND (EXISTS (SELECT 1 FROM LD_BENEFITS_CALC_T\n");<a name="line.90"></a>
+<FONT color="green">091</FONT>            sqlBuilder.append("WHERE (LD_BENEFITS_CALC_T.UNIV_FISCAL_YR = LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR)\n");<a name="line.91"></a>
+<FONT color="green">092</FONT>            sqlBuilder.append("  AND (LD_BENEFITS_CALC_T.FIN_COA_CD = LD_PND_BCNSTR_GL_T.FIN_COA_CD)\n");<a name="line.92"></a>
+<FONT color="green">093</FONT>            sqlBuilder.append("  AND (LD_BENEFITS_CALC_T.POS_FRNGBEN_OBJ_CD = LD_PND_BCNSTR_GL_T.FIN_OBJECT_CD)))");<a name="line.93"></a>
+<FONT color="green">094</FONT>            sqlAnnualSteps.add(new SQLForStep(sqlBuilder));<a name="line.94"></a>
+<FONT color="green">095</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.95"></a>
+<FONT color="green">096</FONT>            /**<a name="line.96"></a>
+<FONT color="green">097</FONT>             * set the request to 0 for fringe benefits objects with base<a name="line.97"></a>
+<FONT color="green">098</FONT>             */<a name="line.98"></a>
+<FONT color="green">099</FONT>            sqlBuilder.append("UPDATE LD_PND_BCNSTR_GL_T\n");<a name="line.99"></a>
+<FONT color="green">100</FONT>            sqlBuilder.append("SET ACLN_ANNL_BAL_AMT =0\n");<a name="line.100"></a>
+<FONT color="green">101</FONT>            sqlBuilder.append("WHERE (LD_PND_BCNSTR_GL_T.FDOC_NBR = ?)\n");<a name="line.101"></a>
+<FONT color="green">102</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR = ?)\n");<a name="line.102"></a>
+<FONT color="green">103</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.FIN_COA_CD = ?)\n");<a name="line.103"></a>
+<FONT color="green">104</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.ACCOUNT_NBR = ?)\n");<a name="line.104"></a>
+<FONT color="green">105</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.SUB_ACCT_NBR = ?)\n");<a name="line.105"></a>
+<FONT color="green">106</FONT>            sqlBuilder.append("  AND (EXISTS (SELECT 1 FROM LD_BENEFITS_CALC_T\n");<a name="line.106"></a>
+<FONT color="green">107</FONT>            sqlBuilder.append("               WHERE (LD_BENEFITS_CALC_T.UNIV_FISCAL_YR = LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR)\n");<a name="line.107"></a>
+<FONT color="green">108</FONT>            sqlBuilder.append("                 AND (LD_BENEFITS_CALC_T.FIN_COA_CD = LD_PND_BCNSTR_GL_T.FIN_COA_CD)\n");<a name="line.108"></a>
+<FONT color="green">109</FONT>            sqlBuilder.append("                 AND (LD_BENEFITS_CALC_T.POS_FRNGBEN_OBJ_CD = LD_PND_BCNSTR_GL_T.FIN_OBJECT_CD)))");<a name="line.109"></a>
+<FONT color="green">110</FONT>            sqlAnnualSteps.add(new SQLForStep(sqlBuilder));<a name="line.110"></a>
+<FONT color="green">111</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.111"></a>
+<FONT color="green">112</FONT>            /**<a name="line.112"></a>
+<FONT color="green">113</FONT>             * sum the amounts in benefits-eligible objects and attach the appropriate benefits object code<a name="line.113"></a>
+<FONT color="green">114</FONT>             */<a name="line.114"></a>
+<FONT color="green">115</FONT>            sqlBuilder.append("INSERT INTO LD_BCN_BENEFITS_RECALC01_MT\n(SESID, POS_FRNGBEN_OBJ_CD, FB_SUM)\n");<a name="line.115"></a>
+<FONT color="green">116</FONT>            sqlBuilder.append("(SELECT ?,LD_BENEFITS_CALC_T.POS_FRNGBEN_OBJ_CD,\n");<a name="line.116"></a>
+<FONT color="green">117</FONT>            sqlBuilder.append(" ROUND(SUM(LD_PND_BCNSTR_GL_T.ACLN_ANNL_BAL_AMT * (LD_BENEFITS_CALC_T.POS_FRNG_BENE_PCT/100.0)),0)\n ");<a name="line.117"></a>
+<FONT color="green">118</FONT>            sqlBuilder.append(" FROM LD_PND_BCNSTR_GL_T,\n");<a name="line.118"></a>
+<FONT color="green">119</FONT>            sqlBuilder.append("      LD_LBR_OBJ_BENE_T,\n");<a name="line.119"></a>
+<FONT color="green">120</FONT>            sqlBuilder.append("      LD_BENEFITS_CALC_T\n");<a name="line.120"></a>
+<FONT color="green">121</FONT>            sqlBuilder.append(" WHERE (LD_PND_BCNSTR_GL_T.FDOC_NBR = ?)\n");<a name="line.121"></a>
+<FONT color="green">122</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR = ?)\n");<a name="line.122"></a>
+<FONT color="green">123</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.FIN_COA_CD = ?)\n");<a name="line.123"></a>
+<FONT color="green">124</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.ACCOUNT_NBR = ?)\n");<a name="line.124"></a>
+<FONT color="green">125</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.SUB_ACCT_NBR = ?)\n");<a name="line.125"></a>
+<FONT color="green">126</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.ACLN_ANNL_BAL_AMT &lt;&gt; 0)\n");<a name="line.126"></a>
+<FONT color="green">127</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.UNIV_FISCAL_YR = LD_LBR_OBJ_BENE_T.UNIV_FISCAL_YR)\n");<a name="line.127"></a>
+<FONT color="green">128</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_coa_cd = LD_LBR_OBJ_BENE_T.fin_coa_cd)\n");<a name="line.128"></a>
+<FONT color="green">129</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_object_cd = LD_LBR_OBJ_BENE_T.fin_object_cd)\n");<a name="line.129"></a>
+<FONT color="green">130</FONT>            sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.univ_fiscal_yr = LD_BENEFITS_CALC_T.univ_fiscal_yr)\n");<a name="line.130"></a>
+<FONT color="green">131</FONT>            sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.fin_coa_cd = LD_BENEFITS_CALC_T.fin_coa_cd)\n");<a name="line.131"></a>
+<FONT color="green">132</FONT>            sqlBuilder.append("   AND (LD_LBR_OBJ_BENE_T.finobj_bene_typ_cd = LD_BENEFITS_CALC_T.pos_benefit_typ_cd)\n");<a name="line.132"></a>
+<FONT color="green">133</FONT>            sqlBuilder.append(" GROUP BY LD_BENEFITS_CALC_T.pos_frngben_obj_cd)");<a name="line.133"></a>
+<FONT color="green">134</FONT>            sqlAnnualSteps.add(new SQLForStep(sqlBuilder));<a name="line.134"></a>
+<FONT color="green">135</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.135"></a>
+<FONT color="green">136</FONT>            /**<a name="line.136"></a>
+<FONT color="green">137</FONT>             * re-set the request amount for the appropriate benefits code<a name="line.137"></a>
+<FONT color="green">138</FONT>             */<a name="line.138"></a>
+<FONT color="green">139</FONT>            sqlBuilder.append("UPDATE LD_PND_BCNSTR_GL_T\n");<a name="line.139"></a>
+<FONT color="green">140</FONT>            sqlBuilder.append("SET acln_annl_bal_amt =\n");<a name="line.140"></a>
+<FONT color="green">141</FONT>            sqlBuilder.append("        (SELECT LD_BCN_BENEFITS_RECALC01_MT.fb_sum\n");<a name="line.141"></a>
+<FONT color="green">142</FONT>            sqlBuilder.append("         FROM LD_BCN_BENEFITS_RECALC01_MT\n");<a name="line.142"></a>
+<FONT color="green">143</FONT>            sqlBuilder.append("        WHERE (LD_BCN_BENEFITS_RECALC01_MT.sesid = ?)\n");<a name="line.143"></a>
+<FONT color="green">144</FONT>            sqlBuilder.append("          AND (LD_PND_BCNSTR_GL_T.fin_object_cd = LD_BCN_BENEFITS_RECALC01_MT.pos_frngben_obj_cd))\n");<a name="line.144"></a>
+<FONT color="green">145</FONT>            sqlBuilder.append("WHERE (LD_PND_BCNSTR_GL_T.fdoc_nbr = ?)\n");<a name="line.145"></a>
+<FONT color="green">146</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.univ_fiscal_yr = ?)\n");<a name="line.146"></a>
+<FONT color="green">147</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.fin_coa_cd = ?)\n");<a name="line.147"></a>
+<FONT color="green">148</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.account_nbr = ?)\n");<a name="line.148"></a>
+<FONT color="green">149</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.sub_acct_nbr = ?)\n");<a name="line.149"></a>
+<FONT color="green">150</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.fin_sub_obj_cd = '");<a name="line.150"></a>
+<FONT color="green">151</FONT>            // default sub object code<a name="line.151"></a>
+<FONT color="green">152</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.152"></a>
+<FONT color="green">153</FONT>            sqlBuilder.append("')\n");<a name="line.153"></a>
+<FONT color="green">154</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.fin_balance_typ_cd = '");<a name="line.154"></a>
+<FONT color="green">155</FONT>            // general ledger budget balance type code<a name="line.155"></a>
+<FONT color="green">156</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.156"></a>
+<FONT color="green">157</FONT>            sqlBuilder.append("')\n");<a name="line.157"></a>
+<FONT color="green">158</FONT>            sqlBuilder.append("  AND EXISTS (SELECT 1\n");<a name="line.158"></a>
+<FONT color="green">159</FONT>            sqlBuilder.append("              FROM LD_BCN_BENEFITS_RECALC01_MT\n");<a name="line.159"></a>
+<FONT color="green">160</FONT>            sqlBuilder.append("              WHERE (sesid = ?)\n");<a name="line.160"></a>
+<FONT color="green">161</FONT>            sqlBuilder.append("                AND (LD_PND_BCNSTR_GL_T.fin_object_cd = LD_BCN_BENEFITS_RECALC01_MT.pos_frngben_obj_cd))\n");<a name="line.161"></a>
+<FONT color="green">162</FONT>            sqlBuilder.append("  AND (LD_PND_BCNSTR_GL_T.fin_obj_typ_cd IN ");<a name="line.162"></a>
+<FONT color="green">163</FONT>            // expenditure object types <a name="line.163"></a>
+<FONT color="green">164</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.164"></a>
+<FONT color="green">165</FONT>            sqlBuilder.append(")");<a name="line.165"></a>
+<FONT color="green">166</FONT>            sqlAnnualSteps.add(new SQLForStep(sqlBuilder,insertionPoints));<a name="line.166"></a>
+<FONT color="green">167</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.167"></a>
+<FONT color="green">168</FONT>            insertionPoints.clear();<a name="line.168"></a>
+<FONT color="green">169</FONT>            /**<a name="line.169"></a>
+<FONT color="green">170</FONT>             * now re-insert rows with zero base which still have benefits-eligible object codes in pending BC GL.  all budget construction GL lines added by the budget construction application have an object type code of FinObjTypeExpenditureexpCd, which we pass at run time as a parameter.  we have an IN clause to check for other object types which may have been loaded in the base from the general ledger.  the request for such lines will not have this object type.<a name="line.170"></a>
+<FONT color="green">171</FONT>             * <a name="line.171"></a>
+<FONT color="green">172</FONT>             */<a name="line.172"></a>
+<FONT color="green">173</FONT>            sqlBuilder.append("INSERT INTO LD_PND_BCNSTR_GL_T\n");<a name="line.173"></a>
+<FONT color="green">174</FONT>            sqlBuilder.append("(FDOC_NBR, UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD,\n");<a name="line.174"></a>
+<FONT color="green">175</FONT>            sqlBuilder.append(" FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, ACLN_ANNL_BAL_AMT, FIN_BEG_BAL_LN_AMT)\n");<a name="line.175"></a>
+<FONT color="green">176</FONT>            sqlBuilder.append("(SELECT ?, ?, ?, ?, ?,\n");<a name="line.176"></a>
+<FONT color="green">177</FONT>            sqlBuilder.append("LD_BCN_BENEFITS_RECALC01_MT.pos_frngben_obj_cd,\n");<a name="line.177"></a>
+<FONT color="green">178</FONT>            sqlBuilder.append(" '");<a name="line.178"></a>
+<FONT color="green">179</FONT>            // default sub object code<a name="line.179"></a>
+<FONT color="green">180</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.180"></a>
+<FONT color="green">181</FONT>            sqlBuilder.append("', '");<a name="line.181"></a>
+<FONT color="green">182</FONT>            // general ledger budget balance type code<a name="line.182"></a>
+<FONT color="green">183</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.183"></a>
+<FONT color="green">184</FONT>            sqlBuilder.append("', ");<a name="line.184"></a>
+<FONT color="green">185</FONT>            sqlBuilder.append("?, \n");<a name="line.185"></a>
+<FONT color="green">186</FONT>            sqlBuilder.append("LD_BCN_BENEFITS_RECALC01_MT.fb_sum, 0\n");<a name="line.186"></a>
+<FONT color="green">187</FONT>            sqlBuilder.append("FROM LD_BCN_BENEFITS_RECALC01_MT\n");<a name="line.187"></a>
+<FONT color="green">188</FONT>            sqlBuilder.append("WHERE (LD_BCN_BENEFITS_RECALC01_MT.sesid = ?)\n");<a name="line.188"></a>
+<FONT color="green">189</FONT>            sqlBuilder.append("  AND (NOT EXISTS\n");<a name="line.189"></a>
+<FONT color="green">190</FONT>            sqlBuilder.append("(SELECT 1\n");<a name="line.190"></a>
+<FONT color="green">191</FONT>            sqlBuilder.append(" FROM LD_PND_BCNSTR_GL_T\n");<a name="line.191"></a>
+<FONT color="green">192</FONT>            sqlBuilder.append(" WHERE (LD_PND_BCNSTR_GL_T.fdoc_nbr = ?)\n");<a name="line.192"></a>
+<FONT color="green">193</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.univ_fiscal_yr = ?)\n");<a name="line.193"></a>
+<FONT color="green">194</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_coa_cd = ?)\n");<a name="line.194"></a>
+<FONT color="green">195</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.account_nbr = ?)\n");<a name="line.195"></a>
+<FONT color="green">196</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.sub_acct_nbr = ?)\n");<a name="line.196"></a>
+<FONT color="green">197</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_object_cd = LD_BCN_BENEFITS_RECALC01_MT.pos_frngben_obj_cd)\n");<a name="line.197"></a>
+<FONT color="green">198</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_sub_obj_cd = '");<a name="line.198"></a>
+<FONT color="green">199</FONT>            // default sub object code<a name="line.199"></a>
+<FONT color="green">200</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.200"></a>
+<FONT color="green">201</FONT>            sqlBuilder.append("')\n");<a name="line.201"></a>
+<FONT color="green">202</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_balance_typ_cd = '");<a name="line.202"></a>
+<FONT color="green">203</FONT>            // general ledger budget balance type code<a name="line.203"></a>
+<FONT color="green">204</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.204"></a>
+<FONT color="green">205</FONT>            sqlBuilder.append("')\n");<a name="line.205"></a>
+<FONT color="green">206</FONT>            sqlBuilder.append("   AND (LD_PND_BCNSTR_GL_T.fin_obj_typ_cd IN ");<a name="line.206"></a>
+<FONT color="green">207</FONT>            //  expenditure object types<a name="line.207"></a>
+<FONT color="green">208</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.208"></a>
+<FONT color="green">209</FONT>            sqlBuilder.append("))))");<a name="line.209"></a>
+<FONT color="green">210</FONT>            sqlAnnualSteps.add(new SQLForStep(sqlBuilder,insertionPoints));<a name="line.210"></a>
+<FONT color="green">211</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.211"></a>
+<FONT color="green">212</FONT>            insertionPoints.clear();<a name="line.212"></a>
+<FONT color="green">213</FONT>            /**<a name="line.213"></a>
+<FONT color="green">214</FONT>             * this is the SQL for the monthly budget benefits. any rounding amount is added to the amount for month 1<a name="line.214"></a>
+<FONT color="green">215</FONT>             */<a name="line.215"></a>
+<FONT color="green">216</FONT>            /**<a name="line.216"></a>
+<FONT color="green">217</FONT>             * Cleanup the rare case where annual request goes to zero with existing monthly buckets.<a name="line.217"></a>
+<FONT color="green">218</FONT>             * This gives monthly calc benefits problems from constraints since the annual benefit target row<a name="line.218"></a>
+<FONT color="green">219</FONT>             * might be non-existent when it inserts the new results from the left over monthly buckets<a name="line.219"></a>
+<FONT color="green">220</FONT>             * This is usually the case since annual benefits are usually calculated first.<a name="line.220"></a>
+<FONT color="green">221</FONT>             */<a name="line.221"></a>
+<FONT color="green">222</FONT>            sqlBuilder.append("DELETE FROM LD_BCNSTR_MONTH_T\n");<a name="line.222"></a>
+<FONT color="green">223</FONT>            sqlBuilder.append("WHERE LD_BCNSTR_MONTH_T.fdoc_nbr = ?\n");<a name="line.223"></a>
+<FONT color="green">224</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.univ_fiscal_yr = ?\n");<a name="line.224"></a>
+<FONT color="green">225</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.fin_coa_cd = ?\n");<a name="line.225"></a>
+<FONT color="green">226</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.account_nbr = ?\n");<a name="line.226"></a>
+<FONT color="green">227</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.sub_acct_nbr = ?\n");<a name="line.227"></a>
+<FONT color="green">228</FONT>            sqlBuilder.append("  AND NOT (LD_BCNSTR_MONTH_T.fdoc_ln_mo1_amt = 0\n");<a name="line.228"></a>
+<FONT color="green">229</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo2_amt = 0\n");<a name="line.229"></a>
+<FONT color="green">230</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo3_amt = 0\n");<a name="line.230"></a>
+<FONT color="green">231</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo4_amt = 0\n");<a name="line.231"></a>
+<FONT color="green">232</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo5_amt = 0\n");<a name="line.232"></a>
+<FONT color="green">233</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo6_amt = 0\n");<a name="line.233"></a>
+<FONT color="green">234</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo7_amt = 0\n");<a name="line.234"></a>
+<FONT color="green">235</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo8_amt = 0\n");<a name="line.235"></a>
+<FONT color="green">236</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo9_amt = 0\n");<a name="line.236"></a>
+<FONT color="green">237</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo10_amt = 0\n");<a name="line.237"></a>
+<FONT color="green">238</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo11_amt = 0\n");<a name="line.238"></a>
+<FONT color="green">239</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo12_amt = 0) \n");<a name="line.239"></a>
+<FONT color="green">240</FONT>            sqlBuilder.append("  AND EXISTS\n");<a name="line.240"></a>
+<FONT color="green">241</FONT>            sqlBuilder.append("        (SELECT 1\n");<a name="line.241"></a>
+<FONT color="green">242</FONT>            sqlBuilder.append("         FROM LD_PND_BCNSTR_GL_T\n");<a name="line.242"></a>
+<FONT color="green">243</FONT>            sqlBuilder.append("        WHERE LD_PND_BCNSTR_GL_T.fdoc_nbr = LD_BCNSTR_MONTH_T.fdoc_nbr\n");<a name="line.243"></a>
+<FONT color="green">244</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.univ_fiscal_yr = LD_BCNSTR_MONTH_T.univ_fiscal_yr\n");<a name="line.244"></a>
+<FONT color="green">245</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.fin_coa_cd = LD_BCNSTR_MONTH_T.fin_coa_cd\n");<a name="line.245"></a>
+<FONT color="green">246</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.account_nbr = LD_BCNSTR_MONTH_T.account_nbr\n");<a name="line.246"></a>
+<FONT color="green">247</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.sub_acct_nbr = LD_BCNSTR_MONTH_T.sub_acct_nbr\n");<a name="line.247"></a>
+<FONT color="green">248</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.fin_object_cd = LD_BCNSTR_MONTH_T.fin_object_cd\n");<a name="line.248"></a>
+<FONT color="green">249</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.fin_sub_obj_cd = LD_BCNSTR_MONTH_T.fin_sub_obj_cd\n");<a name="line.249"></a>
+<FONT color="green">250</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.fin_balance_typ_cd = LD_BCNSTR_MONTH_T.fin_balance_typ_cd\n");<a name="line.250"></a>
+<FONT color="green">251</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.fin_obj_typ_cd = LD_BCNSTR_MONTH_T.fin_obj_typ_cd\n");<a name="line.251"></a>
+<FONT color="green">252</FONT>            sqlBuilder.append("          AND LD_PND_BCNSTR_GL_T.acln_annl_bal_amt = 0)");<a name="line.252"></a>
+<FONT color="green">253</FONT>            sqlMonthlySteps.add(new SQLForStep(sqlBuilder));<a name="line.253"></a>
+<FONT color="green">254</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.254"></a>
+<FONT color="green">255</FONT>    <a name="line.255"></a>
+<FONT color="green">256</FONT>    <a name="line.256"></a>
+<FONT color="green">257</FONT>            /**<a name="line.257"></a>
+<FONT color="green">258</FONT>             * cleanup by deleting any existing monthly benefit recs<a name="line.258"></a>
+<FONT color="green">259</FONT>             */<a name="line.259"></a>
+<FONT color="green">260</FONT>            sqlBuilder.append("DELETE FROM LD_BCNSTR_MONTH_T\n");<a name="line.260"></a>
+<FONT color="green">261</FONT>            sqlBuilder.append("WHERE LD_BCNSTR_MONTH_T.fdoc_nbr = ?\n");<a name="line.261"></a>
+<FONT color="green">262</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.univ_fiscal_yr = ?\n");<a name="line.262"></a>
+<FONT color="green">263</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.fin_coa_cd = ?\n");<a name="line.263"></a>
+<FONT color="green">264</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.account_nbr = ?\n");<a name="line.264"></a>
+<FONT color="green">265</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.sub_acct_nbr = ?\n");<a name="line.265"></a>
+<FONT color="green">266</FONT>            sqlBuilder.append("  AND EXISTS\n");<a name="line.266"></a>
+<FONT color="green">267</FONT>            sqlBuilder.append("        (SELECT 1\n");<a name="line.267"></a>
+<FONT color="green">268</FONT>            sqlBuilder.append("         FROM LD_BENEFITS_CALC_T\n");<a name="line.268"></a>
+<FONT color="green">269</FONT>            sqlBuilder.append("        WHERE LD_BENEFITS_CALC_T.univ_fiscal_yr = ?\n");<a name="line.269"></a>
+<FONT color="green">270</FONT>            sqlBuilder.append("          AND LD_BENEFITS_CALC_T.fin_coa_cd = ?\n");<a name="line.270"></a>
+<FONT color="green">271</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fin_object_cd = LD_BENEFITS_CALC_T.pos_frngben_obj_cd)");<a name="line.271"></a>
+<FONT color="green">272</FONT>            sqlMonthlySteps.add(new SQLForStep(sqlBuilder));<a name="line.272"></a>
+<FONT color="green">273</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.273"></a>
+<FONT color="green">274</FONT>            /**<a name="line.274"></a>
+<FONT color="green">275</FONT>             * calc benefits for source objects and sum to target objects.   all budget construction GL lines added by the budget construction application have an object type code of FinObjTypeExpenditureexpCd, which we pass at run time as a parameter.  we have an IN clause to check for other object types which may have been loaded in the base from the general ledger.  the request for such lines will not have this object type.<a name="line.275"></a>
+<FONT color="green">276</FONT>             */<a name="line.276"></a>
+<FONT color="green">277</FONT>            sqlBuilder.append("INSERT INTO LD_BCNSTR_MONTH_T\n");<a name="line.277"></a>
+<FONT color="green">278</FONT>            sqlBuilder.append("(FDOC_NBR, UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD,\n");<a name="line.278"></a>
+<FONT color="green">279</FONT>            sqlBuilder.append("FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, FDOC_LN_MO1_AMT, FDOC_LN_MO2_AMT,\n");<a name="line.279"></a>
+<FONT color="green">280</FONT>            sqlBuilder.append(" FDOC_LN_MO3_AMT, FDOC_LN_MO4_AMT, FDOC_LN_MO5_AMT, FDOC_LN_MO6_AMT, FDOC_LN_MO7_AMT, FDOC_LN_MO8_AMT,\n");<a name="line.280"></a>
+<FONT color="green">281</FONT>            sqlBuilder.append(" FDOC_LN_MO9_AMT, FDOC_LN_MO10_AMT, FDOC_LN_MO11_AMT, FDOC_LN_MO12_AMT)\n");<a name="line.281"></a>
+<FONT color="green">282</FONT>            sqlBuilder.append("SELECT ?,\n");<a name="line.282"></a>
+<FONT color="green">283</FONT>            sqlBuilder.append("    ?,\n");<a name="line.283"></a>
+<FONT color="green">284</FONT>            sqlBuilder.append("    ?,\n");<a name="line.284"></a>
+<FONT color="green">285</FONT>            sqlBuilder.append("    ?,\n");<a name="line.285"></a>
+<FONT color="green">286</FONT>            sqlBuilder.append("    ?,\n");<a name="line.286"></a>
+<FONT color="green">287</FONT>            sqlBuilder.append("   LD_BENEFITS_CALC_T.pos_frngben_obj_cd,");<a name="line.287"></a>
+<FONT color="green">288</FONT>            sqlBuilder.append(" '");<a name="line.288"></a>
+<FONT color="green">289</FONT>            // default sub object code<a name="line.289"></a>
+<FONT color="green">290</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.290"></a>
+<FONT color="green">291</FONT>            sqlBuilder.append("', '");<a name="line.291"></a>
+<FONT color="green">292</FONT>            // general ledger budget balance type code<a name="line.292"></a>
+<FONT color="green">293</FONT>            insertionPoints.add(sqlBuilder.length());<a name="line.293"></a>
+<FONT color="green">294</FONT>            sqlBuilder.append("', ");<a name="line.294"></a>
+<FONT color="green">295</FONT>            sqlBuilder.append("?, \n");<a name="line.295"></a>
+<FONT color="green">296</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo1_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.296"></a>
+<FONT color="green">297</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo2_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.297"></a>
+<FONT color="green">298</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo3_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.298"></a>
+<FONT color="green">299</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo4_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.299"></a>
+<FONT color="green">300</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo5_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.300"></a>
+<FONT color="green">301</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo6_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.301"></a>
+<FONT color="green">302</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo7_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.302"></a>
+<FONT color="green">303</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo8_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.303"></a>
+<FONT color="green">304</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo9_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.304"></a>
+<FONT color="green">305</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo10_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.305"></a>
+<FONT color="green">306</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo11_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0),\n");<a name="line.306"></a>
+<FONT color="green">307</FONT>            sqlBuilder.append("   ROUND(SUM(COALESCE(LD_BCNSTR_MONTH_T.fdoc_ln_mo12_amt * (LD_BENEFITS_CALC_T.pos_frng_bene_pct/100.0),0)),0)\n");<a name="line.307"></a>
+<FONT color="green">308</FONT>            sqlBuilder.append("FROM LD_BCNSTR_MONTH_T,\n");<a name="line.308"></a>
+<FONT color="green">309</FONT>            sqlBuilder.append("     LD_BENEFITS_CALC_T,\n");<a name="line.309"></a>
+<FONT color="green">310</FONT>            sqlBuilder.append("     LD_LBR_OBJ_BENE_T\n");<a name="line.310"></a>
+<FONT color="green">311</FONT>            sqlBuilder.append("WHERE LD_BCNSTR_MONTH_T.fdoc_nbr = ?\n");<a name="line.311"></a>
+<FONT color="green">312</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.univ_fiscal_yr = ?\n");<a name="line.312"></a>
+<FONT color="green">313</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.fin_coa_cd = ?\n");<a name="line.313"></a>
+<FONT color="green">314</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.account_nbr = ?\n");<a name="line.314"></a>
+<FONT color="green">315</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.sub_acct_nbr = ?\n");<a name="line.315"></a>
+<FONT color="green">316</FONT>            sqlBuilder.append("  AND NOT (LD_BCNSTR_MONTH_T.fdoc_ln_mo1_amt = 0\n");<a name="line.316"></a>
+<FONT color="green">317</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo2_amt = 0\n");<a name="line.317"></a>
+<FONT color="green">318</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo3_amt = 0\n");<a name="line.318"></a>
+<FONT color="green">319</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo4_amt = 0\n");<a name="line.319"></a>
+<FONT color="green">320</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo5_amt = 0\n");<a name="line.320"></a>
+<FONT color="green">321</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo6_amt = 0\n");<a name="line.321"></a>
+<FONT color="green">322</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo7_amt = 0\n");<a name="line.322"></a>
+<FONT color="green">323</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo8_amt = 0\n");<a name="line.323"></a>
+<FONT color="green">324</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo9_amt = 0\n");<a name="line.324"></a>
+<FONT color="green">325</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo10_amt = 0\n");<a name="line.325"></a>
+<FONT color="green">326</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo11_amt = 0\n");<a name="line.326"></a>
+<FONT color="green">327</FONT>            sqlBuilder.append("          AND LD_BCNSTR_MONTH_T.fdoc_ln_mo12_amt = 0) \n");<a name="line.327"></a>
+<FONT color="green">328</FONT>            sqlBuilder.append("  AND LD_LBR_OBJ_BENE_T.univ_fiscal_yr = LD_BCNSTR_MONTH_T.univ_fiscal_yr\n");<a name="line.328"></a>
+<FONT color="green">329</FONT>            sqlBuilder.append("  AND LD_LBR_OBJ_BENE_T.fin_coa_cd = LD_BCNSTR_MONTH_T.fin_coa_cd\n");<a name="line.329"></a>
+<FONT color="green">330</FONT>            sqlBuilder.append("  AND LD_LBR_OBJ_BENE_T.fin_object_cd = LD_BCNSTR_MONTH_T.fin_object_cd\n");<a name="line.330"></a>
+<FONT color="green">331</FONT>            sqlBuilder.append("  AND LD_BENEFITS_CALC_T.univ_fiscal_yr = LD_LBR_OBJ_BENE_T.univ_fiscal_yr\n");<a name="line.331"></a>
+<FONT color="green">332</FONT>            sqlBuilder.append("  AND LD_BENEFITS_CALC_T.fin_coa_cd = LD_LBR_OBJ_BENE_T.fin_coa_cd\n");<a name="line.332"></a>
+<FONT color="green">333</FONT>            sqlBuilder.append("  AND LD_BENEFITS_CALC_T.pos_benefit_typ_cd = LD_LBR_OBJ_BENE_T.finobj_bene_typ_cd\n");<a name="line.333"></a>
+<FONT color="green">334</FONT>            sqlBuilder.append("GROUP BY LD_BENEFITS_CALC_T.pos_frngben_obj_cd");<a name="line.334"></a>
+<FONT color="green">335</FONT>            sqlMonthlySteps.add(new SQLForStep(sqlBuilder,insertionPoints));<a name="line.335"></a>
+<FONT color="green">336</FONT>            sqlBuilder.delete(0, sqlBuilder.length());<a name="line.336"></a>
+<FONT color="green">337</FONT>            insertionPoints.clear();<a name="line.337"></a>
+<FONT color="green">338</FONT>    <a name="line.338"></a>
+<FONT color="green">339</FONT>    <a name="line.339"></a>
+<FONT color="green">340</FONT>            /**<a name="line.340"></a>
+<FONT color="green">341</FONT>             * adjust the month 1 totals for rounding error<a name="line.341"></a>
+<FONT color="green">342</FONT>             */<a name="line.342"></a>
+<FONT color="green">343</FONT>            sqlBuilder.append("UPDATE LD_BCNSTR_MONTH_T\n");<a name="line.343"></a>
+<FONT color="green">344</FONT>            sqlBuilder.append("SET fdoc_ln_mo1_amt =\n");<a name="line.344"></a>
+<FONT color="green">345</FONT>            sqlBuilder.append("    (SELECT (LD_BCNSTR_MONTH_T.fdoc_ln_mo1_amt +\n");<a name="line.345"></a>
+<FONT color="green">346</FONT>            sqlBuilder.append("            (LD_PND_BCNSTR_GL_T.acln_annl_bal_amt -\n");<a name="line.346"></a>
+<FONT color="green">347</FONT>            sqlBuilder.append("            (LD_BCNSTR_MONTH_T.fdoc_ln_mo1_amt + LD_BCNSTR_MONTH_T.fdoc_ln_mo2_amt +\n");<a name="line.347"></a>
+<FONT color="green">348</FONT>            sqlBuilder.append("             LD_BCNSTR_MONTH_T.fdoc_ln_mo3_amt + LD_BCNSTR_MONTH_T.fdoc_ln_mo4_amt +\n");<a name="line.348"></a>
+<FONT color="green">349</FONT>            sqlBuilder.append("             LD_BCNSTR_MONTH_T.fdoc_ln_mo5_amt + LD_BCNSTR_MONTH_T.fdoc_ln_mo6_amt +\n");<a name="line.349"></a>
+<FONT color="green">350</FONT>            sqlBuilder.append("             LD_BCNSTR_MONTH_T.fdoc_ln_mo7_amt + LD_BCNSTR_MONTH_T.fdoc_ln_mo8_amt +\n");<a name="line.350"></a>
+<FONT color="green">351</FONT>            sqlBuilder.append("             LD_BCNSTR_MONTH_T.fdoc_ln_mo9_amt + LD_BCNSTR_MONTH_T.fdoc_ln_mo10_amt +\n");<a name="line.351"></a>
+<FONT color="green">352</FONT>            sqlBuilder.append("             LD_BCNSTR_MONTH_T.fdoc_ln_mo11_amt + LD_BCNSTR_MONTH_T.fdoc_ln_mo12_amt)))\n");<a name="line.352"></a>
+<FONT color="green">353</FONT>            sqlBuilder.append("    FROM LD_PND_BCNSTR_GL_T\n");<a name="line.353"></a>
+<FONT color="green">354</FONT>            sqlBuilder.append("    WHERE LD_BCNSTR_MONTH_T.fdoc_nbr = LD_PND_BCNSTR_GL_T.fdoc_nbr\n");<a name="line.354"></a>
+<FONT color="green">355</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.univ_fiscal_yr = LD_PND_BCNSTR_GL_T.univ_fiscal_yr\n");<a name="line.355"></a>
+<FONT color="green">356</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.fin_coa_cd = LD_PND_BCNSTR_GL_T.fin_coa_cd\n");<a name="line.356"></a>
+<FONT color="green">357</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.account_nbr = LD_PND_BCNSTR_GL_T.account_nbr\n");<a name="line.357"></a>
+<FONT color="green">358</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.sub_acct_nbr = LD_PND_BCNSTR_GL_T.sub_acct_nbr\n");<a name="line.358"></a>
+<FONT color="green">359</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.fin_object_cd = LD_PND_BCNSTR_GL_T.fin_object_cd\n");<a name="line.359"></a>
+<FONT color="green">360</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.fin_sub_obj_cd = LD_PND_BCNSTR_GL_T.fin_sub_obj_cd\n");<a name="line.360"></a>
+<FONT color="green">361</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.fin_balance_typ_cd = LD_PND_BCNSTR_GL_T.fin_balance_typ_cd\n");<a name="line.361"></a>
+<FONT color="green">362</FONT>            sqlBuilder.append("      AND LD_BCNSTR_MONTH_T.fin_obj_typ_cd = LD_PND_BCNSTR_GL_T.fin_obj_typ_cd)\n");<a name="line.362"></a>
+<FONT color="green">363</FONT>            sqlBuilder.append("WHERE LD_BCNSTR_MONTH_T.fdoc_nbr = ?\n");<a name="line.363"></a>
+<FONT color="green">364</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.univ_fiscal_yr = ?\n");<a name="line.364"></a>
+<FONT color="green">365</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.fin_coa_cd = ?\n");<a name="line.365"></a>
+<FONT color="green">366</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.account_nbr = ?\n");<a name="line.366"></a>
+<FONT color="green">367</FONT>            sqlBuilder.append("  AND LD_BCNSTR_MONTH_T.sub_acct_nbr = ?\n");<a name="line.367"></a>
+<FONT color="green">368</FONT>            sqlBuilder.append("  AND EXISTS \n");<a name="line.368"></a>
+<FONT color="green">369</FONT>            sqlBuilder.append("        (SELECT 1\n");<a name="line.369"></a>
+<FONT color="green">370</FONT>            sqlBuilder.append("        FROM LD_BENEFITS_CALC_T\n");<a name="line.370"></a>
+<FONT color="green">371</FONT>            sqlBuilder.append("        WHERE LD_BENEFITS_CALC_T.univ_fiscal_yr = ?\n");<a name="line.371"></a>
+<FONT color="green">372</FONT>            sqlBuilder.append("          AND LD_BENEFITS_CALC_T.fin_coa_cd = ?\n");<a name="line.372"></a>
+<FONT color="green">373</FONT>            sqlBuilder.append("          AND LD_BENEFITS_CALC_T.pos_frngben_obj_cd = LD_BCNSTR_MONTH_T.fin_object_cd)\n");<a name="line.373"></a>
+<FONT color="green">374</FONT>            ;<a name="line.374"></a>
+<FONT color="green">375</FONT>            sqlMonthlySteps.add(new SQLForStep(sqlBuilder));<a name="line.375"></a>
+<FONT color="green">376</FONT>        }<a name="line.376"></a>
+<FONT color="green">377</FONT>    <a name="line.377"></a>
+<FONT color="green">378</FONT>        /**<a name="line.378"></a>
+<FONT color="green">379</FONT>         * @see org.kuali.kfs.module.bc.document.dataaccess.BenefitsCalculationDao#calculateAnnualBudgetConstructionGeneralLedgerBenefits(String, Integer, String, String, String, String)<a name="line.379"></a>
+<FONT color="green">380</FONT>         */<a name="line.380"></a>
+<FONT color="green">381</FONT>        public void calculateAnnualBudgetConstructionGeneralLedgerBenefits(String documentNumber, Integer fiscalYear, String chartOfAccounts, String accountNumber, String subAccountNumber, String finObjTypeExpenditureexpCd) {<a name="line.381"></a>
+<FONT color="green">382</FONT>    <a name="line.382"></a>
+<FONT color="green">383</FONT>            // the first thing to do is get the SQL IN list of expenditure object code types allowed in budget construction.<a name="line.383"></a>
+<FONT color="green">384</FONT>            // if this parameter is ill-formed, we can't calculate benefits. we will blow the user out of the water as a consequence.<a name="line.384"></a>
+<FONT color="green">385</FONT>            // if the benefits portion of budget construction is not in use at a particular site, then doing it this way will have no impact.<a name="line.385"></a>
+<FONT color="green">386</FONT>            <a name="line.386"></a>
+<FONT color="green">387</FONT>            ArrayList&lt;String&gt; stringsToInsert = new ArrayList&lt;String&gt;();<a name="line.387"></a>
+<FONT color="green">388</FONT>            stringsToInsert.add(KFSConstants.getDashFinancialSubObjectCode());<a name="line.388"></a>
+<FONT color="green">389</FONT>            stringsToInsert.add(KFSConstants.BALANCE_TYPE_BASE_BUDGET);<a name="line.389"></a>
+<FONT color="green">390</FONT>            stringsToInsert.add(getExpenditureINList());<a name="line.390"></a>
+<FONT color="green">391</FONT>            String idForSession = (new Guid()).toString();<a name="line.391"></a>
+<FONT color="green">392</FONT>    <a name="line.392"></a>
+<FONT color="green">393</FONT>            getSimpleJdbcTemplate().update(sqlAnnualSteps.get(0).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);<a name="line.393"></a>
+<FONT color="green">394</FONT>            getSimpleJdbcTemplate().update(sqlAnnualSteps.get(1).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);<a name="line.394"></a>
+<FONT color="green">395</FONT>            getSimpleJdbcTemplate().update(sqlAnnualSteps.get(2).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);<a name="line.395"></a>
+<FONT color="green">396</FONT>            getSimpleJdbcTemplate().update(sqlAnnualSteps.get(3).getSQL(), idForSession, documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);<a name="line.396"></a>
+<FONT color="green">397</FONT>            // re-set general ledger amount for existing fringe benefits object codes <a name="line.397"></a>
+<FONT color="green">398</FONT>            getSimpleJdbcTemplate().update(sqlAnnualSteps.get(4).getSQL(stringsToInsert), idForSession, documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber, idForSession);<a name="line.398"></a>
+<FONT color="green">399</FONT>            // insert general ledger lines for new fringe benefits object codes.<a name="line.399"></a>
+<FONT color="green">400</FONT>            stringsToInsert.add(2,stringsToInsert.get(0));<a name="line.400"></a>
+<FONT color="green">401</FONT>            stringsToInsert.add(3,stringsToInsert.get(1));<a name="line.401"></a>
+<FONT color="green">402</FONT>            getSimpleJdbcTemplate().update(sqlAnnualSteps.get(5).getSQL(stringsToInsert), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber, finObjTypeExpenditureexpCd, idForSession, documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);<a name="line.402"></a>
+<FONT color="green">403</FONT>            clearTempTableBySesId("LD_BCN_BENEFITS_RECALC01_MT", "SESID", idForSession);<a name="line.403"></a>
+<FONT color="green">404</FONT>            /**<a name="line.404"></a>
+<FONT color="green">405</FONT>             * this is necessary to clear any rows for the tables we have just updated from the OJB cache.  otherwise, subsequent calls to OJB will fetch the old, unupdated cached rows.<a name="line.405"></a>
+<FONT color="green">406</FONT>             */<a name="line.406"></a>
+<FONT color="green">407</FONT>            persistenceService.clearCache();<a name="line.407"></a>
+<FONT color="green">408</FONT>        }<a name="line.408"></a>
+<FONT color="green">409</FONT>    <a name="line.409"></a>
+<FONT color="green">410</FONT>        /**<a name="line.410"></a>
+<FONT color="green">411</FONT>         * <a name="line.411"></a>
+<FONT color="green">412</FONT>         * @see org.kuali.kfs.module.bc.document.dataaccess.BenefitsCalculationDao#calculateMonthlyBudgetConstructionGeneralLedgerBenefits(java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String, java.lang.String)<a name="line.412"></a>
+<FONT color="green">413</FONT>         */<a name="line.413"></a>
+<FONT color="green">414</FONT>        public void calculateMonthlyBudgetConstructionGeneralLedgerBenefits(String documentNumber, Integer fiscalYear, String chartOfAccounts, String accountNumber, String subAccountNumber, String finObjTypeExpenditureexpCd) {<a name="line.414"></a>
+<FONT color="green">415</FONT>            String idForSession = (new Guid()).toString();<a name="line.415"></a>
+<FONT color="green">416</FONT>    <a name="line.416"></a>
+<FONT color="green">417</FONT>            ArrayList&lt;String&gt; stringsToInsert = new ArrayList&lt;String&gt;();<a name="line.417"></a>
+<FONT color="green">418</FONT>            stringsToInsert.add(KFSConstants.getDashFinancialSubObjectCode());<a name="line.418"></a>
+<FONT color="green">419</FONT>            stringsToInsert.add(KFSConstants.BALANCE_TYPE_BASE_BUDGET);<a name="line.419"></a>
+<FONT color="green">420</FONT>    <a name="line.420"></a>
+<FONT color="green">421</FONT>            // get rid of monthly buckets for any rows with annual zero request<a name="line.421"></a>
+<FONT color="green">422</FONT>            getSimpleJdbcTemplate().update(sqlMonthlySteps.get(0).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);<a name="line.422"></a>
+<FONT color="green">423</FONT>            // get rid of existing monthly budgets for this key       <a name="line.423"></a>
+<FONT color="green">424</FONT>            getSimpleJdbcTemplate().update(sqlMonthlySteps.get(1).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber, fiscalYear, chartOfAccounts);<a name="line.424"></a>
+<FONT color="green">425</FONT>            // spread the budgeted general ledger fringe beneftis amounts for this key equally into the twelve months<a name="line.425"></a>
+<FONT color="green">426</FONT>            getSimpleJdbcTemplate().update(sqlMonthlySteps.get(2).getSQL(stringsToInsert), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber, finObjTypeExpenditureexpCd, documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber);<a name="line.426"></a>
+<FONT color="green">427</FONT>            // add any rounding errors to the first month<a name="line.427"></a>
+<FONT color="green">428</FONT>            getSimpleJdbcTemplate().update(sqlMonthlySteps.get(3).getSQL(), documentNumber, fiscalYear, chartOfAccounts, accountNumber, subAccountNumber, fiscalYear, chartOfAccounts);<a name="line.428"></a>
+<FONT color="green">429</FONT>            /**<a name="line.429"></a>
+<FONT color="green">430</FONT>             * this is necessary to clear any rows for the tables we have just updated from the OJB cache.  otherwise, subsequent calls to OJB will fetch the old, unupdated cached rows.<a name="line.430"></a>
+<FONT color="green">431</FONT>             */<a name="line.431"></a>
+<FONT color="green">432</FONT>            persistenceService.clearCache();<a name="line.432"></a>
+<FONT color="green">433</FONT>        }<a name="line.433"></a>
+<FONT color="green">434</FONT>        <a name="line.434"></a>
+<FONT color="green">435</FONT>        public void setPersistenceService(PersistenceService persistenceService)<a name="line.435"></a>
+<FONT color="green">436</FONT>        {<a name="line.436"></a>
+<FONT color="green">437</FONT>            this.persistenceService = persistenceService;<a name="line.437"></a>
+<FONT color="green">438</FONT>        }<a name="line.438"></a>
+<FONT color="green">439</FONT>    }<a name="line.439"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

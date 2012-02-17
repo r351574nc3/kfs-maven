@@ -1,0 +1,644 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.endow.report.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.sql.Date;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.text.ParseException;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.ArrayList;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Calendar;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.HashMap;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.HashSet;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.List;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.Map;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.util.Set;<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.apache.commons.lang.text.StrBuilder;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.coa.businessobject.Organization;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.module.ar.ArConstants;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.module.ar.businessobject.OrganizationOptions;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.module.endow.EndowConstants;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.module.endow.EndowPropertyConstants;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.module.endow.businessobject.KEMID;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.module.endow.businessobject.KemidBenefittingOrganization;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.module.endow.businessobject.KemidHistoricalCash;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.kfs.module.endow.businessobject.MonthEndDate;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.kfs.module.endow.dataaccess.KemidBenefittingOrganizationDao;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.kfs.module.endow.dataaccess.KemidDao;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.kfs.module.endow.dataaccess.KemidHistoricalCashDao;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.kfs.module.endow.dataaccess.KemidReportGroupDao;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.kuali.kfs.module.endow.document.service.KEMService;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import org.kuali.kfs.module.endow.report.service.EndowmentReportService;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import org.kuali.kfs.module.endow.report.util.EndowmentReportFooterDataHolder;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import org.kuali.kfs.module.endow.report.util.EndowmentReportHeaderDataHolder;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import org.kuali.kfs.module.endow.report.util.KemidsWithMultipleBenefittingOrganizationsDataHolder;<a name="line.46"></a>
+<FONT color="green">047</FONT>    import org.kuali.kfs.module.endow.report.util.EndowmentReportFooterDataHolder.BenefittingForFooter;<a name="line.47"></a>
+<FONT color="green">048</FONT>    import org.kuali.rice.kns.bo.CampusImpl;<a name="line.48"></a>
+<FONT color="green">049</FONT>    import org.kuali.rice.kns.service.BusinessObjectService;<a name="line.49"></a>
+<FONT color="green">050</FONT>    import org.kuali.rice.kns.service.DateTimeService;<a name="line.50"></a>
+<FONT color="green">051</FONT>    import org.kuali.rice.kns.service.ParameterService;<a name="line.51"></a>
+<FONT color="green">052</FONT>    import org.kuali.rice.kns.util.GlobalVariables;<a name="line.52"></a>
+<FONT color="green">053</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>    public abstract class EndowmentReportServiceImpl implements EndowmentReportService {<a name="line.55"></a>
+<FONT color="green">056</FONT>        <a name="line.56"></a>
+<FONT color="green">057</FONT>        protected final static String ALL_VALUES = "ALL";<a name="line.57"></a>
+<FONT color="green">058</FONT>        <a name="line.58"></a>
+<FONT color="green">059</FONT>        protected BusinessObjectService businessObjectService;<a name="line.59"></a>
+<FONT color="green">060</FONT>        protected ParameterService parameterService;<a name="line.60"></a>
+<FONT color="green">061</FONT>        protected DateTimeService dateTimeService;<a name="line.61"></a>
+<FONT color="green">062</FONT>        protected KEMService kemService;<a name="line.62"></a>
+<FONT color="green">063</FONT>        <a name="line.63"></a>
+<FONT color="green">064</FONT>        protected KemidDao kemidDao;<a name="line.64"></a>
+<FONT color="green">065</FONT>        protected KemidBenefittingOrganizationDao kemidBenefittingOrganizationDao;<a name="line.65"></a>
+<FONT color="green">066</FONT>        protected KemidReportGroupDao kemidReportGroupDao;<a name="line.66"></a>
+<FONT color="green">067</FONT>        protected KemidHistoricalCashDao kemidHistoricalCashDao;<a name="line.67"></a>
+<FONT color="green">068</FONT>    <a name="line.68"></a>
+<FONT color="green">069</FONT>        /**<a name="line.69"></a>
+<FONT color="green">070</FONT>         * <a name="line.70"></a>
+<FONT color="green">071</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getInstitutionName()<a name="line.71"></a>
+<FONT color="green">072</FONT>         */<a name="line.72"></a>
+<FONT color="green">073</FONT>        public String getInstitutionName() {<a name="line.73"></a>
+<FONT color="green">074</FONT>            return parameterService.getParameterValue(OrganizationOptions.class, ArConstants.INSTITUTION_NAME);<a name="line.74"></a>
+<FONT color="green">075</FONT>        }<a name="line.75"></a>
+<FONT color="green">076</FONT>        <a name="line.76"></a>
+<FONT color="green">077</FONT>        /**<a name="line.77"></a>
+<FONT color="green">078</FONT>         * <a name="line.78"></a>
+<FONT color="green">079</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getReportRequestor()<a name="line.79"></a>
+<FONT color="green">080</FONT>         */<a name="line.80"></a>
+<FONT color="green">081</FONT>        public String getReportRequestor() {<a name="line.81"></a>
+<FONT color="green">082</FONT>            return GlobalVariables.getUserSession().getPerson().getPrincipalName();<a name="line.82"></a>
+<FONT color="green">083</FONT>        }<a name="line.83"></a>
+<FONT color="green">084</FONT>            <a name="line.84"></a>
+<FONT color="green">085</FONT>        /**<a name="line.85"></a>
+<FONT color="green">086</FONT>         * <a name="line.86"></a>
+<FONT color="green">087</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getBenefittingCampuses(java.util.List)<a name="line.87"></a>
+<FONT color="green">088</FONT>         */<a name="line.88"></a>
+<FONT color="green">089</FONT>        public String getBenefittingCampuses(List&lt;String&gt; campuses) {        <a name="line.89"></a>
+<FONT color="green">090</FONT>            String result = "";<a name="line.90"></a>
+<FONT color="green">091</FONT>            if (ObjectUtils.isNotNull(campuses) &amp;&amp; !campuses.isEmpty()) {<a name="line.91"></a>
+<FONT color="green">092</FONT>                List&lt;String&gt; campusList = kemidBenefittingOrganizationDao.getCampusCodes(EndowPropertyConstants.CA_ORG_CAMPUS_CD, campuses);<a name="line.92"></a>
+<FONT color="green">093</FONT>                result = getListWithSeparator(campuses, ALL_VALUES);<a name="line.93"></a>
+<FONT color="green">094</FONT>            }         <a name="line.94"></a>
+<FONT color="green">095</FONT>            return result;<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>        <a name="line.97"></a>
+<FONT color="green">098</FONT>        /**<a name="line.98"></a>
+<FONT color="green">099</FONT>         * <a name="line.99"></a>
+<FONT color="green">100</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getBenefittingCharts(java.util.List)<a name="line.100"></a>
+<FONT color="green">101</FONT>         */<a name="line.101"></a>
+<FONT color="green">102</FONT>        public String getBenefittingCharts(List&lt;String&gt; charts) {<a name="line.102"></a>
+<FONT color="green">103</FONT>            String result = "";<a name="line.103"></a>
+<FONT color="green">104</FONT>            if (ObjectUtils.isNotNull(charts) &amp;&amp; !charts.isEmpty()) {<a name="line.104"></a>
+<FONT color="green">105</FONT>                List&lt;String&gt; chartList = kemidBenefittingOrganizationDao.getAttributeValues(EndowPropertyConstants.KEMID_BENE_CHRT_CD, charts);<a name="line.105"></a>
+<FONT color="green">106</FONT>                result = getListWithSeparator(chartList, ALL_VALUES);<a name="line.106"></a>
+<FONT color="green">107</FONT>            } <a name="line.107"></a>
+<FONT color="green">108</FONT>            return result; <a name="line.108"></a>
+<FONT color="green">109</FONT>        }<a name="line.109"></a>
+<FONT color="green">110</FONT>        <a name="line.110"></a>
+<FONT color="green">111</FONT>        /**<a name="line.111"></a>
+<FONT color="green">112</FONT>         * <a name="line.112"></a>
+<FONT color="green">113</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getBenefittingOrganizations(java.util.List)<a name="line.113"></a>
+<FONT color="green">114</FONT>         */<a name="line.114"></a>
+<FONT color="green">115</FONT>        public String getBenefittingOrganizations(List&lt;String&gt; organizations) {<a name="line.115"></a>
+<FONT color="green">116</FONT>            String result = "";<a name="line.116"></a>
+<FONT color="green">117</FONT>            if (ObjectUtils.isNotNull(organizations) &amp;&amp; !organizations.isEmpty()) {<a name="line.117"></a>
+<FONT color="green">118</FONT>                List&lt;String&gt; organizationList = kemidBenefittingOrganizationDao.getAttributeValues(EndowPropertyConstants.KEMID_BENE_ORG_CD, organizations);<a name="line.118"></a>
+<FONT color="green">119</FONT>                result = getListWithSeparator(organizationList, ALL_VALUES);<a name="line.119"></a>
+<FONT color="green">120</FONT>            } <a name="line.120"></a>
+<FONT color="green">121</FONT>            return result;   <a name="line.121"></a>
+<FONT color="green">122</FONT>        }<a name="line.122"></a>
+<FONT color="green">123</FONT>        <a name="line.123"></a>
+<FONT color="green">124</FONT>        /**<a name="line.124"></a>
+<FONT color="green">125</FONT>         * <a name="line.125"></a>
+<FONT color="green">126</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getKemidTypeCodes(java.util.List)<a name="line.126"></a>
+<FONT color="green">127</FONT>         */<a name="line.127"></a>
+<FONT color="green">128</FONT>        public String getKemidTypeCodes(List&lt;String&gt; kemidTypeCodes) {<a name="line.128"></a>
+<FONT color="green">129</FONT>            String result = "";<a name="line.129"></a>
+<FONT color="green">130</FONT>            if (ObjectUtils.isNotNull(kemidTypeCodes) &amp;&amp; !kemidTypeCodes.isEmpty()) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                List&lt;String&gt; typeCodeList = kemidDao.getAttributeValues(EndowPropertyConstants.KEMID_TYPE_CODE, kemidTypeCodes);<a name="line.131"></a>
+<FONT color="green">132</FONT>                result = getListWithSeparator(typeCodeList, ALL_VALUES);<a name="line.132"></a>
+<FONT color="green">133</FONT>            } <a name="line.133"></a>
+<FONT color="green">134</FONT>            return result;<a name="line.134"></a>
+<FONT color="green">135</FONT>        }<a name="line.135"></a>
+<FONT color="green">136</FONT>        <a name="line.136"></a>
+<FONT color="green">137</FONT>        /**<a name="line.137"></a>
+<FONT color="green">138</FONT>         * <a name="line.138"></a>
+<FONT color="green">139</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getKemidPurposeCodes(java.util.List)<a name="line.139"></a>
+<FONT color="green">140</FONT>         */<a name="line.140"></a>
+<FONT color="green">141</FONT>        public String getKemidPurposeCodes(List&lt;String&gt; kemidPurposes) {<a name="line.141"></a>
+<FONT color="green">142</FONT>            String result = "";<a name="line.142"></a>
+<FONT color="green">143</FONT>            if (ObjectUtils.isNotNull(kemidPurposes) &amp;&amp; !kemidPurposes.isEmpty()) {<a name="line.143"></a>
+<FONT color="green">144</FONT>                List&lt;String&gt; purposeList = kemidDao.getAttributeValues(EndowPropertyConstants.KEMID_PRPS_CD, kemidPurposes);<a name="line.144"></a>
+<FONT color="green">145</FONT>                result = getListWithSeparator(purposeList, ALL_VALUES);<a name="line.145"></a>
+<FONT color="green">146</FONT>            } <a name="line.146"></a>
+<FONT color="green">147</FONT>            return result;<a name="line.147"></a>
+<FONT color="green">148</FONT>        }<a name="line.148"></a>
+<FONT color="green">149</FONT>        <a name="line.149"></a>
+<FONT color="green">150</FONT>        /**<a name="line.150"></a>
+<FONT color="green">151</FONT>         * <a name="line.151"></a>
+<FONT color="green">152</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getCombineGroupCodes(java.util.List)<a name="line.152"></a>
+<FONT color="green">153</FONT>         */<a name="line.153"></a>
+<FONT color="green">154</FONT>        public String getCombineGroupCodes(List&lt;String&gt; combineGroupCodes) {<a name="line.154"></a>
+<FONT color="green">155</FONT>            String result = "";<a name="line.155"></a>
+<FONT color="green">156</FONT>            if (ObjectUtils.isNotNull(combineGroupCodes) &amp;&amp; !combineGroupCodes.isEmpty()) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                List&lt;String&gt; groupCodeList = kemidReportGroupDao.getAttributeValues(EndowPropertyConstants.KEMID_REPORT_GRP_CD, combineGroupCodes);<a name="line.157"></a>
+<FONT color="green">158</FONT>                result = getListWithSeparator(groupCodeList, ALL_VALUES);<a name="line.158"></a>
+<FONT color="green">159</FONT>            } <a name="line.159"></a>
+<FONT color="green">160</FONT>            return result;<a name="line.160"></a>
+<FONT color="green">161</FONT>        }<a name="line.161"></a>
+<FONT color="green">162</FONT>        <a name="line.162"></a>
+<FONT color="green">163</FONT>        /**<a name="line.163"></a>
+<FONT color="green">164</FONT>         *     <a name="line.164"></a>
+<FONT color="green">165</FONT>         * @see org.kuali.kfs.module.endow.report.service.EndowmentReportService#createReportHeaderSheetData(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.lang.String, java.lang.String)<a name="line.165"></a>
+<FONT color="green">166</FONT>         */<a name="line.166"></a>
+<FONT color="green">167</FONT>        public EndowmentReportHeaderDataHolder createReportHeaderSheetData(<a name="line.167"></a>
+<FONT color="green">168</FONT>                        List&lt;String&gt; kemidsSelected, <a name="line.168"></a>
+<FONT color="green">169</FONT>                        List&lt;String&gt; benefittingOrganziationCampuses,<a name="line.169"></a>
+<FONT color="green">170</FONT>                        List&lt;String&gt; benefittingOrganziationCharts,<a name="line.170"></a>
+<FONT color="green">171</FONT>                        List&lt;String&gt; benefittingOrganziations,<a name="line.171"></a>
+<FONT color="green">172</FONT>                        List&lt;String&gt; typeCodes,<a name="line.172"></a>
+<FONT color="green">173</FONT>                        List&lt;String&gt; purposeCodes,<a name="line.173"></a>
+<FONT color="green">174</FONT>                        List&lt;String&gt; combineGroupCodes,<a name="line.174"></a>
+<FONT color="green">175</FONT>                        String reportName, <a name="line.175"></a>
+<FONT color="green">176</FONT>                        String endowmnetOption,<a name="line.176"></a>
+<FONT color="green">177</FONT>                        String reportOption) {<a name="line.177"></a>
+<FONT color="green">178</FONT>                    <a name="line.178"></a>
+<FONT color="green">179</FONT>            EndowmentReportHeaderDataHolder reportRequestHeaderDataHolder = new EndowmentReportHeaderDataHolder();<a name="line.179"></a>
+<FONT color="green">180</FONT>            <a name="line.180"></a>
+<FONT color="green">181</FONT>            // get request report<a name="line.181"></a>
+<FONT color="green">182</FONT>            reportRequestHeaderDataHolder.setInstitutionName(getInstitutionName());<a name="line.182"></a>
+<FONT color="green">183</FONT>            reportRequestHeaderDataHolder.setReportRequested(reportName);<a name="line.183"></a>
+<FONT color="green">184</FONT>            reportRequestHeaderDataHolder.setRequestedBy(getReportRequestor());<a name="line.184"></a>
+<FONT color="green">185</FONT>            String endowmentOptionDesc = "";<a name="line.185"></a>
+<FONT color="green">186</FONT>            if (EndowConstants.EndowmentReport.BOTH.equalsIgnoreCase(endowmnetOption)) {<a name="line.186"></a>
+<FONT color="green">187</FONT>                endowmentOptionDesc = EndowConstants.EndowmentReport.BOTH_ENDOWMENT_OPTION;<a name="line.187"></a>
+<FONT color="green">188</FONT>            } else {<a name="line.188"></a>
+<FONT color="green">189</FONT>                endowmentOptionDesc = EndowConstants.YES.equalsIgnoreCase(endowmnetOption) ? EndowConstants.EndowmentReport.ENDOWMENT : EndowConstants.EndowmentReport.NON_ENDOWED;<a name="line.189"></a>
+<FONT color="green">190</FONT>            }<a name="line.190"></a>
+<FONT color="green">191</FONT>            reportRequestHeaderDataHolder.setEndowmentOption(endowmentOptionDesc);<a name="line.191"></a>
+<FONT color="green">192</FONT>            String reportOptionDesc = "";<a name="line.192"></a>
+<FONT color="green">193</FONT>            if (reportOption != null) {<a name="line.193"></a>
+<FONT color="green">194</FONT>                if (EndowConstants.EndowmentReport.BOTH.equalsIgnoreCase(reportOption)) {<a name="line.194"></a>
+<FONT color="green">195</FONT>                    reportOptionDesc = EndowConstants.EndowmentReport.BOTH_REPORT_OPTION;<a name="line.195"></a>
+<FONT color="green">196</FONT>                } else if (EndowConstants.EndowmentReport.DETAIL.equalsIgnoreCase(reportOption)) {<a name="line.196"></a>
+<FONT color="green">197</FONT>                    reportOptionDesc = EndowConstants.EndowmentReport.DETAIL_REPORT; <a name="line.197"></a>
+<FONT color="green">198</FONT>                } else if (EndowConstants.EndowmentReport.TOTAL.equalsIgnoreCase(reportOption)) {<a name="line.198"></a>
+<FONT color="green">199</FONT>                    reportOptionDesc = EndowConstants.EndowmentReport.TOTAL_REPORT;<a name="line.199"></a>
+<FONT color="green">200</FONT>                }<a name="line.200"></a>
+<FONT color="green">201</FONT>            }<a name="line.201"></a>
+<FONT color="green">202</FONT>            reportRequestHeaderDataHolder.setReportOption(reportOptionDesc);<a name="line.202"></a>
+<FONT color="green">203</FONT>            <a name="line.203"></a>
+<FONT color="green">204</FONT>            // get criteria<a name="line.204"></a>
+<FONT color="green">205</FONT>            reportRequestHeaderDataHolder.setBenefittingCampus(getBenefittingCampuses(benefittingOrganziationCampuses));<a name="line.205"></a>
+<FONT color="green">206</FONT>            reportRequestHeaderDataHolder.setBenefittingChart(getBenefittingCharts(benefittingOrganziationCharts));<a name="line.206"></a>
+<FONT color="green">207</FONT>            reportRequestHeaderDataHolder.setBenefittingOrganization(getBenefittingOrganizations(benefittingOrganziations));<a name="line.207"></a>
+<FONT color="green">208</FONT>            reportRequestHeaderDataHolder.setKemidTypeCode(getKemidTypeCodes(typeCodes));<a name="line.208"></a>
+<FONT color="green">209</FONT>            reportRequestHeaderDataHolder.setKemidPurposeCode(getKemidPurposeCodes(purposeCodes));<a name="line.209"></a>
+<FONT color="green">210</FONT>            reportRequestHeaderDataHolder.setCombineGroupCode(getCombineGroupCodes(combineGroupCodes));<a name="line.210"></a>
+<FONT color="green">211</FONT>            <a name="line.211"></a>
+<FONT color="green">212</FONT>            // get kemids selected<a name="line.212"></a>
+<FONT color="green">213</FONT>            reportRequestHeaderDataHolder.setKemidsSelected(kemidsSelected);<a name="line.213"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>            // get kemdis with multiple benefittting organizations<a name="line.215"></a>
+<FONT color="green">216</FONT>            reportRequestHeaderDataHolder.setKemidsWithMultipleBenefittingOrganizationsDataHolders(getKemidsWithMultipleBenefittingOrganizations(kemidsSelected));<a name="line.216"></a>
+<FONT color="green">217</FONT>            <a name="line.217"></a>
+<FONT color="green">218</FONT>            return reportRequestHeaderDataHolder;<a name="line.218"></a>
+<FONT color="green">219</FONT>        }<a name="line.219"></a>
+<FONT color="green">220</FONT>        <a name="line.220"></a>
+<FONT color="green">221</FONT>        /**<a name="line.221"></a>
+<FONT color="green">222</FONT>         * Gets the kemids that meet the given conditions<a name="line.222"></a>
+<FONT color="green">223</FONT>         * <a name="line.223"></a>
+<FONT color="green">224</FONT>         * @param benefittingOrganziationCampusCodes<a name="line.224"></a>
+<FONT color="green">225</FONT>         * @param benefittingOrganziationChartCodes<a name="line.225"></a>
+<FONT color="green">226</FONT>         * @param benefittingOrganziationCodes<a name="line.226"></a>
+<FONT color="green">227</FONT>         * @param typeCodes<a name="line.227"></a>
+<FONT color="green">228</FONT>         * @param purposeCodes<a name="line.228"></a>
+<FONT color="green">229</FONT>         * @param combineGroupCodes<a name="line.229"></a>
+<FONT color="green">230</FONT>         * @return<a name="line.230"></a>
+<FONT color="green">231</FONT>         */<a name="line.231"></a>
+<FONT color="green">232</FONT>        public List&lt;String&gt; getKemidsByOtherCriteria(List&lt;String&gt; benefittingOrganziationCampusCodes, List&lt;String&gt; benefittingOrganziationChartCodes,<a name="line.232"></a>
+<FONT color="green">233</FONT>                List&lt;String&gt; benefittingOrganziationCodes, List&lt;String&gt; typeCodes, List&lt;String&gt; purposeCodes, List&lt;String&gt; combineGroupCodes) {<a name="line.233"></a>
+<FONT color="green">234</FONT>          <a name="line.234"></a>
+<FONT color="green">235</FONT>            // 4.1.9 - If any of the non-required criteria are left blank, ignore it as a criterion<a name="line.235"></a>
+<FONT color="green">236</FONT>            // The criteria should be the AND combination.<a name="line.236"></a>
+<FONT color="green">237</FONT>            <a name="line.237"></a>
+<FONT color="green">238</FONT>            Set&lt;String&gt; kemids = new HashSet&lt;String&gt;();<a name="line.238"></a>
+<FONT color="green">239</FONT>            <a name="line.239"></a>
+<FONT color="green">240</FONT>            if (ObjectUtils.isNotNull(benefittingOrganziationCampusCodes) &amp;&amp; !benefittingOrganziationCampusCodes.isEmpty()) {<a name="line.240"></a>
+<FONT color="green">241</FONT>                retainCommonKemids(kemids, kemidBenefittingOrganizationDao.getKemidsByCampusCode(benefittingOrganziationCampusCodes));<a name="line.241"></a>
+<FONT color="green">242</FONT>            }<a name="line.242"></a>
+<FONT color="green">243</FONT>            if (ObjectUtils.isNotNull(benefittingOrganziationChartCodes) &amp;&amp; !benefittingOrganziationChartCodes.isEmpty()) {<a name="line.243"></a>
+<FONT color="green">244</FONT>                retainCommonKemids(kemids, kemidBenefittingOrganizationDao.getKemidsByAttribute(EndowPropertyConstants.KEMID_BENE_CHRT_CD, benefittingOrganziationChartCodes));<a name="line.244"></a>
+<FONT color="green">245</FONT>            }<a name="line.245"></a>
+<FONT color="green">246</FONT>            if (ObjectUtils.isNotNull(benefittingOrganziationCodes) &amp;&amp; !benefittingOrganziationCodes.isEmpty()) {<a name="line.246"></a>
+<FONT color="green">247</FONT>                retainCommonKemids(kemids, kemidBenefittingOrganizationDao.getKemidsByAttribute(EndowPropertyConstants.KEMID_BENE_ORG_CD, benefittingOrganziationCodes));<a name="line.247"></a>
+<FONT color="green">248</FONT>            }<a name="line.248"></a>
+<FONT color="green">249</FONT>            if (ObjectUtils.isNotNull(typeCodes) &amp;&amp; !typeCodes.isEmpty()) {        <a name="line.249"></a>
+<FONT color="green">250</FONT>                retainCommonKemids(kemids, kemidDao.getKemidsByAttribute(EndowPropertyConstants.KEMID_TYPE_CODE, typeCodes));<a name="line.250"></a>
+<FONT color="green">251</FONT>            }<a name="line.251"></a>
+<FONT color="green">252</FONT>            if (ObjectUtils.isNotNull(purposeCodes) &amp;&amp; !purposeCodes.isEmpty()) {<a name="line.252"></a>
+<FONT color="green">253</FONT>                retainCommonKemids(kemids, kemidDao.getKemidsByAttribute(EndowPropertyConstants.KEMID_PRPS_CD, purposeCodes));<a name="line.253"></a>
+<FONT color="green">254</FONT>            }<a name="line.254"></a>
+<FONT color="green">255</FONT>            if (ObjectUtils.isNotNull(combineGroupCodes) &amp;&amp; !combineGroupCodes.isEmpty()) {        <a name="line.255"></a>
+<FONT color="green">256</FONT>                retainCommonKemids(kemids, kemidReportGroupDao.getKemidsByAttribute(EndowPropertyConstants.KEMID_REPORT_GRP_CD, combineGroupCodes));<a name="line.256"></a>
+<FONT color="green">257</FONT>            }        <a name="line.257"></a>
+<FONT color="green">258</FONT>            <a name="line.258"></a>
+<FONT color="green">259</FONT>            return new ArrayList&lt;String&gt;(kemids);<a name="line.259"></a>
+<FONT color="green">260</FONT>        }<a name="line.260"></a>
+<FONT color="green">261</FONT>        <a name="line.261"></a>
+<FONT color="green">262</FONT>        /** <a name="line.262"></a>
+<FONT color="green">263</FONT>         * Retains the kemids that are in common.  <a name="line.263"></a>
+<FONT color="green">264</FONT>         * <a name="line.264"></a>
+<FONT color="green">265</FONT>         * @param kemids<a name="line.265"></a>
+<FONT color="green">266</FONT>         * @param list<a name="line.266"></a>
+<FONT color="green">267</FONT>         */<a name="line.267"></a>
+<FONT color="green">268</FONT>        public void retainCommonKemids(Set&lt;String&gt; kemids, List&lt;String&gt; list) {<a name="line.268"></a>
+<FONT color="green">269</FONT>            if (list != null &amp;&amp; !list.isEmpty()) {<a name="line.269"></a>
+<FONT color="green">270</FONT>                if (kemids.isEmpty()) {<a name="line.270"></a>
+<FONT color="green">271</FONT>                    kemids.addAll(list);<a name="line.271"></a>
+<FONT color="green">272</FONT>                } else {<a name="line.272"></a>
+<FONT color="green">273</FONT>                    kemids.retainAll(list);<a name="line.273"></a>
+<FONT color="green">274</FONT>                }<a name="line.274"></a>
+<FONT color="green">275</FONT>            }<a name="line.275"></a>
+<FONT color="green">276</FONT>        }<a name="line.276"></a>
+<FONT color="green">277</FONT>        <a name="line.277"></a>
+<FONT color="green">278</FONT>        /**<a name="line.278"></a>
+<FONT color="green">279</FONT>         * method to pickup all kemids based on user selection of endowmentOption and closed indicator<a name="line.279"></a>
+<FONT color="green">280</FONT>         * <a name="line.280"></a>
+<FONT color="green">281</FONT>         * @param kemids<a name="line.281"></a>
+<FONT color="green">282</FONT>         * @param endowmentOption<a name="line.282"></a>
+<FONT color="green">283</FONT>         * @param endingDate<a name="line.283"></a>
+<FONT color="green">284</FONT>         * @return List&lt;String&gt; newKemids<a name="line.284"></a>
+<FONT color="green">285</FONT>         */<a name="line.285"></a>
+<FONT color="green">286</FONT>        public List&lt;String&gt; getKemidsBasedOnUserSelection(List&lt;String&gt; kemids, String endowmentOption, String closedIndicator) {<a name="line.286"></a>
+<FONT color="green">287</FONT>            List&lt;String&gt; newKemids = new ArrayList&lt;String&gt;();<a name="line.287"></a>
+<FONT color="green">288</FONT>            <a name="line.288"></a>
+<FONT color="green">289</FONT>            //get KEMID records for the given kemid and endowmentOption and closedIndicator..<a name="line.289"></a>
+<FONT color="green">290</FONT>            List&lt;KEMID&gt; kemidRecords = kemidDao.getKemidRecordsByIds(kemids, endowmentOption, closedIndicator);<a name="line.290"></a>
+<FONT color="green">291</FONT>            <a name="line.291"></a>
+<FONT color="green">292</FONT>            for (KEMID kemidRecord : kemidRecords) {<a name="line.292"></a>
+<FONT color="green">293</FONT>                if (!newKemids.contains(kemidRecord.getKemid())) {<a name="line.293"></a>
+<FONT color="green">294</FONT>                    newKemids.add(kemidRecord.getKemid());<a name="line.294"></a>
+<FONT color="green">295</FONT>                }<a name="line.295"></a>
+<FONT color="green">296</FONT>            }<a name="line.296"></a>
+<FONT color="green">297</FONT>            <a name="line.297"></a>
+<FONT color="green">298</FONT>            return newKemids;<a name="line.298"></a>
+<FONT color="green">299</FONT>        }<a name="line.299"></a>
+<FONT color="green">300</FONT>        <a name="line.300"></a>
+<FONT color="green">301</FONT>        /**<a name="line.301"></a>
+<FONT color="green">302</FONT>         * method to pickup all kemids from the list of kemids where for each kemid, if<a name="line.302"></a>
+<FONT color="green">303</FONT>         * there is record in END_HIST_CSH_T table<a name="line.303"></a>
+<FONT color="green">304</FONT>         * <a name="line.304"></a>
+<FONT color="green">305</FONT>         * @param kemids<a name="line.305"></a>
+<FONT color="green">306</FONT>         * @param beginningDate<a name="line.306"></a>
+<FONT color="green">307</FONT>         * @param endingDate<a name="line.307"></a>
+<FONT color="green">308</FONT>         * @return List&lt;String&gt; newKemids<a name="line.308"></a>
+<FONT color="green">309</FONT>         */<a name="line.309"></a>
+<FONT color="green">310</FONT>        public List&lt;String&gt; getKemidsInHistoryCash(List&lt;String&gt; kemids, String beginningDate, String endingDate) {<a name="line.310"></a>
+<FONT color="green">311</FONT>            List&lt;String&gt; newKemids = new ArrayList&lt;String&gt;();<a name="line.311"></a>
+<FONT color="green">312</FONT>            List&lt;KemidHistoricalCash&gt; kemidHistoryCash = new ArrayList&lt;KemidHistoricalCash&gt;();<a name="line.312"></a>
+<FONT color="green">313</FONT>            <a name="line.313"></a>
+<FONT color="green">314</FONT>            MonthEndDate beginningMED = getPreviousMonthEndDate(convertStringToDate(beginningDate));<a name="line.314"></a>
+<FONT color="green">315</FONT>            MonthEndDate endingMED = getMonthEndDate(convertStringToDate(endingDate));<a name="line.315"></a>
+<FONT color="green">316</FONT>            <a name="line.316"></a>
+<FONT color="green">317</FONT>            kemidHistoryCash = kemidHistoricalCashDao.getHistoricalCashRecords(kemids, beginningMED.getMonthEndDateId(), endingMED.getMonthEndDateId());<a name="line.317"></a>
+<FONT color="green">318</FONT>    <a name="line.318"></a>
+<FONT color="green">319</FONT>            for (KemidHistoricalCash historyCash : kemidHistoryCash) {<a name="line.319"></a>
+<FONT color="green">320</FONT>                if (!newKemids.contains(historyCash.getKemid())) {<a name="line.320"></a>
+<FONT color="green">321</FONT>                    newKemids.add(historyCash.getKemid());<a name="line.321"></a>
+<FONT color="green">322</FONT>                }<a name="line.322"></a>
+<FONT color="green">323</FONT>            }<a name="line.323"></a>
+<FONT color="green">324</FONT>            <a name="line.324"></a>
+<FONT color="green">325</FONT>            return newKemids;<a name="line.325"></a>
+<FONT color="green">326</FONT>        }    <a name="line.326"></a>
+<FONT color="green">327</FONT>        <a name="line.327"></a>
+<FONT color="green">328</FONT>        /**<a name="line.328"></a>
+<FONT color="green">329</FONT>         * Gets a collection of kemids that exist in historical cash<a name="line.329"></a>
+<FONT color="green">330</FONT>         * <a name="line.330"></a>
+<FONT color="green">331</FONT>         * @param kemids<a name="line.331"></a>
+<FONT color="green">332</FONT>         * @param endingDate<a name="line.332"></a>
+<FONT color="green">333</FONT>         * @return<a name="line.333"></a>
+<FONT color="green">334</FONT>         */<a name="line.334"></a>
+<FONT color="green">335</FONT>        public List&lt;String&gt; getKemidsInHistoryCash(List&lt;String&gt; kemids, String endingDate) {<a name="line.335"></a>
+<FONT color="green">336</FONT>            <a name="line.336"></a>
+<FONT color="green">337</FONT>            MonthEndDate endingMED = getMonthEndDate(convertStringToDate(endingDate));            <a name="line.337"></a>
+<FONT color="green">338</FONT>            List&lt;KemidHistoricalCash&gt; kemidHistoryCash = kemidHistoricalCashDao.getHistoricalCashRecords(kemids, endingMED.getMonthEndDateId());<a name="line.338"></a>
+<FONT color="green">339</FONT>            List&lt;String&gt; newKemids = new ArrayList&lt;String&gt;();<a name="line.339"></a>
+<FONT color="green">340</FONT>            for (KemidHistoricalCash historyCash : kemidHistoryCash) {<a name="line.340"></a>
+<FONT color="green">341</FONT>                if (!newKemids.contains(historyCash.getKemid())) {<a name="line.341"></a>
+<FONT color="green">342</FONT>                    newKemids.add(historyCash.getKemid());<a name="line.342"></a>
+<FONT color="green">343</FONT>                }<a name="line.343"></a>
+<FONT color="green">344</FONT>            }<a name="line.344"></a>
+<FONT color="green">345</FONT>            <a name="line.345"></a>
+<FONT color="green">346</FONT>            return newKemids;<a name="line.346"></a>
+<FONT color="green">347</FONT>        }<a name="line.347"></a>
+<FONT color="green">348</FONT>        <a name="line.348"></a>
+<FONT color="green">349</FONT>        /**<a name="line.349"></a>
+<FONT color="green">350</FONT>         * Gets the previous month end date<a name="line.350"></a>
+<FONT color="green">351</FONT>         * <a name="line.351"></a>
+<FONT color="green">352</FONT>         * @param date<a name="line.352"></a>
+<FONT color="green">353</FONT>         * @return<a name="line.353"></a>
+<FONT color="green">354</FONT>         */<a name="line.354"></a>
+<FONT color="green">355</FONT>        protected MonthEndDate getPreviousMonthEndDate(Date date) {<a name="line.355"></a>
+<FONT color="green">356</FONT>            Calendar calendar = Calendar.getInstance();<a name="line.356"></a>
+<FONT color="green">357</FONT>            calendar.setTime(date);<a name="line.357"></a>
+<FONT color="green">358</FONT>            calendar.add(Calendar.DATE, -1);<a name="line.358"></a>
+<FONT color="green">359</FONT>            return getMonthEndDate(new java.sql.Date(calendar.getTimeInMillis()));<a name="line.359"></a>
+<FONT color="green">360</FONT>        }<a name="line.360"></a>
+<FONT color="green">361</FONT>        <a name="line.361"></a>
+<FONT color="green">362</FONT>        /**<a name="line.362"></a>
+<FONT color="green">363</FONT>         * Convert string to date<a name="line.363"></a>
+<FONT color="green">364</FONT>         * <a name="line.364"></a>
+<FONT color="green">365</FONT>         * @param stringDate<a name="line.365"></a>
+<FONT color="green">366</FONT>         * @return<a name="line.366"></a>
+<FONT color="green">367</FONT>         */<a name="line.367"></a>
+<FONT color="green">368</FONT>        protected Date convertStringToDate(String stringDate) {        <a name="line.368"></a>
+<FONT color="green">369</FONT>            Date date = null;<a name="line.369"></a>
+<FONT color="green">370</FONT>            try {<a name="line.370"></a>
+<FONT color="green">371</FONT>                date = dateTimeService.convertToSqlDate(stringDate);<a name="line.371"></a>
+<FONT color="green">372</FONT>            } catch (ParseException e) {<a name="line.372"></a>
+<FONT color="green">373</FONT>                return null;<a name="line.373"></a>
+<FONT color="green">374</FONT>            }        <a name="line.374"></a>
+<FONT color="green">375</FONT>            return date;<a name="line.375"></a>
+<FONT color="green">376</FONT>        }<a name="line.376"></a>
+<FONT color="green">377</FONT>        <a name="line.377"></a>
+<FONT color="green">378</FONT>        /**<a name="line.378"></a>
+<FONT color="green">379</FONT>         * Convert java.sql.date to string<a name="line.379"></a>
+<FONT color="green">380</FONT>         * <a name="line.380"></a>
+<FONT color="green">381</FONT>         * @param date<a name="line.381"></a>
+<FONT color="green">382</FONT>         * @return<a name="line.382"></a>
+<FONT color="green">383</FONT>         */<a name="line.383"></a>
+<FONT color="green">384</FONT>        protected String convertDateToString(Date date) {        <a name="line.384"></a>
+<FONT color="green">385</FONT>            return dateTimeService.toDateString(date);<a name="line.385"></a>
+<FONT color="green">386</FONT>        }<a name="line.386"></a>
+<FONT color="green">387</FONT>        <a name="line.387"></a>
+<FONT color="green">388</FONT>        /**<a name="line.388"></a>
+<FONT color="green">389</FONT>         * Gets a month end date object<a name="line.389"></a>
+<FONT color="green">390</FONT>         * <a name="line.390"></a>
+<FONT color="green">391</FONT>         * @param date<a name="line.391"></a>
+<FONT color="green">392</FONT>         * @return<a name="line.392"></a>
+<FONT color="green">393</FONT>         */<a name="line.393"></a>
+<FONT color="green">394</FONT>        protected MonthEndDate getMonthEndDate(Date date) {<a name="line.394"></a>
+<FONT color="green">395</FONT>            Map&lt;String,Object&gt; primaryKeys = new HashMap&lt;String,Object&gt;();<a name="line.395"></a>
+<FONT color="green">396</FONT>            primaryKeys.put(EndowPropertyConstants.MONTH_END_DATE, date);<a name="line.396"></a>
+<FONT color="green">397</FONT>            return (MonthEndDate) businessObjectService.findByPrimaryKey(MonthEndDate.class, primaryKeys);<a name="line.397"></a>
+<FONT color="green">398</FONT>        }<a name="line.398"></a>
+<FONT color="green">399</FONT>        <a name="line.399"></a>
+<FONT color="green">400</FONT>        /**<a name="line.400"></a>
+<FONT color="green">401</FONT>         * Gets a benefitting organization object<a name="line.401"></a>
+<FONT color="green">402</FONT>         * <a name="line.402"></a>
+<FONT color="green">403</FONT>         * @param kemid<a name="line.403"></a>
+<FONT color="green">404</FONT>         * @return<a name="line.404"></a>
+<FONT color="green">405</FONT>         */<a name="line.405"></a>
+<FONT color="green">406</FONT>        protected List&lt;KemidBenefittingOrganization&gt; getKemidBenefittingOrganization(String kemid) {<a name="line.406"></a>
+<FONT color="green">407</FONT>            Map&lt;String,Object&gt; primaryKeys = new HashMap&lt;String,Object&gt;();<a name="line.407"></a>
+<FONT color="green">408</FONT>            primaryKeys.put(EndowPropertyConstants.KEMID_BENE_KEMID, kemid);<a name="line.408"></a>
+<FONT color="green">409</FONT>            return (List&lt;KemidBenefittingOrganization&gt;) businessObjectService.findMatching(KemidBenefittingOrganization.class, primaryKeys);<a name="line.409"></a>
+<FONT color="green">410</FONT>        }<a name="line.410"></a>
+<FONT color="green">411</FONT>        <a name="line.411"></a>
+<FONT color="green">412</FONT>        /**<a name="line.412"></a>
+<FONT color="green">413</FONT>         * Gets a campus object<a name="line.413"></a>
+<FONT color="green">414</FONT>         * <a name="line.414"></a>
+<FONT color="green">415</FONT>         * @param campusCode<a name="line.415"></a>
+<FONT color="green">416</FONT>         * @return<a name="line.416"></a>
+<FONT color="green">417</FONT>         */<a name="line.417"></a>
+<FONT color="green">418</FONT>        protected CampusImpl getCampus(String campusCode) {<a name="line.418"></a>
+<FONT color="green">419</FONT>            Map&lt;String,Object&gt; primaryKeys = new HashMap&lt;String,Object&gt;();<a name="line.419"></a>
+<FONT color="green">420</FONT>            primaryKeys.put(EndowPropertyConstants.CAMPUS_CODE, campusCode);<a name="line.420"></a>
+<FONT color="green">421</FONT>            return (CampusImpl) businessObjectService.findByPrimaryKey(CampusImpl.class, primaryKeys);<a name="line.421"></a>
+<FONT color="green">422</FONT>        }<a name="line.422"></a>
+<FONT color="green">423</FONT>        <a name="line.423"></a>
+<FONT color="green">424</FONT>        /**<a name="line.424"></a>
+<FONT color="green">425</FONT>         * Gets an organization object<a name="line.425"></a>
+<FONT color="green">426</FONT>         * <a name="line.426"></a>
+<FONT color="green">427</FONT>         * @param chartCode<a name="line.427"></a>
+<FONT color="green">428</FONT>         * @param organizationCode<a name="line.428"></a>
+<FONT color="green">429</FONT>         * @return<a name="line.429"></a>
+<FONT color="green">430</FONT>         */<a name="line.430"></a>
+<FONT color="green">431</FONT>        protected Organization getOrganization(String chartCode, String organizationCode) {<a name="line.431"></a>
+<FONT color="green">432</FONT>            Map&lt;String,Object&gt; primaryKeys = new HashMap&lt;String,Object&gt;();<a name="line.432"></a>
+<FONT color="green">433</FONT>            primaryKeys.put(EndowPropertyConstants.CA_ORG_CHRT_CD, chartCode);<a name="line.433"></a>
+<FONT color="green">434</FONT>            primaryKeys.put(EndowPropertyConstants.CA_ORG_CD, organizationCode);<a name="line.434"></a>
+<FONT color="green">435</FONT>            return (Organization) businessObjectService.findByPrimaryKey(Organization.class, primaryKeys);<a name="line.435"></a>
+<FONT color="green">436</FONT>        }<a name="line.436"></a>
+<FONT color="green">437</FONT>        <a name="line.437"></a>
+<FONT color="green">438</FONT>        /**<a name="line.438"></a>
+<FONT color="green">439</FONT>         * Creates footer data<a name="line.439"></a>
+<FONT color="green">440</FONT>         * <a name="line.440"></a>
+<FONT color="green">441</FONT>         * @param kemidOjb<a name="line.441"></a>
+<FONT color="green">442</FONT>         * @return<a name="line.442"></a>
+<FONT color="green">443</FONT>         */<a name="line.443"></a>
+<FONT color="green">444</FONT>        protected EndowmentReportFooterDataHolder createFooterData(KEMID kemidOjb) {<a name="line.444"></a>
+<FONT color="green">445</FONT>            <a name="line.445"></a>
+<FONT color="green">446</FONT>            List&lt;KemidBenefittingOrganization&gt; benefittingOrganizationList = getKemidBenefittingOrganization(kemidOjb.getKemid());<a name="line.446"></a>
+<FONT color="green">447</FONT>            EndowmentReportFooterDataHolder footerDataHolder = new EndowmentReportFooterDataHolder();<a name="line.447"></a>
+<FONT color="green">448</FONT>            <a name="line.448"></a>
+<FONT color="green">449</FONT>            footerDataHolder.setReference(kemidOjb.getKemid());<a name="line.449"></a>
+<FONT color="green">450</FONT>            footerDataHolder.setEstablishedDate(getDateTimeService().toDateString(kemidOjb.getDateEstablished()));<a name="line.450"></a>
+<FONT color="green">451</FONT>            footerDataHolder.setKemidType(kemidOjb.getType().getName());<a name="line.451"></a>
+<FONT color="green">452</FONT>            footerDataHolder.setKemidPurpose(kemidOjb.getPurpose().getName());<a name="line.452"></a>
+<FONT color="green">453</FONT>            footerDataHolder.setReportRunDate(getDateTimeService().toDateString(kemService.getCurrentDate()));<a name="line.453"></a>
+<FONT color="green">454</FONT>            <a name="line.454"></a>
+<FONT color="green">455</FONT>            if (benefittingOrganizationList != null) {<a name="line.455"></a>
+<FONT color="green">456</FONT>                for (KemidBenefittingOrganization benefittingOrganization : benefittingOrganizationList) {<a name="line.456"></a>
+<FONT color="green">457</FONT>                    BenefittingForFooter benefitting = footerDataHolder.createBenefittingForFooter();<a name="line.457"></a>
+<FONT color="green">458</FONT>                    benefitting.setChartName(benefittingOrganization.getChart().getName());<a name="line.458"></a>
+<FONT color="green">459</FONT>                    benefitting.setBenefittingPercent(benefittingOrganization.getBenefitPrecent().toString());<a name="line.459"></a>
+<FONT color="green">460</FONT>                    Organization organization = getOrganization(benefittingOrganization.getBenefittingChartCode(), benefittingOrganization.getBenefittingOrgCode());<a name="line.460"></a>
+<FONT color="green">461</FONT>                    // some organizations and campuses may not exist <a name="line.461"></a>
+<FONT color="green">462</FONT>                    if (ObjectUtils.isNotNull(organization)) {<a name="line.462"></a>
+<FONT color="green">463</FONT>                        benefitting.setOrganizationName(organization.getOrganizationName());<a name="line.463"></a>
+<FONT color="green">464</FONT>                        CampusImpl campus = getCampus(organization.getOrganizationPhysicalCampusCode());<a name="line.464"></a>
+<FONT color="green">465</FONT>                        if (ObjectUtils.isNotNull(campus)) {<a name="line.465"></a>
+<FONT color="green">466</FONT>                            benefitting.setCampusName(campus.getCampusName());<a name="line.466"></a>
+<FONT color="green">467</FONT>                        } else {<a name="line.467"></a>
+<FONT color="green">468</FONT>                            benefitting.setCampusName("");<a name="line.468"></a>
+<FONT color="green">469</FONT>                        }<a name="line.469"></a>
+<FONT color="green">470</FONT>                    } else {<a name="line.470"></a>
+<FONT color="green">471</FONT>                        benefitting.setOrganizationName("");<a name="line.471"></a>
+<FONT color="green">472</FONT>                    }                <a name="line.472"></a>
+<FONT color="green">473</FONT>                }<a name="line.473"></a>
+<FONT color="green">474</FONT>            }<a name="line.474"></a>
+<FONT color="green">475</FONT>            <a name="line.475"></a>
+<FONT color="green">476</FONT>            return footerDataHolder;<a name="line.476"></a>
+<FONT color="green">477</FONT>        }<a name="line.477"></a>
+<FONT color="green">478</FONT>        <a name="line.478"></a>
+<FONT color="green">479</FONT>        <a name="line.479"></a>
+<FONT color="green">480</FONT>        /**<a name="line.480"></a>
+<FONT color="green">481</FONT>         * Concatenate strings with a separator<a name="line.481"></a>
+<FONT color="green">482</FONT>         * <a name="line.482"></a>
+<FONT color="green">483</FONT>         * @param stringList<a name="line.483"></a>
+<FONT color="green">484</FONT>         * @param defaultEmptyValue<a name="line.484"></a>
+<FONT color="green">485</FONT>         * @return<a name="line.485"></a>
+<FONT color="green">486</FONT>         */<a name="line.486"></a>
+<FONT color="green">487</FONT>        protected String getListWithSeparator(List&lt;String&gt; stringList, String defaultEmptyValue) {<a name="line.487"></a>
+<FONT color="green">488</FONT>            final String SEPARATOR = " ";<a name="line.488"></a>
+<FONT color="green">489</FONT>            StrBuilder builder = new StrBuilder();<a name="line.489"></a>
+<FONT color="green">490</FONT>            builder = builder.appendWithSeparators(stringList, SEPARATOR);<a name="line.490"></a>
+<FONT color="green">491</FONT>            return builder.isEmpty() ?  defaultEmptyValue : builder.toString();<a name="line.491"></a>
+<FONT color="green">492</FONT>        }<a name="line.492"></a>
+<FONT color="green">493</FONT>        <a name="line.493"></a>
+<FONT color="green">494</FONT>        /**<a name="line.494"></a>
+<FONT color="green">495</FONT>         * <a name="line.495"></a>
+<FONT color="green">496</FONT>         * @see org.kuali.kfs.module.endow.report.service.TrialBalanceReportService#getKemidsWithMultipleBenefittingOrganizations(java.util.List)<a name="line.496"></a>
+<FONT color="green">497</FONT>         */<a name="line.497"></a>
+<FONT color="green">498</FONT>        public List&lt;KemidsWithMultipleBenefittingOrganizationsDataHolder&gt; getKemidsWithMultipleBenefittingOrganizations(List&lt;String&gt; kemids) {<a name="line.498"></a>
+<FONT color="green">499</FONT>            return kemidBenefittingOrganizationDao.getKemidsWithMultipleBenefittingOrganizations(kemids);<a name="line.499"></a>
+<FONT color="green">500</FONT>        }<a name="line.500"></a>
+<FONT color="green">501</FONT>        <a name="line.501"></a>
+<FONT color="green">502</FONT>        /**<a name="line.502"></a>
+<FONT color="green">503</FONT>         * Sets business object service<a name="line.503"></a>
+<FONT color="green">504</FONT>         */<a name="line.504"></a>
+<FONT color="green">505</FONT>        public void setBusinessObjectService(BusinessObjectService businessObjectService) {<a name="line.505"></a>
+<FONT color="green">506</FONT>            this.businessObjectService = businessObjectService;<a name="line.506"></a>
+<FONT color="green">507</FONT>        }<a name="line.507"></a>
+<FONT color="green">508</FONT>        <a name="line.508"></a>
+<FONT color="green">509</FONT>        /**<a name="line.509"></a>
+<FONT color="green">510</FONT>         * Sets parameter service<a name="line.510"></a>
+<FONT color="green">511</FONT>         */<a name="line.511"></a>
+<FONT color="green">512</FONT>        public void setParameterService(ParameterService parameterService) {<a name="line.512"></a>
+<FONT color="green">513</FONT>            this.parameterService = parameterService;<a name="line.513"></a>
+<FONT color="green">514</FONT>        }<a name="line.514"></a>
+<FONT color="green">515</FONT>        <a name="line.515"></a>
+<FONT color="green">516</FONT>        /**<a name="line.516"></a>
+<FONT color="green">517</FONT>         * Sets Kem service<a name="line.517"></a>
+<FONT color="green">518</FONT>         * <a name="line.518"></a>
+<FONT color="green">519</FONT>         * @param kemService<a name="line.519"></a>
+<FONT color="green">520</FONT>         */<a name="line.520"></a>
+<FONT color="green">521</FONT>        public void setKemService(KEMService kemService) {<a name="line.521"></a>
+<FONT color="green">522</FONT>            this.kemService = kemService;<a name="line.522"></a>
+<FONT color="green">523</FONT>        }<a name="line.523"></a>
+<FONT color="green">524</FONT>        <a name="line.524"></a>
+<FONT color="green">525</FONT>        /**<a name="line.525"></a>
+<FONT color="green">526</FONT>         * Sets date time service<a name="line.526"></a>
+<FONT color="green">527</FONT>         * <a name="line.527"></a>
+<FONT color="green">528</FONT>         * @param dateTimeService<a name="line.528"></a>
+<FONT color="green">529</FONT>         */<a name="line.529"></a>
+<FONT color="green">530</FONT>        public void setDateTimeService(DateTimeService dateTimeService) {<a name="line.530"></a>
+<FONT color="green">531</FONT>            this.dateTimeService = dateTimeService;<a name="line.531"></a>
+<FONT color="green">532</FONT>        }<a name="line.532"></a>
+<FONT color="green">533</FONT>        <a name="line.533"></a>
+<FONT color="green">534</FONT>        /**<a name="line.534"></a>
+<FONT color="green">535</FONT>         * Sets kemid dao<a name="line.535"></a>
+<FONT color="green">536</FONT>         */<a name="line.536"></a>
+<FONT color="green">537</FONT>        public void setKemidDao(KemidDao kemidDao) {<a name="line.537"></a>
+<FONT color="green">538</FONT>            this.kemidDao = kemidDao;<a name="line.538"></a>
+<FONT color="green">539</FONT>        }<a name="line.539"></a>
+<FONT color="green">540</FONT>    <a name="line.540"></a>
+<FONT color="green">541</FONT>        /**<a name="line.541"></a>
+<FONT color="green">542</FONT>         * sets benefitting organization dao<a name="line.542"></a>
+<FONT color="green">543</FONT>         */<a name="line.543"></a>
+<FONT color="green">544</FONT>        public void setKemidBenefittingOrganizationDao(KemidBenefittingOrganizationDao kemidBenefittingOrganizationDao) {<a name="line.544"></a>
+<FONT color="green">545</FONT>            this.kemidBenefittingOrganizationDao = kemidBenefittingOrganizationDao;<a name="line.545"></a>
+<FONT color="green">546</FONT>        }<a name="line.546"></a>
+<FONT color="green">547</FONT>    <a name="line.547"></a>
+<FONT color="green">548</FONT>        /**<a name="line.548"></a>
+<FONT color="green">549</FONT>         * Sets report group dao<a name="line.549"></a>
+<FONT color="green">550</FONT>         */<a name="line.550"></a>
+<FONT color="green">551</FONT>        public void setKemidReportGroupDao(KemidReportGroupDao kemidReportGroupDao) {<a name="line.551"></a>
+<FONT color="green">552</FONT>            this.kemidReportGroupDao = kemidReportGroupDao;<a name="line.552"></a>
+<FONT color="green">553</FONT>        }<a name="line.553"></a>
+<FONT color="green">554</FONT>    <a name="line.554"></a>
+<FONT color="green">555</FONT>        /**<a name="line.555"></a>
+<FONT color="green">556</FONT>         * Gest historical cash dao<a name="line.556"></a>
+<FONT color="green">557</FONT>         * <a name="line.557"></a>
+<FONT color="green">558</FONT>         * @return<a name="line.558"></a>
+<FONT color="green">559</FONT>         */<a name="line.559"></a>
+<FONT color="green">560</FONT>        public KemidHistoricalCashDao getKemidHistoricalCashDao() {<a name="line.560"></a>
+<FONT color="green">561</FONT>            return kemidHistoricalCashDao;<a name="line.561"></a>
+<FONT color="green">562</FONT>        }<a name="line.562"></a>
+<FONT color="green">563</FONT>    <a name="line.563"></a>
+<FONT color="green">564</FONT>        /**<a name="line.564"></a>
+<FONT color="green">565</FONT>         * sets attribute kemidHistoricalCashDao<a name="line.565"></a>
+<FONT color="green">566</FONT>         */<a name="line.566"></a>
+<FONT color="green">567</FONT>        public void setKemidHistoricalCashDao(KemidHistoricalCashDao kemidHistoricalCashDao) {<a name="line.567"></a>
+<FONT color="green">568</FONT>            this.kemidHistoricalCashDao = kemidHistoricalCashDao;<a name="line.568"></a>
+<FONT color="green">569</FONT>        }<a name="line.569"></a>
+<FONT color="green">570</FONT>    <a name="line.570"></a>
+<FONT color="green">571</FONT>        /**<a name="line.571"></a>
+<FONT color="green">572</FONT>         * gets attribute dateTimeService<a name="line.572"></a>
+<FONT color="green">573</FONT>         * @return dateTimeService<a name="line.573"></a>
+<FONT color="green">574</FONT>         */<a name="line.574"></a>
+<FONT color="green">575</FONT>        public DateTimeService getDateTimeService() {<a name="line.575"></a>
+<FONT color="green">576</FONT>            return dateTimeService;<a name="line.576"></a>
+<FONT color="green">577</FONT>        }<a name="line.577"></a>
+<FONT color="green">578</FONT>    }<a name="line.578"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

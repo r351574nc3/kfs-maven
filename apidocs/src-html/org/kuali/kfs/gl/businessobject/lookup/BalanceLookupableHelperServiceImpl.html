@@ -1,0 +1,416 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.gl.businessobject.lookup;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.ArrayList;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Collection;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.Iterator;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.List;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.Map;<a name="line.22"></a>
+<FONT color="green">023</FONT>    <a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.gl.Constant;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.gl.OJBUtility;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.gl.batch.service.BalanceCalculator;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.gl.businessobject.Balance;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.gl.businessobject.TransientBalanceInquiryAttributes;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.gl.businessobject.inquiry.BalanceInquirableImpl;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.gl.service.BalanceService;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.rice.kns.bo.BusinessObject;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.rice.kns.lookup.HtmlData;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>    /**<a name="line.37"></a>
+<FONT color="green">038</FONT>     * An extension of KualiLookupableImpl to support balance lookups<a name="line.38"></a>
+<FONT color="green">039</FONT>     */<a name="line.39"></a>
+<FONT color="green">040</FONT>    public class BalanceLookupableHelperServiceImpl extends AbstractGeneralLedgerLookupableHelperServiceImpl {<a name="line.40"></a>
+<FONT color="green">041</FONT>        private BalanceCalculator postBalance;<a name="line.41"></a>
+<FONT color="green">042</FONT>        private BalanceService balanceService;<a name="line.42"></a>
+<FONT color="green">043</FONT>        private Map fieldValues;<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>        /**<a name="line.45"></a>
+<FONT color="green">046</FONT>         * Returns the url for any drill down links within the lookup<a name="line.46"></a>
+<FONT color="green">047</FONT>         * @param bo the business object with a property being drilled down on<a name="line.47"></a>
+<FONT color="green">048</FONT>         * @param propertyName the name of the property being drilled down on<a name="line.48"></a>
+<FONT color="green">049</FONT>         * @return a String with the URL of the property<a name="line.49"></a>
+<FONT color="green">050</FONT>         * @see org.kuali.rice.kns.lookup.Lookupable#getInquiryUrl(org.kuali.rice.kns.bo.BusinessObject, java.lang.String)<a name="line.50"></a>
+<FONT color="green">051</FONT>         */<a name="line.51"></a>
+<FONT color="green">052</FONT>        @Override<a name="line.52"></a>
+<FONT color="green">053</FONT>        public HtmlData getInquiryUrl(BusinessObject bo, String propertyName) {<a name="line.53"></a>
+<FONT color="green">054</FONT>            return (new BalanceInquirableImpl()).getInquiryUrl(bo, propertyName);<a name="line.54"></a>
+<FONT color="green">055</FONT>        }<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>        /**<a name="line.57"></a>
+<FONT color="green">058</FONT>         * Generates the list of search results for this inquiry<a name="line.58"></a>
+<FONT color="green">059</FONT>         * @param fieldValues the field values of the query to carry out<a name="line.59"></a>
+<FONT color="green">060</FONT>         * @return List the search results returned by the lookup<a name="line.60"></a>
+<FONT color="green">061</FONT>         * @see org.kuali.rice.kns.lookup.Lookupable#getSearchResults(java.util.Map)<a name="line.61"></a>
+<FONT color="green">062</FONT>         */<a name="line.62"></a>
+<FONT color="green">063</FONT>        @Override<a name="line.63"></a>
+<FONT color="green">064</FONT>        public List getSearchResults(Map fieldValues) {<a name="line.64"></a>
+<FONT color="green">065</FONT>            setBackLocation((String) fieldValues.get(KFSConstants.BACK_LOCATION));<a name="line.65"></a>
+<FONT color="green">066</FONT>            setDocFormKey((String) fieldValues.get(KFSConstants.DOC_FORM_KEY));<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>            // get the pending entry option. This method must be prior to the get search results<a name="line.68"></a>
+<FONT color="green">069</FONT>            String pendingEntryOption = this.getSelectedPendingEntryOption(fieldValues);<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>            // test if the consolidation option is selected or not<a name="line.71"></a>
+<FONT color="green">072</FONT>            boolean isConsolidated = isConsolidationSelected(fieldValues);<a name="line.72"></a>
+<FONT color="green">073</FONT>    <a name="line.73"></a>
+<FONT color="green">074</FONT>            // get Amount View Option and determine if the results has to be accumulated<a name="line.74"></a>
+<FONT color="green">075</FONT>            String amountViewOption = getSelectedAmountViewOption(fieldValues);<a name="line.75"></a>
+<FONT color="green">076</FONT>            boolean isAccumulated = amountViewOption.equals(Constant.ACCUMULATE);<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>            // get the search result collection<a name="line.78"></a>
+<FONT color="green">079</FONT>            Iterator balanceIterator = balanceService.findBalance(fieldValues, isConsolidated);<a name="line.79"></a>
+<FONT color="green">080</FONT>            Collection searchResultsCollection = this.buildBalanceCollection(balanceIterator, isConsolidated, pendingEntryOption);<a name="line.80"></a>
+<FONT color="green">081</FONT>    <a name="line.81"></a>
+<FONT color="green">082</FONT>            // update search results according to the selected pending entry option<a name="line.82"></a>
+<FONT color="green">083</FONT>            updateByPendingLedgerEntry(searchResultsCollection, fieldValues, pendingEntryOption, isConsolidated, false);<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>            // perform the accumulation of the amounts<a name="line.85"></a>
+<FONT color="green">086</FONT>            this.accumulate(searchResultsCollection, isAccumulated);<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>            // get the actual size of all qualified search results<a name="line.88"></a>
+<FONT color="green">089</FONT>            Integer recordCount = balanceService.getBalanceRecordCount(fieldValues, isConsolidated);<a name="line.89"></a>
+<FONT color="green">090</FONT>            Long actualSize = OJBUtility.getResultActualSize(searchResultsCollection, recordCount, fieldValues, new Balance());<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>            return this.buildSearchResultList(searchResultsCollection, actualSize);<a name="line.92"></a>
+<FONT color="green">093</FONT>        }<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * This method builds the balance collection based on the input iterator<a name="line.96"></a>
+<FONT color="green">097</FONT>         * <a name="line.97"></a>
+<FONT color="green">098</FONT>         * @param iterator the iterator of search results of balance<a name="line.98"></a>
+<FONT color="green">099</FONT>         * @param isConsolidated determine if the consolidated result is desired<a name="line.99"></a>
+<FONT color="green">100</FONT>         * @param pendingEntryOption the given pending entry option that can be no, approved or all<a name="line.100"></a>
+<FONT color="green">101</FONT>         * @return the balance collection<a name="line.101"></a>
+<FONT color="green">102</FONT>         */<a name="line.102"></a>
+<FONT color="green">103</FONT>        private Collection buildBalanceCollection(Iterator iterator, boolean isConsolidated, String pendingEntryOption) {<a name="line.103"></a>
+<FONT color="green">104</FONT>            Collection balanceCollection = null;<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>            if (isConsolidated) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                balanceCollection = buildConsolidatedBalanceCollection(iterator, pendingEntryOption);<a name="line.107"></a>
+<FONT color="green">108</FONT>            }<a name="line.108"></a>
+<FONT color="green">109</FONT>            else {<a name="line.109"></a>
+<FONT color="green">110</FONT>                balanceCollection = buildDetailedBalanceCollection(iterator, pendingEntryOption);<a name="line.110"></a>
+<FONT color="green">111</FONT>            }<a name="line.111"></a>
+<FONT color="green">112</FONT>            return balanceCollection;<a name="line.112"></a>
+<FONT color="green">113</FONT>        }<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>        /**<a name="line.115"></a>
+<FONT color="green">116</FONT>         * This method builds the balance collection with consolidation option from an iterator<a name="line.116"></a>
+<FONT color="green">117</FONT>         * <a name="line.117"></a>
+<FONT color="green">118</FONT>         * @param iterator th iterator of balance results<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @param pendingEntryOption the selected pending entry option<a name="line.119"></a>
+<FONT color="green">120</FONT>         * @return the consolidated balance collection<a name="line.120"></a>
+<FONT color="green">121</FONT>         */<a name="line.121"></a>
+<FONT color="green">122</FONT>        private Collection buildConsolidatedBalanceCollection(Iterator iterator, String pendingEntryOption) {<a name="line.122"></a>
+<FONT color="green">123</FONT>            Collection balanceCollection = new ArrayList();<a name="line.123"></a>
+<FONT color="green">124</FONT>    <a name="line.124"></a>
+<FONT color="green">125</FONT>            while (iterator.hasNext()) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                Object collectionEntry = iterator.next();<a name="line.126"></a>
+<FONT color="green">127</FONT>    <a name="line.127"></a>
+<FONT color="green">128</FONT>                if (collectionEntry.getClass().isArray()) {<a name="line.128"></a>
+<FONT color="green">129</FONT>                    int i = 0;<a name="line.129"></a>
+<FONT color="green">130</FONT>                    Object[] array = (Object[]) collectionEntry;<a name="line.130"></a>
+<FONT color="green">131</FONT>                    Balance balance = new Balance();<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>                    balance.setUniversityFiscalYear(new Integer(array[i++].toString()));<a name="line.133"></a>
+<FONT color="green">134</FONT>                    balance.setChartOfAccountsCode(array[i++].toString());<a name="line.134"></a>
+<FONT color="green">135</FONT>                    balance.setAccountNumber(array[i++].toString());<a name="line.135"></a>
+<FONT color="green">136</FONT>    <a name="line.136"></a>
+<FONT color="green">137</FONT>                    String subAccountNumber = Constant.CONSOLIDATED_SUB_ACCOUNT_NUMBER;<a name="line.137"></a>
+<FONT color="green">138</FONT>                    balance.setSubAccountNumber(subAccountNumber);<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>                    balance.setBalanceTypeCode(array[i++].toString());<a name="line.140"></a>
+<FONT color="green">141</FONT>                    balance.setObjectCode(array[i++].toString());<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>                    balance.setSubObjectCode(Constant.CONSOLIDATED_SUB_OBJECT_CODE);<a name="line.143"></a>
+<FONT color="green">144</FONT>                    balance.setObjectTypeCode(Constant.CONSOLIDATED_OBJECT_TYPE_CODE);<a name="line.144"></a>
+<FONT color="green">145</FONT>    <a name="line.145"></a>
+<FONT color="green">146</FONT>                    balance.setAccountLineAnnualBalanceAmount(new KualiDecimal(array[i++].toString()));<a name="line.146"></a>
+<FONT color="green">147</FONT>                    balance.setBeginningBalanceLineAmount(new KualiDecimal(array[i++].toString()));<a name="line.147"></a>
+<FONT color="green">148</FONT>                    balance.setContractsGrantsBeginningBalanceAmount(new KualiDecimal(array[i++].toString()));<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>                    balance.setMonth1Amount(new KualiDecimal(array[i++].toString()));<a name="line.150"></a>
+<FONT color="green">151</FONT>                    balance.setMonth2Amount(new KualiDecimal(array[i++].toString()));<a name="line.151"></a>
+<FONT color="green">152</FONT>                    balance.setMonth3Amount(new KualiDecimal(array[i++].toString()));<a name="line.152"></a>
+<FONT color="green">153</FONT>                    balance.setMonth4Amount(new KualiDecimal(array[i++].toString()));<a name="line.153"></a>
+<FONT color="green">154</FONT>                    balance.setMonth5Amount(new KualiDecimal(array[i++].toString()));<a name="line.154"></a>
+<FONT color="green">155</FONT>                    balance.setMonth6Amount(new KualiDecimal(array[i++].toString()));<a name="line.155"></a>
+<FONT color="green">156</FONT>                    balance.setMonth7Amount(new KualiDecimal(array[i++].toString()));<a name="line.156"></a>
+<FONT color="green">157</FONT>                    balance.setMonth8Amount(new KualiDecimal(array[i++].toString()));<a name="line.157"></a>
+<FONT color="green">158</FONT>                    balance.setMonth9Amount(new KualiDecimal(array[i++].toString()));<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>                    balance.setMonth10Amount(new KualiDecimal(array[i++].toString()));<a name="line.160"></a>
+<FONT color="green">161</FONT>                    balance.setMonth11Amount(new KualiDecimal(array[i++].toString()));<a name="line.161"></a>
+<FONT color="green">162</FONT>                    balance.setMonth12Amount(new KualiDecimal(array[i++].toString()));<a name="line.162"></a>
+<FONT color="green">163</FONT>                    balance.setMonth13Amount(new KualiDecimal(array[i].toString()));<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>                    balance.setDummyBusinessObject(new TransientBalanceInquiryAttributes());<a name="line.165"></a>
+<FONT color="green">166</FONT>                    balance.getDummyBusinessObject().setPendingEntryOption(pendingEntryOption);<a name="line.166"></a>
+<FONT color="green">167</FONT>    <a name="line.167"></a>
+<FONT color="green">168</FONT>                    balanceCollection.add(balance);<a name="line.168"></a>
+<FONT color="green">169</FONT>                }<a name="line.169"></a>
+<FONT color="green">170</FONT>            }<a name="line.170"></a>
+<FONT color="green">171</FONT>            return balanceCollection;<a name="line.171"></a>
+<FONT color="green">172</FONT>        }<a name="line.172"></a>
+<FONT color="green">173</FONT>    <a name="line.173"></a>
+<FONT color="green">174</FONT>        /**<a name="line.174"></a>
+<FONT color="green">175</FONT>         * This method builds the balance collection with detail option from an iterator<a name="line.175"></a>
+<FONT color="green">176</FONT>         * <a name="line.176"></a>
+<FONT color="green">177</FONT>         * @param iterator the balance iterator<a name="line.177"></a>
+<FONT color="green">178</FONT>         * @param pendingEntryOption the selected pending entry option<a name="line.178"></a>
+<FONT color="green">179</FONT>         * @return the detailed balance collection<a name="line.179"></a>
+<FONT color="green">180</FONT>         */<a name="line.180"></a>
+<FONT color="green">181</FONT>        private Collection buildDetailedBalanceCollection(Iterator iterator, String pendingEntryOption) {<a name="line.181"></a>
+<FONT color="green">182</FONT>            Collection balanceCollection = new ArrayList();<a name="line.182"></a>
+<FONT color="green">183</FONT>    <a name="line.183"></a>
+<FONT color="green">184</FONT>            while (iterator.hasNext()) {<a name="line.184"></a>
+<FONT color="green">185</FONT>                Balance balance = (Balance) (iterator.next());<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>                balance.setDummyBusinessObject(new TransientBalanceInquiryAttributes());<a name="line.187"></a>
+<FONT color="green">188</FONT>                balance.getDummyBusinessObject().setPendingEntryOption(pendingEntryOption);<a name="line.188"></a>
+<FONT color="green">189</FONT>    <a name="line.189"></a>
+<FONT color="green">190</FONT>                balanceCollection.add(balance);<a name="line.190"></a>
+<FONT color="green">191</FONT>            }<a name="line.191"></a>
+<FONT color="green">192</FONT>            return balanceCollection;<a name="line.192"></a>
+<FONT color="green">193</FONT>        }<a name="line.193"></a>
+<FONT color="green">194</FONT>    <a name="line.194"></a>
+<FONT color="green">195</FONT>        /**<a name="line.195"></a>
+<FONT color="green">196</FONT>         * This method updates the balance collection with accumulated amounts if required (isAccumulated is true)<a name="line.196"></a>
+<FONT color="green">197</FONT>         * <a name="line.197"></a>
+<FONT color="green">198</FONT>         * @param balanceCollection the balance collection to be updated<a name="line.198"></a>
+<FONT color="green">199</FONT>         * @param isAccumulated determine if the accumulated result is desired<a name="line.199"></a>
+<FONT color="green">200</FONT>         */<a name="line.200"></a>
+<FONT color="green">201</FONT>        private void accumulate(Collection balanceCollection, boolean isAccumulated) {<a name="line.201"></a>
+<FONT color="green">202</FONT>    <a name="line.202"></a>
+<FONT color="green">203</FONT>            if (isAccumulated) {<a name="line.203"></a>
+<FONT color="green">204</FONT>                for (Iterator iterator = balanceCollection.iterator(); iterator.hasNext();) {<a name="line.204"></a>
+<FONT color="green">205</FONT>                    Balance balance = (Balance) (iterator.next());<a name="line.205"></a>
+<FONT color="green">206</FONT>                    accumulateByBalance(balance, isAccumulated);<a name="line.206"></a>
+<FONT color="green">207</FONT>                }<a name="line.207"></a>
+<FONT color="green">208</FONT>            }<a name="line.208"></a>
+<FONT color="green">209</FONT>        }<a name="line.209"></a>
+<FONT color="green">210</FONT>    <a name="line.210"></a>
+<FONT color="green">211</FONT>        /**<a name="line.211"></a>
+<FONT color="green">212</FONT>         * This method computes the accumulate amount of the given balance and updates its fields<a name="line.212"></a>
+<FONT color="green">213</FONT>         * <a name="line.213"></a>
+<FONT color="green">214</FONT>         * @param balance the given balance object<a name="line.214"></a>
+<FONT color="green">215</FONT>         * @param isAccumulated determine if the accumulated result is desired<a name="line.215"></a>
+<FONT color="green">216</FONT>         */<a name="line.216"></a>
+<FONT color="green">217</FONT>        private void accumulateByBalance(Balance balance, boolean isAccumulated) {<a name="line.217"></a>
+<FONT color="green">218</FONT>    <a name="line.218"></a>
+<FONT color="green">219</FONT>            KualiDecimal annualAmount = balance.getAccountLineAnnualBalanceAmount();<a name="line.219"></a>
+<FONT color="green">220</FONT>            KualiDecimal beginningAmount = balance.getBeginningBalanceLineAmount();<a name="line.220"></a>
+<FONT color="green">221</FONT>            KualiDecimal CGBeginningAmount = balance.getContractsGrantsBeginningBalanceAmount();<a name="line.221"></a>
+<FONT color="green">222</FONT>    <a name="line.222"></a>
+<FONT color="green">223</FONT>            KualiDecimal month0Amount = beginningAmount.add(CGBeginningAmount);<a name="line.223"></a>
+<FONT color="green">224</FONT>            KualiDecimal month1Amount = balance.getMonth1Amount();<a name="line.224"></a>
+<FONT color="green">225</FONT>            month1Amount = accumulateAmount(month1Amount, month0Amount, isAccumulated);<a name="line.225"></a>
+<FONT color="green">226</FONT>            balance.setMonth1Amount(month1Amount);<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>            KualiDecimal month2Amount = balance.getMonth2Amount();<a name="line.228"></a>
+<FONT color="green">229</FONT>            month2Amount = accumulateAmount(month2Amount, month1Amount, isAccumulated);<a name="line.229"></a>
+<FONT color="green">230</FONT>            balance.setMonth2Amount(month2Amount);<a name="line.230"></a>
+<FONT color="green">231</FONT>    <a name="line.231"></a>
+<FONT color="green">232</FONT>            KualiDecimal month3Amount = balance.getMonth3Amount();<a name="line.232"></a>
+<FONT color="green">233</FONT>            month3Amount = accumulateAmount(month3Amount, month2Amount, isAccumulated);<a name="line.233"></a>
+<FONT color="green">234</FONT>            balance.setMonth3Amount(month3Amount);<a name="line.234"></a>
+<FONT color="green">235</FONT>    <a name="line.235"></a>
+<FONT color="green">236</FONT>            KualiDecimal month4Amount = balance.getMonth4Amount();<a name="line.236"></a>
+<FONT color="green">237</FONT>            month4Amount = accumulateAmount(month4Amount, month3Amount, isAccumulated);<a name="line.237"></a>
+<FONT color="green">238</FONT>            balance.setMonth4Amount(month4Amount);<a name="line.238"></a>
+<FONT color="green">239</FONT>    <a name="line.239"></a>
+<FONT color="green">240</FONT>            KualiDecimal month5Amount = balance.getMonth5Amount();<a name="line.240"></a>
+<FONT color="green">241</FONT>            month5Amount = accumulateAmount(month5Amount, month4Amount, isAccumulated);<a name="line.241"></a>
+<FONT color="green">242</FONT>            balance.setMonth5Amount(month5Amount);<a name="line.242"></a>
+<FONT color="green">243</FONT>    <a name="line.243"></a>
+<FONT color="green">244</FONT>            KualiDecimal month6Amount = balance.getMonth6Amount();<a name="line.244"></a>
+<FONT color="green">245</FONT>            month6Amount = accumulateAmount(month6Amount, month5Amount, isAccumulated);<a name="line.245"></a>
+<FONT color="green">246</FONT>            balance.setMonth6Amount(month6Amount);<a name="line.246"></a>
+<FONT color="green">247</FONT>    <a name="line.247"></a>
+<FONT color="green">248</FONT>            KualiDecimal month7Amount = balance.getMonth7Amount();<a name="line.248"></a>
+<FONT color="green">249</FONT>            month7Amount = accumulateAmount(month7Amount, month6Amount, isAccumulated);<a name="line.249"></a>
+<FONT color="green">250</FONT>            balance.setMonth7Amount(month7Amount);<a name="line.250"></a>
+<FONT color="green">251</FONT>    <a name="line.251"></a>
+<FONT color="green">252</FONT>            KualiDecimal month8Amount = balance.getMonth8Amount();<a name="line.252"></a>
+<FONT color="green">253</FONT>            month8Amount = accumulateAmount(month8Amount, month7Amount, isAccumulated);<a name="line.253"></a>
+<FONT color="green">254</FONT>            balance.setMonth8Amount(month8Amount);<a name="line.254"></a>
+<FONT color="green">255</FONT>    <a name="line.255"></a>
+<FONT color="green">256</FONT>            KualiDecimal month9Amount = balance.getMonth9Amount();<a name="line.256"></a>
+<FONT color="green">257</FONT>            month9Amount = accumulateAmount(month9Amount, month8Amount, isAccumulated);<a name="line.257"></a>
+<FONT color="green">258</FONT>            balance.setMonth9Amount(month9Amount);<a name="line.258"></a>
+<FONT color="green">259</FONT>    <a name="line.259"></a>
+<FONT color="green">260</FONT>            KualiDecimal month10Amount = balance.getMonth10Amount();<a name="line.260"></a>
+<FONT color="green">261</FONT>            month10Amount = accumulateAmount(month10Amount, month9Amount, isAccumulated);<a name="line.261"></a>
+<FONT color="green">262</FONT>            balance.setMonth10Amount(month10Amount);<a name="line.262"></a>
+<FONT color="green">263</FONT>    <a name="line.263"></a>
+<FONT color="green">264</FONT>            KualiDecimal month11Amount = balance.getMonth11Amount();<a name="line.264"></a>
+<FONT color="green">265</FONT>            month11Amount = accumulateAmount(month11Amount, month10Amount, isAccumulated);<a name="line.265"></a>
+<FONT color="green">266</FONT>            balance.setMonth11Amount(month11Amount);<a name="line.266"></a>
+<FONT color="green">267</FONT>    <a name="line.267"></a>
+<FONT color="green">268</FONT>            KualiDecimal month12Amount = balance.getMonth12Amount();<a name="line.268"></a>
+<FONT color="green">269</FONT>            month12Amount = accumulateAmount(month12Amount, month11Amount, isAccumulated);<a name="line.269"></a>
+<FONT color="green">270</FONT>            balance.setMonth12Amount(month12Amount);<a name="line.270"></a>
+<FONT color="green">271</FONT>    <a name="line.271"></a>
+<FONT color="green">272</FONT>            KualiDecimal month13Amount = balance.getMonth13Amount();<a name="line.272"></a>
+<FONT color="green">273</FONT>            month13Amount = accumulateAmount(month13Amount, month12Amount, isAccumulated);<a name="line.273"></a>
+<FONT color="green">274</FONT>            balance.setMonth13Amount(month13Amount);<a name="line.274"></a>
+<FONT color="green">275</FONT>        }<a name="line.275"></a>
+<FONT color="green">276</FONT>    <a name="line.276"></a>
+<FONT color="green">277</FONT>        /**<a name="line.277"></a>
+<FONT color="green">278</FONT>         * This method converts the amount from String and adds it with the input addend<a name="line.278"></a>
+<FONT color="green">279</FONT>         * <a name="line.279"></a>
+<FONT color="green">280</FONT>         * @param stringAugend a String-type augend<a name="line.280"></a>
+<FONT color="green">281</FONT>         * @param addend an addend<a name="line.281"></a>
+<FONT color="green">282</FONT>         * @param isAccumulated determine if the accumulated result is desired<a name="line.282"></a>
+<FONT color="green">283</FONT>         * @return the accumulated amount if accumulate option is selected; otherwise, the input amount itself<a name="line.283"></a>
+<FONT color="green">284</FONT>         */<a name="line.284"></a>
+<FONT color="green">285</FONT>        private KualiDecimal accumulateAmount(Object stringAugend, KualiDecimal addend, boolean isAccumulated) {<a name="line.285"></a>
+<FONT color="green">286</FONT>    <a name="line.286"></a>
+<FONT color="green">287</FONT>            KualiDecimal augend = new KualiDecimal(stringAugend.toString());<a name="line.287"></a>
+<FONT color="green">288</FONT>            if (isAccumulated) {<a name="line.288"></a>
+<FONT color="green">289</FONT>                augend = augend.add(addend);<a name="line.289"></a>
+<FONT color="green">290</FONT>            }<a name="line.290"></a>
+<FONT color="green">291</FONT>            return augend;<a name="line.291"></a>
+<FONT color="green">292</FONT>        }<a name="line.292"></a>
+<FONT color="green">293</FONT>    <a name="line.293"></a>
+<FONT color="green">294</FONT>        /**<a name="line.294"></a>
+<FONT color="green">295</FONT>         * Updates pending entries before their results are included in the lookup results<a name="line.295"></a>
+<FONT color="green">296</FONT>         * <a name="line.296"></a>
+<FONT color="green">297</FONT>         * @param entryCollection a collection of balance entries<a name="line.297"></a>
+<FONT color="green">298</FONT>         * @param fieldValues the map containing the search fields and values<a name="line.298"></a>
+<FONT color="green">299</FONT>         * @param isApproved flag whether the approved entries or all entries will be processed<a name="line.299"></a>
+<FONT color="green">300</FONT>         * @param isConsolidated flag whether the results are consolidated or not<a name="line.300"></a>
+<FONT color="green">301</FONT>         * @param isCostShareExcluded flag whether the user selects to see the results with cost share subaccount<a name="line.301"></a>
+<FONT color="green">302</FONT>         * @see org.kuali.module.gl.web.lookupable.AbstractGLLookupableImpl#updateEntryCollection(java.util.Collection, java.util.Map,<a name="line.302"></a>
+<FONT color="green">303</FONT>         *      boolean, boolean, boolean)<a name="line.303"></a>
+<FONT color="green">304</FONT>         */<a name="line.304"></a>
+<FONT color="green">305</FONT>        public void updateEntryCollection(Collection entryCollection, Map fieldValues, boolean isApproved, boolean isConsolidated, boolean isCostShareInclusive) {<a name="line.305"></a>
+<FONT color="green">306</FONT>    <a name="line.306"></a>
+<FONT color="green">307</FONT>            // convert the field names of balance object into corresponding ones of pending entry object<a name="line.307"></a>
+<FONT color="green">308</FONT>            Map pendingEntryFieldValues = BusinessObjectFieldConverter.convertToTransactionFieldValues(fieldValues);<a name="line.308"></a>
+<FONT color="green">309</FONT>    <a name="line.309"></a>
+<FONT color="green">310</FONT>            // go through the pending entries to update the balance collection<a name="line.310"></a>
+<FONT color="green">311</FONT>            Iterator pendingEntryIterator = getGeneralLedgerPendingEntryService().findPendingLedgerEntriesForBalance(pendingEntryFieldValues, isApproved);<a name="line.311"></a>
+<FONT color="green">312</FONT>            while (pendingEntryIterator.hasNext()) {<a name="line.312"></a>
+<FONT color="green">313</FONT>                GeneralLedgerPendingEntry pendingEntry = (GeneralLedgerPendingEntry) pendingEntryIterator.next();<a name="line.313"></a>
+<FONT color="green">314</FONT>    <a name="line.314"></a>
+<FONT color="green">315</FONT>                // if consolidated, change the following fields into the default values for consolidation<a name="line.315"></a>
+<FONT color="green">316</FONT>                if (isConsolidated) {<a name="line.316"></a>
+<FONT color="green">317</FONT>                    pendingEntry.setSubAccountNumber(Constant.CONSOLIDATED_SUB_ACCOUNT_NUMBER);<a name="line.317"></a>
+<FONT color="green">318</FONT>                    pendingEntry.setFinancialSubObjectCode(Constant.CONSOLIDATED_SUB_OBJECT_CODE);<a name="line.318"></a>
+<FONT color="green">319</FONT>                    pendingEntry.setFinancialObjectTypeCode(Constant.CONSOLIDATED_OBJECT_TYPE_CODE);<a name="line.319"></a>
+<FONT color="green">320</FONT>                }<a name="line.320"></a>
+<FONT color="green">321</FONT>    <a name="line.321"></a>
+<FONT color="green">322</FONT>                Balance balance = postBalance.findBalance(entryCollection, pendingEntry);<a name="line.322"></a>
+<FONT color="green">323</FONT>    <a name="line.323"></a>
+<FONT color="green">324</FONT>                String pendingEntryOption = isApproved ? Constant.APPROVED_PENDING_ENTRY : Constant.ALL_PENDING_ENTRY;<a name="line.324"></a>
+<FONT color="green">325</FONT>                balance.setDummyBusinessObject(new TransientBalanceInquiryAttributes());<a name="line.325"></a>
+<FONT color="green">326</FONT>                balance.getDummyBusinessObject().setPendingEntryOption(pendingEntryOption);<a name="line.326"></a>
+<FONT color="green">327</FONT>    <a name="line.327"></a>
+<FONT color="green">328</FONT>                postBalance.updateBalance(pendingEntry, balance);<a name="line.328"></a>
+<FONT color="green">329</FONT>            }<a name="line.329"></a>
+<FONT color="green">330</FONT>        }<a name="line.330"></a>
+<FONT color="green">331</FONT>    <a name="line.331"></a>
+<FONT color="green">332</FONT>        /**<a name="line.332"></a>
+<FONT color="green">333</FONT>         * Sets the postBalance attribute value.<a name="line.333"></a>
+<FONT color="green">334</FONT>         * <a name="line.334"></a>
+<FONT color="green">335</FONT>         * @param postBalance The postBalance to set.<a name="line.335"></a>
+<FONT color="green">336</FONT>         */<a name="line.336"></a>
+<FONT color="green">337</FONT>        public void setPostBalance(BalanceCalculator postBalance) {<a name="line.337"></a>
+<FONT color="green">338</FONT>            this.postBalance = postBalance;<a name="line.338"></a>
+<FONT color="green">339</FONT>        }<a name="line.339"></a>
+<FONT color="green">340</FONT>    <a name="line.340"></a>
+<FONT color="green">341</FONT>        /**<a name="line.341"></a>
+<FONT color="green">342</FONT>         * Sets the balanceService attribute value.<a name="line.342"></a>
+<FONT color="green">343</FONT>         * <a name="line.343"></a>
+<FONT color="green">344</FONT>         * @param balanceService The balanceService to set.<a name="line.344"></a>
+<FONT color="green">345</FONT>         */<a name="line.345"></a>
+<FONT color="green">346</FONT>        public void setBalanceService(BalanceService balanceService) {<a name="line.346"></a>
+<FONT color="green">347</FONT>            this.balanceService = balanceService;<a name="line.347"></a>
+<FONT color="green">348</FONT>        }<a name="line.348"></a>
+<FONT color="green">349</FONT>    <a name="line.349"></a>
+<FONT color="green">350</FONT>    }<a name="line.350"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

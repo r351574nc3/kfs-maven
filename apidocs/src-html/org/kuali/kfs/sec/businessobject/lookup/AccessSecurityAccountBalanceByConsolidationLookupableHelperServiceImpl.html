@@ -1,0 +1,283 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.sec.businessobject.lookup;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.ArrayList;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Iterator;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.List;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Map;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.coa.service.ObjectTypeService;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.gl.GeneralLedgerConstants;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.gl.businessobject.AccountBalance;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.gl.businessobject.TransientBalanceInquiryAttributes;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.gl.service.AccountBalanceService;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.sec.SecKeyConstants;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.sec.service.AccessSecurityService;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.sec.util.SecUtil;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.sys.KFSKeyConstants;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.rice.kns.bo.BusinessObject;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.rice.kns.lookup.CollectionIncomplete;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.rice.kns.service.KualiConfigurationService;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.rice.kns.util.GlobalVariables;<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>    /**<a name="line.43"></a>
+<FONT color="green">044</FONT>     * Override of AccountBalanceByConsolidation lookup helper to integrate access security<a name="line.44"></a>
+<FONT color="green">045</FONT>     */<a name="line.45"></a>
+<FONT color="green">046</FONT>    public class AccessSecurityAccountBalanceByConsolidationLookupableHelperServiceImpl extends AccountBalanceByConsolidationLookupableHelperServiceImpl {<a name="line.46"></a>
+<FONT color="green">047</FONT>        protected AccessSecurityService accessSecurityService;<a name="line.47"></a>
+<FONT color="green">048</FONT>        protected ObjectTypeService objectTypeService;<a name="line.48"></a>
+<FONT color="green">049</FONT>        protected KualiConfigurationService kualiConfigurationService;<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>        /**<a name="line.51"></a>
+<FONT color="green">052</FONT>         * Checks security on the detail balance records, if user does not have access to view any of those records they are removed and total lines<a name="line.52"></a>
+<FONT color="green">053</FONT>         * are updated<a name="line.53"></a>
+<FONT color="green">054</FONT>         * <a name="line.54"></a>
+<FONT color="green">055</FONT>         * @see org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl#getSearchResults(java.util.Map)<a name="line.55"></a>
+<FONT color="green">056</FONT>         */<a name="line.56"></a>
+<FONT color="green">057</FONT>        @Override<a name="line.57"></a>
+<FONT color="green">058</FONT>        public List&lt;? extends BusinessObject&gt; getSearchResults(Map fieldValues) {<a name="line.58"></a>
+<FONT color="green">059</FONT>            AccountBalanceByConsolidationLookupableHelperServiceImpl helperServiceImpl = new AccountBalanceByConsolidationLookupableHelperServiceImpl();<a name="line.59"></a>
+<FONT color="green">060</FONT>            helperServiceImpl.setAccountBalanceService(SpringContext.getBean(AccountBalanceService.class));<a name="line.60"></a>
+<FONT color="green">061</FONT>            List&lt;? extends BusinessObject&gt; results = helperServiceImpl.getSearchResults(fieldValues);<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>            // first 7 items of results are total lines, so we need to check any detail lines after than<a name="line.63"></a>
+<FONT color="green">064</FONT>            if (results.size() &gt; 7) {<a name="line.64"></a>
+<FONT color="green">065</FONT>                List details = results.subList(7, results.size());<a name="line.65"></a>
+<FONT color="green">066</FONT>    <a name="line.66"></a>
+<FONT color="green">067</FONT>                int resultSizeBeforeRestrictions = details.size();<a name="line.67"></a>
+<FONT color="green">068</FONT>                accessSecurityService.applySecurityRestrictionsForGLInquiry(details, GlobalVariables.getUserSession().getPerson());<a name="line.68"></a>
+<FONT color="green">069</FONT>    <a name="line.69"></a>
+<FONT color="green">070</FONT>                SecUtil.compareListSizeAndAddMessageIfChanged(resultSizeBeforeRestrictions, details, SecKeyConstants.MESSAGE_BALANCE_INQUIRY_RESULTS_RESTRICTED);<a name="line.70"></a>
+<FONT color="green">071</FONT>    <a name="line.71"></a>
+<FONT color="green">072</FONT>                // if details have changed we need to update totals<a name="line.72"></a>
+<FONT color="green">073</FONT>                if (resultSizeBeforeRestrictions != details.size()) {<a name="line.73"></a>
+<FONT color="green">074</FONT>                    String subAccountNumber = (String) fieldValues.get(KFSPropertyConstants.SUB_ACCOUNT_NUMBER);<a name="line.74"></a>
+<FONT color="green">075</FONT>                    String fiscalYear = (String) fieldValues.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR);<a name="line.75"></a>
+<FONT color="green">076</FONT>                    Integer universityFiscalYear = new Integer(Integer.parseInt(fiscalYear));<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>                    // Dashes means no sub account number<a name="line.78"></a>
+<FONT color="green">079</FONT>                    if (KFSConstants.getDashSubAccountNumber().equals(subAccountNumber)) {<a name="line.79"></a>
+<FONT color="green">080</FONT>                        subAccountNumber = "";<a name="line.80"></a>
+<FONT color="green">081</FONT>                    }<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>                    TransientBalanceInquiryAttributes dbo = ((AccountBalance) results.get(0)).getDummyBusinessObject();<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>                    List totals = buildAccountBalanceTotals(details, universityFiscalYear, subAccountNumber, dbo);<a name="line.85"></a>
+<FONT color="green">086</FONT>                    totals.addAll(details);<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>                    return new CollectionIncomplete(totals, new Long(totals.size()));<a name="line.88"></a>
+<FONT color="green">089</FONT>                }<a name="line.89"></a>
+<FONT color="green">090</FONT>            }<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>            return results;<a name="line.92"></a>
+<FONT color="green">093</FONT>        }<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * Rebuilds the account balance total lines, logic mostly duplicated from AccountBalanceServiceImpl:findAccountBalanceByConsolidation<a name="line.96"></a>
+<FONT color="green">097</FONT>         * <a name="line.97"></a>
+<FONT color="green">098</FONT>         * @param balanceDetails List of AccountBalance detail lines<a name="line.98"></a>
+<FONT color="green">099</FONT>         * @param universityFiscalYear Fiscal Year being searched<a name="line.99"></a>
+<FONT color="green">100</FONT>         * @param subAccountNumber Sub Account number being searched <a name="line.100"></a>
+<FONT color="green">101</FONT>         * @param dbo TransientBalanceInquiryAttributes object that will be set on total lines<a name="line.101"></a>
+<FONT color="green">102</FONT>         * @return List of AccountBalance total lines<a name="line.102"></a>
+<FONT color="green">103</FONT>         */<a name="line.103"></a>
+<FONT color="green">104</FONT>        protected List buildAccountBalanceTotals(List balanceDetails, Integer universityFiscalYear, String subAccountNumber, TransientBalanceInquiryAttributes dbo) {<a name="line.104"></a>
+<FONT color="green">105</FONT>            List totals = new ArrayList();<a name="line.105"></a>
+<FONT color="green">106</FONT>    <a name="line.106"></a>
+<FONT color="green">107</FONT>            List incomeObjectTypes = objectTypeService.getBasicIncomeObjectTypes(universityFiscalYear);<a name="line.107"></a>
+<FONT color="green">108</FONT>            String incomeTransferObjectType = objectTypeService.getIncomeTransferObjectType(universityFiscalYear);<a name="line.108"></a>
+<FONT color="green">109</FONT>            List expenseObjectTypes = objectTypeService.getBasicExpenseObjectTypes(universityFiscalYear);<a name="line.109"></a>
+<FONT color="green">110</FONT>            String expenseTransferObjectType = objectTypeService.getExpenseTransferObjectType(universityFiscalYear);<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>            AccountBalance income = new AccountBalance(kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.INCOME));<a name="line.112"></a>
+<FONT color="green">113</FONT>            AccountBalance incomeTransfers = new AccountBalance(kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.INCOME_FROM_TRANSFERS));<a name="line.113"></a>
+<FONT color="green">114</FONT>            AccountBalance incomeTotal = new AccountBalance(kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.INCOME_TOTAL));<a name="line.114"></a>
+<FONT color="green">115</FONT>            AccountBalance expense = new AccountBalance(kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.EXPENSE));<a name="line.115"></a>
+<FONT color="green">116</FONT>            AccountBalance expenseTransfers = new AccountBalance(kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.EXPENSE_FROM_TRANSFERS));<a name="line.116"></a>
+<FONT color="green">117</FONT>            AccountBalance expenseTotal = new AccountBalance(kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.EXPENSE_TOTAL));<a name="line.117"></a>
+<FONT color="green">118</FONT>            AccountBalance total = new AccountBalance(kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.TOTAL));<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>            totals.add(income);<a name="line.120"></a>
+<FONT color="green">121</FONT>            totals.add(incomeTransfers);<a name="line.121"></a>
+<FONT color="green">122</FONT>            totals.add(incomeTotal);<a name="line.122"></a>
+<FONT color="green">123</FONT>            totals.add(expense);<a name="line.123"></a>
+<FONT color="green">124</FONT>            totals.add(expenseTransfers);<a name="line.124"></a>
+<FONT color="green">125</FONT>            totals.add(expenseTotal);<a name="line.125"></a>
+<FONT color="green">126</FONT>            totals.add(total);<a name="line.126"></a>
+<FONT color="green">127</FONT>    <a name="line.127"></a>
+<FONT color="green">128</FONT>            // set the dummy business object that was built in super lookupable<a name="line.128"></a>
+<FONT color="green">129</FONT>            for (Iterator iterator = totals.iterator(); iterator.hasNext();) {<a name="line.129"></a>
+<FONT color="green">130</FONT>                AccountBalance totalBalance = (AccountBalance) iterator.next();<a name="line.130"></a>
+<FONT color="green">131</FONT>                total.setDummyBusinessObject(dbo);<a name="line.131"></a>
+<FONT color="green">132</FONT>            }<a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>            boolean subAccountBlank = StringUtils.isBlank(subAccountNumber);<a name="line.134"></a>
+<FONT color="green">135</FONT>    <a name="line.135"></a>
+<FONT color="green">136</FONT>            // iterate over details and update total line based on object type<a name="line.136"></a>
+<FONT color="green">137</FONT>            for (Iterator iterator = balanceDetails.iterator(); iterator.hasNext();) {<a name="line.137"></a>
+<FONT color="green">138</FONT>                AccountBalance detail = (AccountBalance) iterator.next();<a name="line.138"></a>
+<FONT color="green">139</FONT>                String objectType = detail.getFinancialObject().getFinancialObjectTypeCode();<a name="line.139"></a>
+<FONT color="green">140</FONT>    <a name="line.140"></a>
+<FONT color="green">141</FONT>                if (incomeObjectTypes.contains(objectType)) {<a name="line.141"></a>
+<FONT color="green">142</FONT>                    String transferExpenseCode = detail.getFinancialObject().getFinancialObjectLevel().getFinancialConsolidationObject().getFinConsolidationObjectCode();<a name="line.142"></a>
+<FONT color="green">143</FONT>                    if (!subAccountBlank &amp;&amp; transferExpenseCode.equals(GeneralLedgerConstants.INCOME_OR_EXPENSE_TRANSFER_CONSOLIDATION_CODE)) {<a name="line.143"></a>
+<FONT color="green">144</FONT>                        incomeTransfers.add(detail);<a name="line.144"></a>
+<FONT color="green">145</FONT>                    }<a name="line.145"></a>
+<FONT color="green">146</FONT>                    else {<a name="line.146"></a>
+<FONT color="green">147</FONT>                        income.add(detail);<a name="line.147"></a>
+<FONT color="green">148</FONT>                    }<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>                    incomeTotal.add(detail);<a name="line.150"></a>
+<FONT color="green">151</FONT>                }<a name="line.151"></a>
+<FONT color="green">152</FONT>    <a name="line.152"></a>
+<FONT color="green">153</FONT>                if (incomeTransferObjectType.equals(objectType)) {<a name="line.153"></a>
+<FONT color="green">154</FONT>                    incomeTransfers.add(detail);<a name="line.154"></a>
+<FONT color="green">155</FONT>                    incomeTotal.add(detail);<a name="line.155"></a>
+<FONT color="green">156</FONT>                }<a name="line.156"></a>
+<FONT color="green">157</FONT>    <a name="line.157"></a>
+<FONT color="green">158</FONT>                if (expenseObjectTypes.contains(objectType)) {<a name="line.158"></a>
+<FONT color="green">159</FONT>                    String transferExpenseCode = detail.getFinancialObject().getFinancialObjectLevel().getFinancialConsolidationObject().getFinConsolidationObjectCode();<a name="line.159"></a>
+<FONT color="green">160</FONT>                    if (!subAccountBlank &amp;&amp; transferExpenseCode.equals(GeneralLedgerConstants.INCOME_OR_EXPENSE_TRANSFER_CONSOLIDATION_CODE)) {<a name="line.160"></a>
+<FONT color="green">161</FONT>                        expenseTransfers.add(detail);<a name="line.161"></a>
+<FONT color="green">162</FONT>                    }<a name="line.162"></a>
+<FONT color="green">163</FONT>                    else {<a name="line.163"></a>
+<FONT color="green">164</FONT>                        expense.add(detail);<a name="line.164"></a>
+<FONT color="green">165</FONT>                    }<a name="line.165"></a>
+<FONT color="green">166</FONT>    <a name="line.166"></a>
+<FONT color="green">167</FONT>                    expenseTotal.add(detail);<a name="line.167"></a>
+<FONT color="green">168</FONT>                }<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>                if (expenseTransferObjectType.equals(objectType)) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                    expenseTransfers.add(detail);<a name="line.171"></a>
+<FONT color="green">172</FONT>                    expenseTransfers.add(detail);<a name="line.172"></a>
+<FONT color="green">173</FONT>                }<a name="line.173"></a>
+<FONT color="green">174</FONT>            }<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>            // Add up variances<a name="line.176"></a>
+<FONT color="green">177</FONT>            income.getDummyBusinessObject().setGenericAmount(income.getAccountLineActualsBalanceAmount().add(income.getAccountLineEncumbranceBalanceAmount()).subtract(income.getCurrentBudgetLineBalanceAmount()));<a name="line.177"></a>
+<FONT color="green">178</FONT>            incomeTransfers.getDummyBusinessObject().setGenericAmount(incomeTransfers.getAccountLineActualsBalanceAmount().add(incomeTransfers.getAccountLineEncumbranceBalanceAmount()).subtract(incomeTransfers.getCurrentBudgetLineBalanceAmount()));<a name="line.178"></a>
+<FONT color="green">179</FONT>            incomeTotal.getDummyBusinessObject().setGenericAmount(income.getDummyBusinessObject().getGenericAmount().add(incomeTransfers.getDummyBusinessObject().getGenericAmount()));<a name="line.179"></a>
+<FONT color="green">180</FONT>    <a name="line.180"></a>
+<FONT color="green">181</FONT>            expense.getDummyBusinessObject().setGenericAmount(expense.getCurrentBudgetLineBalanceAmount().subtract(expense.getAccountLineActualsBalanceAmount()).subtract(expense.getAccountLineEncumbranceBalanceAmount()));<a name="line.181"></a>
+<FONT color="green">182</FONT>            expenseTransfers.getDummyBusinessObject().setGenericAmount(expenseTransfers.getCurrentBudgetLineBalanceAmount().subtract(expenseTransfers.getAccountLineActualsBalanceAmount()).subtract(expenseTransfers.getAccountLineEncumbranceBalanceAmount()));<a name="line.182"></a>
+<FONT color="green">183</FONT>            expenseTotal.getDummyBusinessObject().setGenericAmount(expense.getDummyBusinessObject().getGenericAmount().add(expenseTransfers.getDummyBusinessObject().getGenericAmount()));<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>            total.getDummyBusinessObject().setGenericAmount(incomeTotal.getDummyBusinessObject().getGenericAmount().add(expenseTotal.getDummyBusinessObject().getGenericAmount()));<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>            return totals;<a name="line.187"></a>
+<FONT color="green">188</FONT>        }<a name="line.188"></a>
+<FONT color="green">189</FONT>    <a name="line.189"></a>
+<FONT color="green">190</FONT>        /**<a name="line.190"></a>
+<FONT color="green">191</FONT>         * Sets the accessSecurityService attribute value.<a name="line.191"></a>
+<FONT color="green">192</FONT>         * <a name="line.192"></a>
+<FONT color="green">193</FONT>         * @param accessSecurityService The accessSecurityService to set.<a name="line.193"></a>
+<FONT color="green">194</FONT>         */<a name="line.194"></a>
+<FONT color="green">195</FONT>        public void setAccessSecurityService(AccessSecurityService accessSecurityService) {<a name="line.195"></a>
+<FONT color="green">196</FONT>            this.accessSecurityService = accessSecurityService;<a name="line.196"></a>
+<FONT color="green">197</FONT>        }<a name="line.197"></a>
+<FONT color="green">198</FONT>    <a name="line.198"></a>
+<FONT color="green">199</FONT>        /**<a name="line.199"></a>
+<FONT color="green">200</FONT>         * Sets the objectTypeService attribute value.<a name="line.200"></a>
+<FONT color="green">201</FONT>         * <a name="line.201"></a>
+<FONT color="green">202</FONT>         * @param objectTypeService The objectTypeService to set.<a name="line.202"></a>
+<FONT color="green">203</FONT>         */<a name="line.203"></a>
+<FONT color="green">204</FONT>        public void setObjectTypeService(ObjectTypeService objectTypeService) {<a name="line.204"></a>
+<FONT color="green">205</FONT>            this.objectTypeService = objectTypeService;<a name="line.205"></a>
+<FONT color="green">206</FONT>        }<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>        /**<a name="line.208"></a>
+<FONT color="green">209</FONT>         * Sets the kualiConfigurationService attribute value.<a name="line.209"></a>
+<FONT color="green">210</FONT>         * <a name="line.210"></a>
+<FONT color="green">211</FONT>         * @param kualiConfigurationService The kualiConfigurationService to set.<a name="line.211"></a>
+<FONT color="green">212</FONT>         */<a name="line.212"></a>
+<FONT color="green">213</FONT>        public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {<a name="line.213"></a>
+<FONT color="green">214</FONT>            this.kualiConfigurationService = kualiConfigurationService;<a name="line.214"></a>
+<FONT color="green">215</FONT>        }<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>    }<a name="line.217"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

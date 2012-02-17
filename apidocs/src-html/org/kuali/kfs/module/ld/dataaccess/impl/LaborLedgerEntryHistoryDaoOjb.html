@@ -1,0 +1,121 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.ld.dataaccess.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.math.BigDecimal;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Iterator;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.apache.ojb.broker.query.Criteria;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.apache.ojb.broker.query.QueryFactory;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.apache.ojb.broker.query.ReportQueryByCriteria;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.gl.dataaccess.LedgerEntryHistoryBalancingDao;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.ld.businessobject.LaborEntryHistory;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.ld.util.ConsolidationUtil;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.util.TransactionalServiceUtils;<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>    /**<a name="line.32"></a>
+<FONT color="green">033</FONT>     * This is the data access object for ledger entry history<a name="line.33"></a>
+<FONT color="green">034</FONT>     * <a name="line.34"></a>
+<FONT color="green">035</FONT>     * @see org.kuali.kfs.module.ld.businessobject.LaborEntryHistory<a name="line.35"></a>
+<FONT color="green">036</FONT>     */<a name="line.36"></a>
+<FONT color="green">037</FONT>    public class LaborLedgerEntryHistoryDaoOjb extends PlatformAwareDaoBaseOjb implements LedgerEntryHistoryBalancingDao {<a name="line.37"></a>
+<FONT color="green">038</FONT>        private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LaborLedgerEntryHistoryDaoOjb.class);<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>        /**<a name="line.40"></a>
+<FONT color="green">041</FONT>         * @see org.kuali.kfs.gl.dataaccess.LedgerEntryBalancingDao#findSumRowCountGreaterOrEqualThan(java.lang.Integer)<a name="line.41"></a>
+<FONT color="green">042</FONT>         */<a name="line.42"></a>
+<FONT color="green">043</FONT>        public Integer findSumRowCountGreaterOrEqualThan(Integer year) {<a name="line.43"></a>
+<FONT color="green">044</FONT>            Criteria criteria = new Criteria();<a name="line.44"></a>
+<FONT color="green">045</FONT>            criteria.addGreaterOrEqualThan(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);<a name="line.45"></a>
+<FONT color="green">046</FONT>            <a name="line.46"></a>
+<FONT color="green">047</FONT>            ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(LaborEntryHistory.class, criteria);<a name="line.47"></a>
+<FONT color="green">048</FONT>            reportQuery.setAttributes(new String[] { ConsolidationUtil.sum(KFSPropertyConstants.ROW_COUNT)});<a name="line.48"></a>
+<FONT color="green">049</FONT>            <a name="line.49"></a>
+<FONT color="green">050</FONT>            Iterator&lt;Object[]&gt; iterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery);<a name="line.50"></a>
+<FONT color="green">051</FONT>            Object[] returnResult = TransactionalServiceUtils.retrieveFirstAndExhaustIterator(iterator);<a name="line.51"></a>
+<FONT color="green">052</FONT>            <a name="line.52"></a>
+<FONT color="green">053</FONT>            return ObjectUtils.isNull(returnResult[0]) ? 0 : ((BigDecimal) returnResult[0]).intValue();<a name="line.53"></a>
+<FONT color="green">054</FONT>        }<a name="line.54"></a>
+<FONT color="green">055</FONT>    }<a name="line.55"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

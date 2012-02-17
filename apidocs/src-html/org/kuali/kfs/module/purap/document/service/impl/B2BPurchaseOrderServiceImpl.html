@@ -1,0 +1,572 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.purap.document.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.text.SimpleDateFormat;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Date;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.Iterator;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.List;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.module.purap.PurapConstants;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.purap.dataaccess.B2BDao;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.module.purap.document.RequisitionDocument;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.module.purap.document.service.RequisitionService;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.module.purap.exception.B2BConnectionException;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.module.purap.exception.CxmlParseError;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.module.purap.util.cxml.PurchaseOrderResponse;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.kfs.vnd.businessobject.ContractManager;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.rice.kim.bo.Person;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.rice.kim.service.PersonService;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.rice.kns.service.DateTimeService;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.kuali.rice.kns.service.KualiConfigurationService;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import org.kuali.rice.kns.service.ParameterService;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import org.kuali.rice.kns.workflow.service.KualiWorkflowDocument;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import org.springframework.transaction.annotation.Transactional;<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>    @Transactional<a name="line.48"></a>
+<FONT color="green">049</FONT>    public class B2BPurchaseOrderServiceImpl implements B2BPurchaseOrderService {<a name="line.49"></a>
+<FONT color="green">050</FONT>        private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(B2BPurchaseOrderServiceImpl.class);<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        private B2BDao b2bDao;<a name="line.52"></a>
+<FONT color="green">053</FONT>        private RequisitionService requisitionService;<a name="line.53"></a>
+<FONT color="green">054</FONT>        private ParameterService parameterService;<a name="line.54"></a>
+<FONT color="green">055</FONT>        private PersonService&lt;Person&gt; personService;<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>        // injected values<a name="line.57"></a>
+<FONT color="green">058</FONT>        private String b2bEnvironment;<a name="line.58"></a>
+<FONT color="green">059</FONT>        private String b2bUserAgent;<a name="line.59"></a>
+<FONT color="green">060</FONT>        private String b2bPurchaseOrderURL;<a name="line.60"></a>
+<FONT color="green">061</FONT>        private String b2bPurchaseOrderIdentity;<a name="line.61"></a>
+<FONT color="green">062</FONT>        private String b2bPurchaseOrderPassword;<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>        /**<a name="line.64"></a>
+<FONT color="green">065</FONT>         * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#sendPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument)<a name="line.65"></a>
+<FONT color="green">066</FONT>         */<a name="line.66"></a>
+<FONT color="green">067</FONT>        public String sendPurchaseOrder(PurchaseOrderDocument purchaseOrder) {<a name="line.67"></a>
+<FONT color="green">068</FONT>            /*<a name="line.68"></a>
+<FONT color="green">069</FONT>             * IMPORTANT DESIGN NOTE: We need the contract manager's name, phone number, and e-mail address. B2B orders that don't<a name="line.69"></a>
+<FONT color="green">070</FONT>             * qualify to become APO's will have contract managers on the PO, and the ones that DO become APO's will not. We decided to<a name="line.70"></a>
+<FONT color="green">071</FONT>             * always get the contract manager from the B2B contract associated with the order, and for B2B orders to ignore the<a name="line.71"></a>
+<FONT color="green">072</FONT>             * contract manager field on the PO. We pull the name and phone number from the contract manager table and get the e-mail<a name="line.72"></a>
+<FONT color="green">073</FONT>             * address from the user data.<a name="line.73"></a>
+<FONT color="green">074</FONT>             */<a name="line.74"></a>
+<FONT color="green">075</FONT>    <a name="line.75"></a>
+<FONT color="green">076</FONT>            ContractManager contractManager = purchaseOrder.getVendorContract().getContractManager();<a name="line.76"></a>
+<FONT color="green">077</FONT>            String contractManagerEmail = getContractManagerEmail(contractManager);<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>            String vendorDuns = purchaseOrder.getVendorDetail().getVendorDunsNumber();<a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>            RequisitionDocument r = requisitionService.getRequisitionById(purchaseOrder.getRequisitionIdentifier());<a name="line.81"></a>
+<FONT color="green">082</FONT>            KualiWorkflowDocument reqWorkflowDoc = r.getDocumentHeader().getWorkflowDocument();<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>            LOG.debug("sendPurchaseOrder(): b2bPurchaseOrderURL is " + b2bPurchaseOrderURL);<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>            String validateErrors = verifyCxmlPOData(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);<a name="line.86"></a>
+<FONT color="green">087</FONT>            if (StringUtils.isEmpty(validateErrors)) {<a name="line.87"></a>
+<FONT color="green">088</FONT>                return validateErrors;<a name="line.88"></a>
+<FONT color="green">089</FONT>            }<a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>            StringBuffer transmitErrors = new StringBuffer();<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>            try {<a name="line.93"></a>
+<FONT color="green">094</FONT>                LOG.debug("sendPurchaseOrder() Generating cxml");<a name="line.94"></a>
+<FONT color="green">095</FONT>                String cxml = getCxml(purchaseOrder, reqWorkflowDoc.getInitiatorNetworkId(), b2bPurchaseOrderPassword, contractManager, contractManagerEmail, vendorDuns);<a name="line.95"></a>
+<FONT color="green">096</FONT>    <a name="line.96"></a>
+<FONT color="green">097</FONT>                LOG.info("sendPurchaseOrder() Sending cxml\n" + cxml);<a name="line.97"></a>
+<FONT color="green">098</FONT>                String responseCxml = b2bDao.sendPunchOutRequest(cxml, b2bPurchaseOrderURL);<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>                LOG.info("sendPurchaseOrder(): Response cXML for po #" + purchaseOrder.getPurapDocumentIdentifier() + ":\n" + responseCxml);<a name="line.100"></a>
+<FONT color="green">101</FONT>    <a name="line.101"></a>
+<FONT color="green">102</FONT>                PurchaseOrderResponse poResponse = B2BParserHelper.getInstance().parsePurchaseOrderResponse(responseCxml);<a name="line.102"></a>
+<FONT color="green">103</FONT>                String statusText = poResponse.getStatusText();<a name="line.103"></a>
+<FONT color="green">104</FONT>                LOG.debug("sendPurchaseOrder(): statusText is " + statusText);<a name="line.104"></a>
+<FONT color="green">105</FONT>                if ((ObjectUtils.isNull(statusText)) || (!"success".equalsIgnoreCase(statusText.trim()))) {<a name="line.105"></a>
+<FONT color="green">106</FONT>                    LOG.error("sendPurchaseOrder(): PO cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + " failed sending to vendor: " + statusText);<a name="line.106"></a>
+<FONT color="green">107</FONT>                    transmitErrors.append("Unable to send Purchase Order: " + statusText);<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>                    // find any additional error messages that might have been sent<a name="line.109"></a>
+<FONT color="green">110</FONT>                    List errorMessages = poResponse.getPOResponseErrorMessages();<a name="line.110"></a>
+<FONT color="green">111</FONT>                    if (ObjectUtils.isNotNull(errorMessages) &amp;&amp; !errorMessages.isEmpty()) {<a name="line.111"></a>
+<FONT color="green">112</FONT>                        for (Iterator iter = errorMessages.iterator(); iter.hasNext();) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                            String errorMessage = (String) iter.next();<a name="line.113"></a>
+<FONT color="green">114</FONT>                            if (ObjectUtils.isNotNull(errorMessage)) {<a name="line.114"></a>
+<FONT color="green">115</FONT>                                LOG.error("sendPurchaseOrder(): Error message for po number " + purchaseOrder.getPurapDocumentIdentifier() + ": " + errorMessage);<a name="line.115"></a>
+<FONT color="green">116</FONT>                                transmitErrors.append("Error sending Purchase Order: " + errorMessage);<a name="line.116"></a>
+<FONT color="green">117</FONT>                            }<a name="line.117"></a>
+<FONT color="green">118</FONT>                        }<a name="line.118"></a>
+<FONT color="green">119</FONT>                    }<a name="line.119"></a>
+<FONT color="green">120</FONT>                }<a name="line.120"></a>
+<FONT color="green">121</FONT>            }<a name="line.121"></a>
+<FONT color="green">122</FONT>            catch (B2BConnectionException e) {<a name="line.122"></a>
+<FONT color="green">123</FONT>                LOG.error("sendPurchaseOrder() Error connecting to b2b", e);<a name="line.123"></a>
+<FONT color="green">124</FONT>                transmitErrors.append("Connection to vendor failed.");<a name="line.124"></a>
+<FONT color="green">125</FONT>            }<a name="line.125"></a>
+<FONT color="green">126</FONT>            catch (CxmlParseError e) {<a name="line.126"></a>
+<FONT color="green">127</FONT>                LOG.error("sendPurchaseOrder() Error Parsing", e);<a name="line.127"></a>
+<FONT color="green">128</FONT>                transmitErrors.append("Unable to read cxml returned from vendor.");<a name="line.128"></a>
+<FONT color="green">129</FONT>            }<a name="line.129"></a>
+<FONT color="green">130</FONT>            catch (Throwable e) {<a name="line.130"></a>
+<FONT color="green">131</FONT>                LOG.error("sendPurchaseOrder() Unknown Error", e);<a name="line.131"></a>
+<FONT color="green">132</FONT>                transmitErrors.append("Unexpected error occurred while attempting to transmit Purchase Order.");<a name="line.132"></a>
+<FONT color="green">133</FONT>            }<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>            return transmitErrors.toString();<a name="line.135"></a>
+<FONT color="green">136</FONT>        }<a name="line.136"></a>
+<FONT color="green">137</FONT>    <a name="line.137"></a>
+<FONT color="green">138</FONT>        /**<a name="line.138"></a>
+<FONT color="green">139</FONT>         * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#getCxml(org.kuali.kfs.module.purap.document.PurchaseOrderDocument,<a name="line.139"></a>
+<FONT color="green">140</FONT>         *      org.kuali.rice.kim.bo.Person, java.lang.String, org.kuali.kfs.vnd.businessobject.ContractManager,<a name="line.140"></a>
+<FONT color="green">141</FONT>         *      java.lang.String, java.lang.String)<a name="line.141"></a>
+<FONT color="green">142</FONT>         */<a name="line.142"></a>
+<FONT color="green">143</FONT>        public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>            StringBuffer cxml = new StringBuffer();<a name="line.145"></a>
+<FONT color="green">146</FONT>            Date d = SpringContext.getBean(DateTimeService.class).getCurrentDate();<a name="line.146"></a>
+<FONT color="green">147</FONT>            SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);<a name="line.147"></a>
+<FONT color="green">148</FONT>            SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>            cxml.append("&lt;?xml version=\"1.0\" encoding=\"UTF-8\" ?&gt;\n");<a name="line.150"></a>
+<FONT color="green">151</FONT>            cxml.append("&lt;!DOCTYPE cXML SYSTEM \"http://xml.cXML.org/schemas/cXML/1.2.019/cXML.dtd\"&gt;\n");<a name="line.151"></a>
+<FONT color="green">152</FONT>            // payloadID - can be whatever you would like it to be. Just make it unique.<a name="line.152"></a>
+<FONT color="green">153</FONT>            cxml.append("&lt;cXML payloadID=\"test@kuali.org\" timestamp=\"").append(date.format(d)).append("T").append(time.format(d)).append("+03:00").append("\" xml:lang=\"en-US\"&gt;\n");<a name="line.153"></a>
+<FONT color="green">154</FONT>            cxml.append("  &lt;Header&gt;\n");<a name="line.154"></a>
+<FONT color="green">155</FONT>            cxml.append("    &lt;From&gt;\n");<a name="line.155"></a>
+<FONT color="green">156</FONT>            cxml.append("      &lt;Credential domain=\"NetworkUserId\"&gt;\n");<a name="line.156"></a>
+<FONT color="green">157</FONT>            cxml.append("        &lt;Identity&gt;").append(requisitionInitiatorId.toUpperCase()).append("&lt;/Identity&gt;\n");<a name="line.157"></a>
+<FONT color="green">158</FONT>            cxml.append("      &lt;/Credential&gt;\n");<a name="line.158"></a>
+<FONT color="green">159</FONT>            cxml.append("    &lt;/From&gt;\n");<a name="line.159"></a>
+<FONT color="green">160</FONT>            cxml.append("    &lt;To&gt;\n");<a name="line.160"></a>
+<FONT color="green">161</FONT>            cxml.append("      &lt;Credential domain=\"DUNS\"&gt;\n");<a name="line.161"></a>
+<FONT color="green">162</FONT>            cxml.append("        &lt;Identity&gt;").append(vendorDuns).append("&lt;/Identity&gt;\n");<a name="line.162"></a>
+<FONT color="green">163</FONT>            cxml.append("      &lt;/Credential&gt;\n");<a name="line.163"></a>
+<FONT color="green">164</FONT>            cxml.append("    &lt;/To&gt;\n");<a name="line.164"></a>
+<FONT color="green">165</FONT>            cxml.append("    &lt;Sender&gt;\n");<a name="line.165"></a>
+<FONT color="green">166</FONT>            cxml.append("      &lt;Credential domain=\"NetworkUserId\"&gt;\n");<a name="line.166"></a>
+<FONT color="green">167</FONT>            cxml.append("        &lt;Identity&gt;").append(b2bPurchaseOrderIdentity).append("&lt;/Identity&gt;\n");<a name="line.167"></a>
+<FONT color="green">168</FONT>            cxml.append("        &lt;SharedSecret&gt;").append(password).append("&lt;/SharedSecret&gt;\n");<a name="line.168"></a>
+<FONT color="green">169</FONT>            cxml.append("      &lt;/Credential&gt;\n");<a name="line.169"></a>
+<FONT color="green">170</FONT>            cxml.append("      &lt;UserAgent&gt;Ariba.com Network V1.0&lt;/UserAgent&gt;\n");<a name="line.170"></a>
+<FONT color="green">171</FONT>            cxml.append("    &lt;/Sender&gt;\n");<a name="line.171"></a>
+<FONT color="green">172</FONT>            cxml.append("  &lt;/Header&gt;\n");<a name="line.172"></a>
+<FONT color="green">173</FONT>            // set deployment mode to test if not in production<a name="line.173"></a>
+<FONT color="green">174</FONT>            if (isProduction()) {<a name="line.174"></a>
+<FONT color="green">175</FONT>                cxml.append("  &lt;Request&gt;\n");<a name="line.175"></a>
+<FONT color="green">176</FONT>            } else {<a name="line.176"></a>
+<FONT color="green">177</FONT>                cxml.append("  &lt;Request deploymentMode=\"test\"&gt;\n");<a name="line.177"></a>
+<FONT color="green">178</FONT>            }<a name="line.178"></a>
+<FONT color="green">179</FONT>            cxml.append("    &lt;OrderRequest&gt;\n");<a name="line.179"></a>
+<FONT color="green">180</FONT>            cxml.append("      &lt;OrderRequestHeader orderID=\"").append(purchaseOrder.getPurapDocumentIdentifier()).append("\" orderDate=\"").append(date.format(d)).append("\" type=\"new\"&gt;\n");<a name="line.180"></a>
+<FONT color="green">181</FONT>            cxml.append("        &lt;Total&gt;\n");<a name="line.181"></a>
+<FONT color="green">182</FONT>            cxml.append("          &lt;Money currency=\"USD\"&gt;").append(purchaseOrder.getTotalDollarAmount()).append("&lt;/Money&gt;\n");<a name="line.182"></a>
+<FONT color="green">183</FONT>            cxml.append("        &lt;/Total&gt;\n");<a name="line.183"></a>
+<FONT color="green">184</FONT>            <a name="line.184"></a>
+<FONT color="green">185</FONT>            <a name="line.185"></a>
+<FONT color="green">186</FONT>            cxml.append("        &lt;ShipTo&gt;\n");<a name="line.186"></a>
+<FONT color="green">187</FONT>            cxml.append("          &lt;Address addressID=\"").append(purchaseOrder.getDeliveryCampusCode()).append(purchaseOrder.getOrganizationCode()).append("\"&gt;\n");<a name="line.187"></a>
+<FONT color="green">188</FONT>            cxml.append("            &lt;Name xml:lang=\"en\"&gt;Kuali&lt;/Name&gt;\n");<a name="line.188"></a>
+<FONT color="green">189</FONT>            cxml.append("            &lt;PostalAddress name=\"defaul\"&gt;\n");<a name="line.189"></a>
+<FONT color="green">190</FONT>            cxml.append("              &lt;DeliverTo&gt;").append(purchaseOrder.getDeliveryToName().trim()).append("&lt;/DeliverTo&gt;\n");<a name="line.190"></a>
+<FONT color="green">191</FONT>            if (StringUtils.isNotEmpty(purchaseOrder.getInstitutionContactEmailAddress())) {<a name="line.191"></a>
+<FONT color="green">192</FONT>                cxml.append("              &lt;DeliverTo&gt;&lt;![CDATA[").append(purchaseOrder.getInstitutionContactEmailAddress()).append("]]&gt;&lt;/DeliverTo&gt;\n");<a name="line.192"></a>
+<FONT color="green">193</FONT>            }<a name="line.193"></a>
+<FONT color="green">194</FONT>            else {<a name="line.194"></a>
+<FONT color="green">195</FONT>                cxml.append("              &lt;DeliverTo&gt;&lt;![CDATA[").append(purchaseOrder.getRequestorPersonEmailAddress()).append("]]&gt;&lt;/DeliverTo&gt;\n");<a name="line.195"></a>
+<FONT color="green">196</FONT>            }<a name="line.196"></a>
+<FONT color="green">197</FONT>            if (StringUtils.isNotEmpty(purchaseOrder.getInstitutionContactPhoneNumber())) {<a name="line.197"></a>
+<FONT color="green">198</FONT>                cxml.append("              &lt;DeliverTo&gt;&lt;![CDATA[").append(purchaseOrder.getInstitutionContactPhoneNumber()).append("]]&gt;&lt;/DeliverTo&gt;\n");<a name="line.198"></a>
+<FONT color="green">199</FONT>            }<a name="line.199"></a>
+<FONT color="green">200</FONT>            else {<a name="line.200"></a>
+<FONT color="green">201</FONT>                cxml.append("              &lt;DeliverTo&gt;&lt;![CDATA[").append(purchaseOrder.getRequestorPersonPhoneNumber()).append("]]&gt;&lt;/DeliverTo&gt;\n");<a name="line.201"></a>
+<FONT color="green">202</FONT>            }<a name="line.202"></a>
+<FONT color="green">203</FONT>    <a name="line.203"></a>
+<FONT color="green">204</FONT>            //check indicator to decide if receiving or delivery address should be sent to the vendor<a name="line.204"></a>
+<FONT color="green">205</FONT>            if (purchaseOrder.getAddressToVendorIndicator()) {  //use receiving address<a name="line.205"></a>
+<FONT color="green">206</FONT>                if (StringUtils.isNotEmpty(purchaseOrder.getReceivingName())) {<a name="line.206"></a>
+<FONT color="green">207</FONT>                    cxml.append("              &lt;DeliverTo&gt;&lt;![CDATA[").append(purchaseOrder.getReceivingName()).append("]]&gt;&lt;/DeliverTo&gt;\n");<a name="line.207"></a>
+<FONT color="green">208</FONT>                }<a name="line.208"></a>
+<FONT color="green">209</FONT>                cxml.append("              &lt;Street&gt;&lt;![CDATA[").append(purchaseOrder.getReceivingLine1Address().trim()).append("]]&gt;&lt;/Street&gt;\n");<a name="line.209"></a>
+<FONT color="green">210</FONT>                if (StringUtils.isNotEmpty(purchaseOrder.getReceivingLine2Address())) {<a name="line.210"></a>
+<FONT color="green">211</FONT>                    cxml.append("              &lt;Street&gt;&lt;![CDATA[").append(purchaseOrder.getReceivingLine2Address().trim()).append("]]&gt;&lt;/Street&gt;\n");<a name="line.211"></a>
+<FONT color="green">212</FONT>                }<a name="line.212"></a>
+<FONT color="green">213</FONT>                cxml.append("              &lt;City&gt;&lt;![CDATA[").append(purchaseOrder.getReceivingCityName().trim()).append("]]&gt;&lt;/City&gt;\n");<a name="line.213"></a>
+<FONT color="green">214</FONT>                cxml.append("              &lt;State&gt;").append(purchaseOrder.getReceivingStateCode()).append("&lt;/State&gt;\n");<a name="line.214"></a>
+<FONT color="green">215</FONT>                cxml.append("              &lt;PostalCode&gt;").append(purchaseOrder.getReceivingPostalCode()).append("&lt;/PostalCode&gt;\n");<a name="line.215"></a>
+<FONT color="green">216</FONT>                cxml.append("              &lt;Country isoCountryCode=\"").append(purchaseOrder.getReceivingCountryCode()).append("\"&gt;").append(purchaseOrder.getReceivingCountryCode()).append("&lt;/Country&gt;\n");<a name="line.216"></a>
+<FONT color="green">217</FONT>            }<a name="line.217"></a>
+<FONT color="green">218</FONT>            else { //use final delivery address<a name="line.218"></a>
+<FONT color="green">219</FONT>                if (StringUtils.isNotEmpty(purchaseOrder.getDeliveryBuildingName())) {<a name="line.219"></a>
+<FONT color="green">220</FONT>                    cxml.append("              &lt;DeliverTo&gt;&lt;![CDATA[").append(purchaseOrder.getDeliveryBuildingName()).append(" (").append(purchaseOrder.getDeliveryBuildingCode()).append(")]]&gt;&lt;/DeliverTo&gt;\n");<a name="line.220"></a>
+<FONT color="green">221</FONT>                }<a name="line.221"></a>
+<FONT color="green">222</FONT>                cxml.append("              &lt;Street&gt;&lt;![CDATA[").append(purchaseOrder.getDeliveryBuildingLine1Address().trim()).append("]]&gt;&lt;/Street&gt;\n");<a name="line.222"></a>
+<FONT color="green">223</FONT>                if (StringUtils.isNotEmpty(purchaseOrder.getDeliveryBuildingLine2Address())) {<a name="line.223"></a>
+<FONT color="green">224</FONT>                    cxml.append("              &lt;Street&gt;&lt;![CDATA[").append(purchaseOrder.getDeliveryBuildingLine2Address().trim()).append("]]&gt;&lt;/Street&gt;\n");<a name="line.224"></a>
+<FONT color="green">225</FONT>                }<a name="line.225"></a>
+<FONT color="green">226</FONT>                if (StringUtils.isNotEmpty(purchaseOrder.getDeliveryBuildingRoomNumber())) {<a name="line.226"></a>
+<FONT color="green">227</FONT>                    cxml.append("              &lt;Street&gt;&lt;![CDATA[").append(purchaseOrder.getDeliveryBuildingRoomNumber().trim()).append("]]&gt;&lt;/Street&gt;\n");<a name="line.227"></a>
+<FONT color="green">228</FONT>                }<a name="line.228"></a>
+<FONT color="green">229</FONT>                cxml.append("              &lt;City&gt;&lt;![CDATA[").append(purchaseOrder.getDeliveryCityName().trim()).append("]]&gt;&lt;/City&gt;\n");<a name="line.229"></a>
+<FONT color="green">230</FONT>                cxml.append("              &lt;State&gt;").append(purchaseOrder.getDeliveryStateCode()).append("&lt;/State&gt;\n");<a name="line.230"></a>
+<FONT color="green">231</FONT>                cxml.append("              &lt;PostalCode&gt;").append(purchaseOrder.getDeliveryPostalCode()).append("&lt;/PostalCode&gt;\n");<a name="line.231"></a>
+<FONT color="green">232</FONT>                cxml.append("              &lt;Country isoCountryCode=\"").append(purchaseOrder.getDeliveryCountryCode()).append("\"&gt;").append(purchaseOrder.getDeliveryCountryName()).append("&lt;/Country&gt;\n");<a name="line.232"></a>
+<FONT color="green">233</FONT>            }<a name="line.233"></a>
+<FONT color="green">234</FONT>            cxml.append("            &lt;/PostalAddress&gt;\n");<a name="line.234"></a>
+<FONT color="green">235</FONT>            cxml.append("          &lt;/Address&gt;\n");<a name="line.235"></a>
+<FONT color="green">236</FONT>            cxml.append("        &lt;/ShipTo&gt;\n");<a name="line.236"></a>
+<FONT color="green">237</FONT>    <a name="line.237"></a>
+<FONT color="green">238</FONT>            <a name="line.238"></a>
+<FONT color="green">239</FONT>            cxml.append("        &lt;BillTo&gt;\n");<a name="line.239"></a>
+<FONT color="green">240</FONT>            cxml.append("          &lt;Address addressID=\"").append(purchaseOrder.getDeliveryCampusCode()).append("\"&gt;\n");<a name="line.240"></a>
+<FONT color="green">241</FONT>            cxml.append("            &lt;Name xml:lang=\"en\"&gt;&lt;![CDATA[").append(purchaseOrder.getBillingName().trim()).append("]]&gt;&lt;/Name&gt;\n");<a name="line.241"></a>
+<FONT color="green">242</FONT>            cxml.append("            &lt;PostalAddress name=\"defaul\"&gt;\n");<a name="line.242"></a>
+<FONT color="green">243</FONT>            cxml.append("              &lt;Street&gt;&lt;![CDATA[").append(purchaseOrder.getBillingLine1Address().trim()).append("]]&gt;&lt;/Street&gt;\n");<a name="line.243"></a>
+<FONT color="green">244</FONT>            if (StringUtils.isNotEmpty(purchaseOrder.getBillingLine2Address())) {<a name="line.244"></a>
+<FONT color="green">245</FONT>                cxml.append("              &lt;Street&gt;&lt;![CDATA[").append(purchaseOrder.getBillingLine2Address().trim()).append("]]&gt;&lt;/Street&gt;\n");<a name="line.245"></a>
+<FONT color="green">246</FONT>            }<a name="line.246"></a>
+<FONT color="green">247</FONT>            cxml.append("              &lt;City&gt;&lt;![CDATA[").append(purchaseOrder.getBillingCityName().trim()).append("]]&gt;&lt;/City&gt;\n");<a name="line.247"></a>
+<FONT color="green">248</FONT>            cxml.append("              &lt;State&gt;").append(purchaseOrder.getBillingStateCode()).append("&lt;/State&gt;\n");<a name="line.248"></a>
+<FONT color="green">249</FONT>            cxml.append("              &lt;PostalCode&gt;").append(purchaseOrder.getBillingPostalCode()).append("&lt;/PostalCode&gt;\n");<a name="line.249"></a>
+<FONT color="green">250</FONT>            cxml.append("              &lt;Country isoCountryCode=\"").append(purchaseOrder.getBillingCountryCode()).append("\"&gt;").append(purchaseOrder.getBillingCountryName()).append("&lt;/Country&gt;\n");<a name="line.250"></a>
+<FONT color="green">251</FONT>            cxml.append("            &lt;/PostalAddress&gt;\n");<a name="line.251"></a>
+<FONT color="green">252</FONT>            cxml.append("          &lt;/Address&gt;\n");<a name="line.252"></a>
+<FONT color="green">253</FONT>            cxml.append("        &lt;/BillTo&gt;\n");<a name="line.253"></a>
+<FONT color="green">254</FONT>            cxml.append("        &lt;Tax&gt;\n");<a name="line.254"></a>
+<FONT color="green">255</FONT>            cxml.append("          &lt;Money currency=\"USD\"&gt;").append(purchaseOrder.getTotalTaxAmount()).append("&lt;/Money&gt;\n");<a name="line.255"></a>
+<FONT color="green">256</FONT>            cxml.append("          &lt;Description xml:lang=\"en\"&gt;").append("tax description").append("&lt;/Description&gt;\n");<a name="line.256"></a>
+<FONT color="green">257</FONT>            cxml.append("        &lt;/Tax&gt;\n");<a name="line.257"></a>
+<FONT color="green">258</FONT>            cxml.append("        &lt;Extrinsic name=\"username\"&gt;").append(requisitionInitiatorId.toUpperCase()).append("&lt;/Extrinsic&gt;\n");<a name="line.258"></a>
+<FONT color="green">259</FONT>            cxml.append("        &lt;Extrinsic name=\"BuyerPhone\"&gt;").append(contractManager.getContractManagerPhoneNumber()).append("&lt;/Extrinsic&gt;\n");<a name="line.259"></a>
+<FONT color="green">260</FONT>            cxml.append("        &lt;Extrinsic name=\"SupplierNumber\"&gt;").append(purchaseOrder.getVendorNumber()).append("&lt;/Extrinsic&gt;\n");<a name="line.260"></a>
+<FONT color="green">261</FONT>            cxml.append("      &lt;/OrderRequestHeader&gt;\n");<a name="line.261"></a>
+<FONT color="green">262</FONT>            <a name="line.262"></a>
+<FONT color="green">263</FONT>            for (Object tmpPoi : purchaseOrder.getItems()) {<a name="line.263"></a>
+<FONT color="green">264</FONT>                PurchaseOrderItem poi = (PurchaseOrderItem) tmpPoi;<a name="line.264"></a>
+<FONT color="green">265</FONT>                cxml.append("      &lt;ItemOut quantity=\"").append(poi.getItemQuantity()).append("\" lineNumber=\"").append(poi.getItemLineNumber()).append("\"&gt;\n");<a name="line.265"></a>
+<FONT color="green">266</FONT>                cxml.append("        &lt;ItemID&gt;\n");<a name="line.266"></a>
+<FONT color="green">267</FONT>                cxml.append("          &lt;SupplierPartID&gt;&lt;![CDATA[").append(poi.getItemCatalogNumber()).append("]]&gt;&lt;/SupplierPartID&gt;\n");<a name="line.267"></a>
+<FONT color="green">268</FONT>                if (ObjectUtils.isNotNull(poi.getItemAuxiliaryPartIdentifier())) {<a name="line.268"></a>
+<FONT color="green">269</FONT>                    cxml.append("          &lt;SupplierPartAuxiliaryID&gt;&lt;![CDATA[").append(poi.getItemAuxiliaryPartIdentifier()).append("]]&gt;&lt;/SupplierPartAuxiliaryID&gt;\n");<a name="line.269"></a>
+<FONT color="green">270</FONT>                }<a name="line.270"></a>
+<FONT color="green">271</FONT>                cxml.append("        &lt;/ItemID&gt;\n");<a name="line.271"></a>
+<FONT color="green">272</FONT>                cxml.append("        &lt;ItemDetail&gt;\n");<a name="line.272"></a>
+<FONT color="green">273</FONT>                cxml.append("          &lt;UnitPrice&gt;\n");<a name="line.273"></a>
+<FONT color="green">274</FONT>                cxml.append("            &lt;Money currency=\"USD\"&gt;").append(poi.getItemUnitPrice()).append("&lt;/Money&gt;\n");<a name="line.274"></a>
+<FONT color="green">275</FONT>                cxml.append("          &lt;/UnitPrice&gt;\n");<a name="line.275"></a>
+<FONT color="green">276</FONT>                cxml.append("          &lt;Description xml:lang=\"en\"&gt;&lt;![CDATA[").append(poi.getItemDescription()).append("]]&gt;&lt;/Description&gt;\n"); // Required.<a name="line.276"></a>
+<FONT color="green">277</FONT>                cxml.append("          &lt;UnitOfMeasure&gt;&lt;![CDATA[").append(poi.getItemUnitOfMeasureCode()).append("]]&gt;&lt;/UnitOfMeasure&gt;\n");<a name="line.277"></a>
+<FONT color="green">278</FONT>                cxml.append("          &lt;Classification domain=\"UNSPSC\"&gt;&lt;/Classification&gt;\n");<a name="line.278"></a>
+<FONT color="green">279</FONT>                if (poi.getExternalOrganizationB2bProductTypeName().equals("Punchout")) {<a name="line.279"></a>
+<FONT color="green">280</FONT>                    cxml.append("          &lt;ManufacturerPartID&gt;&lt;/ManufacturerPartID&gt;\n");<a name="line.280"></a>
+<FONT color="green">281</FONT>                }<a name="line.281"></a>
+<FONT color="green">282</FONT>                else {<a name="line.282"></a>
+<FONT color="green">283</FONT>                    cxml.append("          &lt;ManufacturerPartID&gt;").append(poi.getExternalOrganizationB2bProductReferenceNumber()).append("&lt;/ManufacturerPartID&gt;\n");<a name="line.283"></a>
+<FONT color="green">284</FONT>                }<a name="line.284"></a>
+<FONT color="green">285</FONT>                cxml.append("          &lt;ManufacturerName&gt;").append(poi.getExternalOrganizationB2bProductTypeName()).append("&lt;/ManufacturerName&gt;\n");<a name="line.285"></a>
+<FONT color="green">286</FONT>                cxml.append("        &lt;/ItemDetail&gt;\n");<a name="line.286"></a>
+<FONT color="green">287</FONT>                cxml.append("      &lt;/ItemOut&gt;\n");<a name="line.287"></a>
+<FONT color="green">288</FONT>            }<a name="line.288"></a>
+<FONT color="green">289</FONT>    <a name="line.289"></a>
+<FONT color="green">290</FONT>            cxml.append("    &lt;/OrderRequest&gt;\n");<a name="line.290"></a>
+<FONT color="green">291</FONT>            cxml.append("  &lt;/Request&gt;\n");<a name="line.291"></a>
+<FONT color="green">292</FONT>            cxml.append("&lt;/cXML&gt;");<a name="line.292"></a>
+<FONT color="green">293</FONT>    <a name="line.293"></a>
+<FONT color="green">294</FONT>            LOG.debug("getCxml(): cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":\n" + cxml.toString());<a name="line.294"></a>
+<FONT color="green">295</FONT>    <a name="line.295"></a>
+<FONT color="green">296</FONT>            return cxml.toString();<a name="line.296"></a>
+<FONT color="green">297</FONT>        }<a name="line.297"></a>
+<FONT color="green">298</FONT>    <a name="line.298"></a>
+<FONT color="green">299</FONT>        /**<a name="line.299"></a>
+<FONT color="green">300</FONT>         * @see org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService#verifyCxmlPOData(org.kuali.kfs.module.purap.document.PurchaseOrderDocument,<a name="line.300"></a>
+<FONT color="green">301</FONT>         *      org.kuali.rice.kim.bo.Person, java.lang.String, org.kuali.kfs.vnd.businessobject.ContractManager,<a name="line.301"></a>
+<FONT color="green">302</FONT>         *      java.lang.String, java.lang.String)<a name="line.302"></a>
+<FONT color="green">303</FONT>         */<a name="line.303"></a>
+<FONT color="green">304</FONT>        public String verifyCxmlPOData(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {<a name="line.304"></a>
+<FONT color="green">305</FONT>            StringBuffer errors = new StringBuffer();<a name="line.305"></a>
+<FONT color="green">306</FONT>    <a name="line.306"></a>
+<FONT color="green">307</FONT>            if (ObjectUtils.isNull(purchaseOrder)) {<a name="line.307"></a>
+<FONT color="green">308</FONT>                LOG.error("verifyCxmlPOData()  The Purchase Order is null.");<a name="line.308"></a>
+<FONT color="green">309</FONT>                errors.append("Error occurred retrieving Purchase Order\n");<a name="line.309"></a>
+<FONT color="green">310</FONT>                return errors.toString();<a name="line.310"></a>
+<FONT color="green">311</FONT>            }<a name="line.311"></a>
+<FONT color="green">312</FONT>            if (ObjectUtils.isNull(contractManager)) {<a name="line.312"></a>
+<FONT color="green">313</FONT>                LOG.error("verifyCxmlPOData()  The contractManager is null.");<a name="line.313"></a>
+<FONT color="green">314</FONT>                errors.append("Error occurred retrieving Contract Manager\n");<a name="line.314"></a>
+<FONT color="green">315</FONT>                return errors.toString();<a name="line.315"></a>
+<FONT color="green">316</FONT>            }<a name="line.316"></a>
+<FONT color="green">317</FONT>            if (StringUtils.isEmpty(password)) {<a name="line.317"></a>
+<FONT color="green">318</FONT>                LOG.error("verifyCxmlPOData()  The B2B PO password is required for the cXML PO but is missing.");<a name="line.318"></a>
+<FONT color="green">319</FONT>                errors.append("Missing Data: B2B PO password\n");<a name="line.319"></a>
+<FONT color="green">320</FONT>            }<a name="line.320"></a>
+<FONT color="green">321</FONT>            if (ObjectUtils.isNull(purchaseOrder.getPurapDocumentIdentifier())) {<a name="line.321"></a>
+<FONT color="green">322</FONT>                LOG.error("verifyCxmlPOData()  The purchase order Id is required for the cXML PO but is missing.");<a name="line.322"></a>
+<FONT color="green">323</FONT>                errors.append("Missing Data: Purchase Order ID\n");<a name="line.323"></a>
+<FONT color="green">324</FONT>            }<a name="line.324"></a>
+<FONT color="green">325</FONT>            if (StringUtils.isEmpty(requisitionInitiatorId)) {<a name="line.325"></a>
+<FONT color="green">326</FONT>                LOG.error("verifyCxmlPOData()  The requisition initiator Network Id is required for the cXML PO but is missing.");<a name="line.326"></a>
+<FONT color="green">327</FONT>                errors.append("Missing Data: Requisition Initiator NetworkId\n");<a name="line.327"></a>
+<FONT color="green">328</FONT>            }<a name="line.328"></a>
+<FONT color="green">329</FONT>            if (ObjectUtils.isNull(purchaseOrder.getPurchaseOrderCreateTimestamp())) {<a name="line.329"></a>
+<FONT color="green">330</FONT>                LOG.error("verifyCxmlPOData()  The PO create date is required for the cXML PO but is null.");<a name="line.330"></a>
+<FONT color="green">331</FONT>                errors.append("Create Date\n");<a name="line.331"></a>
+<FONT color="green">332</FONT>            }<a name="line.332"></a>
+<FONT color="green">333</FONT>            if (StringUtils.isEmpty(contractManager.getContractManagerPhoneNumber())) {<a name="line.333"></a>
+<FONT color="green">334</FONT>                LOG.error("verifyCxmlPOData()  The contract manager phone number is required for the cXML PO but is missing.");<a name="line.334"></a>
+<FONT color="green">335</FONT>                errors.append("Missing Data: Contract Manager Phone Number\n");<a name="line.335"></a>
+<FONT color="green">336</FONT>            }<a name="line.336"></a>
+<FONT color="green">337</FONT>            if (StringUtils.isEmpty(contractManager.getContractManagerName())) {<a name="line.337"></a>
+<FONT color="green">338</FONT>                LOG.error("verifyCxmlPOData()  The contract manager name is required for the cXML PO but is missing.");<a name="line.338"></a>
+<FONT color="green">339</FONT>                errors.append("Missing Data: Contract Manager Name\n");<a name="line.339"></a>
+<FONT color="green">340</FONT>            }<a name="line.340"></a>
+<FONT color="green">341</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryCampusCode())) {<a name="line.341"></a>
+<FONT color="green">342</FONT>                LOG.error("verifyCxmlPOData()  The Delivery Campus Code is required for the cXML PO but is missing.");<a name="line.342"></a>
+<FONT color="green">343</FONT>                errors.append("Missing Data: Delivery Campus Code\n");<a name="line.343"></a>
+<FONT color="green">344</FONT>            }<a name="line.344"></a>
+<FONT color="green">345</FONT>            if (StringUtils.isEmpty(purchaseOrder.getBillingName())) {<a name="line.345"></a>
+<FONT color="green">346</FONT>                LOG.error("verifyCxmlPOData()  The Delivery Billing Name is required for the cXML PO but is missing.");<a name="line.346"></a>
+<FONT color="green">347</FONT>                errors.append("Missing Data: Delivery Billing Name\n");<a name="line.347"></a>
+<FONT color="green">348</FONT>            }<a name="line.348"></a>
+<FONT color="green">349</FONT>            if (StringUtils.isEmpty(purchaseOrder.getBillingLine1Address())) {<a name="line.349"></a>
+<FONT color="green">350</FONT>                LOG.error("verifyCxmlPOData()  The Billing Line 1 Address is required for the cXML PO but is missing.");<a name="line.350"></a>
+<FONT color="green">351</FONT>                errors.append("Missing Data: Billing Line 1 Address\n");<a name="line.351"></a>
+<FONT color="green">352</FONT>            }<a name="line.352"></a>
+<FONT color="green">353</FONT>            if (StringUtils.isEmpty(purchaseOrder.getBillingLine2Address())) {<a name="line.353"></a>
+<FONT color="green">354</FONT>                LOG.error("verifyCxmlPOData()  The Billing Line 2 Address is required for the cXML PO but is missing.");<a name="line.354"></a>
+<FONT color="green">355</FONT>                errors.append("Missing Data: Billing Line 2 Address\n");<a name="line.355"></a>
+<FONT color="green">356</FONT>            }<a name="line.356"></a>
+<FONT color="green">357</FONT>            if (StringUtils.isEmpty(purchaseOrder.getBillingCityName())) {<a name="line.357"></a>
+<FONT color="green">358</FONT>                LOG.error("verifyCxmlPOData()  The Billing Address City Name is required for the cXML PO but is missing.");<a name="line.358"></a>
+<FONT color="green">359</FONT>                errors.append("Missing Data: Billing Address City Name\n");<a name="line.359"></a>
+<FONT color="green">360</FONT>            }<a name="line.360"></a>
+<FONT color="green">361</FONT>            if (StringUtils.isEmpty(purchaseOrder.getBillingStateCode())) {<a name="line.361"></a>
+<FONT color="green">362</FONT>                LOG.error("verifyCxmlPOData()  The Billing Address State Code is required for the cXML PO but is missing.");<a name="line.362"></a>
+<FONT color="green">363</FONT>                errors.append("Missing Data: Billing Address State Code\n");<a name="line.363"></a>
+<FONT color="green">364</FONT>            }<a name="line.364"></a>
+<FONT color="green">365</FONT>            if (StringUtils.isEmpty(purchaseOrder.getBillingPostalCode())) {<a name="line.365"></a>
+<FONT color="green">366</FONT>                LOG.error("verifyCxmlPOData()  The Billing Address Postal Code is required for the cXML PO but is missing.");<a name="line.366"></a>
+<FONT color="green">367</FONT>                errors.append("Missing Data: Billing Address Postal Code\n");<a name="line.367"></a>
+<FONT color="green">368</FONT>            }<a name="line.368"></a>
+<FONT color="green">369</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryToName())) {<a name="line.369"></a>
+<FONT color="green">370</FONT>                LOG.error("verifyCxmlPOData()  The Delivery To Name is required for the cXML PO but is missing.");<a name="line.370"></a>
+<FONT color="green">371</FONT>                errors.append("Missing Data: Delivery To Name\n");<a name="line.371"></a>
+<FONT color="green">372</FONT>            }<a name="line.372"></a>
+<FONT color="green">373</FONT>            if (StringUtils.isEmpty(contractManagerEmail)) {<a name="line.373"></a>
+<FONT color="green">374</FONT>                LOG.error("verifyCxmlPOData()  The Contract Manager Email is required for the cXML PO but is missing.");<a name="line.374"></a>
+<FONT color="green">375</FONT>                errors.append("Missing Data: Contract Manager Email\n");<a name="line.375"></a>
+<FONT color="green">376</FONT>            }<a name="line.376"></a>
+<FONT color="green">377</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryToEmailAddress())) {<a name="line.377"></a>
+<FONT color="green">378</FONT>                LOG.error("verifyCxmlPOData()  The Requesting Person Email Address is required for the cXML PO but is missing.");<a name="line.378"></a>
+<FONT color="green">379</FONT>                errors.append("Missing Data: Requesting Person Email Address\n");<a name="line.379"></a>
+<FONT color="green">380</FONT>            }<a name="line.380"></a>
+<FONT color="green">381</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryToPhoneNumber())) {<a name="line.381"></a>
+<FONT color="green">382</FONT>                LOG.error("verifyCxmlPOData()  The Requesting Person Phone Number is required for the cXML PO but is missing.");<a name="line.382"></a>
+<FONT color="green">383</FONT>                errors.append("Missing Data: Requesting Person Phone Number\n");<a name="line.383"></a>
+<FONT color="green">384</FONT>            }<a name="line.384"></a>
+<FONT color="green">385</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryBuildingLine1Address())) {<a name="line.385"></a>
+<FONT color="green">386</FONT>                LOG.error("verifyCxmlPOData()  The Delivery Line 1 Address is required for the cXML PO but is missing.");<a name="line.386"></a>
+<FONT color="green">387</FONT>                errors.append("Missing Data: Delivery Line 1 Address\n");<a name="line.387"></a>
+<FONT color="green">388</FONT>            }<a name="line.388"></a>
+<FONT color="green">389</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryToName())) {<a name="line.389"></a>
+<FONT color="green">390</FONT>                LOG.error("verifyCxmlPOData()  The Delivery To Name is required for the cXML PO but is missing.");<a name="line.390"></a>
+<FONT color="green">391</FONT>                errors.append("Missing Data: Delivery To Name\n");<a name="line.391"></a>
+<FONT color="green">392</FONT>            }<a name="line.392"></a>
+<FONT color="green">393</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryCityName())) {<a name="line.393"></a>
+<FONT color="green">394</FONT>                LOG.error("verifyCxmlPOData()  The Delivery City Name is required for the cXML PO but is missing.");<a name="line.394"></a>
+<FONT color="green">395</FONT>                errors.append("Missing Data: Delivery City Name\n");<a name="line.395"></a>
+<FONT color="green">396</FONT>            }<a name="line.396"></a>
+<FONT color="green">397</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryStateCode())) {<a name="line.397"></a>
+<FONT color="green">398</FONT>                LOG.error("verifyCxmlPOData()  The Delivery State is required for the cXML PO but is missing.");<a name="line.398"></a>
+<FONT color="green">399</FONT>                errors.append("Missing Data: Delivery State\n");<a name="line.399"></a>
+<FONT color="green">400</FONT>            }<a name="line.400"></a>
+<FONT color="green">401</FONT>            if (StringUtils.isEmpty(purchaseOrder.getDeliveryPostalCode())) {<a name="line.401"></a>
+<FONT color="green">402</FONT>                LOG.error("verifyCxmlPOData()  The Delivery Postal Code is required for the cXML PO but is missing.");<a name="line.402"></a>
+<FONT color="green">403</FONT>                errors.append("Missing Data: Delivery Postal Code\n");<a name="line.403"></a>
+<FONT color="green">404</FONT>            }<a name="line.404"></a>
+<FONT color="green">405</FONT>    <a name="line.405"></a>
+<FONT color="green">406</FONT>            // verify item data<a name="line.406"></a>
+<FONT color="green">407</FONT>            List detailList = purchaseOrder.getItems();<a name="line.407"></a>
+<FONT color="green">408</FONT>            for (Iterator iter = detailList.iterator(); iter.hasNext();) {<a name="line.408"></a>
+<FONT color="green">409</FONT>                PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();<a name="line.409"></a>
+<FONT color="green">410</FONT>                if (ObjectUtils.isNotNull(poi.getItemType()) &amp;&amp; poi.getItemType().isLineItemIndicator()) {<a name="line.410"></a>
+<FONT color="green">411</FONT>                    if (ObjectUtils.isNull(poi.getItemLineNumber())) {<a name="line.411"></a>
+<FONT color="green">412</FONT>                        LOG.error("verifyCxmlPOData()  The Item Line Number is required for the cXML PO but is missing.");<a name="line.412"></a>
+<FONT color="green">413</FONT>                        errors.append("Missing Data: Item Line Number\n");<a name="line.413"></a>
+<FONT color="green">414</FONT>                    }<a name="line.414"></a>
+<FONT color="green">415</FONT>                    if (StringUtils.isEmpty(poi.getItemCatalogNumber())) {<a name="line.415"></a>
+<FONT color="green">416</FONT>                        LOG.error("verifyCxmlPOData()  The Catalog Number for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");<a name="line.416"></a>
+<FONT color="green">417</FONT>                        errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Catalog Number\n");<a name="line.417"></a>
+<FONT color="green">418</FONT>                    }<a name="line.418"></a>
+<FONT color="green">419</FONT>                    if (StringUtils.isEmpty(poi.getItemDescription())) {<a name="line.419"></a>
+<FONT color="green">420</FONT>                        LOG.error("verifyCxmlPOData()  The Description for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");<a name="line.420"></a>
+<FONT color="green">421</FONT>                        errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Description\n");<a name="line.421"></a>
+<FONT color="green">422</FONT>                    }<a name="line.422"></a>
+<FONT color="green">423</FONT>                    if (StringUtils.isEmpty(poi.getItemUnitOfMeasureCode())) {<a name="line.423"></a>
+<FONT color="green">424</FONT>                        LOG.error("verifyCxmlPOData()  The Unit Of Measure Code for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");<a name="line.424"></a>
+<FONT color="green">425</FONT>                        errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Unit Of Measure\n");<a name="line.425"></a>
+<FONT color="green">426</FONT>                    }<a name="line.426"></a>
+<FONT color="green">427</FONT>                    if (StringUtils.isEmpty(poi.getExternalOrganizationB2bProductTypeName())) {<a name="line.427"></a>
+<FONT color="green">428</FONT>                        LOG.error("verifyCxmlPOData()  The External Org B2B Product Type Name for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");<a name="line.428"></a>
+<FONT color="green">429</FONT>                        errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - External Org B2B Product Type Name\n");<a name="line.429"></a>
+<FONT color="green">430</FONT>                    }<a name="line.430"></a>
+<FONT color="green">431</FONT>                    if (poi.getItemQuantity() == null) {<a name="line.431"></a>
+<FONT color="green">432</FONT>                        LOG.error("verifyCxmlPOData()  The Order Quantity for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");<a name="line.432"></a>
+<FONT color="green">433</FONT>                        errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Order Quantity\n");<a name="line.433"></a>
+<FONT color="green">434</FONT>                    }<a name="line.434"></a>
+<FONT color="green">435</FONT>                    if (poi.getItemUnitPrice() == null) {<a name="line.435"></a>
+<FONT color="green">436</FONT>                        LOG.error("verifyCxmlPOData()  The Unit Price for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");<a name="line.436"></a>
+<FONT color="green">437</FONT>                        errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Unit Price\n");<a name="line.437"></a>
+<FONT color="green">438</FONT>                    }<a name="line.438"></a>
+<FONT color="green">439</FONT>                }<a name="line.439"></a>
+<FONT color="green">440</FONT>            } // end item looping<a name="line.440"></a>
+<FONT color="green">441</FONT>    <a name="line.441"></a>
+<FONT color="green">442</FONT>            return errors.toString();<a name="line.442"></a>
+<FONT color="green">443</FONT>        } <a name="line.443"></a>
+<FONT color="green">444</FONT>    <a name="line.444"></a>
+<FONT color="green">445</FONT>        /**<a name="line.445"></a>
+<FONT color="green">446</FONT>         * Retrieve the Contract Manager's email<a name="line.446"></a>
+<FONT color="green">447</FONT>         */<a name="line.447"></a>
+<FONT color="green">448</FONT>        protected String getContractManagerEmail(ContractManager cm) {<a name="line.448"></a>
+<FONT color="green">449</FONT>            Person contractManager = getPersonService().getPerson(cm.getContractManagerUserIdentifier());<a name="line.449"></a>
+<FONT color="green">450</FONT>            if (ObjectUtils.isNotNull(contractManager)) {<a name="line.450"></a>
+<FONT color="green">451</FONT>                return contractManager.getEmailAddressUnmasked();<a name="line.451"></a>
+<FONT color="green">452</FONT>            }<a name="line.452"></a>
+<FONT color="green">453</FONT>            return "";<a name="line.453"></a>
+<FONT color="green">454</FONT>        }<a name="line.454"></a>
+<FONT color="green">455</FONT>    <a name="line.455"></a>
+<FONT color="green">456</FONT>        /**<a name="line.456"></a>
+<FONT color="green">457</FONT>         * @return Returns the personService.<a name="line.457"></a>
+<FONT color="green">458</FONT>         */<a name="line.458"></a>
+<FONT color="green">459</FONT>        protected PersonService&lt;Person&gt; getPersonService() {<a name="line.459"></a>
+<FONT color="green">460</FONT>            if(personService==null)<a name="line.460"></a>
+<FONT color="green">461</FONT>                personService = SpringContext.getBean(PersonService.class);<a name="line.461"></a>
+<FONT color="green">462</FONT>            return personService;<a name="line.462"></a>
+<FONT color="green">463</FONT>        }<a name="line.463"></a>
+<FONT color="green">464</FONT>    <a name="line.464"></a>
+<FONT color="green">465</FONT>        public void setRequisitionService(RequisitionService requisitionService) {<a name="line.465"></a>
+<FONT color="green">466</FONT>            this.requisitionService = requisitionService;<a name="line.466"></a>
+<FONT color="green">467</FONT>        }<a name="line.467"></a>
+<FONT color="green">468</FONT>    <a name="line.468"></a>
+<FONT color="green">469</FONT>        public void setParameterService(ParameterService parameterService) {<a name="line.469"></a>
+<FONT color="green">470</FONT>            this.parameterService = parameterService;<a name="line.470"></a>
+<FONT color="green">471</FONT>        }<a name="line.471"></a>
+<FONT color="green">472</FONT>    <a name="line.472"></a>
+<FONT color="green">473</FONT>        public void setB2bDao(B2BDao b2bDao) {<a name="line.473"></a>
+<FONT color="green">474</FONT>            this.b2bDao = b2bDao;<a name="line.474"></a>
+<FONT color="green">475</FONT>        }<a name="line.475"></a>
+<FONT color="green">476</FONT>    <a name="line.476"></a>
+<FONT color="green">477</FONT>        /**<a name="line.477"></a>
+<FONT color="green">478</FONT>         * Throws an exception if running on production<a name="line.478"></a>
+<FONT color="green">479</FONT>         */<a name="line.479"></a>
+<FONT color="green">480</FONT>        protected boolean isProduction() {<a name="line.480"></a>
+<FONT color="green">481</FONT>            KualiConfigurationService configService = SpringContext.getBean(KualiConfigurationService.class);<a name="line.481"></a>
+<FONT color="green">482</FONT>            return StringUtils.equals(configService.getPropertyString(KFSConstants.PROD_ENVIRONMENT_CODE_KEY), b2bEnvironment);<a name="line.482"></a>
+<FONT color="green">483</FONT>        }<a name="line.483"></a>
+<FONT color="green">484</FONT>    <a name="line.484"></a>
+<FONT color="green">485</FONT>        public void setB2bEnvironment(String environment) {<a name="line.485"></a>
+<FONT color="green">486</FONT>            b2bEnvironment = environment;<a name="line.486"></a>
+<FONT color="green">487</FONT>        }<a name="line.487"></a>
+<FONT color="green">488</FONT>    <a name="line.488"></a>
+<FONT color="green">489</FONT>        public void setB2bUserAgent(String userAgent) {<a name="line.489"></a>
+<FONT color="green">490</FONT>            b2bUserAgent = userAgent;<a name="line.490"></a>
+<FONT color="green">491</FONT>        }<a name="line.491"></a>
+<FONT color="green">492</FONT>    <a name="line.492"></a>
+<FONT color="green">493</FONT>        public void setB2bPurchaseOrderURL(String purchaseOrderURL) {<a name="line.493"></a>
+<FONT color="green">494</FONT>            b2bPurchaseOrderURL = purchaseOrderURL;<a name="line.494"></a>
+<FONT color="green">495</FONT>        }<a name="line.495"></a>
+<FONT color="green">496</FONT>        <a name="line.496"></a>
+<FONT color="green">497</FONT>        public void setB2bPurchaseOrderIdentity(String b2bPurchaseOrderIdentity) {<a name="line.497"></a>
+<FONT color="green">498</FONT>            this.b2bPurchaseOrderIdentity = b2bPurchaseOrderIdentity;<a name="line.498"></a>
+<FONT color="green">499</FONT>        }<a name="line.499"></a>
+<FONT color="green">500</FONT>    <a name="line.500"></a>
+<FONT color="green">501</FONT>        public void setB2bPurchaseOrderPassword(String purchaseOrderPassword) {<a name="line.501"></a>
+<FONT color="green">502</FONT>            b2bPurchaseOrderPassword = purchaseOrderPassword;<a name="line.502"></a>
+<FONT color="green">503</FONT>        }<a name="line.503"></a>
+<FONT color="green">504</FONT>    <a name="line.504"></a>
+<FONT color="green">505</FONT>    }<a name="line.505"></a>
+<FONT color="green">506</FONT>    <a name="line.506"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,273 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.bc;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    /**<a name="line.18"></a>
+<FONT color="green">019</FONT>     * Constants for message keys. Should have corresponding key=message in resources.<a name="line.19"></a>
+<FONT color="green">020</FONT>     */<a name="line.20"></a>
+<FONT color="green">021</FONT>    public class BCKeyConstants {<a name="line.21"></a>
+<FONT color="green">022</FONT>        public static final String QUESTION_CONFIRM_CLEANUP = "document.budget.question.confirmCleanup.text";<a name="line.22"></a>
+<FONT color="green">023</FONT>        public static final String QUESTION_DELETE = "document.question.delete.text";<a name="line.23"></a>
+<FONT color="green">024</FONT>        public static final String QUESTION_CONFIRM_MONTHLY_OVERRIDE = "document.budget.question.confirmMonthlyOverride.text";<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>        public static final String MESSAGE_BUDGET_DOCUMENT_NOT_BUDGETABLE = "message.budget.documentNotBudgetable";<a name="line.26"></a>
+<FONT color="green">027</FONT>        public static final String MESSAGE_BUDGET_NOCREATE_DOCUMENT = "message.budget.nocreate.document";<a name="line.27"></a>
+<FONT color="green">028</FONT>        public static final String MESSAGE_BUDGET_PREVIOUS_SESSION_NOTCLEANED = "message.budget.system.session.notCleaned";<a name="line.28"></a>
+<FONT color="green">029</FONT>        public static final String MESSAGE_BUDGET_PREVIOUS_SESSION_TIMEOUT = "message.budget.system.session.timeOut";<a name="line.29"></a>
+<FONT color="green">030</FONT>        public static final String MESSAGE_BUDGET_SYSTEM_NOT_ACTIVE = "message.budget.system.not.active";<a name="line.30"></a>
+<FONT color="green">031</FONT>        public static final String MESSAGE_BUDGET_SYSTEM_MULTIPLE_ACTIVE = "message.budget.system.multiple.active";<a name="line.31"></a>
+<FONT color="green">032</FONT>        public static final String MESSAGE_BUDGET_SYSTEM_VIEW_ONLY = "message.budget.systemViewOnly";<a name="line.32"></a>
+<FONT color="green">033</FONT>        public static final String MESSAGE_BUDGET_VIEW_ONLY = "message.budget.viewOnly";<a name="line.33"></a>
+<FONT color="green">034</FONT>        public static final String MESSAGE_BUDGET_EDIT_ACCESS = "message.budget.editAccess";<a name="line.34"></a>
+<FONT color="green">035</FONT>        public static final String MESSAGE_BUDGET_SUCCESSFUL_CLOSE = "message.budget.successfulClose";<a name="line.35"></a>
+<FONT color="green">036</FONT>        public static final String MESSAGE_BENEFITS_CALCULATED = "message.budget.benefitsCalculated";<a name="line.36"></a>
+<FONT color="green">037</FONT>        public static final String MESSAGE_BENEFITS_MONTHLY_CALCULATED = "message.budget.benefitsMonthlyCalculated";<a name="line.37"></a>
+<FONT color="green">038</FONT>        public static final String MESSAGE_SALARY_SETTING_SAVED = "message.budget.salarySettingSaved";<a name="line.38"></a>
+<FONT color="green">039</FONT>        public static final String MESSAGE_SALARY_SETTING_SAVED_AND_CLOSED = "message.budget.salarySettingSavedAndClosed";<a name="line.39"></a>
+<FONT color="green">040</FONT>        public static final String MESSAGE_MONTHLY_ANNUAL_OVERRIDE_SAVED = "message.budget.monthlyAnnualOverrideSaved";<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        public static final String ERROR_BUDGET_USER_NOT_ORG_APPROVER = "error.budget.userNotOrgApprover";<a name="line.42"></a>
+<FONT color="green">043</FONT>        public static final String ERROR_BUDGET_USER_BELOW_DOCLEVEL = "error.budget.userBelowDocLevel";<a name="line.43"></a>
+<FONT color="green">044</FONT>        public static final String ERROR_BUDGET_USER_NOT_IN_HIERARCHY = "error.budget.userNotInHierarchy";<a name="line.44"></a>
+<FONT color="green">045</FONT>        public static final String ERROR_BUDGET_DOCUMENT_LOCKED = "error.budget.documentLocked";<a name="line.45"></a>
+<FONT color="green">046</FONT>        public static final String ERROR_BUDGET_FUNDING_LOCKED = "error.budget.fundingLocked";<a name="line.46"></a>
+<FONT color="green">047</FONT>        public static final String ERROR_BUDGET_DOCUMENT_OTHER = "error.budget.documentOther";<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>        public static final String ERROR_BUDGET_AUTHORIZATION_DOCUMENT = "error.budget.authorization.document";<a name="line.49"></a>
+<FONT color="green">050</FONT>        public static final String ERROR_BUDGET_DOCUMENT_NOT_BUDGETABLE = "error.budget.documentNotBudgetable";<a name="line.50"></a>
+<FONT color="green">051</FONT>        public static final String ERROR_BUDGET_PULLUP_DOCUMENT = "error.budget.pullup.document";<a name="line.51"></a>
+<FONT color="green">052</FONT>        public static final String ERROR_BUDGET_PUSHDOWN_DOCUMENT = "error.budget.pushdown.document";<a name="line.52"></a>
+<FONT color="green">053</FONT>        public static final String ERROR_BUDGET_SUBFUND_NOT_SELECTED = "error.budget.subFundNotSelected";<a name="line.53"></a>
+<FONT color="green">054</FONT>        public static final String ERROR_BUDGET_OBJECT_CODE_NOT_SELECTED = "error.budget.objectCodeNotSelected";<a name="line.54"></a>
+<FONT color="green">055</FONT>        public static final String ERROR_BUDGET_REASON_CODE_NOT_SELECTED = "error.budget.reasonCodeNotSelected";<a name="line.55"></a>
+<FONT color="green">056</FONT>        public static final String ERROR_BUDGET_THRESHOLD_PERCENT_NEEDED = "error.budget.thresholdPercentNeeded";<a name="line.56"></a>
+<FONT color="green">057</FONT>        public static final String ERROR_BUDGET_ORG_NOT_SELECTED = "error.budget.orgNotSelected";<a name="line.57"></a>
+<FONT color="green">058</FONT>        public static final String ERROR_BUDGET_LINE_EXISTS = "error.budget.lineExists";<a name="line.58"></a>
+<FONT color="green">059</FONT>        public static final String ERROR_BUDGET_LINE_REINSTATED = "error.budget.lineReinstated";<a name="line.59"></a>
+<FONT color="green">060</FONT>        public static final String ERROR_LABOR_OBJECT_IN_NOWAGES_ACCOUNT = "error.budget.laborObjectInNoWagesAccount";<a name="line.60"></a>
+<FONT color="green">061</FONT>        public static final String ERROR_FRINGE_BENEFIT_OBJECT_NOT_ALLOWED = "error.budget.fringeBenefitObjectNotAllowed";<a name="line.61"></a>
+<FONT color="green">062</FONT>        public static final String ERROR_SALARY_SETTING_OBJECT_ONLY = "error.budget.salarySettingObjectOnly";<a name="line.62"></a>
+<FONT color="green">063</FONT>        public static final String ERROR_SALARY_SETTING_OBJECT_ONLY_NO_PARAMETER = "error.budget.salarySettingObjectOnlyNoParameter";<a name="line.63"></a>
+<FONT color="green">064</FONT>        public static final String ERROR_NO_BUDGET_ALLOWED = "error.budget.noBudgetAllowed";<a name="line.64"></a>
+<FONT color="green">065</FONT>        public static final String ERROR_BUDGET_RECORDING_LEVEL_NOT_ALLOWED = "error.budget.budgetRecordingLevelNotAllowed";<a name="line.65"></a>
+<FONT color="green">066</FONT>        public static final String ERROR_SUB_ACCOUNT_TYPE_NOT_ALLOWED = "error.budget.subAccountTypeNotAllowed";<a name="line.66"></a>
+<FONT color="green">067</FONT>        public static final String ERROR_NO_DELETE_ALLOWED_WITH_BASE = "error.budget.noDeleteAllowedWithBase";<a name="line.67"></a>
+<FONT color="green">068</FONT>        public static final String ERROR_NO_DELETE_ALLOWED_SALARY_DETAIL = "error.budget.noDeleteAllowedSalaryDetail";<a name="line.68"></a>
+<FONT color="green">069</FONT>        public static final String ERROR_MONTHLY_SUM_REQUEST_NOT_EQUAL = "error.budget.monthlySumRequestNotEqual";<a name="line.69"></a>
+<FONT color="green">070</FONT>        public static final String ERROR_SALARY_SUM_REQUEST_NOT_EQUAL = "error.budget.salarySumRequestNotEqual";<a name="line.70"></a>
+<FONT color="green">071</FONT>        public static final String ERROR_MONTHLY_DETAIL_SALARY_OVERIDE = "error.budget.monthlyDetailSalarySettingNoRequestOverride";<a name="line.71"></a>
+<FONT color="green">072</FONT>        public static final String ERROR_MONTHLY_TOTAL_ZERO = "error.budget.monthlyTotalZero";<a name="line.72"></a>
+<FONT color="green">073</FONT>        public static final String ERROR_BUDGET_ACCOUNT_ORGANIZATION_HIERARCHY = "error.budget.AccountOrganizationHierarchy";<a name="line.73"></a>
+<FONT color="green">074</FONT>        public static final String ERROR_BUDGET_REASONMAINT_INACTIVATE_REASONEXIST = "error.budget.reasonMaintenance.inactivate.reasonExist";<a name="line.74"></a>
+<FONT color="green">075</FONT>        <a name="line.75"></a>
+<FONT color="green">076</FONT>        public static final String ERROR_REPORT_GETTING_CHART_DESCRIPTION = "error.budget.report.gettingChartDescription";<a name="line.76"></a>
+<FONT color="green">077</FONT>        public static final String ERROR_REPORT_GETTING_OBJECT_CODE = "error.budget.report.gettingObjectCode";<a name="line.77"></a>
+<FONT color="green">078</FONT>        public static final String ERROR_REPORT_GETTING_OBJECT_NAME = "error.budget.report.gettingObjectName";<a name="line.78"></a>
+<FONT color="green">079</FONT>        public static final String ERROR_REPORT_GETTING_OBJECT_LEVEL_NAME = "error.budget.report.gettingObjectLevelName";<a name="line.79"></a>
+<FONT color="green">080</FONT>        public static final String ERROR_REPORT_GETTING_ACCOUNT_DESCRIPTION = "error.budget.report.gettingAccountDescription";<a name="line.80"></a>
+<FONT color="green">081</FONT>        public static final String ERROR_REPORT_GETTING_SUB_ACCOUNT_DESCRIPTION = "error.budget.report.gettingSubAccountDescription";<a name="line.81"></a>
+<FONT color="green">082</FONT>        public static final String ERROR_REPORT_GETTING_ORGANIZATION_NAME = "error.budget.report.gettingOrganizationName";<a name="line.82"></a>
+<FONT color="green">083</FONT>        public static final String ERROR_REPORT_GETTING_FUNDGROUP_NAME = "error.budget.report.gettingFundGroupName";<a name="line.83"></a>
+<FONT color="green">084</FONT>        public static final String ERROR_REPORT_GETTING_FUNDGROUP_CODE = "error.budget.report.gettingFundGroupCode";<a name="line.84"></a>
+<FONT color="green">085</FONT>        public static final String ERROR_REPORT_GETTING_SUBFUNDGROUP_DESCRIPTION = "error.budget.report.gettingSubFundGroupDescription";<a name="line.85"></a>
+<FONT color="green">086</FONT>        public static final String MSG_REPORT_HEADER_ACCOUNT_SUB = "message.budget.report.header.accountSub";<a name="line.86"></a>
+<FONT color="green">087</FONT>        public static final String MSG_REPORT_HEADER_ACCOUNT_SUB_NAME = "message.budget.report.header.accountSubName"; <a name="line.87"></a>
+<FONT color="green">088</FONT>        public static final String MSG_REPORT_HEADER_BASE_AMOUNT = "message.budget.report.header.baseAmount";<a name="line.88"></a>
+<FONT color="green">089</FONT>        public static final String MSG_REPORT_HEADER_REQ_AMOUNT = "message.budget.report.header.reqAmount";<a name="line.89"></a>
+<FONT color="green">090</FONT>        public static final String MSG_REPORT_HEADER_CHANGE = "message.budget.report.header.change";<a name="line.90"></a>
+<FONT color="green">091</FONT>        public static final String MSG_REPORT_INCOME_EXP_DESC_REVENUE = "message.budget.report.incomeExpDescRevenue";<a name="line.91"></a>
+<FONT color="green">092</FONT>        public static final String MSG_REPORT_INCOME_EXP_DESC_UPPERCASE_REVENUE = "message.budget.report.incomeExpDescUppercaseRevenue";<a name="line.92"></a>
+<FONT color="green">093</FONT>        public static final String MSG_REPORT_INCOME_EXP_DESC_EXP_GROSS = "message.budget.report.incomeExpDescExpGross";<a name="line.93"></a>
+<FONT color="green">094</FONT>        public static final String MSG_REPORT_INCOME_EXP_DESC_TRNFR_IN = "message.budget.report.incomeExpDescTrnfrIn";<a name="line.94"></a>
+<FONT color="green">095</FONT>        public static final String MSG_REPORT_INCOME_EXP_DESC_EXP_NET_TRNFR = "message.budget.report.incomeExpDescExpNetTrnfr";<a name="line.95"></a>
+<FONT color="green">096</FONT>        public static final String MSG_REPORT_INCOME_EXP_DESC_EXPENDITURE_NET_TRNFR = "message.budget.report.incomeExpDescExpenditureNetTrnfr";<a name="line.96"></a>
+<FONT color="green">097</FONT>        public static final String MSG_REPORT_INCOME_EXP_DESC_EXPENDITURE = "message.budget.report.incomeExpDescExpenditure";<a name="line.97"></a>
+<FONT color="green">098</FONT>        <a name="line.98"></a>
+<FONT color="green">099</FONT>        public static final String MSG_REPORT_HEADER_SUBFUND = "message.budget.report.header.subFund";<a name="line.99"></a>
+<FONT color="green">100</FONT>        public static final String MSG_REPORT_HEADER_SUBFUND_DESCRIPTION = "message.budget.report.header.subFundDescription";<a name="line.100"></a>
+<FONT color="green">101</FONT>        <a name="line.101"></a>
+<FONT color="green">102</FONT>        public static final String ERROR_FILE_IS_REQUIRED = "error.budget.requestImport.missingFile";<a name="line.102"></a>
+<FONT color="green">103</FONT>        public static final String ERROR_FILE_EMPTY = "error.budget.requestImport.emptyFile";<a name="line.103"></a>
+<FONT color="green">104</FONT>        public static final String ERROR_FILE_TYPE_IS_REQUIRED = "error.budget.requestImport.missingFileType";<a name="line.104"></a>
+<FONT color="green">105</FONT>        public static final String ERROR_FILENAME_REQUIRED = "error.budget.requestImport.missingFileName";<a name="line.105"></a>
+<FONT color="green">106</FONT>        public static final String ERROR_FIELD_SEPARATOR_REQUIRED = "error.budget.requestImport.missingFieldSeparator";<a name="line.106"></a>
+<FONT color="green">107</FONT>        public static final String ERROR_TEXT_DELIMITER_REQUIRED = "error.budget.requestImport.missingTextFieldDelimiter";<a name="line.107"></a>
+<FONT color="green">108</FONT>        public static final String ERROR_DISTINCT_DELIMITERS_REQUIRED = "error.budget.requestImport.nonDistinctDelimiters";<a name="line.108"></a>
+<FONT color="green">109</FONT>        public static final String ERROR_BUDGET_YEAR_REQUIRED = "error.budget.requestImport.missingBudgetYear";<a name="line.109"></a>
+<FONT color="green">110</FONT>        public static final String MSG_UNLOCK_CONFIRMATION = "message.budget.lock.unlockConfirmation";<a name="line.110"></a>
+<FONT color="green">111</FONT>        public static final String MSG_LOCK_NOTEXIST = "message.budget.lock.lockNotExist";<a name="line.111"></a>
+<FONT color="green">112</FONT>        public static final String MSG_UNLOCK_SUCCESSFUL = "message.budget.lock.unlockSuccessful";<a name="line.112"></a>
+<FONT color="green">113</FONT>        public static final String MSG_UNLOCK_NOTSUCCESSFUL = "message.budget.lock.unlockNotSuccessful";<a name="line.113"></a>
+<FONT color="green">114</FONT>        public static final String MSG_LOCK_POSITIONKEY = "message.budget.lock.positionKey";<a name="line.114"></a>
+<FONT color="green">115</FONT>        public static final String MSG_LOCK_POSITIONFUNDINGKEY = "message.budget.lock.positionFundingKey";<a name="line.115"></a>
+<FONT color="green">116</FONT>        public static final String MSG_LOCK_ACCOUNTKEY = "message.budget.lock.accountKey";<a name="line.116"></a>
+<FONT color="green">117</FONT>        public static final String ERROR_LOCK_INVALID_USER = "error.budget.lock.invalidUser";<a name="line.117"></a>
+<FONT color="green">118</FONT>        public static final String ERROR_PAYRATE_IMPORT_UPDATE_NOT_ALLOWED = "error.budget.payrateImportExport.updatesNotAllowed";<a name="line.118"></a>
+<FONT color="green">119</FONT>        public static final String ERROR_NO_RECORDS_MY_ACCOUNTS = "error.budget.noRecordsMyAccounts";<a name="line.119"></a>
+<FONT color="green">120</FONT>        public static final String ERROR_NO_ACCOUNTS_PUSH_DOWN = "error.budget.noAccountsPushDown";<a name="line.120"></a>
+<FONT color="green">121</FONT>        public static final String ERROR_NO_ACCOUNTS_PULL_UP = "error.budget.noAccountsPullUp";<a name="line.121"></a>
+<FONT color="green">122</FONT>        <a name="line.122"></a>
+<FONT color="green">123</FONT>        public static final String MSG_ACCOUNT_PULLUP_LIST = "message.budget.accountPullupList";<a name="line.123"></a>
+<FONT color="green">124</FONT>        public static final String MSG_ACCOUNT_PUSHDOWN_LIST = "message.budget.accountPushdownList";<a name="line.124"></a>
+<FONT color="green">125</FONT>        public static final String MSG_ACCOUNT_MANAGER_DELEGATE_LIST = "message.budget.accountManagerDelegateList";<a name="line.125"></a>
+<FONT color="green">126</FONT>        public static final String MSG_ORG_PULL_UP_SUCCESSFUL = "message.budget.orgPullUpSuccessful";<a name="line.126"></a>
+<FONT color="green">127</FONT>        public static final String MSG_ORG_PUSH_DOWN_SUCCESSFUL = "message.budget.orgPushDownSuccessful";<a name="line.127"></a>
+<FONT color="green">128</FONT>        <a name="line.128"></a>
+<FONT color="green">129</FONT>        public static final String ERROR_PAYRATE_IMPORT_ABORTED = "error.budget.payrate.importAborted";<a name="line.129"></a>
+<FONT color="green">130</FONT>        public static final String ERROR_PAYRATE_UPDATE_ABORTED = "error.budget.payrate.updateAborted";<a name="line.130"></a>
+<FONT color="green">131</FONT>        public static final String ERROR_PAYRATE_IMPORT_NO_PAYROLL_MATCH = "error.budget.payrate.noPayrollMatch";<a name="line.131"></a>
+<FONT color="green">132</FONT>        public static final String ERROR_PAYRATE_NO_ACTIVE_FUNDING_RECORDS = "error.budget.payrate.noActiveFundingRecords";<a name="line.132"></a>
+<FONT color="green">133</FONT>        public static final String ERROR_PAYRATE_NO_BUDGET_DOCUMENT = "error.budget.payrate.noBudgetDocument";<a name="line.133"></a>
+<FONT color="green">134</FONT>        public static final String ERROR_PAYRATE_OBJECT_LEVEL_ERROR = "error.budget.payrate.objectLevelError";<a name="line.134"></a>
+<FONT color="green">135</FONT>        public static final String ERROR_PAYRATE_ACCOUNT_LOCK_EXISTS = "error.budget.payrate.accountLockExists";<a name="line.135"></a>
+<FONT color="green">136</FONT>        public static final String ERROR_PAYRATE_FUNDING_LOCK_EXISTS = "error.budget.payrate.fundingLockExists";<a name="line.136"></a>
+<FONT color="green">137</FONT>        public static final String ERROR_PAYRATE_BATCH_ACCOUNT_LOCK_FAILED = "error.budget.payrate.batchAccountLockFailed";<a name="line.137"></a>
+<FONT color="green">138</FONT>        public static final String ERROR_PAYRATE_NO_UPDATE_FTE_ZERO_OR_BLANK = "error.budget.payrate.noUpdateFteZero";<a name="line.138"></a>
+<FONT color="green">139</FONT>        <a name="line.139"></a>
+<FONT color="green">140</FONT>        public static final String MSG_PAYRATE_IMPORT_LOG_FILE_HEADER_LINE = "message.budget.payrate.headerLine";<a name="line.140"></a>
+<FONT color="green">141</FONT>        public static final String MSG_PAYRATE_IMPORT_NO_IMPORT_RECORDS = "message.budget.payrate.noImportRecords";<a name="line.141"></a>
+<FONT color="green">142</FONT>        public static final String MSG_PAYRATE_IMPORT_COUNT = "message.budget.payrate.importCount";<a name="line.142"></a>
+<FONT color="green">143</FONT>        public static final String MSG_PAYRATE_IMPORT_COMPLETE = "message.budget.payrate.importComplete";<a name="line.143"></a>
+<FONT color="green">144</FONT>        public static final String MSG_PAYRATE_IMPORT_UPDATE_COMPLETE = "message.budget.payrate.updateComplete";<a name="line.144"></a>
+<FONT color="green">145</FONT>        public static final String MSG_PAYRATE_IMPORT_LOG_FILE_FOOTER = "message.budget.payrate.footerLine";<a name="line.145"></a>
+<FONT color="green">146</FONT>        <a name="line.146"></a>
+<FONT color="green">147</FONT>        public static final String ERROR_REQUIRED_FOR_GET_NEW_POSITION = "error.budget.requiredGetNewPosition";<a name="line.147"></a>
+<FONT color="green">148</FONT>        public static final String ERROR_EXTERNAL_POSITION_NOT_FOUND = "error.budget.externalPositionNotFound";<a name="line.148"></a>
+<FONT color="green">149</FONT>        public static final String ERROR_BUDGET_POSITION_ALREADY_EXISTS = "error.budget.positionAlreadyExists";<a name="line.149"></a>
+<FONT color="green">150</FONT>        public static final String ERROR_REQUIRED_FOR_GET_NEW_INCUMBENT = "error.budget.requiredGetNewIncumbent";<a name="line.150"></a>
+<FONT color="green">151</FONT>        public static final String ERROR_BUDGET_INCUMBENT_ALREADY_EXISTS = "error.budget.incumbentAlreadyExists";<a name="line.151"></a>
+<FONT color="green">152</FONT>        public static final String ERROR_EXTERNAL_INCUMBENT_NOT_FOUND = "error.budget.externalIncumbentNotFound";<a name="line.152"></a>
+<FONT color="green">153</FONT>        public static final String ERROR_POSITION_LOCK_NOT_OBTAINED = "error.budget.positionLockNotObtained";   <a name="line.153"></a>
+<FONT color="green">154</FONT>        <a name="line.154"></a>
+<FONT color="green">155</FONT>        public static final String ERROR_PAYRATE_EXPORT_INVALID_POSITION_UNION_CODE = "error.budget.payrate.export.invalidPositionUnionCode";<a name="line.155"></a>
+<FONT color="green">156</FONT>        public static final String ERROR_PAYRATE_EXPORT_POSITION_UNION_CODE_REQUIRED = "error.budget.payrate.export.positionUnionCodeRequired";<a name="line.156"></a>
+<FONT color="green">157</FONT>        public static final String ERROR_PAYRATE_EXPORT_CSF_FREEZE_DATE_REQUIRED = "error.budget.payrate.export.CsfFreezeDateRequired";<a name="line.157"></a>
+<FONT color="green">158</FONT>        public static final String ERROR_PAYRATE_EXPORT_CSF_FREEZE_DATE_INCORRECT_FORMAT = "error.budget.payrate.export.CsfFreezeDateIncorrectFormat";<a name="line.158"></a>
+<FONT color="green">159</FONT>        <a name="line.159"></a>
+<FONT color="green">160</FONT>        public static final String ERROR_FAIL_TO_LOCK_POSITION = "error.budget.failToLockPosition";<a name="line.160"></a>
+<FONT color="green">161</FONT>        public static final String ERROR_FAIL_TO_LOCK_FUNDING = "error.budget.failToLockFunding";<a name="line.161"></a>
+<FONT color="green">162</FONT>        public static final String ERROR_FAIL_TO_UPDATE_FUNDING_ACCESS = "error.budget.failToUpdateFundingAccess";<a name="line.162"></a>
+<FONT color="green">163</FONT>        <a name="line.163"></a>
+<FONT color="green">164</FONT>        public static final String ERROR_INCUMBENT_NOT_FOUND = "error.budget.incumbentNotFound";<a name="line.164"></a>
+<FONT color="green">165</FONT>        public static final String ERROR_POSITION_NOT_FOUND = "error.budget.positionNotFound";<a name="line.165"></a>
+<FONT color="green">166</FONT>        public static final String ERROR_FAIL_TO_ACQUIRE_TRANSACTION_LOCK = "error.budget.failToAcquireTransactionLock";<a name="line.166"></a>
+<FONT color="green">167</FONT>        public static final String ERROR_SALARY_SETTING_EXPANSION_NOT_FOUND = "error.budget.salarySettingExpansionNotFound";<a name="line.167"></a>
+<FONT color="green">168</FONT>        public static final String ERROR_ADJUSTMENT_AMOUNT_REQUIRED = "error.budget.adjustmentAmountRequired";<a name="line.168"></a>
+<FONT color="green">169</FONT>        public static final String ERROR_ADJUSTMENT_PERCENT_REQUIRED = "error.budget.adjustmentPercentRequired";<a name="line.169"></a>
+<FONT color="green">170</FONT>        public static final String ERROR_REQUESTED_AMOUNT_NONNEGATIVE_REQUIRED = "error.budget.requestedSalaryIsNonnegative";<a name="line.170"></a>
+<FONT color="green">171</FONT>        public static final String ERROR_REQUESTED_AMOUNT_NEEDS_FTE_FIRST = "error.budget.requestedSalaryNeedsFteFirst";<a name="line.171"></a>
+<FONT color="green">172</FONT>        public static final String ERROR_FTE_GREATER_THAN_ZERO_REQUIRED = "error.budget.fteAmountGreaterThanZero";<a name="line.172"></a>
+<FONT color="green">173</FONT>        public static final String ERROR_BUDGET_DOCUMENT_NOT_FOUND = "error.budget.budgetDocumentNotFound";<a name="line.173"></a>
+<FONT color="green">174</FONT>        public static final String ERROR_EMPTY_PAY_RATE_ANNUAL_AMOUNT = "error.budget.emptyPayRateAnnualAmount";<a name="line.174"></a>
+<FONT color="green">175</FONT>        <a name="line.175"></a>
+<FONT color="green">176</FONT>        public static final String WARNING_FTE_NOT_EQUAL = "warning.budget.fteNotEqual";<a name="line.176"></a>
+<FONT color="green">177</FONT>        public static final String WARNING_FTE_NOT_ONE = "warning.budget.fteNotOne";<a name="line.177"></a>
+<FONT color="green">178</FONT>        public static final String WARNING_WORKING_HOUR_NOT_EQUAL = "warning.budget.workingHourNotEqual";<a name="line.178"></a>
+<FONT color="green">179</FONT>        public static final String WARNING_RECALCULATE_NEEDED = "warning.budget.recalculateNeeded";<a name="line.179"></a>
+<FONT color="green">180</FONT>        <a name="line.180"></a>
+<FONT color="green">181</FONT>        public static final String ERROR_NO_ACTIVE_JOB_FOUND = "error.budget.noActiveJobFound";<a name="line.181"></a>
+<FONT color="green">182</FONT>        public static final String ERROR_TIME_PERCENT_GREATER_THAN_ZERO_REQUIRED = "error.budget.timePercentGreaterThanZero";<a name="line.182"></a>
+<FONT color="green">183</FONT>        public static final String ERROR_NOT_EQUAL_NORMAL_WORK_MONTHS = "error.budget.notEqualNormalWorkMonths";<a name="line.183"></a>
+<FONT color="green">184</FONT>        public static final String ERROR_FUNDIN_MONTH_NOT_IN_RANGE = "error.budget.fundingMonthNotInRange";<a name="line.184"></a>
+<FONT color="green">185</FONT>        public static final String ERROR_EMPTY_FUNDIN_MONTH = "error.budget.emptyFundingMonth";<a name="line.185"></a>
+<FONT color="green">186</FONT>        public static final String ERROR_DUPLICATE_FUNDING_LINE = "error.budget.duplicateFundingLine";<a name="line.186"></a>
+<FONT color="green">187</FONT>        public static final String ERROR_NOT_DEFAULT_OBJECT_CODE = "error.budget.notDefaultObjectCode";<a name="line.187"></a>
+<FONT color="green">188</FONT>        public static final String ERROR_REQUEST_AMOUNT_NOT_ZERO_WHEN_FULL_YEAR_LEAVE = "error.budget.requestedAmountNotZeroWhenFullYearleave";<a name="line.188"></a>
+<FONT color="green">189</FONT>        public static final String ERROR_REQUEST_FTE_NOT_ZERO_WHEN_FULL_YEAR_LEAVE = "error.budget.requestedFteNotZeroWhenFullYearleave";<a name="line.189"></a>
+<FONT color="green">190</FONT>        public static final String ERROR_EMPTY_REQUESTED_TIME_PERCENT = "error.budget.emptyRequestedTimePercent";<a name="line.190"></a>
+<FONT color="green">191</FONT>        public static final String ERROR_DETAIL_POSITION_NOT_REQUIRED = "error.budget.detailPositionNotRequired";<a name="line.191"></a>
+<FONT color="green">192</FONT>        public static final String ERROR_FTE_QUANTITY_NOT_IN_RANGE = "error.budget.fteQuantityNotInRange";<a name="line.192"></a>
+<FONT color="green">193</FONT>        public static final String ERROR_LEAVE_TIME_PERCENT_NOT_IN_RANGE = "error.budget.leaveTimePercentNotInRange";<a name="line.193"></a>
+<FONT color="green">194</FONT>        public static final String ERROR_TIME_PERCENT_NOT_IN_RANGE = "error.budget.timePercentNotInRange";<a name="line.194"></a>
+<FONT color="green">195</FONT>        public static final String ERROR_CANNOT_ADJUST_FUNDING_WITHOUT_EFFECTIVE_CSF_TRACKER = "error.budget.cannotAdjustFundingWithoutEffectiveCSFTracker";<a name="line.195"></a>
+<FONT color="green">196</FONT>        public static final String ERROR_CANNOT_ADJUST_FUNDING_MARKED_AS_DELETE = "error.budget.cannotAdjustFundingMarkedAsDelete";<a name="line.196"></a>
+<FONT color="green">197</FONT>        public static final String WARNING_AUTHORIZATION_DISABLED = "warning.budget.authorizationDisabled";<a name="line.197"></a>
+<FONT color="green">198</FONT>    <a name="line.198"></a>
+<FONT color="green">199</FONT>        public static final String ERROR_NO_SALARY_SETTING_PERMISSION = "error.budget.noSalarySettingPermission";<a name="line.199"></a>
+<FONT color="green">200</FONT>    <a name="line.200"></a>
+<FONT color="green">201</FONT>        // Calculated Salary Foundation Tracker Override errors<a name="line.201"></a>
+<FONT color="green">202</FONT>        public static final String ERROR_FISCAL_YEAR_NOT_CURRENT = "error.fiscalYear.notCurrentFiscalYear";<a name="line.202"></a>
+<FONT color="green">203</FONT>        public static final String ERROR_INVALID_APPOINTMENT = "error.invalid.appointment";<a name="line.203"></a>
+<FONT color="green">204</FONT>        public static final String ERROR_INVALID_POSITION = "error.invalid.position";<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>    }<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

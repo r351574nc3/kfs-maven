@@ -1,0 +1,344 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.gl.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.io.BufferedReader;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.io.File;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.io.FileNotFoundException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.io.FileReader;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.io.FilenameFilter;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.io.IOException;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.io.PrintStream;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.Arrays;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.util.List;<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.gl.GeneralLedgerConstants;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.gl.service.OriginEntryGroupService;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kns.service.DateTimeService;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.rice.kns.service.KualiModuleService;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.springframework.transaction.annotation.Transactional;<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>    /**<a name="line.35"></a>
+<FONT color="green">036</FONT>     * @see org.kuali.kfs.gl.service.OriginEntryGroupService<a name="line.36"></a>
+<FONT color="green">037</FONT>     */<a name="line.37"></a>
+<FONT color="green">038</FONT>    @Transactional<a name="line.38"></a>
+<FONT color="green">039</FONT>    public class OriginEntryGroupServiceImpl implements OriginEntryGroupService {<a name="line.39"></a>
+<FONT color="green">040</FONT>        private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(OriginEntryGroupServiceImpl.class);<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        protected DateTimeService dateTimeService;<a name="line.42"></a>
+<FONT color="green">043</FONT>        protected String batchFileDirectoryName;<a name="line.43"></a>
+<FONT color="green">044</FONT>        protected KualiModuleService kualiModuleService;<a name="line.44"></a>
+<FONT color="green">045</FONT>        protected String nightlyOutFileName;<a name="line.45"></a>
+<FONT color="green">046</FONT>        protected String backupFileName;<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        /**<a name="line.48"></a>
+<FONT color="green">049</FONT>         * @see org.kuali.kfs.gl.service.OriginEntryGroupService#getNewestScrubberErrorFileName()<a name="line.49"></a>
+<FONT color="green">050</FONT>         */<a name="line.50"></a>
+<FONT color="green">051</FONT>        public String getNewestScrubberErrorFileName() {<a name="line.51"></a>
+<FONT color="green">052</FONT>            File newestFile = null;<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>            File[] files = null;<a name="line.54"></a>
+<FONT color="green">055</FONT>            // can add filter here: listFiles(filter); -- check out originEntryTestBase from Jeff<a name="line.55"></a>
+<FONT color="green">056</FONT>            if (new File(batchFileDirectoryName) == null) {<a name="line.56"></a>
+<FONT color="green">057</FONT>                return null;<a name="line.57"></a>
+<FONT color="green">058</FONT>            }<a name="line.58"></a>
+<FONT color="green">059</FONT>            files = new File(batchFileDirectoryName).listFiles(new ScrubberErrorFilenameFilter());<a name="line.59"></a>
+<FONT color="green">060</FONT>            List&lt;File&gt; fileList = Arrays.asList(files);<a name="line.60"></a>
+<FONT color="green">061</FONT>            if (fileList.size() &gt; 0) {<a name="line.61"></a>
+<FONT color="green">062</FONT>                for (File eachFile : fileList) {<a name="line.62"></a>
+<FONT color="green">063</FONT>                    if (newestFile == null) {<a name="line.63"></a>
+<FONT color="green">064</FONT>                        newestFile = eachFile;<a name="line.64"></a>
+<FONT color="green">065</FONT>                    }<a name="line.65"></a>
+<FONT color="green">066</FONT>                    else {<a name="line.66"></a>
+<FONT color="green">067</FONT>                        if (newestFile.lastModified() &lt; eachFile.lastModified()) {<a name="line.67"></a>
+<FONT color="green">068</FONT>                            newestFile = eachFile;<a name="line.68"></a>
+<FONT color="green">069</FONT>                        }<a name="line.69"></a>
+<FONT color="green">070</FONT>                    }<a name="line.70"></a>
+<FONT color="green">071</FONT>                }<a name="line.71"></a>
+<FONT color="green">072</FONT>            }<a name="line.72"></a>
+<FONT color="green">073</FONT>            else {<a name="line.73"></a>
+<FONT color="green">074</FONT>                return null;<a name="line.74"></a>
+<FONT color="green">075</FONT>            }<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>            return newestFile.getName();<a name="line.77"></a>
+<FONT color="green">078</FONT>        }<a name="line.78"></a>
+<FONT color="green">079</FONT>    <a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>        /**<a name="line.81"></a>
+<FONT color="green">082</FONT>         * Retrieves all groups to be created today, and creates backup group versions of them<a name="line.82"></a>
+<FONT color="green">083</FONT>         * <a name="line.83"></a>
+<FONT color="green">084</FONT>         * @see org.kuali.kfs.gl.service.OriginEntryGroupService#createBackupGroup()<a name="line.84"></a>
+<FONT color="green">085</FONT>         */<a name="line.85"></a>
+<FONT color="green">086</FONT>        public void createBackupGroup() {<a name="line.86"></a>
+<FONT color="green">087</FONT>            LOG.debug("createBackupGroup() started");<a name="line.87"></a>
+<FONT color="green">088</FONT>            // check file from nightly out<a name="line.88"></a>
+<FONT color="green">089</FONT>            File nightlyOutFile = new File(batchFileDirectoryName + File.separator + nightlyOutFileName);<a name="line.89"></a>
+<FONT color="green">090</FONT>            if (!nightlyOutFile.exists()) {<a name="line.90"></a>
+<FONT color="green">091</FONT>                LOG.warn("nightlyOutFile doesn't exist :" + nightlyOutFileName);<a name="line.91"></a>
+<FONT color="green">092</FONT>            }<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>            String backupFile = batchFileDirectoryName + File.separator + backupFileName + GeneralLedgerConstants.BatchFileSystem.EXTENSION;<a name="line.94"></a>
+<FONT color="green">095</FONT>            PrintStream backupPs = null;<a name="line.95"></a>
+<FONT color="green">096</FONT>            try {<a name="line.96"></a>
+<FONT color="green">097</FONT>                backupPs = new PrintStream(backupFile);<a name="line.97"></a>
+<FONT color="green">098</FONT>            }<a name="line.98"></a>
+<FONT color="green">099</FONT>            catch (FileNotFoundException e) {<a name="line.99"></a>
+<FONT color="green">100</FONT>                throw new RuntimeException("backupFile doesn't exist " + backupFile);<a name="line.100"></a>
+<FONT color="green">101</FONT>            }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>            // get all done files from originEntry Directory<a name="line.103"></a>
+<FONT color="green">104</FONT>            File[] doneFileList = new File(batchFileDirectoryName).listFiles(new DoneFileFilter());<a name="line.104"></a>
+<FONT color="green">105</FONT>            // build output file with doneFileList and print stream<a name="line.105"></a>
+<FONT color="green">106</FONT>            buildBackupFileOutput(doneFileList, backupPs);<a name="line.106"></a>
+<FONT color="green">107</FONT>            backupPs.close();<a name="line.107"></a>
+<FONT color="green">108</FONT>        }<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>        /*<a name="line.111"></a>
+<FONT color="green">112</FONT>         * buildBackupFileOuput with doneFileList and PrintStream<a name="line.112"></a>
+<FONT color="green">113</FONT>         */<a name="line.113"></a>
+<FONT color="green">114</FONT>        protected void buildBackupFileOutput(File[] doneFileList, PrintStream ps) {<a name="line.114"></a>
+<FONT color="green">115</FONT>            BufferedReader inputFileReader = null;<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>            for (File doneFile : doneFileList) {<a name="line.117"></a>
+<FONT color="green">118</FONT>                // get data file with done file<a name="line.118"></a>
+<FONT color="green">119</FONT>                File dataFile = getDataFile(doneFile);<a name="line.119"></a>
+<FONT color="green">120</FONT>                if (dataFile != null) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                    try {<a name="line.121"></a>
+<FONT color="green">122</FONT>                        inputFileReader = new BufferedReader(new FileReader(dataFile.getPath()));<a name="line.122"></a>
+<FONT color="green">123</FONT>                        String line = null;<a name="line.123"></a>
+<FONT color="green">124</FONT>                        while ((line = inputFileReader.readLine()) != null) {<a name="line.124"></a>
+<FONT color="green">125</FONT>                            try {<a name="line.125"></a>
+<FONT color="green">126</FONT>                                ps.printf("%s\n", line);<a name="line.126"></a>
+<FONT color="green">127</FONT>                            }<a name="line.127"></a>
+<FONT color="green">128</FONT>                            catch (Exception e) {<a name="line.128"></a>
+<FONT color="green">129</FONT>                                throw new IOException(e.toString());<a name="line.129"></a>
+<FONT color="green">130</FONT>                            }<a name="line.130"></a>
+<FONT color="green">131</FONT>                        }<a name="line.131"></a>
+<FONT color="green">132</FONT>                        inputFileReader.close();<a name="line.132"></a>
+<FONT color="green">133</FONT>                        inputFileReader = null;<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>                    }<a name="line.135"></a>
+<FONT color="green">136</FONT>                    catch (Exception e) {<a name="line.136"></a>
+<FONT color="green">137</FONT>                        throw new RuntimeException(e.toString());<a name="line.137"></a>
+<FONT color="green">138</FONT>                    }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>                    doneFile.delete();<a name="line.140"></a>
+<FONT color="green">141</FONT>                    postProcessDataFile(dataFile);<a name="line.141"></a>
+<FONT color="green">142</FONT>                    <a name="line.142"></a>
+<FONT color="green">143</FONT>                }<a name="line.143"></a>
+<FONT color="green">144</FONT>            }<a name="line.144"></a>
+<FONT color="green">145</FONT>        }<a name="line.145"></a>
+<FONT color="green">146</FONT>        <a name="line.146"></a>
+<FONT color="green">147</FONT>        protected void postProcessDataFile( File dataFile )<a name="line.147"></a>
+<FONT color="green">148</FONT>        {<a name="line.148"></a>
+<FONT color="green">149</FONT>            // do nothing.  A hook for institution extension.<a name="line.149"></a>
+<FONT color="green">150</FONT>        }<a name="line.150"></a>
+<FONT color="green">151</FONT>    <a name="line.151"></a>
+<FONT color="green">152</FONT>    <a name="line.152"></a>
+<FONT color="green">153</FONT>        /**<a name="line.153"></a>
+<FONT color="green">154</FONT>         * @see org.kuali.kfs.gl.service.OriginEntryGroupService#createGroup(java.lang.String)<a name="line.154"></a>
+<FONT color="green">155</FONT>         */<a name="line.155"></a>
+<FONT color="green">156</FONT>        public File createGroup(String fileName) {<a name="line.156"></a>
+<FONT color="green">157</FONT>            return new File(batchFileDirectoryName + File.separator + fileName);<a name="line.157"></a>
+<FONT color="green">158</FONT>        }<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>        /**<a name="line.160"></a>
+<FONT color="green">161</FONT>         * @see org.kuali.kfs.gl.service.OriginEntryGroupService#getGroupExists(java.lang.String)<a name="line.161"></a>
+<FONT color="green">162</FONT>         */<a name="line.162"></a>
+<FONT color="green">163</FONT>        public boolean getGroupExists(String groupId) {<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>            File file = new File(batchFileDirectoryName + File.separator + groupId);<a name="line.165"></a>
+<FONT color="green">166</FONT>            if (file == null) {<a name="line.166"></a>
+<FONT color="green">167</FONT>                return false;<a name="line.167"></a>
+<FONT color="green">168</FONT>            }<a name="line.168"></a>
+<FONT color="green">169</FONT>            else {<a name="line.169"></a>
+<FONT color="green">170</FONT>                return true;<a name="line.170"></a>
+<FONT color="green">171</FONT>            }<a name="line.171"></a>
+<FONT color="green">172</FONT>        }<a name="line.172"></a>
+<FONT color="green">173</FONT>    <a name="line.173"></a>
+<FONT color="green">174</FONT>        /**<a name="line.174"></a>
+<FONT color="green">175</FONT>         * @see org.kuali.kfs.gl.service.OriginEntryGroupService#getAllFileInBatchDirectory()<a name="line.175"></a>
+<FONT color="green">176</FONT>         */<a name="line.176"></a>
+<FONT color="green">177</FONT>        public File[] getAllFileInBatchDirectory() {<a name="line.177"></a>
+<FONT color="green">178</FONT>            File[] returnFiles = null;<a name="line.178"></a>
+<FONT color="green">179</FONT>            if (new File(batchFileDirectoryName) != null) {<a name="line.179"></a>
+<FONT color="green">180</FONT>                returnFiles = new File(batchFileDirectoryName).listFiles(new DateAndDoneFileFilter());<a name="line.180"></a>
+<FONT color="green">181</FONT>            }<a name="line.181"></a>
+<FONT color="green">182</FONT>            return returnFiles;<a name="line.182"></a>
+<FONT color="green">183</FONT>        }<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>    <a name="line.185"></a>
+<FONT color="green">186</FONT>        /**<a name="line.186"></a>
+<FONT color="green">187</FONT>         * @see org.kuali.kfs.gl.service.OriginEntryGroupService#deleteFile(java.lang.String)<a name="line.187"></a>
+<FONT color="green">188</FONT>         */<a name="line.188"></a>
+<FONT color="green">189</FONT>        public void deleteFile(String fileNameWithPath) {<a name="line.189"></a>
+<FONT color="green">190</FONT>            File file = new File(fileNameWithPath);<a name="line.190"></a>
+<FONT color="green">191</FONT>            if (file.exists()) {<a name="line.191"></a>
+<FONT color="green">192</FONT>                file.delete();<a name="line.192"></a>
+<FONT color="green">193</FONT>            }<a name="line.193"></a>
+<FONT color="green">194</FONT>        }<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>        /**<a name="line.196"></a>
+<FONT color="green">197</FONT>         * @see org.kuali.kfs.gl.service.OriginEntryGroupService#getLaborFileWithFileName(java.lang.String)<a name="line.197"></a>
+<FONT color="green">198</FONT>         */<a name="line.198"></a>
+<FONT color="green">199</FONT>        public File getFileWithFileName(String fileName) {<a name="line.199"></a>
+<FONT color="green">200</FONT>            return new File(batchFileDirectoryName + File.separator + fileName);<a name="line.200"></a>
+<FONT color="green">201</FONT>        }<a name="line.201"></a>
+<FONT color="green">202</FONT>    <a name="line.202"></a>
+<FONT color="green">203</FONT>        protected class ScrubberErrorFilenameFilter implements FilenameFilter {<a name="line.203"></a>
+<FONT color="green">204</FONT>            /**<a name="line.204"></a>
+<FONT color="green">205</FONT>             * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)<a name="line.205"></a>
+<FONT color="green">206</FONT>             */<a name="line.206"></a>
+<FONT color="green">207</FONT>            public boolean accept(File dir, String name) {<a name="line.207"></a>
+<FONT color="green">208</FONT>                return name.contains(GeneralLedgerConstants.BatchFileSystem.SCRUBBER_ERROR_PREFIX);<a name="line.208"></a>
+<FONT color="green">209</FONT>            }<a name="line.209"></a>
+<FONT color="green">210</FONT>        }<a name="line.210"></a>
+<FONT color="green">211</FONT>    <a name="line.211"></a>
+<FONT color="green">212</FONT>        protected class DateAndDoneFileFilter implements FilenameFilter {<a name="line.212"></a>
+<FONT color="green">213</FONT>            /**<a name="line.213"></a>
+<FONT color="green">214</FONT>             * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)<a name="line.214"></a>
+<FONT color="green">215</FONT>             */<a name="line.215"></a>
+<FONT color="green">216</FONT>            public boolean accept(File dir, String name) {<a name="line.216"></a>
+<FONT color="green">217</FONT>                return name.contains(GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION) || name.contains(GeneralLedgerConstants.BatchFileSystem.EXTENSION);<a name="line.217"></a>
+<FONT color="green">218</FONT>            }<a name="line.218"></a>
+<FONT color="green">219</FONT>        }<a name="line.219"></a>
+<FONT color="green">220</FONT>    <a name="line.220"></a>
+<FONT color="green">221</FONT>        protected class DoneFileFilter implements FilenameFilter {<a name="line.221"></a>
+<FONT color="green">222</FONT>            /**<a name="line.222"></a>
+<FONT color="green">223</FONT>             * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)<a name="line.223"></a>
+<FONT color="green">224</FONT>             */<a name="line.224"></a>
+<FONT color="green">225</FONT>            public boolean accept(File dir, String name) {<a name="line.225"></a>
+<FONT color="green">226</FONT>                return name.contains(GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);<a name="line.226"></a>
+<FONT color="green">227</FONT>            }<a name="line.227"></a>
+<FONT color="green">228</FONT>        }<a name="line.228"></a>
+<FONT color="green">229</FONT>    <a name="line.229"></a>
+<FONT color="green">230</FONT>        protected File getDataFile(File doneFile) {<a name="line.230"></a>
+<FONT color="green">231</FONT>            String doneFileAbsPath = doneFile.getAbsolutePath();<a name="line.231"></a>
+<FONT color="green">232</FONT>            if (!doneFileAbsPath.endsWith(GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION)) {<a name="line.232"></a>
+<FONT color="green">233</FONT>                throw new IllegalArgumentException("Done file name must end with " + GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);<a name="line.233"></a>
+<FONT color="green">234</FONT>            }<a name="line.234"></a>
+<FONT color="green">235</FONT>            String dataFileAbsPath = StringUtils.removeEnd(doneFileAbsPath, GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION) + GeneralLedgerConstants.BatchFileSystem.EXTENSION;<a name="line.235"></a>
+<FONT color="green">236</FONT>            File dataFile = new File(dataFileAbsPath);<a name="line.236"></a>
+<FONT color="green">237</FONT>            if (!dataFile.exists() || !dataFile.canRead()) {<a name="line.237"></a>
+<FONT color="green">238</FONT>                LOG.error("Cannot find/read data file " + dataFileAbsPath);<a name="line.238"></a>
+<FONT color="green">239</FONT>                return null;<a name="line.239"></a>
+<FONT color="green">240</FONT>            }<a name="line.240"></a>
+<FONT color="green">241</FONT>            return dataFile;<a name="line.241"></a>
+<FONT color="green">242</FONT>        }<a name="line.242"></a>
+<FONT color="green">243</FONT>        <a name="line.243"></a>
+<FONT color="green">244</FONT>        public void setBatchFileDirectoryName(String batchFileDirectoryName) {<a name="line.244"></a>
+<FONT color="green">245</FONT>            this.batchFileDirectoryName = batchFileDirectoryName;<a name="line.245"></a>
+<FONT color="green">246</FONT>        }<a name="line.246"></a>
+<FONT color="green">247</FONT>    <a name="line.247"></a>
+<FONT color="green">248</FONT>    <a name="line.248"></a>
+<FONT color="green">249</FONT>        public void setKualiModuleService(KualiModuleService kualiModuleService) {<a name="line.249"></a>
+<FONT color="green">250</FONT>            this.kualiModuleService = kualiModuleService;<a name="line.250"></a>
+<FONT color="green">251</FONT>        }<a name="line.251"></a>
+<FONT color="green">252</FONT>        <a name="line.252"></a>
+<FONT color="green">253</FONT>        public void setDateTimeService(DateTimeService dts) {<a name="line.253"></a>
+<FONT color="green">254</FONT>            dateTimeService = dts;<a name="line.254"></a>
+<FONT color="green">255</FONT>        }<a name="line.255"></a>
+<FONT color="green">256</FONT>    <a name="line.256"></a>
+<FONT color="green">257</FONT>        public void setNightlyOutFileName(String nightlyOutFileName) {<a name="line.257"></a>
+<FONT color="green">258</FONT>            this.nightlyOutFileName = nightlyOutFileName;<a name="line.258"></a>
+<FONT color="green">259</FONT>        }<a name="line.259"></a>
+<FONT color="green">260</FONT>    <a name="line.260"></a>
+<FONT color="green">261</FONT>        public void setBackupFileName(String backupFileName) {<a name="line.261"></a>
+<FONT color="green">262</FONT>            this.backupFileName = backupFileName;<a name="line.262"></a>
+<FONT color="green">263</FONT>        }<a name="line.263"></a>
+<FONT color="green">264</FONT>    <a name="line.264"></a>
+<FONT color="green">265</FONT>        protected DateTimeService getDateTimeService() {<a name="line.265"></a>
+<FONT color="green">266</FONT>            return dateTimeService;<a name="line.266"></a>
+<FONT color="green">267</FONT>        }<a name="line.267"></a>
+<FONT color="green">268</FONT>    <a name="line.268"></a>
+<FONT color="green">269</FONT>        protected String getBatchFileDirectoryName() {<a name="line.269"></a>
+<FONT color="green">270</FONT>            return batchFileDirectoryName;<a name="line.270"></a>
+<FONT color="green">271</FONT>        }<a name="line.271"></a>
+<FONT color="green">272</FONT>    <a name="line.272"></a>
+<FONT color="green">273</FONT>        protected KualiModuleService getKualiModuleService() {<a name="line.273"></a>
+<FONT color="green">274</FONT>            return kualiModuleService;<a name="line.274"></a>
+<FONT color="green">275</FONT>        }<a name="line.275"></a>
+<FONT color="green">276</FONT>        <a name="line.276"></a>
+<FONT color="green">277</FONT>        <a name="line.277"></a>
+<FONT color="green">278</FONT>    }<a name="line.278"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

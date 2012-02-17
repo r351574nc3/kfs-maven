@@ -1,0 +1,479 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.gl.web.struts;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.ArrayList;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Collection;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.HashMap;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.List;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.Map;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Properties;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>    import javax.servlet.http.HttpServletRequest;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import javax.servlet.http.HttpServletResponse;<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.apache.struts.action.ActionForm;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.struts.action.ActionForward;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.apache.struts.action.ActionMapping;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.gl.GeneralLedgerConstants;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.gl.ObjectHelper;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.gl.businessobject.AccountBalance;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.integration.ld.SegmentedBusinessObject;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.kfs.sys.KFSKeyConstants;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.rice.kns.lookup.CollectionIncomplete;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.kuali.rice.kns.lookup.LookupResultsService;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import org.kuali.rice.kns.lookup.Lookupable;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import org.kuali.rice.kns.service.KNSServiceLocator;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import org.kuali.rice.kns.service.KualiConfigurationService;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import org.kuali.rice.kns.service.SequenceAccessorService;<a name="line.46"></a>
+<FONT color="green">047</FONT>    import org.kuali.rice.kns.util.GlobalVariables;<a name="line.47"></a>
+<FONT color="green">048</FONT>    import org.kuali.rice.kns.util.KNSUtils;<a name="line.48"></a>
+<FONT color="green">049</FONT>    import org.kuali.rice.kns.util.KNSConstants;<a name="line.49"></a>
+<FONT color="green">050</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.50"></a>
+<FONT color="green">051</FONT>    import org.kuali.rice.kns.util.UrlFactory;<a name="line.51"></a>
+<FONT color="green">052</FONT>    import org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction;<a name="line.52"></a>
+<FONT color="green">053</FONT>    import org.kuali.rice.kns.web.struts.form.MultipleValueLookupForm;<a name="line.53"></a>
+<FONT color="green">054</FONT>    import org.kuali.rice.kns.web.ui.Column;<a name="line.54"></a>
+<FONT color="green">055</FONT>    import org.kuali.rice.kns.web.ui.ResultRow;<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>    /**<a name="line.57"></a>
+<FONT color="green">058</FONT>     * Balance inquiries are pretty much just lookups already, but are not used in the traditional sense. In most cases, balance<a name="line.58"></a>
+<FONT color="green">059</FONT>     * inquiries only show the end-user data, and allow the end-user to drill-down into inquiries. A traditional lookup allows the user<a name="line.59"></a>
+<FONT color="green">060</FONT>     * to return data to a form. This class is for balance inquiries implemented in the sense of a traditional lookup for forms that<a name="line.60"></a>
+<FONT color="green">061</FONT>     * pull data out of inquiries.&lt;br/&gt; &lt;br/&gt; One example of this is the<a name="line.61"></a>
+<FONT color="green">062</FONT>     * &lt;code&gt;{@link org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument}&lt;/code&gt; which creates source lines from a labor<a name="line.62"></a>
+<FONT color="green">063</FONT>     * ledger balance inquiry screen.&lt;br/&gt; &lt;br/&gt; This is a &lt;code&gt;{@link KualiMultipleValueLookupAction}&lt;/code&gt; which required some<a name="line.63"></a>
+<FONT color="green">064</FONT>     * customization because requirements were not possible with displaytag.<a name="line.64"></a>
+<FONT color="green">065</FONT>     * <a name="line.65"></a>
+<FONT color="green">066</FONT>     * @see org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument<a name="line.66"></a>
+<FONT color="green">067</FONT>     * @see org.kuali.kfs.module.ld.document.web.struts.SalaryExpenseTransferAction;<a name="line.67"></a>
+<FONT color="green">068</FONT>     * @see org.kuali.kfs.module.ld.document.web.struts.SalaryExpenseTransferForm;<a name="line.68"></a>
+<FONT color="green">069</FONT>     */<a name="line.69"></a>
+<FONT color="green">070</FONT>    public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {<a name="line.70"></a>
+<FONT color="green">071</FONT>        private static final org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(BalanceInquiryLookupAction.class);<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>        private static final String TOTALS_TABLE_KEY = "totalsTable";<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>        /**<a name="line.75"></a>
+<FONT color="green">076</FONT>         * If there is no app param defined for the # rows/page, then this value will be used for the default<a name="line.76"></a>
+<FONT color="green">077</FONT>         * <a name="line.77"></a>
+<FONT color="green">078</FONT>         * @see KualiMultipleValueLookupAction#getMaxRowsPerPage(MultipleValueLookupForm)<a name="line.78"></a>
+<FONT color="green">079</FONT>         */<a name="line.79"></a>
+<FONT color="green">080</FONT>        public static final int DEFAULT_MAX_ROWS_PER_PAGE = 50;<a name="line.80"></a>
+<FONT color="green">081</FONT>    <a name="line.81"></a>
+<FONT color="green">082</FONT>        private KualiConfigurationService kualiConfigurationService;<a name="line.82"></a>
+<FONT color="green">083</FONT>        private String[] totalTitles;<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        public BalanceInquiryLookupAction() {<a name="line.85"></a>
+<FONT color="green">086</FONT>            super();<a name="line.86"></a>
+<FONT color="green">087</FONT>            kualiConfigurationService = SpringContext.getBean(KualiConfigurationService.class);<a name="line.87"></a>
+<FONT color="green">088</FONT>        }<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>        private void setTotalTitles() {<a name="line.90"></a>
+<FONT color="green">091</FONT>            totalTitles = new String[7];<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>            totalTitles[0] = kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.INCOME);<a name="line.93"></a>
+<FONT color="green">094</FONT>            totalTitles[1] = kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.INCOME_FROM_TRANSFERS);<a name="line.94"></a>
+<FONT color="green">095</FONT>            totalTitles[2] = kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.INCOME_TOTAL);<a name="line.95"></a>
+<FONT color="green">096</FONT>            totalTitles[3] = kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.EXPENSE);<a name="line.96"></a>
+<FONT color="green">097</FONT>            totalTitles[4] = kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.EXPENSE_FROM_TRANSFERS);<a name="line.97"></a>
+<FONT color="green">098</FONT>            totalTitles[5] = kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.EXPENSE_TOTAL);<a name="line.98"></a>
+<FONT color="green">099</FONT>            totalTitles[6] = kualiConfigurationService.getPropertyString(KFSKeyConstants.AccountBalanceService.TOTAL);<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>        }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>        private String[] getTotalTitles() {<a name="line.103"></a>
+<FONT color="green">104</FONT>            if (null == totalTitles) {<a name="line.104"></a>
+<FONT color="green">105</FONT>                setTotalTitles();<a name="line.105"></a>
+<FONT color="green">106</FONT>            }<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>            return totalTitles;<a name="line.108"></a>
+<FONT color="green">109</FONT>        }<a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>        /**<a name="line.111"></a>
+<FONT color="green">112</FONT>         * search - sets the values of the data entered on the form on the jsp into a map and then searches for the results.<a name="line.112"></a>
+<FONT color="green">113</FONT>         */<a name="line.113"></a>
+<FONT color="green">114</FONT>        public ActionForward search(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {<a name="line.114"></a>
+<FONT color="green">115</FONT>            BalanceInquiryLookupForm lookupForm = (BalanceInquiryLookupForm) form;<a name="line.115"></a>
+<FONT color="green">116</FONT>            Lookupable lookupable = lookupForm.getLookupable();<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>            if (lookupable == null) {<a name="line.118"></a>
+<FONT color="green">119</FONT>                LOG.error("Lookupable is null.");<a name="line.119"></a>
+<FONT color="green">120</FONT>                throw new RuntimeException("Lookupable is null.");<a name="line.120"></a>
+<FONT color="green">121</FONT>            }<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>            Collection displayList = new ArrayList();<a name="line.123"></a>
+<FONT color="green">124</FONT>            CollectionIncomplete incompleteDisplayList;<a name="line.124"></a>
+<FONT color="green">125</FONT>            List&lt;ResultRow&gt; resultTable = new ArrayList&lt;ResultRow&gt;();<a name="line.125"></a>
+<FONT color="green">126</FONT>            Long totalSize;<a name="line.126"></a>
+<FONT color="green">127</FONT>            boolean bounded = true;<a name="line.127"></a>
+<FONT color="green">128</FONT>    <a name="line.128"></a>
+<FONT color="green">129</FONT>            lookupable.validateSearchParameters(lookupForm.getFields());<a name="line.129"></a>
+<FONT color="green">130</FONT>    <a name="line.130"></a>
+<FONT color="green">131</FONT>            displayList = performMultipleValueLookup(lookupForm, resultTable, getMaxRowsPerPage(lookupForm), bounded);<a name="line.131"></a>
+<FONT color="green">132</FONT>            incompleteDisplayList = (CollectionIncomplete) displayList;<a name="line.132"></a>
+<FONT color="green">133</FONT>            totalSize = incompleteDisplayList.getActualSizeIfTruncated();<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>            if (lookupable.isSearchUsingOnlyPrimaryKeyValues()) {<a name="line.135"></a>
+<FONT color="green">136</FONT>                lookupForm.setSearchUsingOnlyPrimaryKeyValues(true);<a name="line.136"></a>
+<FONT color="green">137</FONT>                lookupForm.setPrimaryKeyFieldLabels(lookupable.getPrimaryKeyFieldLabels());<a name="line.137"></a>
+<FONT color="green">138</FONT>            }<a name="line.138"></a>
+<FONT color="green">139</FONT>            else {<a name="line.139"></a>
+<FONT color="green">140</FONT>                lookupForm.setSearchUsingOnlyPrimaryKeyValues(false);<a name="line.140"></a>
+<FONT color="green">141</FONT>                lookupForm.setPrimaryKeyFieldLabels(KFSConstants.EMPTY_STRING);<a name="line.141"></a>
+<FONT color="green">142</FONT>            }<a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>            // TODO: use inheritance instead of this if statement<a name="line.145"></a>
+<FONT color="green">146</FONT>            if (lookupable.getLookupableHelperService() instanceof AccountBalanceByConsolidationLookupableHelperServiceImpl) {<a name="line.146"></a>
+<FONT color="green">147</FONT>                Object[] resultTableAsArray = resultTable.toArray();<a name="line.147"></a>
+<FONT color="green">148</FONT>                Collection totalsTable = new ArrayList();<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>                int arrayIndex = 0;<a name="line.150"></a>
+<FONT color="green">151</FONT>    <a name="line.151"></a>
+<FONT color="green">152</FONT>                try {<a name="line.152"></a>
+<FONT color="green">153</FONT>                    for (int listIndex = 0; listIndex &lt; incompleteDisplayList.size(); listIndex++) {<a name="line.153"></a>
+<FONT color="green">154</FONT>                        AccountBalance balance = (AccountBalance) incompleteDisplayList.get(listIndex);<a name="line.154"></a>
+<FONT color="green">155</FONT>                        boolean ok = ObjectHelper.isOneOf(balance.getTitle(), getTotalTitles());<a name="line.155"></a>
+<FONT color="green">156</FONT>                        if (ok) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                            if (totalSize &gt; 7) {<a name="line.157"></a>
+<FONT color="green">158</FONT>                                totalsTable.add(resultTableAsArray[arrayIndex]);<a name="line.158"></a>
+<FONT color="green">159</FONT>                            }<a name="line.159"></a>
+<FONT color="green">160</FONT>                            resultTable.remove(resultTableAsArray[arrayIndex]);<a name="line.160"></a>
+<FONT color="green">161</FONT>                            incompleteDisplayList.remove(balance);<a name="line.161"></a>
+<FONT color="green">162</FONT>                        }<a name="line.162"></a>
+<FONT color="green">163</FONT>                        arrayIndex++;<a name="line.163"></a>
+<FONT color="green">164</FONT>                    }<a name="line.164"></a>
+<FONT color="green">165</FONT>    <a name="line.165"></a>
+<FONT color="green">166</FONT>                    request.setAttribute(TOTALS_TABLE_KEY, totalsTable);<a name="line.166"></a>
+<FONT color="green">167</FONT>                    GlobalVariables.getUserSession().addObject(TOTALS_TABLE_KEY, totalsTable);<a name="line.167"></a>
+<FONT color="green">168</FONT>                }<a name="line.168"></a>
+<FONT color="green">169</FONT>                catch (NumberFormatException e) {<a name="line.169"></a>
+<FONT color="green">170</FONT>                    GlobalVariables.getMessageMap().putError(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, KFSKeyConstants.ERROR_CUSTOM, new String[] { "Fiscal Year must be a four-digit number" });<a name="line.170"></a>
+<FONT color="green">171</FONT>                }<a name="line.171"></a>
+<FONT color="green">172</FONT>                catch (Exception e) {<a name="line.172"></a>
+<FONT color="green">173</FONT>                    GlobalVariables.getMessageMap().putError(KFSConstants.DOCUMENT_ERRORS, KFSKeyConstants.ERROR_CUSTOM, new String[] { "Please report the server error." });<a name="line.173"></a>
+<FONT color="green">174</FONT>                    LOG.error("Application Errors", e);<a name="line.174"></a>
+<FONT color="green">175</FONT>                }<a name="line.175"></a>
+<FONT color="green">176</FONT>            }<a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>            request.setAttribute(KFSConstants.REQUEST_SEARCH_RESULTS_SIZE, totalSize);<a name="line.178"></a>
+<FONT color="green">179</FONT>            request.setAttribute(KFSConstants.REQUEST_SEARCH_RESULTS, resultTable);<a name="line.179"></a>
+<FONT color="green">180</FONT>            lookupForm.setResultsActualSize((int) totalSize.longValue());<a name="line.180"></a>
+<FONT color="green">181</FONT>            lookupForm.setResultsLimitedSize(resultTable.size());<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>            if (lookupForm.isSegmented()) {<a name="line.183"></a>
+<FONT color="green">184</FONT>                LOG.debug("I'm segmented");<a name="line.184"></a>
+<FONT color="green">185</FONT>                request.setAttribute(GeneralLedgerConstants.LookupableBeanKeys.SEGMENTED_LOOKUP_FLAG_NAME, Boolean.TRUE);<a name="line.185"></a>
+<FONT color="green">186</FONT>            }<a name="line.186"></a>
+<FONT color="green">187</FONT>    <a name="line.187"></a>
+<FONT color="green">188</FONT>            if (request.getParameter(KFSConstants.SEARCH_LIST_REQUEST_KEY) != null) {<a name="line.188"></a>
+<FONT color="green">189</FONT>                GlobalVariables.getUserSession().removeObject(request.getParameter(KFSConstants.SEARCH_LIST_REQUEST_KEY));<a name="line.189"></a>
+<FONT color="green">190</FONT>                request.setAttribute(KFSConstants.SEARCH_LIST_REQUEST_KEY, GlobalVariables.getUserSession().addObject(resultTable));<a name="line.190"></a>
+<FONT color="green">191</FONT>            }<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>            return mapping.findForward(KFSConstants.MAPPING_BASIC);<a name="line.193"></a>
+<FONT color="green">194</FONT>        }<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>        /**<a name="line.196"></a>
+<FONT color="green">197</FONT>         * This method returns none of the selected results and redirects back to the lookup caller.<a name="line.197"></a>
+<FONT color="green">198</FONT>         * <a name="line.198"></a>
+<FONT color="green">199</FONT>         * @param mapping<a name="line.199"></a>
+<FONT color="green">200</FONT>         * @param form must be an instance of MultipleValueLookupForm<a name="line.200"></a>
+<FONT color="green">201</FONT>         * @param request<a name="line.201"></a>
+<FONT color="green">202</FONT>         * @param response<a name="line.202"></a>
+<FONT color="green">203</FONT>         * @return<a name="line.203"></a>
+<FONT color="green">204</FONT>         * @throws Exception<a name="line.204"></a>
+<FONT color="green">205</FONT>         */<a name="line.205"></a>
+<FONT color="green">206</FONT>        public ActionForward prepareToReturnNone(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {<a name="line.206"></a>
+<FONT color="green">207</FONT>            MultipleValueLookupForm multipleValueLookupForm = (MultipleValueLookupForm) form;<a name="line.207"></a>
+<FONT color="green">208</FONT>            prepareToReturnNone(multipleValueLookupForm);<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>            // build the parameters for the refresh url<a name="line.210"></a>
+<FONT color="green">211</FONT>            Properties parameters = new Properties();<a name="line.211"></a>
+<FONT color="green">212</FONT>            parameters.put(KFSConstants.DOC_FORM_KEY, multipleValueLookupForm.getFormKey());<a name="line.212"></a>
+<FONT color="green">213</FONT>            parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.RETURN_METHOD_TO_CALL);<a name="line.213"></a>
+<FONT color="green">214</FONT>            parameters.put(KFSConstants.REFRESH_CALLER, KFSConstants.MULTIPLE_VALUE);<a name="line.214"></a>
+<FONT color="green">215</FONT>            parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>            String backUrl = UrlFactory.parameterizeUrl(multipleValueLookupForm.getBackLocation(), parameters);<a name="line.217"></a>
+<FONT color="green">218</FONT>            return new ActionForward(backUrl, true);<a name="line.218"></a>
+<FONT color="green">219</FONT>        }<a name="line.219"></a>
+<FONT color="green">220</FONT>    <a name="line.220"></a>
+<FONT color="green">221</FONT>        /**<a name="line.221"></a>
+<FONT color="green">222</FONT>         * This method does the processing necessary to return selected results and sends a redirect back to the lookup caller<a name="line.222"></a>
+<FONT color="green">223</FONT>         * <a name="line.223"></a>
+<FONT color="green">224</FONT>         * @param mapping<a name="line.224"></a>
+<FONT color="green">225</FONT>         * @param form must be an instance of MultipleValueLookupForm<a name="line.225"></a>
+<FONT color="green">226</FONT>         * @param request<a name="line.226"></a>
+<FONT color="green">227</FONT>         * @param response<a name="line.227"></a>
+<FONT color="green">228</FONT>         * @return<a name="line.228"></a>
+<FONT color="green">229</FONT>         * @throws Exception<a name="line.229"></a>
+<FONT color="green">230</FONT>         */<a name="line.230"></a>
+<FONT color="green">231</FONT>        public ActionForward prepareToReturnSelectedResults(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {<a name="line.231"></a>
+<FONT color="green">232</FONT>            MultipleValueLookupForm multipleValueLookupForm = (MultipleValueLookupForm) form;<a name="line.232"></a>
+<FONT color="green">233</FONT>            if (StringUtils.isBlank(multipleValueLookupForm.getLookupResultsSequenceNumber())) {<a name="line.233"></a>
+<FONT color="green">234</FONT>                // no search was executed<a name="line.234"></a>
+<FONT color="green">235</FONT>                return prepareToReturnNone(mapping, form, request, response);<a name="line.235"></a>
+<FONT color="green">236</FONT>            }<a name="line.236"></a>
+<FONT color="green">237</FONT>    <a name="line.237"></a>
+<FONT color="green">238</FONT>            prepareToReturnSelectedResultBOs(multipleValueLookupForm);<a name="line.238"></a>
+<FONT color="green">239</FONT>    <a name="line.239"></a>
+<FONT color="green">240</FONT>            // build the parameters for the refresh url<a name="line.240"></a>
+<FONT color="green">241</FONT>            Properties parameters = new Properties();<a name="line.241"></a>
+<FONT color="green">242</FONT>            parameters.put(KFSConstants.LOOKUP_RESULTS_BO_CLASS_NAME, multipleValueLookupForm.getBusinessObjectClassName());<a name="line.242"></a>
+<FONT color="green">243</FONT>            parameters.put(KFSConstants.LOOKUP_RESULTS_SEQUENCE_NUMBER, multipleValueLookupForm.getLookupResultsSequenceNumber());<a name="line.243"></a>
+<FONT color="green">244</FONT>            parameters.put(KFSConstants.DOC_FORM_KEY, multipleValueLookupForm.getFormKey());<a name="line.244"></a>
+<FONT color="green">245</FONT>            parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.RETURN_METHOD_TO_CALL);<a name="line.245"></a>
+<FONT color="green">246</FONT>            parameters.put(KFSConstants.REFRESH_CALLER, KFSConstants.MULTIPLE_VALUE);<a name="line.246"></a>
+<FONT color="green">247</FONT>            parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());<a name="line.247"></a>
+<FONT color="green">248</FONT>            String backUrl = UrlFactory.parameterizeUrl(multipleValueLookupForm.getBackLocation(), parameters);<a name="line.248"></a>
+<FONT color="green">249</FONT>            return new ActionForward(backUrl, true);<a name="line.249"></a>
+<FONT color="green">250</FONT>        }<a name="line.250"></a>
+<FONT color="green">251</FONT>    <a name="line.251"></a>
+<FONT color="green">252</FONT>        /**<a name="line.252"></a>
+<FONT color="green">253</FONT>         * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#sort(org.apache.struts.action.ActionMapping,<a name="line.253"></a>
+<FONT color="green">254</FONT>         *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)<a name="line.254"></a>
+<FONT color="green">255</FONT>         */<a name="line.255"></a>
+<FONT color="green">256</FONT>        @Override<a name="line.256"></a>
+<FONT color="green">257</FONT>        public ActionForward sort(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {<a name="line.257"></a>
+<FONT color="green">258</FONT>            request.setAttribute(GeneralLedgerConstants.LookupableBeanKeys.SEGMENTED_LOOKUP_FLAG_NAME, Boolean.TRUE);<a name="line.258"></a>
+<FONT color="green">259</FONT>            return super.sort(mapping, form, request, response);<a name="line.259"></a>
+<FONT color="green">260</FONT>        }<a name="line.260"></a>
+<FONT color="green">261</FONT>    <a name="line.261"></a>
+<FONT color="green">262</FONT>        /**<a name="line.262"></a>
+<FONT color="green">263</FONT>         * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#selectAll(org.apache.struts.action.ActionMapping,<a name="line.263"></a>
+<FONT color="green">264</FONT>         *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)<a name="line.264"></a>
+<FONT color="green">265</FONT>         */<a name="line.265"></a>
+<FONT color="green">266</FONT>        @Override<a name="line.266"></a>
+<FONT color="green">267</FONT>        public ActionForward selectAll(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {<a name="line.267"></a>
+<FONT color="green">268</FONT>            request.setAttribute(GeneralLedgerConstants.LookupableBeanKeys.SEGMENTED_LOOKUP_FLAG_NAME, Boolean.TRUE);<a name="line.268"></a>
+<FONT color="green">269</FONT>            return super.selectAll(mapping, form, request, response);<a name="line.269"></a>
+<FONT color="green">270</FONT>        }<a name="line.270"></a>
+<FONT color="green">271</FONT>    <a name="line.271"></a>
+<FONT color="green">272</FONT>        /**<a name="line.272"></a>
+<FONT color="green">273</FONT>         * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#unselectAll(org.apache.struts.action.ActionMapping,<a name="line.273"></a>
+<FONT color="green">274</FONT>         *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)<a name="line.274"></a>
+<FONT color="green">275</FONT>         */<a name="line.275"></a>
+<FONT color="green">276</FONT>        @Override<a name="line.276"></a>
+<FONT color="green">277</FONT>        public ActionForward unselectAll(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {<a name="line.277"></a>
+<FONT color="green">278</FONT>            request.setAttribute(GeneralLedgerConstants.LookupableBeanKeys.SEGMENTED_LOOKUP_FLAG_NAME, Boolean.TRUE);<a name="line.278"></a>
+<FONT color="green">279</FONT>            return super.unselectAll(mapping, form, request, response);<a name="line.279"></a>
+<FONT color="green">280</FONT>        }<a name="line.280"></a>
+<FONT color="green">281</FONT>    <a name="line.281"></a>
+<FONT color="green">282</FONT>        /**<a name="line.282"></a>
+<FONT color="green">283</FONT>         * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#switchToPage(org.apache.struts.action.ActionMapping,<a name="line.283"></a>
+<FONT color="green">284</FONT>         *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)<a name="line.284"></a>
+<FONT color="green">285</FONT>         */<a name="line.285"></a>
+<FONT color="green">286</FONT>        @Override<a name="line.286"></a>
+<FONT color="green">287</FONT>        public ActionForward switchToPage(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {<a name="line.287"></a>
+<FONT color="green">288</FONT>            request.setAttribute(GeneralLedgerConstants.LookupableBeanKeys.SEGMENTED_LOOKUP_FLAG_NAME, Boolean.TRUE);<a name="line.288"></a>
+<FONT color="green">289</FONT>            return super.switchToPage(mapping, form, request, response);<a name="line.289"></a>
+<FONT color="green">290</FONT>        }<a name="line.290"></a>
+<FONT color="green">291</FONT>    <a name="line.291"></a>
+<FONT color="green">292</FONT>        /**<a name="line.292"></a>
+<FONT color="green">293</FONT>         * This method performs the lookup and returns a collection of lookup items. Also initializes values in the form that will allow<a name="line.293"></a>
+<FONT color="green">294</FONT>         * the multiple value lookup page to render<a name="line.294"></a>
+<FONT color="green">295</FONT>         * <a name="line.295"></a>
+<FONT color="green">296</FONT>         * @param multipleValueLookupForm<a name="line.296"></a>
+<FONT color="green">297</FONT>         * @param resultTable a list of result rows (used to generate what's shown in the UI). This list will be modified by this method<a name="line.297"></a>
+<FONT color="green">298</FONT>         * @param maxRowsPerPage<a name="line.298"></a>
+<FONT color="green">299</FONT>         * @param bounded whether the results will be bounded<a name="line.299"></a>
+<FONT color="green">300</FONT>         * @return the list of result BOs, possibly bounded by size<a name="line.300"></a>
+<FONT color="green">301</FONT>         */<a name="line.301"></a>
+<FONT color="green">302</FONT>        protected Collection performMultipleValueLookup(MultipleValueLookupForm multipleValueLookupForm, List&lt;ResultRow&gt; resultTable, int maxRowsPerPage, boolean bounded) {<a name="line.302"></a>
+<FONT color="green">303</FONT>            Lookupable lookupable = multipleValueLookupForm.getLookupable();<a name="line.303"></a>
+<FONT color="green">304</FONT>            Collection displayList = lookupable.performLookup(multipleValueLookupForm, resultTable, bounded);<a name="line.304"></a>
+<FONT color="green">305</FONT>    <a name="line.305"></a>
+<FONT color="green">306</FONT>            List defaultSortColumns = lookupable.getDefaultSortColumns();<a name="line.306"></a>
+<FONT color="green">307</FONT>            if (defaultSortColumns != null &amp;&amp; !defaultSortColumns.isEmpty() &amp;&amp; resultTable != null &amp;&amp; !resultTable.isEmpty()) {<a name="line.307"></a>
+<FONT color="green">308</FONT>                // there's a default sort order, just find the first sort column, and we can't go wrong<a name="line.308"></a>
+<FONT color="green">309</FONT>                String firstSortColumn = (String) defaultSortColumns.get(0);<a name="line.309"></a>
+<FONT color="green">310</FONT>    <a name="line.310"></a>
+<FONT color="green">311</FONT>                // go thru the first result row to find the index of the column (more efficient than calling lookupable.getColumns since<a name="line.311"></a>
+<FONT color="green">312</FONT>                // we don't have to recreate column list)<a name="line.312"></a>
+<FONT color="green">313</FONT>                int firstSortColumnIdx = -1;<a name="line.313"></a>
+<FONT color="green">314</FONT>                List&lt;Column&gt; columnsForFirstResultRow = resultTable.get(0).getColumns();<a name="line.314"></a>
+<FONT color="green">315</FONT>                for (int i = 0; i &lt; columnsForFirstResultRow.size(); i++) {<a name="line.315"></a>
+<FONT color="green">316</FONT>                    if (StringUtils.equals(firstSortColumn, columnsForFirstResultRow.get(i).getPropertyName())) {<a name="line.316"></a>
+<FONT color="green">317</FONT>                        firstSortColumnIdx = i;<a name="line.317"></a>
+<FONT color="green">318</FONT>                        break;<a name="line.318"></a>
+<FONT color="green">319</FONT>                    }<a name="line.319"></a>
+<FONT color="green">320</FONT>                }<a name="line.320"></a>
+<FONT color="green">321</FONT>                multipleValueLookupForm.setColumnToSortIndex(firstSortColumnIdx);<a name="line.321"></a>
+<FONT color="green">322</FONT>            }<a name="line.322"></a>
+<FONT color="green">323</FONT>            else {<a name="line.323"></a>
+<FONT color="green">324</FONT>                // don't know how results were sorted, so we just say -1<a name="line.324"></a>
+<FONT color="green">325</FONT>                multipleValueLookupForm.setColumnToSortIndex(-1);<a name="line.325"></a>
+<FONT color="green">326</FONT>            }<a name="line.326"></a>
+<FONT color="green">327</FONT>    <a name="line.327"></a>
+<FONT color="green">328</FONT>            // we just performed the lookup, so we're on the first page (indexed from 0)<a name="line.328"></a>
+<FONT color="green">329</FONT>            multipleValueLookupForm.jumpToFirstPage(resultTable.size(), maxRowsPerPage);<a name="line.329"></a>
+<FONT color="green">330</FONT>    <a name="line.330"></a>
+<FONT color="green">331</FONT>            SequenceAccessorService sequenceAccessorService = SpringContext.getBean(SequenceAccessorService.class);<a name="line.331"></a>
+<FONT color="green">332</FONT>            String lookupResultsSequenceNumber = String.valueOf(sequenceAccessorService.getNextAvailableSequenceNumber(KNSConstants.LOOKUP_RESULTS_SEQUENCE));<a name="line.332"></a>
+<FONT color="green">333</FONT>            multipleValueLookupForm.setLookupResultsSequenceNumber(lookupResultsSequenceNumber);<a name="line.333"></a>
+<FONT color="green">334</FONT>            try {<a name="line.334"></a>
+<FONT color="green">335</FONT>                LookupResultsService lookupResultsService = SpringContext.getBean(LookupResultsService.class);<a name="line.335"></a>
+<FONT color="green">336</FONT>                lookupResultsService.persistResultsTable(lookupResultsSequenceNumber, resultTable, GlobalVariables.getUserSession().getPerson().getPrincipalId());<a name="line.336"></a>
+<FONT color="green">337</FONT>            }<a name="line.337"></a>
+<FONT color="green">338</FONT>            catch (Exception e) {<a name="line.338"></a>
+<FONT color="green">339</FONT>                LOG.error("error occured trying to persist multiple lookup results", e);<a name="line.339"></a>
+<FONT color="green">340</FONT>                throw new RuntimeException("error occured trying to persist multiple lookup results");<a name="line.340"></a>
+<FONT color="green">341</FONT>            }<a name="line.341"></a>
+<FONT color="green">342</FONT>    <a name="line.342"></a>
+<FONT color="green">343</FONT>            // since new search, nothing's checked<a name="line.343"></a>
+<FONT color="green">344</FONT>            multipleValueLookupForm.setCompositeObjectIdMap(new HashMap&lt;String, String&gt;());<a name="line.344"></a>
+<FONT color="green">345</FONT>    <a name="line.345"></a>
+<FONT color="green">346</FONT>            return displayList;<a name="line.346"></a>
+<FONT color="green">347</FONT>        }<a name="line.347"></a>
+<FONT color="green">348</FONT>    <a name="line.348"></a>
+<FONT color="green">349</FONT>        /**<a name="line.349"></a>
+<FONT color="green">350</FONT>         * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#selectAll(org.kuali.rice.kns.web.struts.form.MultipleValueLookupForm,<a name="line.350"></a>
+<FONT color="green">351</FONT>         *      int)<a name="line.351"></a>
+<FONT color="green">352</FONT>         */<a name="line.352"></a>
+<FONT color="green">353</FONT>        @Override<a name="line.353"></a>
+<FONT color="green">354</FONT>        protected List&lt;ResultRow&gt; selectAll(MultipleValueLookupForm multipleValueLookupForm, int maxRowsPerPage) {<a name="line.354"></a>
+<FONT color="green">355</FONT>            List&lt;ResultRow&gt; resultTable = null;<a name="line.355"></a>
+<FONT color="green">356</FONT>            try {<a name="line.356"></a>
+<FONT color="green">357</FONT>                LookupResultsService lookupResultsService = KNSServiceLocator.getLookupResultsService();<a name="line.357"></a>
+<FONT color="green">358</FONT>                String lookupResultsSequenceNumber = multipleValueLookupForm.getLookupResultsSequenceNumber();<a name="line.358"></a>
+<FONT color="green">359</FONT>    <a name="line.359"></a>
+<FONT color="green">360</FONT>                resultTable = lookupResultsService.retrieveResultsTable(lookupResultsSequenceNumber, GlobalVariables.getUserSession().getPerson().getPrincipalId());<a name="line.360"></a>
+<FONT color="green">361</FONT>            }<a name="line.361"></a>
+<FONT color="green">362</FONT>            catch (Exception e) {<a name="line.362"></a>
+<FONT color="green">363</FONT>                LOG.error("error occured trying to export multiple lookup results", e);<a name="line.363"></a>
+<FONT color="green">364</FONT>                throw new RuntimeException("error occured trying to export multiple lookup results");<a name="line.364"></a>
+<FONT color="green">365</FONT>            }<a name="line.365"></a>
+<FONT color="green">366</FONT>    <a name="line.366"></a>
+<FONT color="green">367</FONT>            Map&lt;String, String&gt; selectedObjectIds = this.getSelectedObjectIds(multipleValueLookupForm, resultTable);<a name="line.367"></a>
+<FONT color="green">368</FONT>    <a name="line.368"></a>
+<FONT color="green">369</FONT>            multipleValueLookupForm.jumpToPage(multipleValueLookupForm.getViewedPageNumber(), resultTable.size(), maxRowsPerPage);<a name="line.369"></a>
+<FONT color="green">370</FONT>            multipleValueLookupForm.setColumnToSortIndex(Integer.parseInt(multipleValueLookupForm.getPreviouslySortedColumnIndex()));<a name="line.370"></a>
+<FONT color="green">371</FONT>            multipleValueLookupForm.setCompositeObjectIdMap(selectedObjectIds);<a name="line.371"></a>
+<FONT color="green">372</FONT>    <a name="line.372"></a>
+<FONT color="green">373</FONT>            return resultTable;<a name="line.373"></a>
+<FONT color="green">374</FONT>        }<a name="line.374"></a>
+<FONT color="green">375</FONT>    <a name="line.375"></a>
+<FONT color="green">376</FONT>        /**<a name="line.376"></a>
+<FONT color="green">377</FONT>         * put all enties into select object map. This implmentation only deals with the money amount objects.<a name="line.377"></a>
+<FONT color="green">378</FONT>         * <a name="line.378"></a>
+<FONT color="green">379</FONT>         * @param multipleValueLookupForm the given struts form<a name="line.379"></a>
+<FONT color="green">380</FONT>         * @param resultTable the given result table that holds all data being presented<a name="line.380"></a>
+<FONT color="green">381</FONT>         * @return the map containing all entries available for selection<a name="line.381"></a>
+<FONT color="green">382</FONT>         */<a name="line.382"></a>
+<FONT color="green">383</FONT>        private Map&lt;String, String&gt; getSelectedObjectIds(MultipleValueLookupForm multipleValueLookupForm, List&lt;ResultRow&gt; resultTable) {<a name="line.383"></a>
+<FONT color="green">384</FONT>            String businessObjectClassName = multipleValueLookupForm.getBusinessObjectClassName();<a name="line.384"></a>
+<FONT color="green">385</FONT>            SegmentedBusinessObject segmentedBusinessObject;<a name="line.385"></a>
+<FONT color="green">386</FONT>            try {<a name="line.386"></a>
+<FONT color="green">387</FONT>                segmentedBusinessObject = (SegmentedBusinessObject) Class.forName(multipleValueLookupForm.getBusinessObjectClassName()).newInstance();<a name="line.387"></a>
+<FONT color="green">388</FONT>            }<a name="line.388"></a>
+<FONT color="green">389</FONT>            catch (Exception e) {<a name="line.389"></a>
+<FONT color="green">390</FONT>                throw new RuntimeException("Fail to create an object of " + businessObjectClassName + e);<a name="line.390"></a>
+<FONT color="green">391</FONT>            }<a name="line.391"></a>
+<FONT color="green">392</FONT>    <a name="line.392"></a>
+<FONT color="green">393</FONT>            Map&lt;String, String&gt; selectedObjectIds = new HashMap&lt;String, String&gt;();<a name="line.393"></a>
+<FONT color="green">394</FONT>            Collection&lt;String&gt; segmentedPropertyNames = segmentedBusinessObject.getSegmentedPropertyNames();<a name="line.394"></a>
+<FONT color="green">395</FONT>            for (ResultRow row : resultTable) {<a name="line.395"></a>
+<FONT color="green">396</FONT>                for (Column column : row.getColumns()) {<a name="line.396"></a>
+<FONT color="green">397</FONT>                    String propertyName = column.getPropertyName();<a name="line.397"></a>
+<FONT color="green">398</FONT>                    if (segmentedPropertyNames.contains(propertyName)) {<a name="line.398"></a>
+<FONT color="green">399</FONT>                        String propertyValue = StringUtils.replace(column.getPropertyValue(), ",", "");<a name="line.399"></a>
+<FONT color="green">400</FONT>                        KualiDecimal amount = new KualiDecimal(propertyValue);<a name="line.400"></a>
+<FONT color="green">401</FONT>    <a name="line.401"></a>
+<FONT color="green">402</FONT>                        if (amount.isNonZero()) {<a name="line.402"></a>
+<FONT color="green">403</FONT>                            String objectId = row.getObjectId() + "." + propertyName + "." + KNSUtils.convertDecimalIntoInteger(amount);<a name="line.403"></a>
+<FONT color="green">404</FONT>                            selectedObjectIds.put(objectId, objectId);<a name="line.404"></a>
+<FONT color="green">405</FONT>                        }<a name="line.405"></a>
+<FONT color="green">406</FONT>                    }<a name="line.406"></a>
+<FONT color="green">407</FONT>                }<a name="line.407"></a>
+<FONT color="green">408</FONT>            }<a name="line.408"></a>
+<FONT color="green">409</FONT>    <a name="line.409"></a>
+<FONT color="green">410</FONT>            return selectedObjectIds;<a name="line.410"></a>
+<FONT color="green">411</FONT>        }<a name="line.411"></a>
+<FONT color="green">412</FONT>    }<a name="line.412"></a>
+<FONT color="green">413</FONT>    <a name="line.413"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,185 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.ar.document.service;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.List;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.kuali.kfs.module.ar.businessobject.CashControlDetail;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.module.ar.businessobject.InvoicePaidApplied;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.module.ar.document.CashControlDocument;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.module.ar.document.CustomerInvoiceDocument;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.ar.document.PaymentApplicationDocument;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.rice.kew.exception.WorkflowException;<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>    public interface PaymentApplicationDocumentService {<a name="line.28"></a>
+<FONT color="green">029</FONT>        <a name="line.29"></a>
+<FONT color="green">030</FONT>        /**<a name="line.30"></a>
+<FONT color="green">031</FONT>         * <a name="line.31"></a>
+<FONT color="green">032</FONT>         * Retrieves the CashControlDetail line associated with the passed-in PaymentApplication Document.<a name="line.32"></a>
+<FONT color="green">033</FONT>         * <a name="line.33"></a>
+<FONT color="green">034</FONT>         * @param document A valid PaymentApplication Document<a name="line.34"></a>
+<FONT color="green">035</FONT>         * @return The associated CashControlDetail, if exists, or null if not.<a name="line.35"></a>
+<FONT color="green">036</FONT>         */<a name="line.36"></a>
+<FONT color="green">037</FONT>        public CashControlDetail getCashControlDetailForPaymentApplicationDocument(PaymentApplicationDocument document);<a name="line.37"></a>
+<FONT color="green">038</FONT>        <a name="line.38"></a>
+<FONT color="green">039</FONT>        /**<a name="line.39"></a>
+<FONT color="green">040</FONT>         * <a name="line.40"></a>
+<FONT color="green">041</FONT>         * Retrieves the CashControlDetail line associated with the passed-in PaymentApplication Document number.<a name="line.41"></a>
+<FONT color="green">042</FONT>         * <a name="line.42"></a>
+<FONT color="green">043</FONT>         * @param payAppDocNumber A valid PaymentApplication Document Number<a name="line.43"></a>
+<FONT color="green">044</FONT>         * @return The associated CashControlDetail, if exists, or null if not.<a name="line.44"></a>
+<FONT color="green">045</FONT>         */<a name="line.45"></a>
+<FONT color="green">046</FONT>        public CashControlDetail getCashControlDetailForPayAppDocNumber(String payAppDocNumber);<a name="line.46"></a>
+<FONT color="green">047</FONT>        <a name="line.47"></a>
+<FONT color="green">048</FONT>        /**<a name="line.48"></a>
+<FONT color="green">049</FONT>         * <a name="line.49"></a>
+<FONT color="green">050</FONT>         * Retrieves the CashControlDocument associated with the passed-in PaymentApplication Document.<a name="line.50"></a>
+<FONT color="green">051</FONT>         * <a name="line.51"></a>
+<FONT color="green">052</FONT>         * @param document A valid PaymentApplication Document<a name="line.52"></a>
+<FONT color="green">053</FONT>         * @return The associated CashControlDocument, if exists, or null if not.<a name="line.53"></a>
+<FONT color="green">054</FONT>         */<a name="line.54"></a>
+<FONT color="green">055</FONT>        public CashControlDocument getCashControlDocumentForPaymentApplicationDocument(PaymentApplicationDocument document);<a name="line.55"></a>
+<FONT color="green">056</FONT>        <a name="line.56"></a>
+<FONT color="green">057</FONT>        /**<a name="line.57"></a>
+<FONT color="green">058</FONT>         * <a name="line.58"></a>
+<FONT color="green">059</FONT>         * Retrieves the CashControlDocument associated with the passed-in PaymentApplication Document number.<a name="line.59"></a>
+<FONT color="green">060</FONT>         * @param payAppDocNumber A valid PaymentApplication Document number<a name="line.60"></a>
+<FONT color="green">061</FONT>         * @return The associated CashControlDocument, if exists, or null if not.<a name="line.61"></a>
+<FONT color="green">062</FONT>         */<a name="line.62"></a>
+<FONT color="green">063</FONT>        public CashControlDocument getCashControlDocumentForPayAppDocNumber(String payAppDocNumber);<a name="line.63"></a>
+<FONT color="green">064</FONT>        <a name="line.64"></a>
+<FONT color="green">065</FONT>        /**<a name="line.65"></a>
+<FONT color="green">066</FONT>         * <a name="line.66"></a>
+<FONT color="green">067</FONT>         * Creates PaidApplieds for all the invoice lines on the passed in InvoiceDocument, on the passed in <a name="line.67"></a>
+<FONT color="green">068</FONT>         * PaymentApplicationDocument.<a name="line.68"></a>
+<FONT color="green">069</FONT>         * <a name="line.69"></a>
+<FONT color="green">070</FONT>         * This method will overwrite any existing PaidApplieds on the document, it assumes an empty <a name="line.70"></a>
+<FONT color="green">071</FONT>         * PayApp doc with no paidapplieds.<a name="line.71"></a>
+<FONT color="green">072</FONT>         * <a name="line.72"></a>
+<FONT color="green">073</FONT>         * This method does no checking to prevent over or under applying, it assumes that the documents have <a name="line.73"></a>
+<FONT color="green">074</FONT>         * been setup such that it will work correctly.  So if this method is used to over or under apply, then <a name="line.74"></a>
+<FONT color="green">075</FONT>         * the resulting PaymentApplicationDocument will fail business rules validation.<a name="line.75"></a>
+<FONT color="green">076</FONT>         * <a name="line.76"></a>
+<FONT color="green">077</FONT>         * @param customerInvoiceDocument<a name="line.77"></a>
+<FONT color="green">078</FONT>         * @param paymentApplicationDocument<a name="line.78"></a>
+<FONT color="green">079</FONT>         * @return<a name="line.79"></a>
+<FONT color="green">080</FONT>         */<a name="line.80"></a>
+<FONT color="green">081</FONT>        public PaymentApplicationDocument createInvoicePaidAppliedsForEntireInvoiceDocument(CustomerInvoiceDocument customerInvoiceDocument, PaymentApplicationDocument paymentApplicationDocument);<a name="line.81"></a>
+<FONT color="green">082</FONT>        <a name="line.82"></a>
+<FONT color="green">083</FONT>        /**<a name="line.83"></a>
+<FONT color="green">084</FONT>         * This method creates an invoice paid applied for the given customer invoice detail. <a name="line.84"></a>
+<FONT color="green">085</FONT>         * <a name="line.85"></a>
+<FONT color="green">086</FONT>         * This method assumes that no existing paidApplieds are already on the document.<a name="line.86"></a>
+<FONT color="green">087</FONT>         * <a name="line.87"></a>
+<FONT color="green">088</FONT>         * @param customerInvoiceDetail the customer invoice detail for which we want to create the invoice paid applied<a name="line.88"></a>
+<FONT color="green">089</FONT>         * @param applicationDocNbr the payment application document number<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @param universityFiscalYear the university fiscal year<a name="line.90"></a>
+<FONT color="green">091</FONT>         * @param universityFiscalPeriodCode the university fiscal period code<a name="line.91"></a>
+<FONT color="green">092</FONT>         * @param amount the amount to be applied<a name="line.92"></a>
+<FONT color="green">093</FONT>         * @return the created invoice paid applied if it did not exist, null otherwise<a name="line.93"></a>
+<FONT color="green">094</FONT>         */<a name="line.94"></a>
+<FONT color="green">095</FONT>        public InvoicePaidApplied createInvoicePaidAppliedForInvoiceDetail(CustomerInvoiceDetail customerInvoiceDetail, PaymentApplicationDocument paymentApplicationDocument, Integer paidAppliedItemNumber);<a name="line.95"></a>
+<FONT color="green">096</FONT>        <a name="line.96"></a>
+<FONT color="green">097</FONT>        /**<a name="line.97"></a>
+<FONT color="green">098</FONT>         * This method is used in the lockbox process to create a PA document which is then auto-approved when the amount on the invoice matches <a name="line.98"></a>
+<FONT color="green">099</FONT>         * the amount on the lockbox.<a name="line.99"></a>
+<FONT color="green">100</FONT>         * <a name="line.100"></a>
+<FONT color="green">101</FONT>         * @param customerInvoiceDocument<a name="line.101"></a>
+<FONT color="green">102</FONT>         * @return<a name="line.102"></a>
+<FONT color="green">103</FONT>         */<a name="line.103"></a>
+<FONT color="green">104</FONT>        public PaymentApplicationDocument createPaymentApplicationToMatchInvoice(CustomerInvoiceDocument customerInvoiceDocument) throws WorkflowException;<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>        public PaymentApplicationDocument createSaveAndApprovePaymentApplicationToMatchInvoice(CustomerInvoiceDocument customerInvoiceDocument, String approvalAnnotation, List workflowNotificationRecipients) throws WorkflowException;<a name="line.106"></a>
+<FONT color="green">107</FONT>        public PaymentApplicationDocument createAndSavePaymentApplicationToMatchInvoice(CustomerInvoiceDocument customerInvoiceDocument) throws WorkflowException;<a name="line.107"></a>
+<FONT color="green">108</FONT>        <a name="line.108"></a>
+<FONT color="green">109</FONT>        /**<a name="line.109"></a>
+<FONT color="green">110</FONT>         * This method returns true if invoicePaidApplied is the applied payment for <a name="line.110"></a>
+<FONT color="green">111</FONT>         * the customer invoice detail based on document number and item/sequence number.<a name="line.111"></a>
+<FONT color="green">112</FONT>         * <a name="line.112"></a>
+<FONT color="green">113</FONT>         * @param customerInvoiceDetail<a name="line.113"></a>
+<FONT color="green">114</FONT>         * @param invoicePaidApplied<a name="line.114"></a>
+<FONT color="green">115</FONT>         * @return<a name="line.115"></a>
+<FONT color="green">116</FONT>         */<a name="line.116"></a>
+<FONT color="green">117</FONT>        public boolean customerInvoiceDetailPairsWithInvoicePaidApplied(CustomerInvoiceDetail customerInvoiceDetail, InvoicePaidApplied invoicePaidApplied);<a name="line.117"></a>
+<FONT color="green">118</FONT>        <a name="line.118"></a>
+<FONT color="green">119</FONT>    }<a name="line.119"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
