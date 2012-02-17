@@ -950,7 +950,7 @@
                 <version>2.2.1</version>
                 <dependencies>
                   <dependency>
-                    <groupId>com.rsmart.kuali</groupId>
+                    <groupId>org.kuali.kfs</groupId>
                     <artifactId>kfs-assembly</artifactId>
                     <version>0.0.1</version>
                   </dependency>
