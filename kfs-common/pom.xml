@@ -65,20 +65,20 @@
   <build>
     <filters>
       <filter>${env.filter}</filter>
-      <filter>b2b.properties</filter>
-      <filter>batch.properties</filter>
-      <filter>build.properties</filter>
-      <filter>build-foundation.properties</filter>
-      <filter>cas.properties</filter>
-      <filter>database.properties</filter>
-      <filter>directory.properties</filter>
-      <filter>email.properties</filter>
-      <filter>logging.properties</filter>
-      <filter>rice.properties</filter>
-      <filter>spring.properties</filter>
-      <filter>springide.properties</filter>
-      <filter>url.properties</filter>
-      <filter>web.properties</filter>
+      <filter>${filter.directory}/b2b.properties</filter>
+      <filter>${filter.directory}/batch.properties</filter>
+      <filter>${filter.directory}/build.properties</filter>
+      <filter>${filter.directory}/build-foundation.properties</filter>
+      <filter>${filter.directory}/cas.properties</filter>
+      <filter>${filter.directory}/database.properties</filter>
+      <filter>${filter.directory}/directory.properties</filter>
+      <filter>${filter.directory}/email.properties</filter>
+      <filter>${filter.directory}/logging.properties</filter>
+      <filter>${filter.directory}/rice.properties</filter>
+      <filter>${filter.directory}/spring.properties</filter>
+      <filter>${filter.directory}/springide.properties</filter>
+      <filter>${filter.directory}/url.properties</filter>
+      <filter>${filter.directory}/web.properties</filter>
     </filters>
   </build>
 
@@ -1214,6 +1214,7 @@ scripts/rice-overrides.js</core.javascript.files>
 <kfs.rice.override.spring.files>${base.kfs.rice.override.spring.files}${internal.access.security.rice.spring.files}${internal.batch.spring.files}</kfs.rice.override.spring.files>
 
 <env.filter>${build.environment}-build.properties</env.filter>
+<filter.directory>src/main/filters</filter.directory>
 </properties>
 
 <profiles>
