@@ -75,6 +75,62 @@
           </webResources>
         </configuration>
       </plugin>
+
+      <!-- Unpacks the datadictionary because KFS has trouble accessing the datadictionary from a jar -->      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <id>unpack-datadictionary</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+               <artifactItems>
+                 <artifactItem>
+                   <groupId>${project.groupId}</groupId>
+                   <artifactId>kfs-core</artifactId>
+                   <version>${project.version}</version>  
+                   <type>jar</type>
+                   <overWrite>true</overWrite>
+                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                   <excludes>**/*.class</excludes>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>${project.groupId}</groupId>
+                   <artifactId>kfs-module-endow</artifactId>
+                   <version>${project.version}</version>  
+                   <type>jar</type>
+                   <overWrite>true</overWrite>
+                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                   <excludes>**/*.class</excludes>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>${project.groupId}</groupId>
+                   <artifactId>kfs-module-external</artifactId>
+                   <version>${project.version}</version>  
+                   <type>jar</type>
+                   <overWrite>true</overWrite>
+                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                   <excludes>**/*.class</excludes>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>${project.groupId}</groupId>
+                   <artifactId>kfs-rice</artifactId>
+                   <version>${project.version}</version>  
+                   <type>jar</type>
+                   <overWrite>true</overWrite>
+                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                   <includes>**/datadictionary/**/*</includes>
+                 </artifactItem>
+               </artifactItems>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
     </plugins>
   </build> 
 

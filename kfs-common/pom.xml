@@ -192,6 +192,8 @@
 <!-- The beginning of the section that describes all the KFS properties                                                          -->
 <!-- ################################################################################ -->
 
+<current.year>2012</current.year>
+
 
 <!-- values used in KFS-PURAP B2B functions - all values but user -->
 <!-- agent derived by build.xml based on build.environment -->
@@ -861,11 +863,11 @@ xpp3*.jar</runtime.only.jars>
 <spring.datasource.bean.file>spring-datasources.xml</spring.datasource.bean.file>
 
 <!-- the files that define the spring context for the application - note that further configuration files may be specified in the module definitions -->
-<core.spring.source.files>org/kuali/kfs/sys/spring-sys.xml,
-org/kuali/kfs/coa/spring-coa.xml,
-org/kuali/kfs/fp/spring-fp.xml,
-org/kuali/kfs/gl/spring-gl.xml,
-org/kuali/kfs/pdp/spring-pdp.xml,
+<core.spring.source.files>org/kuali/kfs/sys/spring-sys.xml, \
+org/kuali/kfs/coa/spring-coa.xml, \
+org/kuali/kfs/fp/spring-fp.xml, \
+org/kuali/kfs/gl/spring-gl.xml, \
+org/kuali/kfs/pdp/spring-pdp.xml, \
 org/kuali/kfs/vnd/spring-vnd.xml</core.spring.source.files>
 
 <access.security.core.spring.files>,org/kuali/kfs/sec/spring-sec.xml,org/kuali/kfs/sec/spring-sec-gl-overrides.xml</access.security.core.spring.files>
@@ -880,9 +882,9 @@ org/kuali/kfs/vnd/spring-vnd.xml</core.spring.source.files>
 <accounts.receivable.spring.files>,org/kuali/kfs/module/ar/spring-ar.xml</accounts.receivable.spring.files>
 <purchasing.spring.files>,org/kuali/kfs/module/purap/spring-purap.xml</purchasing.spring.files>
 <contracts.and.grants.spring.files>,org/kuali/kfs/module/cg/spring-cg.xml</contracts.and.grants.spring.files>
-<kuali.coeus.spring.files>,org/kuali/kfs/module/external/kc/spring-kc.xml</kuali.coeus.spring.files>
-<labor.distribution.spring.files>,org/kuali/kfs/module/ld/spring-ld.xml
-,org/kuali/kfs/module/bc/spring-bc.xml
+<kuali.coeus.spring.files></kuali.coeus.spring.files>
+<labor.distribution.spring.files>,org/kuali/kfs/module/ld/spring-ld.xml \
+,org/kuali/kfs/module/bc/spring-bc.xml \
 ,org/kuali/kfs/module/ec/spring-ec.xml</labor.distribution.spring.files>
 
 
@@ -898,11 +900,6 @@ org/kuali/kfs/vnd/spring-vnd.xml</core.spring.source.files>
 
 <!-- the institution specific files that define the spring context for the application -->
 <institution.spring.source.files></institution.spring.source.files>
-
-<!-- Commented out since needs to be set dynamically in build.xml -->
-<!--
-<spring.source.files>${core.spring.source.files}${optional.module.spring.source.files}${institution.spring.source.files}</spring.source.files>
--->
 
 <base.kfs.rice.override.spring.files>spring-kfs-rice-overrides.xml</base.kfs.rice.override.spring.files>
 
@@ -1176,6 +1173,7 @@ scripts/rice-overrides.js</core.javascript.files>
 <spring.source.files>${core.spring.source.files}${internal.access.security.core.spring.files}${integration.spring.files}${optional.module.spring.source.files}${institution.spring.source.files}</spring.source.files>
 <spring.test.files>{core.spring.test.files}${optional.module.spring.test.files}${institution.spring.test.files}</spring.test.files>
 <kfs.rice.override.spring.files>${base.kfs.rice.override.spring.files}${internal.access.security.rice.spring.files}${internal.batch.spring.files}</kfs.rice.override.spring.files>
+
 </properties>
 
 <profiles>
@@ -1313,7 +1311,12 @@ scripts/rice-overrides.js</core.javascript.files>
         </filter-mapping>]]></authentication.filter.mappings>
     </properties>
   </profile>
-
+  <profile>
+    <id>coeus</id>
+    <properties>
+      <kuali.coeus.spring.files>,org/kuali/kfs/module/external/kc/spring-kc.xml</kuali.coeus.spring.files>
+    </properties>
+  </profile>
 </profiles>
 
 
