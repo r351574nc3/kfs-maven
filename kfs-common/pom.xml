@@ -454,10 +454,33 @@ xpp3*.jar</runtime.only.jars>
 <deploy.local.cas.server>false</deploy.local.cas.server>
 
 <!-- the value of this property will be included in the filter section of web.xml -->
-<authentication.filter.definition></authentication.filter.definition>
+<login.user>khuntley</login.user>
+<authentication.filter.definition><![CDATA[
+    <filter>
+        <filter-name>DummyLoginFilter</filter-name>
+        <filter-class>org.kuali.rice.kns.web.filter.DummyLoginFilter</filter-class>
+            <init-param>
+                <param-name>loginUser</param-name>
+                <param-value>${login.user}</param-value>
+            </init-param>
+    </filter>
+]]></authentication.filter.definition>
 
 <!-- the value of this property will be included in the filter mapping section of web.xml -->
-<authentication.filter.mappings></authentication.filter.mappings>
+<authentication.filter.mappings><![CDATA[
+        <filter-mapping>
+        <filter-name>DummyLoginFilter</filter-name>
+            <servlet-name>action</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>DummyLoginFilter</filter-name>
+            <servlet-name>dwr-invoker</servlet-name>
+        </filter-mapping>
+        <filter-mapping>
+            <filter-name>DummyLoginFilter</filter-name>
+            <servlet-name>batchFileUpload</servlet-name>
+        </filter-mapping>
+]]></authentication.filter.mappings>
 
 
 
@@ -739,7 +762,7 @@ xpp3*.jar</runtime.only.jars>
 <encryption.key>7IC64w6ksLU</encryption.key>
 
 <!-- Determines whether data should be unmasked -->
-<rice.enable.nonproduction.data.unmasking>false </rice.enable.nonproduction.data.unmasking>
+<rice.enable.nonproduction.data.unmasking>true </rice.enable.nonproduction.data.unmasking>
 
 <!-- rice & notification -->
 <!-- determines if notifications coming out of KEW should be forwarded to KEN -->
