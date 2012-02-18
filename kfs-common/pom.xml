@@ -64,6 +64,21 @@
 
   <build>
     <filters>
+      <filter>${env.filter}</filter>
+      <filter>${filter.directory}/b2b.properties</filter>
+      <filter>${filter.directory}/batch.properties</filter>
+      <filter>${filter.directory}/build.properties</filter>
+      <filter>${filter.directory}/build-foundation.properties</filter>
+      <filter>${filter.directory}/cas.properties</filter>
+      <filter>${filter.directory}/database.properties</filter>
+      <filter>${filter.directory}/directory.properties</filter>
+      <filter>${filter.directory}/email.properties</filter>
+      <filter>${filter.directory}/logging.properties</filter>
+      <filter>${filter.directory}/rice.properties</filter>
+      <filter>${filter.directory}/spring.properties</filter>
+      <filter>${filter.directory}/springide.properties</filter>
+      <filter>${filter.directory}/url.properties</filter>
+      <filter>${filter.directory}/web.properties</filter>
     </filters>
   </build>
 
@@ -202,7 +217,7 @@
 <!-- values used in KFS-PURAP B2B functions - all values but user -->
 <!-- agent derived by build.xml based on build.environment -->
 <dev.mode>true</dev.mode>
-<build.environment>${environment}</build.environment>
+<environment>${build.environment}</environment>
 <build.version>${project.version}</build.version>
 <b2b.user.agent>kfs</b2b.user.agent>
 <b2b.environment>test</b2b.environment>
