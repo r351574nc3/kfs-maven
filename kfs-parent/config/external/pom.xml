@@ -25,6 +25,17 @@
   </parent>
   <artifactId>kfs-config-external</artifactId>
 
+  <build>
+    <filters>
+      <filter>${env.filter}</filter>
+      <filter>${filter.directory}/b2b.properties</filter>
+      <filter>${filter.directory}/build.properties</filter>
+      <filter>${filter.directory}/build-foundation.properties</filter>
+      <filter>${filter.directory}/database.properties</filter>
+      <filter>${filter.directory}/logging.properties</filter>
+      <filter>${filter.directory}/rice.properties</filter>
+    </filters>
+  </build>
 
   <profiles>
     <profile>
