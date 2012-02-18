@@ -25,5 +25,7 @@
   </parent>
   <artifactId>kfs-core</artifactId>
 
-
+  <properties>
+    <filter.directory>${basedir}/../src/main/filters</filter.directory>
+  </properties>
 </project>
