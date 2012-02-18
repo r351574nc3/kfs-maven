@@ -1213,8 +1213,8 @@ scripts/rice-overrides.js</core.javascript.files>
 <spring.test.files>{core.spring.test.files}${optional.module.spring.test.files}${institution.spring.test.files}</spring.test.files>
 <kfs.rice.override.spring.files>${base.kfs.rice.override.spring.files}${internal.access.security.rice.spring.files}${internal.batch.spring.files}</kfs.rice.override.spring.files>
 
-<env.filter>${build.environment}-build.properties</env.filter>
 <filter.directory>src/main/filters</filter.directory>
+<env.filter>${filter.directory}/${build.environment}-build.properties</env.filter>
 </properties>
 
 <profiles>
