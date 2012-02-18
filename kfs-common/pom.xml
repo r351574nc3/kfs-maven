@@ -1219,7 +1219,9 @@ scripts/rice-overrides.js</core.javascript.files>
 <profiles>
   <profile>
     <id>dev</id>
-    <activeByDefault>true</activeByDefault>
+    <activation>
+      <activeByDefault>true</activeByDefault>
+    </activation>
     <properties>
       <environment>dev</environment>
       <env.filter></env.filter>
