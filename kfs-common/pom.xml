@@ -147,7 +147,6 @@
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   
   <!-- defaults to dev unless overriden -->
-  <build.environment>dev</build.environment>
   <default.context.path>/${project.artifactId}-${build.environment}</default.context.path>
   
   <rice.web.excludes>
@@ -198,7 +197,6 @@
 <!-- values used in KFS-PURAP B2B functions - all values but user -->
 <!-- agent derived by build.xml based on build.environment -->
 <dev.mode>true</dev.mode>
-<environment>dev</environment>
 <build.environment>${environment}</build.environment>
 <build.version>${project.version}</build.version>
 <b2b.user.agent>kfs</b2b.user.agent>
@@ -1174,7 +1172,7 @@ scripts/rice-overrides.js</core.javascript.files>
 <spring.test.files>{core.spring.test.files}${optional.module.spring.test.files}${institution.spring.test.files}</spring.test.files>
 <kfs.rice.override.spring.files>${base.kfs.rice.override.spring.files}${internal.access.security.rice.spring.files}${internal.batch.spring.files}</kfs.rice.override.spring.files>
 
-<env.filter>${env}-build.properties</env.filter>
+<env.filter>${build.environment}-build.properties</env.filter>
 </properties>
 
 <filters>
@@ -1185,42 +1183,43 @@ scripts/rice-overrides.js</core.javascript.files>
   <id>dev</id>
   <activeByDefault>true</activeByDefault>
   <properties>
-    <env>dev</env>
+    <environment>dev</environment>
+    <env.filter></env.filter>
   </properties>
 </profile>
 
 <profile>
   <id>test</id>
   <properties>
-    <env>test</env>
+    <environment>test</environment>
   </properties>
 </profile>
 
 <profile>
   <id>cfg</id>
   <properties>
-    <env>cfg</env>
+    <environment>cfg</environment>
   </properties>
 </profile>
 
 <profile>
   <id>cnv</id>
   <properties>
-    <env>cnv</env>
+    <environment>cnv</environment>
   </properties>
 </profile>
 
 <profile>
   <id>prd</id>
   <properties>
-    <env>prd</env>
+    <environment>prd</environment>
   </properties>
 </profile>
 
 <profile>
   <id>stg</id>
   <properties>
-    <env>stg</env>
+    <environment>stg</environment>
   </properties>
 </profile>
 
