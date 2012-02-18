@@ -1174,7 +1174,55 @@ scripts/rice-overrides.js</core.javascript.files>
 <spring.test.files>{core.spring.test.files}${optional.module.spring.test.files}${institution.spring.test.files}</spring.test.files>
 <kfs.rice.override.spring.files>${base.kfs.rice.override.spring.files}${internal.access.security.rice.spring.files}${internal.batch.spring.files}</kfs.rice.override.spring.files>
 
+<env.filter>${env}-build.properties</env.filter>
 </properties>
+
+<filters>
+  <filter>${env.filter}</filter>
+</filters>
+
+<profile>
+  <id>dev</id>
+  <activeByDefault>true</activeByDefault>
+  <properties>
+    <env>dev</env>
+  </properties>
+</profile>
+
+<profile>
+  <id>test</id>
+  <properties>
+    <env>test</env>
+  </properties>
+</profile>
+
+<profile>
+  <id>cfg</id>
+  <properties>
+    <env>cfg</env>
+  </properties>
+</profile>
+
+<profile>
+  <id>cnv</id>
+  <properties>
+    <env>cnv</env>
+  </properties>
+</profile>
+
+<profile>
+  <id>prd</id>
+  <properties>
+    <env>prd</env>
+  </properties>
+</profile>
+
+<profile>
+  <id>stg</id>
+  <properties>
+    <env>stg</env>
+  </properties>
+</profile>
 
 <profiles>
   <!-- standalone rice properties -->
