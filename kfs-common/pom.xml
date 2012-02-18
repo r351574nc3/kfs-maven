@@ -1127,6 +1127,7 @@ scripts/rice-overrides.js</core.javascript.files>
 <distributable.tag></distributable.tag>
 
 <!-- Handling init-database-properties target outcome -->
+<datasource.url>${oracle.datasource.url}</datasource.url>
 <datasource.ojb.platform>${oracle.ojb.platform}</datasource.ojb.platform>
 <datasource.driver.class>${oracle.driver.class}</datasource.driver.class>
 <p6spy.real.driver.class>${oracle.driver.class}</p6spy.real.driver.class>
@@ -1225,6 +1226,7 @@ scripts/rice-overrides.js</core.javascript.files>
   <profile>
     <id>mysql</id>
     <properties>
+      <datasource.url>${mysql.datasource.url}</datasource.url>
       <datasource.ojb.platform>${mysql.ojb.platform}</datasource.ojb.platform>
       <datasource.driver.class>${mysql.driver.class}</datasource.driver.class>
       <p6spy.real.driver.class>${mysql.driver.class}</p6spy.real.driver.class>
