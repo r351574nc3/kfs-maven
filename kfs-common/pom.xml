@@ -1695,17 +1695,19 @@ limitations under the License.
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
         <version>${servlet.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>${jstl.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>taglibs</groupId>
         <artifactId>standard</artifactId>
         <version>1.1.2</version>
-        <scope>provided</scope>
+        <scope>runtime</scope>
       </dependency>
       <!-- remove once we are on jdk 6 -->
       <dependency>
