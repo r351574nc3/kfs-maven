@@ -116,7 +116,7 @@ limitations under the License.
     <!-- Servlet API Version -->
     <jsp.version>2.0</jsp.version>
     <jstl.version>1.2</jstl.version>
-    <servlet.version>2.4</servlet.version>
+    <servlet.version>2.5</servlet.version>
     <taglib.plugin.version>2.4</taglib.plugin.version>
 
     <cxf.version>2.2.9</cxf.version>
@@ -1701,6 +1701,13 @@ limitations under the License.
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>${jstl.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+        <version>1.1.2</version>
+        <scope>provided</scope>
       </dependency>
       <!-- remove once we are on jdk 6 -->
       <dependency>

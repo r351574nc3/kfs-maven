@@ -27,7 +27,7 @@
   <packaging>war</packaging>
 
   <build>
-    <finalName>${project.parent.name}</finalName>
+    <finalName>${project.parent.name}-${environment}</finalName>
     <filters>
       <filter>${env.filter}</filter>
       <filter>${filter.directory}/b2b.properties</filter>
@@ -172,6 +172,22 @@
       <artifactId>kfs-rice</artifactId>
       <version>${project.version}</version>  
     </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jsp-api</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+      </dependency>
   </dependencies> 
   
 <profiles>
