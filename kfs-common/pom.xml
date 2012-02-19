@@ -2246,7 +2246,7 @@ limitations under the License.
       </dependency>
     </dependencies>
   </dependencyManagement>
-
+  
   <scm>
     <connection>scm:git:git://github.com/r351574nc3/kfs-maven.git</connection>
     <developerConnection>scm:git:git://github.com/r351574nc3/kfs-maven.git</developerConnection>
