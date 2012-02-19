@@ -90,7 +90,7 @@ limitations under the License.
     <maven-reactor-plugin.version>1.0</maven-reactor-plugin.version>
     <maven-release-plugin.version>2.1</maven-release-plugin.version>
     <maven-remote-resources-plugin.version>1.1</maven-remote-resources-plugin.version>
-    <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
+    <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
     <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
     <maven-surefire-plugin.version>2.7.2</maven-surefire-plugin.version>
     <maven-surefire-report-plugin.version>2.7.2</maven-surefire-report-plugin.version>
@@ -110,9 +110,16 @@ limitations under the License.
     <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
     <versions-maven-plugin.version>1.2</versions-maven-plugin.version>
     <xml-maven-plugin.version>1.0-beta-3</xml-maven-plugin.version>
+    <checkstyle.plugin.version>2.6</checkstyle.plugin.version>
+    <javadoc.plugin.version>2.7</javadoc.plugin.version>
+    <project.info.reports.plugin.version>2.2</project.info.reports.plugin.version>
+    <surefire.plugin.version>2.6</surefire.plugin.version>
+    <commons.logging.version>1.1.1</commons.logging.version>
+    <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
+
     <kfs-site.generateReports>true</kfs-site.generateReports>
     
-    <commons.logging.version>1.1.1</commons.logging.version>
+
     <!-- Servlet API Version -->
     <jsp.version>2.0</jsp.version>
     <jstl.version>1.2</jstl.version>
@@ -172,19 +179,13 @@ limitations under the License.
          
          see https://cwiki.apache.org/MAVEN/maven-3x-and-site-plugin.html
     -->
-    <checkstyle.plugin.version>2.6</checkstyle.plugin.version>
-    <javadoc.plugin.version>2.7</javadoc.plugin.version>
-    <project.info.reports.plugin.version>2.2</project.info.reports.plugin.version>
-    <surefire.plugin.version>2.6</surefire.plugin.version>
     <surefire.usefile>false</surefire.usefile>
     <surefire.testFailureIgnore>false</surefire.testFailureIgnore>
     <surefire.forkMode>never</surefire.forkMode>
     <surefire.reportFormat>plain</surefire.reportFormat>
     <surefire.argLine>-Xmx1536m -XX:MaxPermSize=512m</surefire.argLine>
     <surefire.aggregate>true</surefire.aggregate>
-    <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
     <cobertura.maxmem>512M</cobertura.maxmem>
-    <properties.directory>src/main/config/properties</properties.directory>
     <account.wsdl.packaged.location>wsdl/AccountCreationService.wsdl</account.wsdl.packaged.location>
 
     <!-- ################################################################################ -->
@@ -1394,14 +1395,6 @@ limitations under the License.
     <pluginManagement>
       <plugins>
         <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>${plugin.site.version}</version>
-          <configuration>
-            <reportPlugins>
-            </reportPlugins>
-          </configuration>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>${maven-site-plugin.version}</version>
@@ -1431,12 +1424,12 @@ limitations under the License.
                   <artifactId>maven-jxr-plugin</artifactId>
                   <version>${maven-jxr-plugin.version}</version>
                   </plugin>
-                  <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-pmd-plugin</artifactId>
-                  <version>${maven-pmd-plugin.version}</version>
-                  </plugin>
               -->
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+              </plugin>
               <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>

@@ -45,6 +45,8 @@
       <filter>${filter.directory}/url.properties</filter>
       <filter>${filter.directory}/web.properties</filter>
     </filters>
+
+    <!--
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -54,6 +56,8 @@
         </excludes>
       </resource>
     </resources>
+    -->
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -113,7 +117,7 @@
                    <version>${project.version}</version>  
                    <type>jar</type>
                    <overWrite>true</overWrite>
-                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                    <excludes>**/*.class</excludes>
                  </artifactItem>
                  <artifactItem>
@@ -122,7 +126,7 @@
                    <version>${project.version}</version>  
                    <type>jar</type>
                    <overWrite>true</overWrite>
-                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                    <excludes>**/*.class</excludes>
                  </artifactItem>
                  <artifactItem>
@@ -131,7 +135,7 @@
                    <version>${project.version}</version>  
                    <type>jar</type>
                    <overWrite>true</overWrite>
-                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                    <excludes>**/*.class</excludes>
                  </artifactItem>
                  <artifactItem>
@@ -140,8 +144,8 @@
                    <version>${project.version}</version>  
                    <type>jar</type>
                    <overWrite>true</overWrite>
-                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                   <includes>**/datadictionary/**/*</includes>
+                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                   <excludes>**/*.class</excludes>
                  </artifactItem>
                </artifactItems>
              </configuration>

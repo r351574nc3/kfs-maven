@@ -30,7 +30,7 @@
   <inceptionYear>2005</inceptionYear>
   <version>4.1.1-maven-SNAPSHOT</version>
   <description></description>
-  <url>http://${kuali.site.hostname}/rice/${project.version}</url>
+  <url>http://${kuali.site.hostname}/kfs/${project.version}</url>
   
   <modules>
     <module>core</module>
