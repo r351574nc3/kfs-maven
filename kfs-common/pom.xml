@@ -198,6 +198,7 @@ limitations under the License.
     <!-- values used in KFS-PURAP B2B functions - all values but user -->
     <!-- agent derived by build.xml based on build.environment -->
     <dev.mode>true</dev.mode>
+    <build.environment>dev</build.environment>
     <environment>${build.environment}</environment>
     <build.version>${project.version}</build.version>
     <b2b.user.agent>kfs</b2b.user.agent>
