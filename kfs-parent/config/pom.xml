@@ -28,6 +28,7 @@
 
   <build>
     <filters>
+      <filter>${user.home}/kfs-build.properties</filter>
       <filter>${env.filter}</filter>
       <filter>${filter.directory}/b2b.properties</filter>
       <filter>${filter.directory}/build.properties</filter>

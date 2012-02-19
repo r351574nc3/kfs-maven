@@ -29,6 +29,7 @@
   <build>
     <finalName>${project.parent.name}-${environment}</finalName>
     <filters>
+      <filter>${user.home}/kfs-build.properties</filter>
       <filter>${env.filter}</filter>
       <filter>${filter.directory}/b2b.properties</filter>
       <filter>${filter.directory}/batch.properties</filter>
