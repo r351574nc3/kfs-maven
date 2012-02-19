@@ -1,0 +1,524 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.bc.document.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.math.BigDecimal;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.ArrayList;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.Collection;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.HashMap;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.List;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Map;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.apache.ojb.broker.PersistenceBrokerException;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.bc.BCConstants;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.module.bc.BCKeyConstants;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionAdministrativePost;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionCalculatedSalaryFoundationTracker;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionObjectDump;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionOrgAccountFundingDetailReport;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionOrgAccountFundingDetailReportTotal;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.module.bc.businessobject.PendingBudgetConstructionAppointmentFunding;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionAccountFundingDetailReportDao;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.kfs.module.bc.document.service.BudgetConstructionAccountFundingDetailReportService;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.kfs.module.bc.document.service.BudgetConstructionReportsServiceHelper;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.kfs.module.bc.report.BudgetConstructionReportHelper;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.rice.kns.service.KualiConfigurationService;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.springframework.transaction.annotation.Transactional;<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>    /**<a name="line.44"></a>
+<FONT color="green">045</FONT>     * Service implementation of BudgetConstructionAccountFundingDetailReportService.<a name="line.45"></a>
+<FONT color="green">046</FONT>     */<a name="line.46"></a>
+<FONT color="green">047</FONT>    @Transactional<a name="line.47"></a>
+<FONT color="green">048</FONT>    public class BudgetConstructionAccountFundingDetailReportServiceImpl implements BudgetConstructionAccountFundingDetailReportService {<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        BudgetConstructionAccountFundingDetailReportDao budgetConstructionAccountFundingDetailReportDao;<a name="line.50"></a>
+<FONT color="green">051</FONT>        BudgetConstructionReportsServiceHelper budgetConstructionReportsServiceHelper;<a name="line.51"></a>
+<FONT color="green">052</FONT>        KualiConfigurationService kualiConfigurationService;<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>        /**<a name="line.54"></a>
+<FONT color="green">055</FONT>         * @see org.kuali.kfs.module.bc.document.service.BudgetReportsControlListService#updateRepotsAccountFundingDetailTable(java.lang.String)<a name="line.55"></a>
+<FONT color="green">056</FONT>         */<a name="line.56"></a>
+<FONT color="green">057</FONT>        public void updateAccountFundingDetailTable(String principalName) {<a name="line.57"></a>
+<FONT color="green">058</FONT>            budgetConstructionAccountFundingDetailReportDao.updateReportsAccountFundingDetailTable(principalName);<a name="line.58"></a>
+<FONT color="green">059</FONT>        }<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>        /**<a name="line.61"></a>
+<FONT color="green">062</FONT>         * @see org.kuali.kfs.module.bc.document.service.BudgetConstructionAccountFundingDetailReportService#buildReports(java.lang.Integer,<a name="line.62"></a>
+<FONT color="green">063</FONT>         *      java.util.Collection)<a name="line.63"></a>
+<FONT color="green">064</FONT>         */<a name="line.64"></a>
+<FONT color="green">065</FONT>        public Collection&lt;BudgetConstructionOrgAccountFundingDetailReport&gt; buildReports(Integer universityFiscalYear, String principalName) {<a name="line.65"></a>
+<FONT color="green">066</FONT>            Collection&lt;BudgetConstructionOrgAccountFundingDetailReport&gt; reportSet = new ArrayList();<a name="line.66"></a>
+<FONT color="green">067</FONT>            List&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; orgAccountFundingDetailReportTotalList;<a name="line.67"></a>
+<FONT color="green">068</FONT>            BudgetConstructionOrgAccountFundingDetailReport orgAccountFundingDetailReportEntry;<a name="line.68"></a>
+<FONT color="green">069</FONT>            Collection&lt;BudgetConstructionObjectDump&gt; accountFundingDetailList = budgetConstructionReportsServiceHelper.getDataForBuildingReports(BudgetConstructionObjectDump.class, principalName, buildOrderByList());<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>            Map&lt;BudgetConstructionObjectDump, Collection&lt;PendingBudgetConstructionAppointmentFunding&gt;&gt; appointmentFundingEntireMap = new HashMap();<a name="line.71"></a>
+<FONT color="green">072</FONT>            for (BudgetConstructionObjectDump accountFundingDetailEntry : accountFundingDetailList) {<a name="line.72"></a>
+<FONT color="green">073</FONT>                appointmentFundingEntireMap.put(accountFundingDetailEntry, budgetConstructionReportsServiceHelper.getPendingBudgetConstructionAppointmentFundingList(universityFiscalYear, accountFundingDetailEntry));<a name="line.73"></a>
+<FONT color="green">074</FONT>            }<a name="line.74"></a>
+<FONT color="green">075</FONT>    <a name="line.75"></a>
+<FONT color="green">076</FONT>            String objectCodes = budgetConstructionReportsServiceHelper.getSelectedObjectCodes(principalName);<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>            List&lt;BudgetConstructionObjectDump&gt; listForCalculateTotalObject = BudgetConstructionReportHelper.deleteDuplicated((List) accountFundingDetailList, fieldsForObject());<a name="line.78"></a>
+<FONT color="green">079</FONT>            List&lt;BudgetConstructionObjectDump&gt; listForCalculateTotalAccount = BudgetConstructionReportHelper.deleteDuplicated((List) accountFundingDetailList, fieldsForAccount());<a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>            // Calculate Total Section<a name="line.81"></a>
+<FONT color="green">082</FONT>            Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; fundingDetailTotalObject = calculateObjectTotal(appointmentFundingEntireMap, listForCalculateTotalObject);<a name="line.82"></a>
+<FONT color="green">083</FONT>            Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; fundingDetailTotalAccount = calculateAccountTotal(fundingDetailTotalObject, listForCalculateTotalAccount);<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>            for (BudgetConstructionObjectDump accountFundingDetailEntry : accountFundingDetailList) {<a name="line.85"></a>
+<FONT color="green">086</FONT>                Collection&lt;PendingBudgetConstructionAppointmentFunding&gt; appointmentFundingCollection = appointmentFundingEntireMap.get(accountFundingDetailEntry);<a name="line.86"></a>
+<FONT color="green">087</FONT>                for (PendingBudgetConstructionAppointmentFunding appointmentFundingEntry : appointmentFundingCollection) {<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>                    orgAccountFundingDetailReportEntry = new BudgetConstructionOrgAccountFundingDetailReport();<a name="line.89"></a>
+<FONT color="green">090</FONT>                    buildReportsHeader(universityFiscalYear, objectCodes, orgAccountFundingDetailReportEntry, accountFundingDetailEntry);<a name="line.90"></a>
+<FONT color="green">091</FONT>                    buildReportsBody(universityFiscalYear, orgAccountFundingDetailReportEntry, appointmentFundingEntry);<a name="line.91"></a>
+<FONT color="green">092</FONT>                    buildReportsTotal(orgAccountFundingDetailReportEntry, accountFundingDetailEntry, fundingDetailTotalObject, fundingDetailTotalAccount);<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>                    reportSet.add(orgAccountFundingDetailReportEntry);<a name="line.94"></a>
+<FONT color="green">095</FONT>                }<a name="line.95"></a>
+<FONT color="green">096</FONT>            }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>            return reportSet;<a name="line.98"></a>
+<FONT color="green">099</FONT>        }<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>        /**<a name="line.101"></a>
+<FONT color="green">102</FONT>         * builds report Header<a name="line.102"></a>
+<FONT color="green">103</FONT>         * <a name="line.103"></a>
+<FONT color="green">104</FONT>         * @param BudgetConstructionObjectDump bcod<a name="line.104"></a>
+<FONT color="green">105</FONT>         */<a name="line.105"></a>
+<FONT color="green">106</FONT>        public void buildReportsHeader(Integer universityFiscalYear, String objectCodes, BudgetConstructionOrgAccountFundingDetailReport orgAccountFundingDetailReportEntry, BudgetConstructionObjectDump accountFundingDetail) {<a name="line.106"></a>
+<FONT color="green">107</FONT>            String orgChartDesc = accountFundingDetail.getOrganizationChartOfAccounts().getFinChartOfAccountDescription();<a name="line.107"></a>
+<FONT color="green">108</FONT>            String chartDesc = accountFundingDetail.getChartOfAccounts().getFinChartOfAccountDescription();<a name="line.108"></a>
+<FONT color="green">109</FONT>            String orgName = accountFundingDetail.getOrganization().getOrganizationName();<a name="line.109"></a>
+<FONT color="green">110</FONT>            String reportChartDesc = accountFundingDetail.getChartOfAccounts().getReportsToChartOfAccounts().getFinChartOfAccountDescription();<a name="line.110"></a>
+<FONT color="green">111</FONT>            String subFundGroupName = accountFundingDetail.getSubFundGroup().getSubFundGroupCode();<a name="line.111"></a>
+<FONT color="green">112</FONT>            String subFundGroupDes = accountFundingDetail.getSubFundGroup().getSubFundGroupDescription();<a name="line.112"></a>
+<FONT color="green">113</FONT>            String fundGroupName = accountFundingDetail.getSubFundGroup().getFundGroupCode();<a name="line.113"></a>
+<FONT color="green">114</FONT>            String fundGroupDes = accountFundingDetail.getSubFundGroup().getFundGroup().getName();<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>            Integer prevFiscalyear = universityFiscalYear - 1;<a name="line.116"></a>
+<FONT color="green">117</FONT>            orgAccountFundingDetailReportEntry.setFiscalYear(prevFiscalyear.toString() + "-" + universityFiscalYear.toString().substring(2, 4));<a name="line.117"></a>
+<FONT color="green">118</FONT>            orgAccountFundingDetailReportEntry.setOrgChartOfAccountsCode(accountFundingDetail.getOrganizationChartOfAccountsCode());<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>            if (orgChartDesc == null) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                orgAccountFundingDetailReportEntry.setOrgChartOfAccountDescription(kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_CHART_DESCRIPTION));<a name="line.121"></a>
+<FONT color="green">122</FONT>            }<a name="line.122"></a>
+<FONT color="green">123</FONT>            else {<a name="line.123"></a>
+<FONT color="green">124</FONT>                orgAccountFundingDetailReportEntry.setOrgChartOfAccountDescription(orgChartDesc);<a name="line.124"></a>
+<FONT color="green">125</FONT>            }<a name="line.125"></a>
+<FONT color="green">126</FONT>    <a name="line.126"></a>
+<FONT color="green">127</FONT>            orgAccountFundingDetailReportEntry.setOrganizationCode(accountFundingDetail.getOrganizationCode());<a name="line.127"></a>
+<FONT color="green">128</FONT>            if (orgName == null) {<a name="line.128"></a>
+<FONT color="green">129</FONT>                orgAccountFundingDetailReportEntry.setOrganizationName(kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_ORGANIZATION_NAME));<a name="line.129"></a>
+<FONT color="green">130</FONT>            }<a name="line.130"></a>
+<FONT color="green">131</FONT>            else {<a name="line.131"></a>
+<FONT color="green">132</FONT>                orgAccountFundingDetailReportEntry.setOrganizationName(orgName);<a name="line.132"></a>
+<FONT color="green">133</FONT>            }<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>            orgAccountFundingDetailReportEntry.setChartOfAccountsCode(accountFundingDetail.getChartOfAccountsCode());<a name="line.135"></a>
+<FONT color="green">136</FONT>            if (chartDesc == null) {<a name="line.136"></a>
+<FONT color="green">137</FONT>                orgAccountFundingDetailReportEntry.setChartOfAccountDescription(kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_CHART_DESCRIPTION));<a name="line.137"></a>
+<FONT color="green">138</FONT>            }<a name="line.138"></a>
+<FONT color="green">139</FONT>            else {<a name="line.139"></a>
+<FONT color="green">140</FONT>                orgAccountFundingDetailReportEntry.setChartOfAccountDescription(chartDesc);<a name="line.140"></a>
+<FONT color="green">141</FONT>            }<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>            orgAccountFundingDetailReportEntry.setFundGroupCode(accountFundingDetail.getSubFundGroup().getFundGroupCode());<a name="line.143"></a>
+<FONT color="green">144</FONT>            if (fundGroupDes == null) {<a name="line.144"></a>
+<FONT color="green">145</FONT>                orgAccountFundingDetailReportEntry.setFundGroupName(kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_FUNDGROUP_NAME));<a name="line.145"></a>
+<FONT color="green">146</FONT>            }<a name="line.146"></a>
+<FONT color="green">147</FONT>            else {<a name="line.147"></a>
+<FONT color="green">148</FONT>                orgAccountFundingDetailReportEntry.setFundGroupName(fundGroupDes);<a name="line.148"></a>
+<FONT color="green">149</FONT>            }<a name="line.149"></a>
+<FONT color="green">150</FONT>    <a name="line.150"></a>
+<FONT color="green">151</FONT>            orgAccountFundingDetailReportEntry.setSubFundGroupCode(accountFundingDetail.getSubFundGroupCode());<a name="line.151"></a>
+<FONT color="green">152</FONT>            if (subFundGroupDes == null) {<a name="line.152"></a>
+<FONT color="green">153</FONT>                orgAccountFundingDetailReportEntry.setSubFundGroupDescription(kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_SUBFUNDGROUP_DESCRIPTION));<a name="line.153"></a>
+<FONT color="green">154</FONT>            }<a name="line.154"></a>
+<FONT color="green">155</FONT>            else {<a name="line.155"></a>
+<FONT color="green">156</FONT>                orgAccountFundingDetailReportEntry.setSubFundGroupDescription(subFundGroupDes);<a name="line.156"></a>
+<FONT color="green">157</FONT>            }<a name="line.157"></a>
+<FONT color="green">158</FONT>    <a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>            Integer prevPrevFiscalyear = prevFiscalyear - 1;<a name="line.160"></a>
+<FONT color="green">161</FONT>            orgAccountFundingDetailReportEntry.setReqFy(prevFiscalyear.toString() + "-" + universityFiscalYear.toString().substring(2, 4));<a name="line.161"></a>
+<FONT color="green">162</FONT>            orgAccountFundingDetailReportEntry.setConsHdr("");<a name="line.162"></a>
+<FONT color="green">163</FONT>    <a name="line.163"></a>
+<FONT color="green">164</FONT>            orgAccountFundingDetailReportEntry.setFinancialObjectCode(accountFundingDetail.getFinancialObjectCode());<a name="line.164"></a>
+<FONT color="green">165</FONT>            orgAccountFundingDetailReportEntry.setFinancialObjectCodeName(accountFundingDetail.getFinancialObject().getFinancialObjectCodeName());<a name="line.165"></a>
+<FONT color="green">166</FONT>            // group<a name="line.166"></a>
+<FONT color="green">167</FONT>            orgAccountFundingDetailReportEntry.setSubAccountNumber(accountFundingDetail.getSubAccountNumber() + accountFundingDetail.getAccountNumber());<a name="line.167"></a>
+<FONT color="green">168</FONT>            orgAccountFundingDetailReportEntry.setObjectCodes(objectCodes);<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>            String subAccountName = "";<a name="line.170"></a>
+<FONT color="green">171</FONT>            String subAccountNumberAndName = "";<a name="line.171"></a>
+<FONT color="green">172</FONT>            String divider = "";<a name="line.172"></a>
+<FONT color="green">173</FONT>            // set accountNumber and name, subAccountNumber and name<a name="line.173"></a>
+<FONT color="green">174</FONT>            if (accountFundingDetail.getAccount() != null) {<a name="line.174"></a>
+<FONT color="green">175</FONT>                orgAccountFundingDetailReportEntry.setAccountNumberAndName(accountFundingDetail.getAccountNumber() + " " + accountFundingDetail.getAccount().getAccountName());<a name="line.175"></a>
+<FONT color="green">176</FONT>                orgAccountFundingDetailReportEntry.setAccountName(accountFundingDetail.getAccount().getAccountName());<a name="line.176"></a>
+<FONT color="green">177</FONT>            }<a name="line.177"></a>
+<FONT color="green">178</FONT>    <a name="line.178"></a>
+<FONT color="green">179</FONT>            if (!accountFundingDetail.getSubAccountNumber().equals(BCConstants.Report.DASHES_SUB_ACCOUNT_CODE)) {<a name="line.179"></a>
+<FONT color="green">180</FONT>                divider = BCConstants.Report.DIVIDER;<a name="line.180"></a>
+<FONT color="green">181</FONT>                try {<a name="line.181"></a>
+<FONT color="green">182</FONT>                    subAccountName = accountFundingDetail.getSubAccount().getSubAccountName();<a name="line.182"></a>
+<FONT color="green">183</FONT>                    subAccountNumberAndName = accountFundingDetail.getSubAccount().getSubAccountNumber() + " " + accountFundingDetail.getSubAccount().getSubAccountName();<a name="line.183"></a>
+<FONT color="green">184</FONT>                }<a name="line.184"></a>
+<FONT color="green">185</FONT>                catch (PersistenceBrokerException e) {<a name="line.185"></a>
+<FONT color="green">186</FONT>                    subAccountName = kualiConfigurationService.getPropertyString(BCKeyConstants.ERROR_REPORT_GETTING_SUB_ACCOUNT_DESCRIPTION);<a name="line.186"></a>
+<FONT color="green">187</FONT>                    subAccountNumberAndName = subAccountName;<a name="line.187"></a>
+<FONT color="green">188</FONT>                }<a name="line.188"></a>
+<FONT color="green">189</FONT>            }<a name="line.189"></a>
+<FONT color="green">190</FONT>            orgAccountFundingDetailReportEntry.setSubAccountName(subAccountName);<a name="line.190"></a>
+<FONT color="green">191</FONT>            orgAccountFundingDetailReportEntry.setSubAccountNumberAndName(subAccountNumberAndName);<a name="line.191"></a>
+<FONT color="green">192</FONT>            orgAccountFundingDetailReportEntry.setDivider(divider);<a name="line.192"></a>
+<FONT color="green">193</FONT>        }<a name="line.193"></a>
+<FONT color="green">194</FONT>    <a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>        /**<a name="line.196"></a>
+<FONT color="green">197</FONT>         * builds report body<a name="line.197"></a>
+<FONT color="green">198</FONT>         * <a name="line.198"></a>
+<FONT color="green">199</FONT>         * @param BudgetConstructionObjectDump bcod<a name="line.199"></a>
+<FONT color="green">200</FONT>         */<a name="line.200"></a>
+<FONT color="green">201</FONT>        public void buildReportsBody(Integer universityFiscalYear, BudgetConstructionOrgAccountFundingDetailReport orgAccountFundingDetailReportEntry, PendingBudgetConstructionAppointmentFunding appointmentFundingEntry) {<a name="line.201"></a>
+<FONT color="green">202</FONT>    <a name="line.202"></a>
+<FONT color="green">203</FONT>            // get budgetConstructionIntendedIncumbent, budgetConstructionAdministrativePost, budgetConstructionPosition objects<a name="line.203"></a>
+<FONT color="green">204</FONT>            BudgetConstructionIntendedIncumbent budgetConstructionIntendedIncumbent = budgetConstructionReportsServiceHelper.getBudgetConstructionIntendedIncumbent(appointmentFundingEntry);<a name="line.204"></a>
+<FONT color="green">205</FONT>            BudgetConstructionAdministrativePost budgetConstructionAdministrativePost = budgetConstructionReportsServiceHelper.getBudgetConstructionAdministrativePost(appointmentFundingEntry);<a name="line.205"></a>
+<FONT color="green">206</FONT>            BudgetConstructionPosition budgetConstructionPosition = budgetConstructionReportsServiceHelper.getBudgetConstructionPosition(universityFiscalYear, appointmentFundingEntry);<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>            // set report body<a name="line.208"></a>
+<FONT color="green">209</FONT>            if (budgetConstructionIntendedIncumbent != null) {<a name="line.209"></a>
+<FONT color="green">210</FONT>                if (budgetConstructionIntendedIncumbent.getName() == null) {<a name="line.210"></a>
+<FONT color="green">211</FONT>                    orgAccountFundingDetailReportEntry.setName(BCConstants.Report.VACANT);<a name="line.211"></a>
+<FONT color="green">212</FONT>                }<a name="line.212"></a>
+<FONT color="green">213</FONT>                else {<a name="line.213"></a>
+<FONT color="green">214</FONT>                    int nameLength = budgetConstructionIntendedIncumbent.getName().length();<a name="line.214"></a>
+<FONT color="green">215</FONT>                    orgAccountFundingDetailReportEntry.setName(budgetConstructionIntendedIncumbent.getName().substring(0, (nameLength &gt; 33) ? 33 : nameLength));<a name="line.215"></a>
+<FONT color="green">216</FONT>                }<a name="line.216"></a>
+<FONT color="green">217</FONT>    <a name="line.217"></a>
+<FONT color="green">218</FONT>                orgAccountFundingDetailReportEntry.setIuClassificationLevel(budgetConstructionIntendedIncumbent.getIuClassificationLevel());<a name="line.218"></a>
+<FONT color="green">219</FONT>            }<a name="line.219"></a>
+<FONT color="green">220</FONT>            else {<a name="line.220"></a>
+<FONT color="green">221</FONT>                orgAccountFundingDetailReportEntry.setName(BCConstants.Report.VACANT);<a name="line.221"></a>
+<FONT color="green">222</FONT>                orgAccountFundingDetailReportEntry.setIuClassificationLevel(BCConstants.Report.BLANK);<a name="line.222"></a>
+<FONT color="green">223</FONT>            }<a name="line.223"></a>
+<FONT color="green">224</FONT>    <a name="line.224"></a>
+<FONT color="green">225</FONT>    <a name="line.225"></a>
+<FONT color="green">226</FONT>            if (budgetConstructionAdministrativePost != null) {<a name="line.226"></a>
+<FONT color="green">227</FONT>                orgAccountFundingDetailReportEntry.setAdministrativePost(budgetConstructionAdministrativePost.getAdministrativePost());<a name="line.227"></a>
+<FONT color="green">228</FONT>            }<a name="line.228"></a>
+<FONT color="green">229</FONT>    <a name="line.229"></a>
+<FONT color="green">230</FONT>            if (budgetConstructionPosition != null) {<a name="line.230"></a>
+<FONT color="green">231</FONT>                orgAccountFundingDetailReportEntry.setPositionNumber(budgetConstructionPosition.getPositionNumber());<a name="line.231"></a>
+<FONT color="green">232</FONT>                orgAccountFundingDetailReportEntry.setNormalWorkMonthsAndiuPayMonths(budgetConstructionPosition.getIuNormalWorkMonths() + "/" + budgetConstructionPosition.getIuPayMonths());<a name="line.232"></a>
+<FONT color="green">233</FONT>                orgAccountFundingDetailReportEntry.setPositionFte(BudgetConstructionReportHelper.setDecimalDigit(budgetConstructionPosition.getPositionFullTimeEquivalency(), 5, true));<a name="line.233"></a>
+<FONT color="green">234</FONT>                orgAccountFundingDetailReportEntry.setPositionSalaryPlanDefault(budgetConstructionPosition.getPositionSalaryPlanDefault());<a name="line.234"></a>
+<FONT color="green">235</FONT>                orgAccountFundingDetailReportEntry.setPositionGradeDefault(budgetConstructionPosition.getPositionGradeDefault());<a name="line.235"></a>
+<FONT color="green">236</FONT>                orgAccountFundingDetailReportEntry.setPositionStandardHoursDefault(budgetConstructionPosition.getPositionStandardHoursDefault());<a name="line.236"></a>
+<FONT color="green">237</FONT>            }<a name="line.237"></a>
+<FONT color="green">238</FONT>    <a name="line.238"></a>
+<FONT color="green">239</FONT>            BudgetConstructionCalculatedSalaryFoundationTracker csfTracker = appointmentFundingEntry.getEffectiveCSFTracker();<a name="line.239"></a>
+<FONT color="green">240</FONT>            orgAccountFundingDetailReportEntry.setAmountChange(new Integer(0));<a name="line.240"></a>
+<FONT color="green">241</FONT>            orgAccountFundingDetailReportEntry.setPercentChange(BigDecimal.ZERO);<a name="line.241"></a>
+<FONT color="green">242</FONT>            if (csfTracker != null) {<a name="line.242"></a>
+<FONT color="green">243</FONT>                orgAccountFundingDetailReportEntry.setCsfTimePercent(BudgetConstructionReportHelper.setDecimalDigit(csfTracker.getCsfTimePercent(), 2, false));<a name="line.243"></a>
+<FONT color="green">244</FONT>                orgAccountFundingDetailReportEntry.setCsfAmount(new Integer(csfTracker.getCsfAmount().intValue()));<a name="line.244"></a>
+<FONT color="green">245</FONT>                orgAccountFundingDetailReportEntry.setCsfFullTimeEmploymentQuantity(BudgetConstructionReportHelper.setDecimalDigit(csfTracker.getCsfFullTimeEmploymentQuantity(), 5, true));<a name="line.245"></a>
+<FONT color="green">246</FONT>    <a name="line.246"></a>
+<FONT color="green">247</FONT>                // calculate amountChange and percentChange<a name="line.247"></a>
+<FONT color="green">248</FONT>                Integer amountChange = new Integer(0);<a name="line.248"></a>
+<FONT color="green">249</FONT>                BigDecimal percentChange = BigDecimal.ZERO;<a name="line.249"></a>
+<FONT color="green">250</FONT>                BigDecimal csfFte = BudgetConstructionReportHelper.setDecimalDigit(csfTracker.getCsfFullTimeEmploymentQuantity(), 5, false);<a name="line.250"></a>
+<FONT color="green">251</FONT>                BigDecimal reqFte = BudgetConstructionReportHelper.setDecimalDigit(appointmentFundingEntry.getAppointmentRequestedFteQuantity(), 5, false);<a name="line.251"></a>
+<FONT color="green">252</FONT>                if (reqFte.compareTo(csfFte) == 0) {<a name="line.252"></a>
+<FONT color="green">253</FONT>                    amountChange = appointmentFundingEntry.getAppointmentRequestedAmount().subtract(csfTracker.getCsfAmount()).intValue();<a name="line.253"></a>
+<FONT color="green">254</FONT>                    percentChange = BudgetConstructionReportHelper.calculatePercent(new BigDecimal(amountChange.intValue()), csfTracker.getCsfAmount().bigDecimalValue());<a name="line.254"></a>
+<FONT color="green">255</FONT>                }<a name="line.255"></a>
+<FONT color="green">256</FONT>                orgAccountFundingDetailReportEntry.setAmountChange(amountChange);<a name="line.256"></a>
+<FONT color="green">257</FONT>                orgAccountFundingDetailReportEntry.setPercentChange(percentChange);<a name="line.257"></a>
+<FONT color="green">258</FONT>            }<a name="line.258"></a>
+<FONT color="green">259</FONT>    <a name="line.259"></a>
+<FONT color="green">260</FONT>            if (appointmentFundingEntry != null) {<a name="line.260"></a>
+<FONT color="green">261</FONT>                if (appointmentFundingEntry.getFinancialSubObjectCode().equals(BCConstants.Report.BLANK_SUB_OBJECT_CODE)) {<a name="line.261"></a>
+<FONT color="green">262</FONT>                    orgAccountFundingDetailReportEntry.setFinancialSubObjectCode(BCConstants.Report.BLANK);<a name="line.262"></a>
+<FONT color="green">263</FONT>                }<a name="line.263"></a>
+<FONT color="green">264</FONT>                else {<a name="line.264"></a>
+<FONT color="green">265</FONT>                    orgAccountFundingDetailReportEntry.setFinancialSubObjectCode(appointmentFundingEntry.getFinancialSubObjectCode());<a name="line.265"></a>
+<FONT color="green">266</FONT>                }<a name="line.266"></a>
+<FONT color="green">267</FONT>    <a name="line.267"></a>
+<FONT color="green">268</FONT>                orgAccountFundingDetailReportEntry.setAppointmentFundingMonth(appointmentFundingEntry.getAppointmentFundingMonth());<a name="line.268"></a>
+<FONT color="green">269</FONT>                orgAccountFundingDetailReportEntry.setAppointmentRequestedAmount(new Integer(appointmentFundingEntry.getAppointmentRequestedAmount().intValue()));<a name="line.269"></a>
+<FONT color="green">270</FONT>                orgAccountFundingDetailReportEntry.setAppointmentRequestedTimePercent(BudgetConstructionReportHelper.setDecimalDigit(appointmentFundingEntry.getAppointmentRequestedTimePercent(), 2, false));<a name="line.270"></a>
+<FONT color="green">271</FONT>                orgAccountFundingDetailReportEntry.setAppointmentRequestedFteQuantity(BudgetConstructionReportHelper.setDecimalDigit(appointmentFundingEntry.getAppointmentRequestedFteQuantity(), 5, false));<a name="line.271"></a>
+<FONT color="green">272</FONT>                orgAccountFundingDetailReportEntry.setAppointmentFundingDurationCode(appointmentFundingEntry.getAppointmentFundingDurationCode());<a name="line.272"></a>
+<FONT color="green">273</FONT>    <a name="line.273"></a>
+<FONT color="green">274</FONT>                orgAccountFundingDetailReportEntry.setAppointmentRequestedCsfAmount(BudgetConstructionReportHelper.convertKualiInteger(appointmentFundingEntry.getAppointmentRequestedCsfAmount()));<a name="line.274"></a>
+<FONT color="green">275</FONT>                orgAccountFundingDetailReportEntry.setAppointmentRequestedCsfTimePercent(appointmentFundingEntry.getAppointmentRequestedCsfTimePercent());<a name="line.275"></a>
+<FONT color="green">276</FONT>                orgAccountFundingDetailReportEntry.setAppointmentRequestedCsfFteQuantity(BudgetConstructionReportHelper.setDecimalDigit(appointmentFundingEntry.getAppointmentRequestedCsfFteQuantity(), 5, false));<a name="line.276"></a>
+<FONT color="green">277</FONT>    <a name="line.277"></a>
+<FONT color="green">278</FONT>                orgAccountFundingDetailReportEntry.setAppointmentTotalIntendedAmount(BudgetConstructionReportHelper.convertKualiInteger(appointmentFundingEntry.getAppointmentTotalIntendedAmount()));<a name="line.278"></a>
+<FONT color="green">279</FONT>                orgAccountFundingDetailReportEntry.setAppointmentTotalIntendedFteQuantity(BudgetConstructionReportHelper.setDecimalDigit(appointmentFundingEntry.getAppointmentTotalIntendedFteQuantity(), 5, false));<a name="line.279"></a>
+<FONT color="green">280</FONT>    <a name="line.280"></a>
+<FONT color="green">281</FONT>                orgAccountFundingDetailReportEntry.setEmplid(appointmentFundingEntry.getEmplid());<a name="line.281"></a>
+<FONT color="green">282</FONT>            }<a name="line.282"></a>
+<FONT color="green">283</FONT>    <a name="line.283"></a>
+<FONT color="green">284</FONT>    <a name="line.284"></a>
+<FONT color="green">285</FONT>            if (appointmentFundingEntry.isAppointmentFundingDeleteIndicator()) {<a name="line.285"></a>
+<FONT color="green">286</FONT>                orgAccountFundingDetailReportEntry.setDeleteBox(BCConstants.Report.DELETE_MARK);<a name="line.286"></a>
+<FONT color="green">287</FONT>            }<a name="line.287"></a>
+<FONT color="green">288</FONT>            else {<a name="line.288"></a>
+<FONT color="green">289</FONT>                orgAccountFundingDetailReportEntry.setDeleteBox(BCConstants.Report.BLANK);<a name="line.289"></a>
+<FONT color="green">290</FONT>            }<a name="line.290"></a>
+<FONT color="green">291</FONT>        }<a name="line.291"></a>
+<FONT color="green">292</FONT>    <a name="line.292"></a>
+<FONT color="green">293</FONT>        public void buildReportsTotal(BudgetConstructionOrgAccountFundingDetailReport orgAccountFundingDetailReportEntry, BudgetConstructionObjectDump accountFundingDetail, Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; fundingDetailTotalObject, Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; fundingDetailTotalAccount) {<a name="line.293"></a>
+<FONT color="green">294</FONT>            for (BudgetConstructionOrgAccountFundingDetailReportTotal fundingDetailTotalObjectEntry : fundingDetailTotalObject) {<a name="line.294"></a>
+<FONT color="green">295</FONT>                if (BudgetConstructionReportHelper.isSameEntry(fundingDetailTotalObjectEntry.getBudgetConstructionObjectDump(), accountFundingDetail, fieldsForObject())) {<a name="line.295"></a>
+<FONT color="green">296</FONT>                    if (accountFundingDetail.getFinancialObject() != null) {<a name="line.296"></a>
+<FONT color="green">297</FONT>                        orgAccountFundingDetailReportEntry.setTotalObjectname(accountFundingDetail.getFinancialObject().getName());<a name="line.297"></a>
+<FONT color="green">298</FONT>                    }<a name="line.298"></a>
+<FONT color="green">299</FONT>                    orgAccountFundingDetailReportEntry.setTotalObjectPositionCsfAmount(fundingDetailTotalObjectEntry.getTotalObjectPositionCsfAmount());<a name="line.299"></a>
+<FONT color="green">300</FONT>                    orgAccountFundingDetailReportEntry.setTotalObjectAppointmentRequestedAmount(fundingDetailTotalObjectEntry.getTotalObjectAppointmentRequestedAmount());<a name="line.300"></a>
+<FONT color="green">301</FONT>                    orgAccountFundingDetailReportEntry.setTotalObjectPositionCsfFteQuantity(BudgetConstructionReportHelper.setDecimalDigit(fundingDetailTotalObjectEntry.getTotalObjectPositionCsfFteQuantity(), 5, true));<a name="line.301"></a>
+<FONT color="green">302</FONT>                    orgAccountFundingDetailReportEntry.setTotalObjectAppointmentRequestedFteQuantity(BudgetConstructionReportHelper.setDecimalDigit(fundingDetailTotalObjectEntry.getTotalObjectAppointmentRequestedFteQuantity(), 5, true));<a name="line.302"></a>
+<FONT color="green">303</FONT>                    // calculate amountChange and percentChange<a name="line.303"></a>
+<FONT color="green">304</FONT>                    Integer amountChange = fundingDetailTotalObjectEntry.getTotalObjectAppointmentRequestedAmount() - fundingDetailTotalObjectEntry.getTotalObjectPositionCsfAmount();<a name="line.304"></a>
+<FONT color="green">305</FONT>                    orgAccountFundingDetailReportEntry.setTotalObjectAmountChange(amountChange);<a name="line.305"></a>
+<FONT color="green">306</FONT>                    orgAccountFundingDetailReportEntry.setTotalObjectPercentChange(BudgetConstructionReportHelper.calculatePercent(amountChange, fundingDetailTotalObjectEntry.getTotalObjectPositionCsfAmount()));<a name="line.306"></a>
+<FONT color="green">307</FONT>                }<a name="line.307"></a>
+<FONT color="green">308</FONT>            }<a name="line.308"></a>
+<FONT color="green">309</FONT>    <a name="line.309"></a>
+<FONT color="green">310</FONT>            for (BudgetConstructionOrgAccountFundingDetailReportTotal fundingDetailTotalAccountEntry : fundingDetailTotalAccount) {<a name="line.310"></a>
+<FONT color="green">311</FONT>                if (BudgetConstructionReportHelper.isSameEntry(fundingDetailTotalAccountEntry.getBudgetConstructionObjectDump(), accountFundingDetail, fieldsForAccount())) {<a name="line.311"></a>
+<FONT color="green">312</FONT>    <a name="line.312"></a>
+<FONT color="green">313</FONT>                    orgAccountFundingDetailReportEntry.setTotalAccountPositionCsfAmount(fundingDetailTotalAccountEntry.getTotalAccountPositionCsfAmount());<a name="line.313"></a>
+<FONT color="green">314</FONT>                    orgAccountFundingDetailReportEntry.setTotalAccountAppointmentRequestedAmount(fundingDetailTotalAccountEntry.getTotalAccountAppointmentRequestedAmount());<a name="line.314"></a>
+<FONT color="green">315</FONT>                    orgAccountFundingDetailReportEntry.setTotalAccountPositionCsfFteQuantity(BudgetConstructionReportHelper.setDecimalDigit(fundingDetailTotalAccountEntry.getTotalAccountPositionCsfFteQuantity(), 5, true));<a name="line.315"></a>
+<FONT color="green">316</FONT>                    orgAccountFundingDetailReportEntry.setTotalAccountAppointmentRequestedFteQuantity(BudgetConstructionReportHelper.setDecimalDigit(fundingDetailTotalAccountEntry.getTotalAccountAppointmentRequestedFteQuantity(), 5, true));<a name="line.316"></a>
+<FONT color="green">317</FONT>                    Integer amountChange = fundingDetailTotalAccountEntry.getTotalAccountAppointmentRequestedAmount() - fundingDetailTotalAccountEntry.getTotalAccountPositionCsfAmount();<a name="line.317"></a>
+<FONT color="green">318</FONT>                    orgAccountFundingDetailReportEntry.setTotalAccountAmountChange(amountChange);<a name="line.318"></a>
+<FONT color="green">319</FONT>                    orgAccountFundingDetailReportEntry.setTotalAccountPercentChange(BudgetConstructionReportHelper.calculatePercent(amountChange, fundingDetailTotalAccountEntry.getTotalAccountPositionCsfAmount()));<a name="line.319"></a>
+<FONT color="green">320</FONT>                }<a name="line.320"></a>
+<FONT color="green">321</FONT>            }<a name="line.321"></a>
+<FONT color="green">322</FONT>        }<a name="line.322"></a>
+<FONT color="green">323</FONT>    <a name="line.323"></a>
+<FONT color="green">324</FONT>    <a name="line.324"></a>
+<FONT color="green">325</FONT>        /**<a name="line.325"></a>
+<FONT color="green">326</FONT>         * builds report total<a name="line.326"></a>
+<FONT color="green">327</FONT>         * <a name="line.327"></a>
+<FONT color="green">328</FONT>         * @param BudgetConstructionObjectDump bcod<a name="line.328"></a>
+<FONT color="green">329</FONT>         * @param List reportTotalList<a name="line.329"></a>
+<FONT color="green">330</FONT>         */<a name="line.330"></a>
+<FONT color="green">331</FONT>        protected Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; calculateObjectTotal(Map appointmentFundingEntireMap, List&lt;BudgetConstructionObjectDump&gt; listForCalculateTotalObject) {<a name="line.331"></a>
+<FONT color="green">332</FONT>            Integer totalObjectPositionCsfAmount = new Integer(0);<a name="line.332"></a>
+<FONT color="green">333</FONT>            Integer totalObjectAppointmentRequestedAmount = new Integer(0);<a name="line.333"></a>
+<FONT color="green">334</FONT>            BigDecimal totalObjectPositionCsfFteQuantity = BigDecimal.ZERO;<a name="line.334"></a>
+<FONT color="green">335</FONT>            BigDecimal totalObjectAppointmentRequestedFteQuantity = BigDecimal.ZERO;<a name="line.335"></a>
+<FONT color="green">336</FONT>    <a name="line.336"></a>
+<FONT color="green">337</FONT>            Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; returnCollection = new ArrayList();<a name="line.337"></a>
+<FONT color="green">338</FONT>    <a name="line.338"></a>
+<FONT color="green">339</FONT>            for (BudgetConstructionObjectDump budgetConstructionObjectDump : listForCalculateTotalObject) {<a name="line.339"></a>
+<FONT color="green">340</FONT>                Collection&lt;PendingBudgetConstructionAppointmentFunding&gt; accountFundingCollection = new ArrayList();<a name="line.340"></a>
+<FONT color="green">341</FONT>                accountFundingCollection = (Collection&lt;PendingBudgetConstructionAppointmentFunding&gt;) appointmentFundingEntireMap.get(budgetConstructionObjectDump);<a name="line.341"></a>
+<FONT color="green">342</FONT>                for (PendingBudgetConstructionAppointmentFunding accountFundingEntry : accountFundingCollection) {<a name="line.342"></a>
+<FONT color="green">343</FONT>                    if (accountFundingEntry.getBcnCalculatedSalaryFoundationTracker().size() &gt; 0) {<a name="line.343"></a>
+<FONT color="green">344</FONT>                        BudgetConstructionCalculatedSalaryFoundationTracker calculatedSalaryFoundationTracker = accountFundingEntry.getBcnCalculatedSalaryFoundationTracker().get(0);<a name="line.344"></a>
+<FONT color="green">345</FONT>                        totalObjectPositionCsfAmount = totalObjectPositionCsfAmount + new Integer(calculatedSalaryFoundationTracker.getCsfAmount().intValue());<a name="line.345"></a>
+<FONT color="green">346</FONT>                        totalObjectPositionCsfFteQuantity = totalObjectPositionCsfFteQuantity.add(calculatedSalaryFoundationTracker.getCsfFullTimeEmploymentQuantity());<a name="line.346"></a>
+<FONT color="green">347</FONT>                    }<a name="line.347"></a>
+<FONT color="green">348</FONT>                    totalObjectAppointmentRequestedAmount = totalObjectAppointmentRequestedAmount + new Integer(accountFundingEntry.getAppointmentRequestedAmount().intValue());<a name="line.348"></a>
+<FONT color="green">349</FONT>                    totalObjectAppointmentRequestedFteQuantity = totalObjectAppointmentRequestedFteQuantity.add(accountFundingEntry.getAppointmentRequestedFteQuantity());<a name="line.349"></a>
+<FONT color="green">350</FONT>                }<a name="line.350"></a>
+<FONT color="green">351</FONT>    <a name="line.351"></a>
+<FONT color="green">352</FONT>                BudgetConstructionOrgAccountFundingDetailReportTotal budgetConstructionOrgAccountFundingDetailReportTotal = new BudgetConstructionOrgAccountFundingDetailReportTotal();<a name="line.352"></a>
+<FONT color="green">353</FONT>    <a name="line.353"></a>
+<FONT color="green">354</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setBudgetConstructionObjectDump(budgetConstructionObjectDump);<a name="line.354"></a>
+<FONT color="green">355</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalObjectPositionCsfAmount(totalObjectPositionCsfAmount);<a name="line.355"></a>
+<FONT color="green">356</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalObjectPositionCsfFteQuantity(totalObjectPositionCsfFteQuantity);<a name="line.356"></a>
+<FONT color="green">357</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalObjectAppointmentRequestedAmount(totalObjectAppointmentRequestedAmount);<a name="line.357"></a>
+<FONT color="green">358</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalObjectAppointmentRequestedFteQuantity(totalObjectAppointmentRequestedFteQuantity);<a name="line.358"></a>
+<FONT color="green">359</FONT>    <a name="line.359"></a>
+<FONT color="green">360</FONT>                returnCollection.add(budgetConstructionOrgAccountFundingDetailReportTotal);<a name="line.360"></a>
+<FONT color="green">361</FONT>    <a name="line.361"></a>
+<FONT color="green">362</FONT>                totalObjectPositionCsfAmount = new Integer(0);<a name="line.362"></a>
+<FONT color="green">363</FONT>                totalObjectAppointmentRequestedAmount = new Integer(0);<a name="line.363"></a>
+<FONT color="green">364</FONT>                totalObjectPositionCsfFteQuantity = BigDecimal.ZERO;<a name="line.364"></a>
+<FONT color="green">365</FONT>                totalObjectAppointmentRequestedFteQuantity = BigDecimal.ZERO;<a name="line.365"></a>
+<FONT color="green">366</FONT>            }<a name="line.366"></a>
+<FONT color="green">367</FONT>    <a name="line.367"></a>
+<FONT color="green">368</FONT>    <a name="line.368"></a>
+<FONT color="green">369</FONT>            return returnCollection;<a name="line.369"></a>
+<FONT color="green">370</FONT>        }<a name="line.370"></a>
+<FONT color="green">371</FONT>    <a name="line.371"></a>
+<FONT color="green">372</FONT>        protected Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; calculateAccountTotal(Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; fundingDetailTotalObject, List&lt;BudgetConstructionObjectDump&gt; listForCalculateTotalAccount) {<a name="line.372"></a>
+<FONT color="green">373</FONT>    <a name="line.373"></a>
+<FONT color="green">374</FONT>            // private Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; calculateAccountTotal(Map<a name="line.374"></a>
+<FONT color="green">375</FONT>            // appointmentFundingEntireMap, Collection&lt;BudgetConstructionObjectDump&gt; accountFundingDetailList,<a name="line.375"></a>
+<FONT color="green">376</FONT>            // List&lt;BudgetConstructionObjectDump&gt; listForCalculateTotalAccount) {<a name="line.376"></a>
+<FONT color="green">377</FONT>    <a name="line.377"></a>
+<FONT color="green">378</FONT>            Integer totalAccountPositionCsfAmount = new Integer(0);<a name="line.378"></a>
+<FONT color="green">379</FONT>            Integer totalAccountAppointmentRequestedAmount = new Integer(0);<a name="line.379"></a>
+<FONT color="green">380</FONT>            BigDecimal totalAccountPositionCsfFteQuantity = BigDecimal.ZERO;<a name="line.380"></a>
+<FONT color="green">381</FONT>            BigDecimal totalAccountAppointmentRequestedFteQuantity = BigDecimal.ZERO;<a name="line.381"></a>
+<FONT color="green">382</FONT>    <a name="line.382"></a>
+<FONT color="green">383</FONT>            Collection&lt;BudgetConstructionOrgAccountFundingDetailReportTotal&gt; returnCollection = new ArrayList();<a name="line.383"></a>
+<FONT color="green">384</FONT>            for (BudgetConstructionObjectDump budgetConstructionObjectDump : listForCalculateTotalAccount) {<a name="line.384"></a>
+<FONT color="green">385</FONT>                for (BudgetConstructionOrgAccountFundingDetailReportTotal fundingDetailTotalObjectEntry : fundingDetailTotalObject) {<a name="line.385"></a>
+<FONT color="green">386</FONT>                    if (BudgetConstructionReportHelper.isSameEntry(budgetConstructionObjectDump, fundingDetailTotalObjectEntry.getBudgetConstructionObjectDump(), fieldsForAccount())) {<a name="line.386"></a>
+<FONT color="green">387</FONT>                        totalAccountPositionCsfAmount = totalAccountPositionCsfAmount + fundingDetailTotalObjectEntry.getTotalObjectPositionCsfAmount();<a name="line.387"></a>
+<FONT color="green">388</FONT>                        totalAccountPositionCsfFteQuantity = totalAccountPositionCsfFteQuantity.add(fundingDetailTotalObjectEntry.getTotalObjectPositionCsfFteQuantity());<a name="line.388"></a>
+<FONT color="green">389</FONT>                        totalAccountAppointmentRequestedAmount = totalAccountAppointmentRequestedAmount + fundingDetailTotalObjectEntry.getTotalObjectAppointmentRequestedAmount();<a name="line.389"></a>
+<FONT color="green">390</FONT>                        totalAccountAppointmentRequestedFteQuantity = totalAccountAppointmentRequestedFteQuantity.add(fundingDetailTotalObjectEntry.getTotalObjectAppointmentRequestedFteQuantity());<a name="line.390"></a>
+<FONT color="green">391</FONT>                    }<a name="line.391"></a>
+<FONT color="green">392</FONT>                }<a name="line.392"></a>
+<FONT color="green">393</FONT>                BudgetConstructionOrgAccountFundingDetailReportTotal budgetConstructionOrgAccountFundingDetailReportTotal = new BudgetConstructionOrgAccountFundingDetailReportTotal();<a name="line.393"></a>
+<FONT color="green">394</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setBudgetConstructionObjectDump(budgetConstructionObjectDump);<a name="line.394"></a>
+<FONT color="green">395</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalAccountPositionCsfAmount(totalAccountPositionCsfAmount);<a name="line.395"></a>
+<FONT color="green">396</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalAccountPositionCsfFteQuantity(totalAccountPositionCsfFteQuantity);<a name="line.396"></a>
+<FONT color="green">397</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalAccountAppointmentRequestedAmount(totalAccountAppointmentRequestedAmount);<a name="line.397"></a>
+<FONT color="green">398</FONT>                budgetConstructionOrgAccountFundingDetailReportTotal.setTotalAccountAppointmentRequestedFteQuantity(totalAccountAppointmentRequestedFteQuantity);<a name="line.398"></a>
+<FONT color="green">399</FONT>    <a name="line.399"></a>
+<FONT color="green">400</FONT>                returnCollection.add(budgetConstructionOrgAccountFundingDetailReportTotal);<a name="line.400"></a>
+<FONT color="green">401</FONT>    <a name="line.401"></a>
+<FONT color="green">402</FONT>                totalAccountPositionCsfAmount = new Integer(0);<a name="line.402"></a>
+<FONT color="green">403</FONT>                totalAccountAppointmentRequestedAmount = new Integer(0);<a name="line.403"></a>
+<FONT color="green">404</FONT>                totalAccountPositionCsfFteQuantity = BigDecimal.ZERO;<a name="line.404"></a>
+<FONT color="green">405</FONT>                totalAccountAppointmentRequestedFteQuantity = BigDecimal.ZERO;<a name="line.405"></a>
+<FONT color="green">406</FONT>            }<a name="line.406"></a>
+<FONT color="green">407</FONT>            return returnCollection;<a name="line.407"></a>
+<FONT color="green">408</FONT>        }<a name="line.408"></a>
+<FONT color="green">409</FONT>    <a name="line.409"></a>
+<FONT color="green">410</FONT>        protected List&lt;String&gt; fieldsForObject() {<a name="line.410"></a>
+<FONT color="green">411</FONT>            List&lt;String&gt; fieldList = new ArrayList();<a name="line.411"></a>
+<FONT color="green">412</FONT>            fieldList.addAll(fieldsForAccount());<a name="line.412"></a>
+<FONT color="green">413</FONT>            fieldList.add(KFSPropertyConstants.FINANCIAL_OBJECT_CODE);<a name="line.413"></a>
+<FONT color="green">414</FONT>            return fieldList;<a name="line.414"></a>
+<FONT color="green">415</FONT>        }<a name="line.415"></a>
+<FONT color="green">416</FONT>    <a name="line.416"></a>
+<FONT color="green">417</FONT>        protected List&lt;String&gt; fieldsForAccount() {<a name="line.417"></a>
+<FONT color="green">418</FONT>            List&lt;String&gt; fieldList = new ArrayList();<a name="line.418"></a>
+<FONT color="green">419</FONT>            fieldList.add(KFSPropertyConstants.ORGANIZATION_CHART_OF_ACCOUNTS_CODE);<a name="line.419"></a>
+<FONT color="green">420</FONT>            fieldList.add(KFSPropertyConstants.ORGANIZATION_CODE);<a name="line.420"></a>
+<FONT color="green">421</FONT>            fieldList.add(KFSPropertyConstants.SUB_FUND_GROUP_CODE);<a name="line.421"></a>
+<FONT color="green">422</FONT>            fieldList.add(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);<a name="line.422"></a>
+<FONT color="green">423</FONT>            fieldList.add(KFSPropertyConstants.ACCOUNT_NUMBER);<a name="line.423"></a>
+<FONT color="green">424</FONT>            fieldList.add(KFSPropertyConstants.SUB_ACCOUNT_NUMBER);<a name="line.424"></a>
+<FONT color="green">425</FONT>            return fieldList;<a name="line.425"></a>
+<FONT color="green">426</FONT>        }<a name="line.426"></a>
+<FONT color="green">427</FONT>    <a name="line.427"></a>
+<FONT color="green">428</FONT>        /**<a name="line.428"></a>
+<FONT color="green">429</FONT>         * builds orderByList for sort order.<a name="line.429"></a>
+<FONT color="green">430</FONT>         * <a name="line.430"></a>
+<FONT color="green">431</FONT>         * @return returnList<a name="line.431"></a>
+<FONT color="green">432</FONT>         */<a name="line.432"></a>
+<FONT color="green">433</FONT>        public List&lt;String&gt; buildOrderByList() {<a name="line.433"></a>
+<FONT color="green">434</FONT>            List&lt;String&gt; returnList = new ArrayList();<a name="line.434"></a>
+<FONT color="green">435</FONT>            returnList.add(KFSPropertyConstants.ORGANIZATION_CHART_OF_ACCOUNTS_CODE);<a name="line.435"></a>
+<FONT color="green">436</FONT>            returnList.add(KFSPropertyConstants.ORGANIZATION_CODE);<a name="line.436"></a>
+<FONT color="green">437</FONT>            returnList.add(KFSPropertyConstants.SUB_FUND_GROUP_CODE);<a name="line.437"></a>
+<FONT color="green">438</FONT>            returnList.add(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR);<a name="line.438"></a>
+<FONT color="green">439</FONT>            returnList.add(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);<a name="line.439"></a>
+<FONT color="green">440</FONT>            returnList.add(KFSPropertyConstants.ACCOUNT_NUMBER);<a name="line.440"></a>
+<FONT color="green">441</FONT>            returnList.add(KFSPropertyConstants.SUB_ACCOUNT_NUMBER);<a name="line.441"></a>
+<FONT color="green">442</FONT>            returnList.add(KFSPropertyConstants.FINANCIAL_OBJECT_CODE);<a name="line.442"></a>
+<FONT color="green">443</FONT>            return returnList;<a name="line.443"></a>
+<FONT color="green">444</FONT>        }<a name="line.444"></a>
+<FONT color="green">445</FONT>    <a name="line.445"></a>
+<FONT color="green">446</FONT>        public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {<a name="line.446"></a>
+<FONT color="green">447</FONT>            this.kualiConfigurationService = kualiConfigurationService;<a name="line.447"></a>
+<FONT color="green">448</FONT>        }<a name="line.448"></a>
+<FONT color="green">449</FONT>    <a name="line.449"></a>
+<FONT color="green">450</FONT>        public void setBudgetConstructionAccountFundingDetailReportDao(BudgetConstructionAccountFundingDetailReportDao budgetConstructionAccountFundingDetailReportDao) {<a name="line.450"></a>
+<FONT color="green">451</FONT>            this.budgetConstructionAccountFundingDetailReportDao = budgetConstructionAccountFundingDetailReportDao;<a name="line.451"></a>
+<FONT color="green">452</FONT>        }<a name="line.452"></a>
+<FONT color="green">453</FONT>    <a name="line.453"></a>
+<FONT color="green">454</FONT>        public void setBudgetConstructionReportsServiceHelper(BudgetConstructionReportsServiceHelper budgetConstructionReportsServiceHelper) {<a name="line.454"></a>
+<FONT color="green">455</FONT>            this.budgetConstructionReportsServiceHelper = budgetConstructionReportsServiceHelper;<a name="line.455"></a>
+<FONT color="green">456</FONT>        }<a name="line.456"></a>
+<FONT color="green">457</FONT>    <a name="line.457"></a>
+<FONT color="green">458</FONT>    }<a name="line.458"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

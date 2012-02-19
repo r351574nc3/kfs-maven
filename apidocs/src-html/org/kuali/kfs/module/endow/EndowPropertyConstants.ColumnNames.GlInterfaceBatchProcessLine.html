@@ -1,0 +1,807 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.endow;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import org.kuali.rice.kns.util.KualiInteger;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    public class EndowPropertyConstants {<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>        // Endowment common fields<a name="line.23"></a>
+<FONT color="green">024</FONT>        public static final String KUALICODEBASE_CODE = "code";<a name="line.24"></a>
+<FONT color="green">025</FONT>        public static final String KUALICODEBASE_NAME = "name";<a name="line.25"></a>
+<FONT color="green">026</FONT>        public static final String KUALICODEBASE_ACTIVE_INDICATOR = "active";<a name="line.26"></a>
+<FONT color="green">027</FONT>        public static final String ENDOWCODEBASE_CODE = "code";<a name="line.27"></a>
+<FONT color="green">028</FONT>        public static final String ENDOWCODEBASE_DESC = "description";<a name="line.28"></a>
+<FONT color="green">029</FONT>        public static final String ENDOWCODEBASE_ACTIVE_INDICATOR = "active";<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>        // Security Reporting Group<a name="line.31"></a>
+<FONT color="green">032</FONT>        public static final String SECURITY_REPORTING_GROUP_ORDER = "securityReportingGrpOrder";<a name="line.32"></a>
+<FONT color="green">033</FONT>        public static final String SECURITY_REPORTING_GROUP_ACTIVE_INFICATOR = "active";<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        // Endowment Transaction<a name="line.35"></a>
+<FONT color="green">036</FONT>        public static final String ENDOWMENT_TRANSACTION_GL_LINKS = "glLinks";<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>        // Class Code<a name="line.38"></a>
+<FONT color="green">039</FONT>        public static final String CLASS_CODE_SEC_REPORTING_GRP = "securityReportingGrp";<a name="line.39"></a>
+<FONT color="green">040</FONT>        public static final String CLASS_CODE_SEC_ACCRUAL_METHOD = "securityAccrualMethod";<a name="line.40"></a>
+<FONT color="green">041</FONT>        public static final String CLASS_CODE_SEC_END_TRANSACTION_CODE = "securityEndowmentTransactionCode";<a name="line.41"></a>
+<FONT color="green">042</FONT>        public static final String CLASS_CODE_SEC_INCOME_END_TRANSACTION_CODE = "securityIncomeEndowmentTransactionPostCode";<a name="line.42"></a>
+<FONT color="green">043</FONT>        public static final String CLASS_CODE_TAX_LOT_INDICATOR = "taxLotIndicator";<a name="line.43"></a>
+<FONT color="green">044</FONT>        public static final String CLASS_CODE_TYPE = "classCodeType";<a name="line.44"></a>
+<FONT color="green">045</FONT>        public static final String CLASS_CODE_VALUATION_METHOD = "valuationMethod";<a name="line.45"></a>
+<FONT color="green">046</FONT>        public static final String CLASS_CODE_ENDOWMENT_TRANSACTION = "endowmentTransactionCode";<a name="line.46"></a>
+<FONT color="green">047</FONT>        public static final String CLASS_CODE_INCOME_ENDOWMENT_TRANSACTION_POST = "incomeEndowmentTransactionPost";<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>        // Frequency Code<a name="line.49"></a>
+<FONT color="green">050</FONT>        public static final String FREQUENCY_TYPE = "frequencyType";<a name="line.50"></a>
+<FONT color="green">051</FONT>        public static final String FREQUENCY_WEEK_DAY = "frequencyWeekDay";<a name="line.51"></a>
+<FONT color="green">052</FONT>        public static final String FREQUENCY_MONTH = "frequencyMonth";<a name="line.52"></a>
+<FONT color="green">053</FONT>        public static final String FREQUENCY_DAY_IN_MONTH = "dayInMonth";<a name="line.53"></a>
+<FONT color="green">054</FONT>        public static final String FREQUENCY_MONTHLY_OCCURENCE = "monthlyOccurence";<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        // Security<a name="line.56"></a>
+<FONT color="green">057</FONT>        public static final String SECURITY_ID = "id";<a name="line.57"></a>
+<FONT color="green">058</FONT>        public static final String SECURITY_USER_ENTERED_ID_PREFIX = "userEnteredSecurityIDprefix";<a name="line.58"></a>
+<FONT color="green">059</FONT>        public static final String SECURITY_DESCRIPTION = "description";<a name="line.59"></a>
+<FONT color="green">060</FONT>        public static final String SECURITY_TICKER_SYMBOL = "tickerSymbol";<a name="line.60"></a>
+<FONT color="green">061</FONT>        public static final String SECURITY_CLASS_CODE = "securityClassCode";<a name="line.61"></a>
+<FONT color="green">062</FONT>        public static final String SECURITY_SUBCLASS_CODE = "securitySubclassCode";<a name="line.62"></a>
+<FONT color="green">063</FONT>        public static final String SECURITY_MATURITY_DATE = "maturityDate";<a name="line.63"></a>
+<FONT color="green">064</FONT>        public static final String SECURITY_UNIT_VALUE = "unitValue";<a name="line.64"></a>
+<FONT color="green">065</FONT>        public static final String SECURITY_UNITS_HELD = "unitsHeld";<a name="line.65"></a>
+<FONT color="green">066</FONT>        public static final String SECURITY_VALUATION_DATE = "valuationDate";<a name="line.66"></a>
+<FONT color="green">067</FONT>        public static final String SECURITY_UNIT_VALUE_SOURCE = "unitValueSource";<a name="line.67"></a>
+<FONT color="green">068</FONT>        public static final String SECURITY_PREVIOUS_UNIT_VALUE = "previousUnitValue";<a name="line.68"></a>
+<FONT color="green">069</FONT>        public static final String SECURITY_PREVIOUS_UNIT_VALUE_DATE = "previousUnitValueDate";<a name="line.69"></a>
+<FONT color="green">070</FONT>        public static final String SECURITY_CARRY_VALUE = "carryValue";<a name="line.70"></a>
+<FONT color="green">071</FONT>        public static final String SECURITY_MARKET_VALUE = "marketValue";<a name="line.71"></a>
+<FONT color="green">072</FONT>        public static final String SECURITY_LAST_TRANSACTION_DATE = "lastTransactionDate";<a name="line.72"></a>
+<FONT color="green">073</FONT>        public static final String SECURITY_INCOME_PAY_FREQUENCY = "incomePayFrequency";<a name="line.73"></a>
+<FONT color="green">074</FONT>        public static final String SECURITY_INCOME_NEXT_PAY_DATE = "incomeNextPayDate";<a name="line.74"></a>
+<FONT color="green">075</FONT>        public static final String SECURITY_INCOME_RATE = "incomeRate";<a name="line.75"></a>
+<FONT color="green">076</FONT>        public static final String SECURITY_INCOME_CHANGE_DATE = "incomeChangeDate";<a name="line.76"></a>
+<FONT color="green">077</FONT>        public static final String SECURITY_ISSUE_DATE = "issueDate";<a name="line.77"></a>
+<FONT color="green">078</FONT>        public static final String SECURITY_DIVIDEND_RECORD_DATE = "dividendRecordDate";<a name="line.78"></a>
+<FONT color="green">079</FONT>        public static final String SECURITY_EX_DIVIDEND_DATE = "exDividendDate";<a name="line.79"></a>
+<FONT color="green">080</FONT>        public static final String SECURITY_DIVIDEND_PAY_DATE = "dividendPayDate";<a name="line.80"></a>
+<FONT color="green">081</FONT>        public static final String SECURITY_DIVIDEND_AMOUNT = "dividendAmount";<a name="line.81"></a>
+<FONT color="green">082</FONT>        public static final String SECURITY_COMMITMENT_AMOUNT = "commitmentAmount";<a name="line.82"></a>
+<FONT color="green">083</FONT>        public static final String SECURITY_FOREIGN_WITHHOLD_PERCENTAGE = "foreignWithholdPercentage";<a name="line.83"></a>
+<FONT color="green">084</FONT>        public static final String SECURITY_NEXT_FISCAL_YEAR_DISTRIBUTION_AMOUNT = "nextFiscalYearDistributionAmount";<a name="line.84"></a>
+<FONT color="green">085</FONT>        public static final String SECURITY_CURRENT_HOLDERS = "currentHolders";<a name="line.85"></a>
+<FONT color="green">086</FONT>        public static final String SECURITY_HOLDERS_IN_HISTORY = "holdersInHistory";<a name="line.86"></a>
+<FONT color="green">087</FONT>        public static final String SECURITY_CLASS_CODE_REF = "classCode";<a name="line.87"></a>
+<FONT color="green">088</FONT>        public static final String SECURITY_SUBCLASS_CODE_REF = "subclassCode";<a name="line.88"></a>
+<FONT color="green">089</FONT>        public static final String SECURITY_FREQUENCY_CODE_REF = "frequencyCode";<a name="line.89"></a>
+<FONT color="green">090</FONT>        public static final String SECURITY_VALUE_BY_MARKET = "securityValueByMarket";<a name="line.90"></a>
+<FONT color="green">091</FONT>        public static final String SECURITY_ACTIVE_INDICATOR = "active";<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>        public static final String REPORTING_GROUP_DESC = "classCode.reportingGroup.securityReportingGrpDesc";<a name="line.93"></a>
+<FONT color="green">094</FONT>        public static final String ACCRUAL_METHOD_DESC = "classCode.accrualMethod.accrualMethodDesc";<a name="line.94"></a>
+<FONT color="green">095</FONT>        public static final String TRANSACTION_CODE_DESC = "classCode.endowmentTransactionCode.codeAndDescription";<a name="line.95"></a>
+<FONT color="green">096</FONT>        public static final String INCOME_TRANSACTION_CODE_DESC = "classCode.incomeEndowmentTransactionPost.codeAndDescription";<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        // HoldingTaxLot fields<a name="line.98"></a>
+<FONT color="green">099</FONT>        public static final String HOLDING_TAX_LOT_KEMID = "kemid";<a name="line.99"></a>
+<FONT color="green">100</FONT>        public static final String HOLDING_TAX_LOT_SECURITY_ID = "securityId";<a name="line.100"></a>
+<FONT color="green">101</FONT>        public static final String HOLDING_TAX_LOT_REGISTRATION_CODE = "registrationCode";<a name="line.101"></a>
+<FONT color="green">102</FONT>        public static final String HOLDING_TAX_LOT_NUMBER = "lotNumber";<a name="line.102"></a>
+<FONT color="green">103</FONT>        public static final String HOLDING_TAX_LOT_INCOME_PRINCIPAL_INDICATOR = "incomePrincipalIndicator";<a name="line.103"></a>
+<FONT color="green">104</FONT>        public static final String HOLDING_TAX_LOT_BALANCE_DATE = "balanceDate";<a name="line.104"></a>
+<FONT color="green">105</FONT>        public static final String HOLDING_TAX_LOT_ACQUIRED_DATE = "acquiredDate";<a name="line.105"></a>
+<FONT color="green">106</FONT>        public static final String HOLDING_TAX_LOT_UNITS = "units";<a name="line.106"></a>
+<FONT color="green">107</FONT>        public static final String HOLDING_TAX_LOT_COST = "cost";<a name="line.107"></a>
+<FONT color="green">108</FONT>        public static final String HOLDING_TAX_LOT_ACRD_INC_DUE = "currentAccrual";<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>        // MonthEndDate fields<a name="line.110"></a>
+<FONT color="green">111</FONT>        public static final String MONTH_END_DATE_ID = "monthEndDateId";<a name="line.111"></a>
+<FONT color="green">112</FONT>        public static final String MONTH_END_DATE = "monthEndDate";<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>        // HoldingHistory fields<a name="line.114"></a>
+<FONT color="green">115</FONT>        public static final String HOLDING_HISTORY_KEMID = "kemid";<a name="line.115"></a>
+<FONT color="green">116</FONT>        public static final String HOLDING_HISTORY_MONTH_END_DATE_ID = "monthEndDateId";<a name="line.116"></a>
+<FONT color="green">117</FONT>        public static final String HOLDING_HISTORY_SECURITY_ID = "securityId";<a name="line.117"></a>
+<FONT color="green">118</FONT>        public static final String HOLDING_HISTORY_INCOME_PRINCIPAL_INDICATOR = "incomePrincipalIndicator";<a name="line.118"></a>
+<FONT color="green">119</FONT>        public static final String HOLDING_HISTORY_SECURITY_CLASS_CODE = "feeClassCode";<a name="line.119"></a>
+<FONT color="green">120</FONT>        public static final String HOLDING_HISTORY_FEE_METHOD_CODE = "feeMethodCode";<a name="line.120"></a>
+<FONT color="green">121</FONT>        public static final String HOLDING_HISTORY_UNITS = "units";<a name="line.121"></a>
+<FONT color="green">122</FONT>        public static final String HOLDING_HISTORY_ESTIMATED_INCOME = "estimatedIncome";<a name="line.122"></a>
+<FONT color="green">123</FONT>        public static final String HOLDING_HISTORY_MARKET_VALUE = "marketValue";<a name="line.123"></a>
+<FONT color="green">124</FONT>        public static final String HOLDING_HISTORY_REMAIDER_OF_FY_ESTIMATED_INCOME = "remainderOfFYEstimatedIncome";<a name="line.124"></a>
+<FONT color="green">125</FONT>        public static final String HOLDING_HISTORY_NEXT_FY_ESTIMATED_INCOME = "nextFYEstimatedIncome";<a name="line.125"></a>
+<FONT color="green">126</FONT>        <a name="line.126"></a>
+<FONT color="green">127</FONT>        // CurrentTaxLotBalance fields<a name="line.127"></a>
+<FONT color="green">128</FONT>        public static final String CURRENT_TAX_LOT_BALANCE_SECURITY_ID = "securityId";<a name="line.128"></a>
+<FONT color="green">129</FONT>        public static final String CURRENT_TAX_LOT_BALANCE_INCOME_PRINCIPAL_INDICATOR = "incomePrincipalIndicator";<a name="line.129"></a>
+<FONT color="green">130</FONT>        public static final String CURRENT_TAX_LOT_BALANCE_SECURITY_CLASS_CODE = "feeClassCode";<a name="line.130"></a>
+<FONT color="green">131</FONT>        <a name="line.131"></a>
+<FONT color="green">132</FONT>        // KEMID<a name="line.132"></a>
+<FONT color="green">133</FONT>        public static final String KEMID = "kemid";<a name="line.133"></a>
+<FONT color="green">134</FONT>        public static final String KEMID_TYPE_CODE = "typeCode";<a name="line.134"></a>
+<FONT color="green">135</FONT>        public static final String KEMID_USER_ENTERED_MOD10 = "userEnteredKemidMod10";<a name="line.135"></a>
+<FONT color="green">136</FONT>        public static final String KEMID_DORMANT_IND = "dormantIndicator";<a name="line.136"></a>
+<FONT color="green">137</FONT>        public static final String KEMID_CLOSED_IND = "close";<a name="line.137"></a>
+<FONT color="green">138</FONT>        public static final String KEMID_CLOSED_TO_KEMID = "closedToKEMID";<a name="line.138"></a>
+<FONT color="green">139</FONT>        public static final String KEMID_CLOSE_CODE = "closeCode";<a name="line.139"></a>
+<FONT color="green">140</FONT>        public static final String KEMID_DISPOSITION_OF_FUNDS = "dispositionOfFunds";<a name="line.140"></a>
+<FONT color="green">141</FONT>        public static final String KEMID_DATE_CLOSED = "dateClosed";<a name="line.141"></a>
+<FONT color="green">142</FONT>        public static final String KEMID_AGREEMENTS_TAB = "kemidAgreements";<a name="line.142"></a>
+<FONT color="green">143</FONT>        public static final String KEMID_SOURCE_OF_FUNDS_TAB = "kemidSourcesOfFunds";<a name="line.143"></a>
+<FONT color="green">144</FONT>        public static final String KEMID_BENEFITTING_ORGS_TAB = "kemidBenefittingOrganizations";<a name="line.144"></a>
+<FONT color="green">145</FONT>        public static final String KEMID_GENERAL_LEDGER_ACCOUNTS_TAB = "kemidGeneralLedgerAccounts";<a name="line.145"></a>
+<FONT color="green">146</FONT>        public static final String KEMID_AUTHORIZATIONS_TAB = "kemidAuthorizations";<a name="line.146"></a>
+<FONT color="green">147</FONT>        public static final String KEMID_PAY_INSTRUCTIONS_TAB = "kemidPayoutInstructions";<a name="line.147"></a>
+<FONT color="green">148</FONT>        public static final String KEMID_USE_CRITERIA_TAB = "kemidUseCriteria";<a name="line.148"></a>
+<FONT color="green">149</FONT>        public static final String KEMID_SPECIAL_INSTRUCTIONS_TAB = "kemidSpecialInstructions";<a name="line.149"></a>
+<FONT color="green">150</FONT>        public static final String KEMID_REPORT_GROUP_TAB = "kemidReportGroups";<a name="line.150"></a>
+<FONT color="green">151</FONT>        public static final String KEMID_DONOR_STATEMENTS_TAB = "kemidDonorStatements";<a name="line.151"></a>
+<FONT color="green">152</FONT>        public static final String KEMID_COMBINE_DONOR_STATEMENTS_TAB = "kemidCombineDonorStatements";<a name="line.152"></a>
+<FONT color="green">153</FONT>        public static final String KEMID_FEES_TAB = "kemidFees";<a name="line.153"></a>
+<FONT color="green">154</FONT>        public static final String KEMID_CLOSED = "closed_ind";<a name="line.154"></a>
+<FONT color="green">155</FONT>        public static final String KEMID_CASH_SWEEP_MDL_ID = "cashSweepModelId";<a name="line.155"></a>
+<FONT color="green">156</FONT>        public static final String KEMID_TYP_PRIN_RESTR_CD = "principalRestrictionCode";<a name="line.156"></a>
+<FONT color="green">157</FONT>        public static final String KEMID_PRPS_CD = "purposeCode";<a name="line.157"></a>
+<FONT color="green">158</FONT>        <a name="line.158"></a>
+<FONT color="green">159</FONT>        // links<a name="line.159"></a>
+<FONT color="green">160</FONT>        public static final String KEMID_CURRENT_AVAILABLE_FUNDS = "currentAvailableFunds";<a name="line.160"></a>
+<FONT color="green">161</FONT>        public static final String KEMID_CURRENT_BALANCES = "currentBalances";<a name="line.161"></a>
+<FONT color="green">162</FONT>        public static final String KEMID_HISTORICAL_BALANCES = "historicalBalances";<a name="line.162"></a>
+<FONT color="green">163</FONT>        public static final String KEMID_TICKLERS = "ticklers";<a name="line.163"></a>
+<FONT color="green">164</FONT>        public static final String KEMID_RECURRING_TRANSFERS = "recurringTransfers";<a name="line.164"></a>
+<FONT color="green">165</FONT>    <a name="line.165"></a>
+<FONT color="green">166</FONT>        public static final String KEMID_AGREEMENTS_SECTION = "agreements";<a name="line.166"></a>
+<FONT color="green">167</FONT>        public static final String KEMID_SOURCE_OF_FUNDS_SECTION = "sourcesOfFunds";<a name="line.167"></a>
+<FONT color="green">168</FONT>        public static final String KEMID_BENEFITTING_ORGS_SECTION = "benefittingOrganizations";<a name="line.168"></a>
+<FONT color="green">169</FONT>        public static final String KEMID_GENERAL_LEDGER_ACCOUNTS_SECTION = "generalLedgerAccounts";<a name="line.169"></a>
+<FONT color="green">170</FONT>        public static final String KEMID_PAY_INSTRUCTIONS_SECTION = "payoutInstructions";<a name="line.170"></a>
+<FONT color="green">171</FONT>        public static final String KEMID_USE_CRITERIA_SECTION = "useCriteria";<a name="line.171"></a>
+<FONT color="green">172</FONT>        public static final String KEMID_SPECIAL_INSTRUCTIONS_SECTION = "specialInstructions";<a name="line.172"></a>
+<FONT color="green">173</FONT>        public static final String KEMID_FEES_SECTION = "fees";<a name="line.173"></a>
+<FONT color="green">174</FONT>        public static final String KEMID_REPORT_GROUP_SECTION = "reportGroup";<a name="line.174"></a>
+<FONT color="green">175</FONT>        public static final String KEMID_DONOR_STATEMENTS_SECTION = "donorStatements";<a name="line.175"></a>
+<FONT color="green">176</FONT>        public static final String KEMID_COMBINE_DONOR_STATEMENTS_SECTION = "combineDonorStatements";<a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>        // KemidAgreement<a name="line.178"></a>
+<FONT color="green">179</FONT>        public static final String KEMID_AGRMNT_ID = "agreementId";<a name="line.179"></a>
+<FONT color="green">180</FONT>        public static final String KEMID_AGRMNT_TYP_CD = "agreementTypeCode";<a name="line.180"></a>
+<FONT color="green">181</FONT>        public static final String KEMID_AGRMNT_TYPE = "agreementType";<a name="line.181"></a>
+<FONT color="green">182</FONT>        public static final String KEMID_AGRMNT_STAT_CD = "agreementStatusCode";<a name="line.182"></a>
+<FONT color="green">183</FONT>        public static final String KEMID_AGRMNT_STATUS = "agreementStatus";<a name="line.183"></a>
+<FONT color="green">184</FONT>        public static final String KEMID_AGRMNT_STAT_DT = "agreementStatusDate";<a name="line.184"></a>
+<FONT color="green">185</FONT>        public static final String KEMID_AGRMNT_OTHR_DOC = "otherAgreementDocumentation";<a name="line.185"></a>
+<FONT color="green">186</FONT>        public static final String KEMID_AGRMNT_DONR_INTENT = "donorIntentFromAgreement";<a name="line.186"></a>
+<FONT color="green">187</FONT>        public static final String KEMID_AGRMNT_COMM = "comments";<a name="line.187"></a>
+<FONT color="green">188</FONT>        public static final String KEMID_AGRMNT_ACTIVE_IND = "active";<a name="line.188"></a>
+<FONT color="green">189</FONT>    <a name="line.189"></a>
+<FONT color="green">190</FONT>        //KEMID ETRAN GL Link<a name="line.190"></a>
+<FONT color="green">191</FONT>        public static final String KEMID_ETRAN_GL_LNK_CHART_CD = "chartCode";<a name="line.191"></a>
+<FONT color="green">192</FONT>        public static final String KEMID_ETRAN_GL_LNK_ETRAN_CD = "endowmentTransactionCode";<a name="line.192"></a>
+<FONT color="green">193</FONT>        public static final String KEMID_ETRAN_GL_LNK_ROW_ACTIVE_IND = "active";<a name="line.193"></a>
+<FONT color="green">194</FONT>    <a name="line.194"></a>
+<FONT color="green">195</FONT>        // KEMID Source Of Funds<a name="line.195"></a>
+<FONT color="green">196</FONT>        public static final String KEMID_FND_SRC_SEQ_NBR = "kemidFundSourceSequenceNumber";<a name="line.196"></a>
+<FONT color="green">197</FONT>        public static final String KEMID_FND_SRC_CD = "fundSourceCode";<a name="line.197"></a>
+<FONT color="green">198</FONT>        public static final String KEMID_FND_SRC = "fundSource";<a name="line.198"></a>
+<FONT color="green">199</FONT>        public static final String KEMID_FND_SRC_OPND_FROM_KEMID = "openedFromKemid";<a name="line.199"></a>
+<FONT color="green">200</FONT>        public static final String KEMID_FND_SRC_OPND_FROM_KEMID_OBJ_REF = "openedFromKemidObjRef";<a name="line.200"></a>
+<FONT color="green">201</FONT>        public static final String KEMID_FND_SRC_HIST = "fundHistory";<a name="line.201"></a>
+<FONT color="green">202</FONT>        public static final String KEMID_FND_SRC_ADDITIONAL_DATA = "additionalSourceData";<a name="line.202"></a>
+<FONT color="green">203</FONT>        public static final String KEMID_FND_SRC_ACTIVE_IND = "active";<a name="line.203"></a>
+<FONT color="green">204</FONT>    <a name="line.204"></a>
+<FONT color="green">205</FONT>        // KEMID Benefitting Org<a name="line.205"></a>
+<FONT color="green">206</FONT>        public static final String KEMID_BENE_KEMID = "kemid";<a name="line.206"></a>
+<FONT color="green">207</FONT>        public static final String KEMID_BENE_ORG_SEQ_NBR = "benefittingOrgSeqNumber";<a name="line.207"></a>
+<FONT color="green">208</FONT>        public static final String KEMID_BENE_ORG_CD = "benefittingOrgCode";<a name="line.208"></a>
+<FONT color="green">209</FONT>        public static final String KEMID_BENE_ORG = "organization";<a name="line.209"></a>
+<FONT color="green">210</FONT>        public static final String KEMID_BENE_CHRT_CD = "benefittingChartCode";<a name="line.210"></a>
+<FONT color="green">211</FONT>        public static final String KEMID_BENE_CHRT = "chart";<a name="line.211"></a>
+<FONT color="green">212</FONT>        public static final String KEMID_BENE_ORG_PERCENT = "benefitPrecent";<a name="line.212"></a>
+<FONT color="green">213</FONT>        public static final String KEMID_BENE_ORG_START_DATE = "startDate";<a name="line.213"></a>
+<FONT color="green">214</FONT>        public static final String KEMID_BENE_ORG_LAST_CHG_DATE = "lastChangeDate";<a name="line.214"></a>
+<FONT color="green">215</FONT>        public static final String KEMID_BENE_ORG_ACTIVE_IND = "active";<a name="line.215"></a>
+<FONT color="green">216</FONT>        <a name="line.216"></a>
+<FONT color="green">217</FONT>        // Chart of Account Organization - should be moved to the COA module later<a name="line.217"></a>
+<FONT color="green">218</FONT>        public static final String CA_ORG_CAMPUS_CD = "organizationPhysicalCampusCode";<a name="line.218"></a>
+<FONT color="green">219</FONT>        public static final String CA_ORG_CHRT_CD = "chartOfAccountsCode";<a name="line.219"></a>
+<FONT color="green">220</FONT>        public static final String CA_ORG_CD = "organizationCode";<a name="line.220"></a>
+<FONT color="green">221</FONT>    <a name="line.221"></a>
+<FONT color="green">222</FONT>        // KEMID General Ledger Account<a name="line.222"></a>
+<FONT color="green">223</FONT>        public static final String KEMID_GL_ACCOUNT_IP_INDICATOR_CD = "incomePrincipalIndicatorCode";<a name="line.223"></a>
+<FONT color="green">224</FONT>        public static final String KEMID_GL_ACCOUNT_CHART_CD = "chartCode";<a name="line.224"></a>
+<FONT color="green">225</FONT>        public static final String KEMID_GL_ACCOUNT_CHART = "chart";<a name="line.225"></a>
+<FONT color="green">226</FONT>        public static final String KEMID_GL_ACCOUNT_NBR = "accountNumber";<a name="line.226"></a>
+<FONT color="green">227</FONT>        public static final String KEMID_GL_ACCOUNT = "account";<a name="line.227"></a>
+<FONT color="green">228</FONT>        public static final String KEMID_GL_ACCOUNT_ROW_ACTV_IND = "active";<a name="line.228"></a>
+<FONT color="green">229</FONT>        <a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>        // KEMID Payout Instructions<a name="line.231"></a>
+<FONT color="green">232</FONT>        public static final String KEMID_PAY_INC_SEQ_NBR = "payoutIncomeSequenceNumber";<a name="line.232"></a>
+<FONT color="green">233</FONT>        public static final String KEMID_PAY_INC_KEMID = "kemid";<a name="line.233"></a>
+<FONT color="green">234</FONT>        public static final String KEMID_PAY_INC_TO_KEMID = "payIncomeToKemid";<a name="line.234"></a>
+<FONT color="green">235</FONT>        public static final String KEMID_PAY_INC_TO_KEMID_OBJ_REF = "payIncomeToKemidObjRef";<a name="line.235"></a>
+<FONT color="green">236</FONT>        public static final String KEMID_PAY_INC_PERCENT_OF_INC_TO_PAY_TO_KEMID = "percentOfIncomeToPayToKemid";<a name="line.236"></a>
+<FONT color="green">237</FONT>        public static final String KEMID_PAY_INC_START_DATE = "startDate";<a name="line.237"></a>
+<FONT color="green">238</FONT>        public static final String KEMID_PAY_INC_END_DATE = "endDate";<a name="line.238"></a>
+<FONT color="green">239</FONT>    <a name="line.239"></a>
+<FONT color="green">240</FONT>        // KEMID Use Criteria<a name="line.240"></a>
+<FONT color="green">241</FONT>        public static final String KEMID_USE_CRIT_SEQ = "useCriteriaSeq";<a name="line.241"></a>
+<FONT color="green">242</FONT>        public static final String KEMID_USE_CRIT_CD = "useCriteriaCode";<a name="line.242"></a>
+<FONT color="green">243</FONT>        public static final String KEMID_USE_CRIT = "useCriteria";<a name="line.243"></a>
+<FONT color="green">244</FONT>        public static final String KEMID_USE_CRIT_ADDITIONAL_INFO = "useCriteriaAdditionalInfo";<a name="line.244"></a>
+<FONT color="green">245</FONT>        public static final String KEMID_USE_CRIT_ACTIVE_IND = "active";<a name="line.245"></a>
+<FONT color="green">246</FONT>    <a name="line.246"></a>
+<FONT color="green">247</FONT>        // KEMID Special Instruction<a name="line.247"></a>
+<FONT color="green">248</FONT>        public static final String KEMID_SPEC_INSTR_SEQ = "instructionSeq";<a name="line.248"></a>
+<FONT color="green">249</FONT>        public static final String KEMID_SPEC_INSTR_CD = "agreementSpecialInstructionCode";<a name="line.249"></a>
+<FONT color="green">250</FONT>        public static final String KEMID_SPEC_INSTR = "agreementSpecialInstruction";<a name="line.250"></a>
+<FONT color="green">251</FONT>        public static final String KEMID_SPEC_INSTR_COMMENTS = "comments";<a name="line.251"></a>
+<FONT color="green">252</FONT>        public static final String KEMID_SPEC_INSTR_START_DATE = "instructionStartDate";<a name="line.252"></a>
+<FONT color="green">253</FONT>        public static final String KEMID_SPEC_INSTR_END_DATE = "instructionEndDate";<a name="line.253"></a>
+<FONT color="green">254</FONT>    <a name="line.254"></a>
+<FONT color="green">255</FONT>        // KEMID Fee Method<a name="line.255"></a>
+<FONT color="green">256</FONT>        public static final String KEMID_FEE_MTHD_CD = "feeMethodCode";<a name="line.256"></a>
+<FONT color="green">257</FONT>        public static final String KEMID_FEE_MTHD = "feeMethod";<a name="line.257"></a>
+<FONT color="green">258</FONT>        public static final String KEMID_FEE_SEQ = "feeMethodSeq";<a name="line.258"></a>
+<FONT color="green">259</FONT>        public static final String KEMID_FEE_CHARGE_FEE_TO_KEMID = "chargeFeeToKemid";<a name="line.259"></a>
+<FONT color="green">260</FONT>        public static final String KEMID_FEE_CHARGE_FEE_TO_KEMID_OBJ_REF = "chargeFeeToKemidObjRef";<a name="line.260"></a>
+<FONT color="green">261</FONT>        public static final String KEMID_FEE_PERCENT_OF_FEE_CHARGED_TO_INCOME = "percentOfFeeChargedToIncome";<a name="line.261"></a>
+<FONT color="green">262</FONT>        public static final String KEMID_FEE_PERCENT_OF_FEE_CHARGED_TO_PRINCIPAL = "percentOfFeeChargedToPrincipal";<a name="line.262"></a>
+<FONT color="green">263</FONT>        public static final String KEMID_FEE_ACCRUE_FEES = "accrueFees";<a name="line.263"></a>
+<FONT color="green">264</FONT>        public static final String KEMID_FEE_TOTAL_ACCRUED_FEES = "totalAccruedFees";<a name="line.264"></a>
+<FONT color="green">265</FONT>        public static final String KEMID_FEE_WAIVE_FEES = "waiveFees";<a name="line.265"></a>
+<FONT color="green">266</FONT>        public static final String KEMID_FEE_TOTAL_WAIVED_FEES_THIS_FISCAL_YEAR = "totalWaivedFeesThisFiscalYear";<a name="line.266"></a>
+<FONT color="green">267</FONT>        public static final String KEMID_FEE_TOTAL_WAIVED_FEES = "totalWaivedFees";<a name="line.267"></a>
+<FONT color="green">268</FONT>        public static final String KEMID_FEE_START_DATE = "feeStartDate";<a name="line.268"></a>
+<FONT color="green">269</FONT>        public static final String KEMID_FEE_END_DATE = "feeEndDate";<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>        // KEMID Report Group<a name="line.271"></a>
+<FONT color="green">272</FONT>        public static final String KEMID_REPORT_GRP_SEQ = "combineGroupSeq";<a name="line.272"></a>
+<FONT color="green">273</FONT>        public static final String KEMID_REPORT_GRP_CD = "combineGroupCode";<a name="line.273"></a>
+<FONT color="green">274</FONT>        public static final String KEMID_REPORT_GRP = "combineGroup";<a name="line.274"></a>
+<FONT color="green">275</FONT>        public static final String KEMID_REPORT_GRP_DATE_ADDED = "dateAdded";<a name="line.275"></a>
+<FONT color="green">276</FONT>        public static final String KEMID_REPORT_GRP_DATE_TERMINATED = "dateTerminated";<a name="line.276"></a>
+<FONT color="green">277</FONT>    <a name="line.277"></a>
+<FONT color="green">278</FONT>        // KEMID Donor Statement<a name="line.278"></a>
+<FONT color="green">279</FONT>        public static final String KEMID_DONOR_STATEMENT_ID = "donorId";<a name="line.279"></a>
+<FONT color="green">280</FONT>        public static final String KEMID_DONOR_STATEMENT_DONOR = "donor";<a name="line.280"></a>
+<FONT color="green">281</FONT>        public static final String KEMID_DONOR_STATEMENT_SEQ = "donorSeq";<a name="line.281"></a>
+<FONT color="green">282</FONT>        public static final String KEMID_DONOR_STATEMENT_CD = "donorStatementCode";<a name="line.282"></a>
+<FONT color="green">283</FONT>        public static final String KEMID_DONOR_STATEMENT = "donorStatement";<a name="line.283"></a>
+<FONT color="green">284</FONT>        public static final String KEMID_DONOR_STATEMENT_COMBINE_WITH_DONOR_ID = "combineWithDonorId";<a name="line.284"></a>
+<FONT color="green">285</FONT>        public static final String KEMID_DONOR_STATEMENT_COMBINE_WITH_DONOR = "combineWithDonor";<a name="line.285"></a>
+<FONT color="green">286</FONT>        public static final String KEMID_DONOR_STATEMENT_DONOR_LABEL = "donorLabel";<a name="line.286"></a>
+<FONT color="green">287</FONT>        public static final String KEMID_DONOR_STATEMENT_DONOR_LABEL_OBJ_REF = "donorLabelObjRef";<a name="line.287"></a>
+<FONT color="green">288</FONT>        public static final String KEMID_DONOR_STATEMENT_TERMINATION_REASON = "terminationReason";<a name="line.288"></a>
+<FONT color="green">289</FONT>        public static final String KEMID_DONOR_STATEMENT_TERMINATION_DATE = "terminationDate";<a name="line.289"></a>
+<FONT color="green">290</FONT>    <a name="line.290"></a>
+<FONT color="green">291</FONT>        // KEMID Combine Donor Statement<a name="line.291"></a>
+<FONT color="green">292</FONT>        public static final String KEMID_COMBINE_DONOR_STATEMENT_SEQ = "combineDonorSeq";<a name="line.292"></a>
+<FONT color="green">293</FONT>        public static final String KEMID_COMBINE_DONOR_STATEMENT_TERMINATION_DATE = "terminateCombineDate";<a name="line.293"></a>
+<FONT color="green">294</FONT>        public static final String KEMID_COMBINE_DONOR_STATEMENT_WITH_KEMID = "combineWithKemid";<a name="line.294"></a>
+<FONT color="green">295</FONT>        public static final String KEMID_COMBINE_DONOR_STATEMENT_WITH_KEMID_OBJ_REF = "combineWithKemidObjRef";<a name="line.295"></a>
+<FONT color="green">296</FONT>    <a name="line.296"></a>
+<FONT color="green">297</FONT>        // KEMID Authorizations<a name="line.297"></a>
+<FONT color="green">298</FONT>        public static final String KEMID_AUTHORIZATIONS_ROLE_SEQ_NBR = "roleSequenceNumber";<a name="line.298"></a>
+<FONT color="green">299</FONT>        public static final String KEMID_AUTHORIZATIONS_ROLE_ID = "roleId";<a name="line.299"></a>
+<FONT color="green">300</FONT>        public static final String KEMID_AUTHORIZATIONS_ROLE_PRNCPL_ID = "rolePrincipalId";<a name="line.300"></a>
+<FONT color="green">301</FONT>    <a name="line.301"></a>
+<FONT color="green">302</FONT>        // GLLink<a name="line.302"></a>
+<FONT color="green">303</FONT>        public static final String GL_LINK_ETRAN_CD = "endowmentTransactionCode";<a name="line.303"></a>
+<FONT color="green">304</FONT>        public static final String GL_LINK_CHART_CD = "chartCode";<a name="line.304"></a>
+<FONT color="green">305</FONT>        public static final String GL_LINK_OBJECT_CD = "object";<a name="line.305"></a>
+<FONT color="green">306</FONT>        public static final String GL_LINK_FINANCIAL_OBJECT_CODE = "financialObjectCode";<a name="line.306"></a>
+<FONT color="green">307</FONT>    <a name="line.307"></a>
+<FONT color="green">308</FONT>        // Pooled Fund Control<a name="line.308"></a>
+<FONT color="green">309</FONT>        public static final String POOL_SECURITY_ID = "pooledSecurityID";<a name="line.309"></a>
+<FONT color="green">310</FONT>        public static final String DISTRIBUTE_GAINS_LOSSES_IND = "distributeGainsAndLossesIndicator";<a name="line.310"></a>
+<FONT color="green">311</FONT>    <a name="line.311"></a>
+<FONT color="green">312</FONT>        // PooledFundValue<a name="line.312"></a>
+<FONT color="green">313</FONT>        public static final String VALUE_EFFECTIVE_DATE = "valueEffectiveDate";<a name="line.313"></a>
+<FONT color="green">314</FONT>        public static final String VALUATION_DATE = "valuationDate";<a name="line.314"></a>
+<FONT color="green">315</FONT>        public static final String INCOME_DISTRIBUTION_PER_UNIT = "incomeDistributionPerUnit";<a name="line.315"></a>
+<FONT color="green">316</FONT>        public static final String INCOME_DISTRIBUTION_COMPLETE = "incomeDistributionComplete";<a name="line.316"></a>
+<FONT color="green">317</FONT>        public static final String LONG_TERM_GAIN_LOSS_DISTRIBUTION_PER_UNIT = "longTermGainLossDistributionPerUnit";<a name="line.317"></a>
+<FONT color="green">318</FONT>        public static final String SHORT_TERM_GAIN_LOSS_DISTRIBUTION_PER_UNIT = "shortTermGainLossDistributionPerUnit";<a name="line.318"></a>
+<FONT color="green">319</FONT>        public static final String DISTRIBUTE_INCOME_ON_DATE = "distributeIncomeOnDate";<a name="line.319"></a>
+<FONT color="green">320</FONT>        public static final String DISTRIBUTE_LONG_TERM_GAIN_LOSS_ON_DATE = "distributeLongTermGainLossOnDate";<a name="line.320"></a>
+<FONT color="green">321</FONT>        public static final String DISTRIBUTE_SHORT_TERM_GAIN_LOSS_ON_DATE = "distributeShortTermGainLossOnDate";<a name="line.321"></a>
+<FONT color="green">322</FONT>        public static final String ST_GAIN_LOSS_DISTR_COMPL = "shortTermGainLossDistributionComplete";<a name="line.322"></a>
+<FONT color="green">323</FONT>        public static final String LT_GAIN_LOSS_DISTR_COMPL = "longTermGainLossDistributionComplete";<a name="line.323"></a>
+<FONT color="green">324</FONT>    <a name="line.324"></a>
+<FONT color="green">325</FONT>    <a name="line.325"></a>
+<FONT color="green">326</FONT>        // Cash Sweep Model<a name="line.326"></a>
+<FONT color="green">327</FONT>        public static final String CASH_SWEEP_MODEL_ID = "cashSweepModelID";<a name="line.327"></a>
+<FONT color="green">328</FONT>        public static final String CASH_SWEEP_MODEL_NEXT_DUE_DATE = "cashSweepNextDueDate";<a name="line.328"></a>
+<FONT color="green">329</FONT>        public static final String CASH_SWEEP_MODEL_FREQUENCY_CDOE = "cashSweepFrequencyCode";<a name="line.329"></a>
+<FONT color="green">330</FONT>        public static final String CASH_SWEEP_MODEL_ACTIVE_INDICATOR = "active";<a name="line.330"></a>
+<FONT color="green">331</FONT>    <a name="line.331"></a>
+<FONT color="green">332</FONT>        // Automated Cash Investment Model<a name="line.332"></a>
+<FONT color="green">333</FONT>        public static final String ACI_MODEL_ID = "aciModelID";<a name="line.333"></a>
+<FONT color="green">334</FONT>        public static final String INVESTMENT_1_PERCENT = "investment1Percent";<a name="line.334"></a>
+<FONT color="green">335</FONT>        public static final String INVESTMENT_2_PERCENT = "investment2Percent";<a name="line.335"></a>
+<FONT color="green">336</FONT>        public static final String INVESTMENT_3_PERCENT = "investment3Percent";<a name="line.336"></a>
+<FONT color="green">337</FONT>        public static final String INVESTMENT_4_PERCENT = "investment4Percent";<a name="line.337"></a>
+<FONT color="green">338</FONT>        public static final String ACI_MODEL_NEXT_DUE_DATE = "aciNextDueDate";<a name="line.338"></a>
+<FONT color="green">339</FONT>        public static final String ACI_MODEL_FREQUENCY_CDOE = "aciFrequencyCode";<a name="line.339"></a>
+<FONT color="green">340</FONT>        public static final String ACI_MODEL_ACTIVE_INDICATOR = "active";<a name="line.340"></a>
+<FONT color="green">341</FONT>    <a name="line.341"></a>
+<FONT color="green">342</FONT>        // PurposeCode<a name="line.342"></a>
+<FONT color="green">343</FONT>        public static final String PURPOSE_INCOME_CAE_CD = "incomeCAECode";<a name="line.343"></a>
+<FONT color="green">344</FONT>        public static final String PURPOSE_PRINCIPAL_CAE_CD = "principalCAECode";<a name="line.344"></a>
+<FONT color="green">345</FONT>    <a name="line.345"></a>
+<FONT color="green">346</FONT>        // KEMID CAE<a name="line.346"></a>
+<FONT color="green">347</FONT>        public static final String CAE_TYPE_CODE_ID = "caeTypeCode";<a name="line.347"></a>
+<FONT color="green">348</FONT>    <a name="line.348"></a>
+<FONT color="green">349</FONT>        // KEMID Donor<a name="line.349"></a>
+<FONT color="green">350</FONT>        public static final String DONR_ID = "donorID";<a name="line.350"></a>
+<FONT color="green">351</FONT>    <a name="line.351"></a>
+<FONT color="green">352</FONT>        // KEMID Type Code<a name="line.352"></a>
+<FONT color="green">353</FONT>        public static final String TYPE_CODE = "code";<a name="line.353"></a>
+<FONT color="green">354</FONT>        public static final String TYPE_INC_RESTR_CD = "incomeRestrictionCode";<a name="line.354"></a>
+<FONT color="green">355</FONT>        public static final String TYPE_PRINCIPAL_RESTR_CD = "incomeRestrictionCode";<a name="line.355"></a>
+<FONT color="green">356</FONT>        public static final String TYPE_INCOME_ACI_MODEL_ID = "incomeACIModelId";<a name="line.356"></a>
+<FONT color="green">357</FONT>        public static final String TYPE_PRINCIPAL_ACI_MODEL_ID = "principalACIModelId";<a name="line.357"></a>
+<FONT color="green">358</FONT>    <a name="line.358"></a>
+<FONT color="green">359</FONT>        // Type Restrict Code<a name="line.359"></a>
+<FONT color="green">360</FONT>        public static final String TYPE_RESTR_PERM_IND = "permanentIndicator";<a name="line.360"></a>
+<FONT color="green">361</FONT>        <a name="line.361"></a>
+<FONT color="green">362</FONT>        // KEMID Type Fee Method<a name="line.362"></a>
+<FONT color="green">363</FONT>        public static final String FEE_METHOD = "feeMethod";<a name="line.363"></a>
+<FONT color="green">364</FONT>        public static final String FEE_BASE_CD = "feeBaseCode";<a name="line.364"></a>
+<FONT color="green">365</FONT>    <a name="line.365"></a>
+<FONT color="green">366</FONT>        // KEMID Fee Method<a name="line.366"></a>
+<FONT color="green">367</FONT>        public static final String FEE_METHOD_CODE = "feeMethodCode";<a name="line.367"></a>
+<FONT color="green">368</FONT>        public static final String FEE_METHOD_FREQUENCY_CODE = "feeFrequencyCode";<a name="line.368"></a>
+<FONT color="green">369</FONT>        public static final String FEE_METHOD_NEXT_PROCESS_DATE = "feeNextProcessDate";<a name="line.369"></a>
+<FONT color="green">370</FONT>        public static final String FEE_METHOD_LAST_PROCESS_DATE = "feeLastProcessDate";<a name="line.370"></a>
+<FONT color="green">371</FONT>    <a name="line.371"></a>
+<FONT color="green">372</FONT>        // KEMID Fee Class Code<a name="line.372"></a>
+<FONT color="green">373</FONT>        public static final String FEE_CLASS_CODE = "classCode";<a name="line.373"></a>
+<FONT color="green">374</FONT>    <a name="line.374"></a>
+<FONT color="green">375</FONT>        // KEMID Fee Security<a name="line.375"></a>
+<FONT color="green">376</FONT>        public static final String FEE_SECURITY_CODE = "securityCode";<a name="line.376"></a>
+<FONT color="green">377</FONT>        public static final String FEE_SECURITY = "security"; // object<a name="line.377"></a>
+<FONT color="green">378</FONT>    <a name="line.378"></a>
+<FONT color="green">379</FONT>        // KEMID Fee Payment Type<a name="line.379"></a>
+<FONT color="green">380</FONT>        public static final String FEE_PAYMENT_TYPE_CODE = "paymentTypeCode";<a name="line.380"></a>
+<FONT color="green">381</FONT>    <a name="line.381"></a>
+<FONT color="green">382</FONT>        // KEMID Fee Transaction Type<a name="line.382"></a>
+<FONT color="green">383</FONT>        public static final String FEE_TRANSACTION_TYPE_CODE = "transactionTypeCode";<a name="line.383"></a>
+<FONT color="green">384</FONT>        public static final String FEE_TRANSACTION_DOCUMENT_TYPE_CODE = "documentTypeName";<a name="line.384"></a>
+<FONT color="green">385</FONT>        public static final String FEE_TRANSACTION_INCLUDE = "include";<a name="line.385"></a>
+<FONT color="green">386</FONT>    <a name="line.386"></a>
+<FONT color="green">387</FONT>        // KEMID Fee Rate Definition Code<a name="line.387"></a>
+<FONT color="green">388</FONT>        public static final String FEE_RATE_DEFINITION_CODE = "feeRateDefinitionCode";<a name="line.388"></a>
+<FONT color="green">389</FONT>    <a name="line.389"></a>
+<FONT color="green">390</FONT>        // KEMID Fee Endowment Transaction Code<a name="line.390"></a>
+<FONT color="green">391</FONT>        public static final String FEE_ENDOWMENT_TRANSACTION_CODE = "endowmentTransactionCode";<a name="line.391"></a>
+<FONT color="green">392</FONT>        public static final String FEE_ENDOWMENT_TRANSACTION_INCLUDE = "include";<a name="line.392"></a>
+<FONT color="green">393</FONT>    <a name="line.393"></a>
+<FONT color="green">394</FONT>        // KEMID Current Balance<a name="line.394"></a>
+<FONT color="green">395</FONT>        public static final String CURRENT_BAL_TOTAL_MARKET_VALUE = "totalMarketValue";<a name="line.395"></a>
+<FONT color="green">396</FONT>        public static final String CURRENT_BAL_PURPOSE_CD = "kemidObj.purposeCode";<a name="line.396"></a>
+<FONT color="green">397</FONT>        public static final String CURRENT_BAL_KEMID_BALANCE_DATE = "balanceDate";<a name="line.397"></a>
+<FONT color="green">398</FONT>        public static final String CURRENT_BAL_CLOSED_INDICATOR = "kemidObj.close";<a name="line.398"></a>
+<FONT color="green">399</FONT>        public static final String CURRENT_BAL_KEMID_SHORT_TTL = "kemidObj.shortTitle";<a name="line.399"></a>
+<FONT color="green">400</FONT>    <a name="line.400"></a>
+<FONT color="green">401</FONT>        // KEMID Current Balance Detail<a name="line.401"></a>
+<FONT color="green">402</FONT>        public static final String KEMID_CRNT_BAL_DET_INC_AT_MARKET = "incomeAtMarket";<a name="line.402"></a>
+<FONT color="green">403</FONT>        public static final String KEMID_CRNT_BAL_DET_PRIN_AT_MARKET = "principalAtMarket";<a name="line.403"></a>
+<FONT color="green">404</FONT>        public static final String KEMID_CRNT_BAL_KEMID_SHORT_TTL = "kemidObj.shortTitle";<a name="line.404"></a>
+<FONT color="green">405</FONT>        public static final String KEMID_CRNT_BAL_PURPOSE_DESC = "kemidObj.purpose.name";<a name="line.405"></a>
+<FONT color="green">406</FONT>    <a name="line.406"></a>
+<FONT color="green">407</FONT>        // KEMID Current Reporting Group<a name="line.407"></a>
+<FONT color="green">408</FONT>        public static final String KEMID_CRNT_REP_GRP_SEC_ID = "securityId";<a name="line.408"></a>
+<FONT color="green">409</FONT>        public static final String KEMID_CRNT_REP_GRP_CD = "reportingGroupCode";<a name="line.409"></a>
+<FONT color="green">410</FONT>        public static final String KEMID_CRNT_REP_GRP_REGIS_CD = "registrationCode";<a name="line.410"></a>
+<FONT color="green">411</FONT>        public static final String KEMID_CRNT_REP_GRP_IP_IND = "ipIndicator";<a name="line.411"></a>
+<FONT color="green">412</FONT>        public static final String KEMID_CRNT_REP_GRP_UNITS = "units";<a name="line.412"></a>
+<FONT color="green">413</FONT>        public static final String KEMID_CRNT_REP_GRP_CARRY_VAL = "carryVal";<a name="line.413"></a>
+<FONT color="green">414</FONT>        public static final String KEMID_CRNT_REP_GRP_MVAL = "marketVal";<a name="line.414"></a>
+<FONT color="green">415</FONT>        public static final String KEMID_CRNT_REP_GRP_FY_EST_INC = "nextFYEstimatedIncome";<a name="line.415"></a>
+<FONT color="green">416</FONT>        public static final String KEMID_CRNT_REP_GRP_FY_REM_EST_INC = "remainderOfFYEstimatedIncome";<a name="line.416"></a>
+<FONT color="green">417</FONT>        public static final String KEMID_CRNT_REP_GRP_ANNL_INC_EST = "annualEstimatedIncome";<a name="line.417"></a>
+<FONT color="green">418</FONT>        public static final String KEMID_CRNT_REP_GRP_KEMID_SHORT_TTL = "kemidObj.shortTitle";<a name="line.418"></a>
+<FONT color="green">419</FONT>        public static final String KEMID_CRNT_REP_GRP_PURPOSE_DESC = "kemidObj.purpose.name";<a name="line.419"></a>
+<FONT color="green">420</FONT>        public static final String KEMID_CRNT_REP_GRP_DESC = "reportingGroup.name";<a name="line.420"></a>
+<FONT color="green">421</FONT>        public static final String KEMID_CRNT_REP_GRP_IP_IND_DESC = "incomePrincipalIndicator.name";<a name="line.421"></a>
+<FONT color="green">422</FONT>    <a name="line.422"></a>
+<FONT color="green">423</FONT>        // Current Tax Lot<a name="line.423"></a>
+<FONT color="green">424</FONT>        public static final String CURRENT_TAX_LOT_KEMID = "kemid";<a name="line.424"></a>
+<FONT color="green">425</FONT>        public static final String CURRENT_TAX_LOT_SECURITY_ID = "securityId";<a name="line.425"></a>
+<FONT color="green">426</FONT>        public static final String CURRENT_TAX_LOT_REGIS_CD = "registrationCode";<a name="line.426"></a>
+<FONT color="green">427</FONT>        public static final String CURRENT_TAX_LOT_LOT_NBR = "lotNumber";<a name="line.427"></a>
+<FONT color="green">428</FONT>        public static final String CURRENT_TAX_LOT_IP_IND = "incomePrincipalIndicator";<a name="line.428"></a>
+<FONT color="green">429</FONT>        public static final String CURRENT_TAX_LOT_IP_IND_DESC = "incomePrincipal.name";<a name="line.429"></a>
+<FONT color="green">430</FONT>        public static final String CURRENT_TAX_LOT_UNITS = "units";<a name="line.430"></a>
+<FONT color="green">431</FONT>        public static final String CURRENT_TAX_LOT_COST = "cost";<a name="line.431"></a>
+<FONT color="green">432</FONT>        public static final String CURRENT_TAX_LOT_HOLDING_MVAL = "holdingMarketValue";<a name="line.432"></a>
+<FONT color="green">433</FONT>        public static final String CURRENT_TAX_LOT_ACQUIRED_DATE = "acquiredDate";<a name="line.433"></a>
+<FONT color="green">434</FONT>        public static final String CURRENT_TAX_LOT_ANN_EST_INC = "annualEstimatedIncome";<a name="line.434"></a>
+<FONT color="green">435</FONT>        public static final String CURRENT_TAX_LOT_REMAINDER_OF_FY_EST_INC = "remainderOfFYEstimatedIncome";<a name="line.435"></a>
+<FONT color="green">436</FONT>        public static final String CURRENT_TAX_LOT_NEXT_FY_EST_INC = "nextFYEstimatedIncome";<a name="line.436"></a>
+<FONT color="green">437</FONT>        public static final String CURRENT_TAX_LOT_LAST_TRAN_DATE = "lastTransactionDate";<a name="line.437"></a>
+<FONT color="green">438</FONT>        public static final String CURRENT_TAX_LOT_CURRENT_ACCRUAL = "currentAccrual";<a name="line.438"></a>
+<FONT color="green">439</FONT>        public static final String CURRENT_TAX_LOT_PRIOR_ACCRUAL = "priorAccrual";<a name="line.439"></a>
+<FONT color="green">440</FONT>        public static final String CURRENT_TAX_LOT_KEMID_SHORT_TTL = "kemidObj.shortTitle";<a name="line.440"></a>
+<FONT color="green">441</FONT>        public static final String CURRENT_TAX_LOT_KEMID_PURPOSE_CD = "kemidObj.purposeCode";<a name="line.441"></a>
+<FONT color="green">442</FONT>        public static final String CURRENT_TAX_LOT_BALANCE_DATE = "balanceDate";<a name="line.442"></a>
+<FONT color="green">443</FONT>        public static final String CURRENT_TAX_LOT_KEMID_CLOSED_IND = "kemidObj.close";<a name="line.443"></a>
+<FONT color="green">444</FONT>        public static final String CURRENT_TAX_LOT_REP_GRP = "security.classCode.securityReportingGrp";<a name="line.444"></a>
+<FONT color="green">445</FONT>        public static final String CURRENT_TAX_LOT_REGIS_DESC = "registration.name";<a name="line.445"></a>
+<FONT color="green">446</FONT>        public static final String CURRENT_TAX_LOT_SEC_DESC = "security.description";<a name="line.446"></a>
+<FONT color="green">447</FONT>        public static final String CURRENT_TAX_LOT_PURPOSE_DESC = "kemidObj.purpose.name";<a name="line.447"></a>
+<FONT color="green">448</FONT>        public static final String CURRENT_TAX_LOT_INC_PRIN_DESC = "incomePrincipal.name";<a name="line.448"></a>
+<FONT color="green">449</FONT>    <a name="line.449"></a>
+<FONT color="green">450</FONT>        // KEMIDHistoricalBalance<a name="line.450"></a>
+<FONT color="green">451</FONT>        public static final String KEMID_HIST_BAL_KEMID = "kemid";<a name="line.451"></a>
+<FONT color="green">452</FONT>        public static final String KEMID_HIST_BAL_CLOSED_IND = "closedIndicator";<a name="line.452"></a>
+<FONT color="green">453</FONT>        public static final String KEMID_HIST_BAL_DATE_ID = "historyBalanceDateId";<a name="line.453"></a>
+<FONT color="green">454</FONT>        public static final String KEMID_HIST_BAL_PURPOSE_CD = "purposeCode";<a name="line.454"></a>
+<FONT color="green">455</FONT>        public static final String KEMID_HIST_BAL_INC_AT_MARKET = "incomeAtMarket";<a name="line.455"></a>
+<FONT color="green">456</FONT>        public static final String KEMID_HIST_BAL_PRINC_AT_MARKET = "principalAtMarket";<a name="line.456"></a>
+<FONT color="green">457</FONT>        public static final String KEMID_HIST_BAL_TOTAL_MARKET_VAL = "totalMarketValue";<a name="line.457"></a>
+<FONT color="green">458</FONT>        public static final String KEMID_HIST_BAL_ANNUAL_EST_INC = "annualEstimatedIncome"; // next 12 months estimated income<a name="line.458"></a>
+<FONT color="green">459</FONT>        public static final String KEMID_HIST_BAL_REMAINDER_FY_EST_INC = "remainderFYEstimatedIncome";<a name="line.459"></a>
+<FONT color="green">460</FONT>        public static final String KEMID_HIST_BAL_NEXT_FT_EST_INC = "nextFYEstimatedIncome";<a name="line.460"></a>
+<FONT color="green">461</FONT>    <a name="line.461"></a>
+<FONT color="green">462</FONT>        // KEMIDHistoricalBalanceDetail<a name="line.462"></a>
+<FONT color="green">463</FONT>        public static final String KEMID_HIST_BAL_DET_KEMID = "kemid";<a name="line.463"></a>
+<FONT color="green">464</FONT>        public static final String KEMID_HIST_BAL_DET_PURPOSE_CODE = "kemidObj.purposeCode";<a name="line.464"></a>
+<FONT color="green">465</FONT>        public static final String KEMID_HIST_BAL_DET_DATE_ID = "historyBalanceDateId";<a name="line.465"></a>
+<FONT color="green">466</FONT>        public static final String KEMID_HIST_BAL_DET_INC_PRIN_IND = "incomePrincipalIndicator";<a name="line.466"></a>
+<FONT color="green">467</FONT>        public static final String KEMID_HIST_BAL_DET_RPT_GRP_CD = "reportingGroupCode";<a name="line.467"></a>
+<FONT color="green">468</FONT>        public static final String KEMID_HIST_BAL_DET_VAL_AT_MARKET = "valueAtMarket";<a name="line.468"></a>
+<FONT color="green">469</FONT>        public static final String KEMID_HIST_BAL_DET_ANNUAL_EST_INC = "annualEstimatedIncome"; // next 12 months estimated<a name="line.469"></a>
+<FONT color="green">470</FONT>        // income<a name="line.470"></a>
+<FONT color="green">471</FONT>        public static final String KEMID_HIST_BAL_DET_INC_AT_MARKET = "incomeAtMarket";<a name="line.471"></a>
+<FONT color="green">472</FONT>        public static final String KEMID_HIST_BAL_DET_PRINC_AT_MARKET = "principalAtMarket";<a name="line.472"></a>
+<FONT color="green">473</FONT>        public static final String KEMID_HIST_BAL_DET_REMAINDER_FY_EST_INC = "remainderOfFYEstimatedIncome";<a name="line.473"></a>
+<FONT color="green">474</FONT>        public static final String KEMID_HIST_BAL_DET_NEXT_FT_EST_INC = "nextFYEstimatedIncome";<a name="line.474"></a>
+<FONT color="green">475</FONT>        public static final String KEMID_HIST_BAL_DET_KEMID_PURPOSE_DESC = "kemidObj.purpose.name";<a name="line.475"></a>
+<FONT color="green">476</FONT>        public static final String KEMID_HIST_BAL_DET_KEMID_CLOSED_INDICATOR = "kemidObj.close";<a name="line.476"></a>
+<FONT color="green">477</FONT>        public static final String KEMID_HIST_BAL_DET_KEMID_SHORT_TTL = "kemidObj.shortTitle";<a name="line.477"></a>
+<FONT color="green">478</FONT>    <a name="line.478"></a>
+<FONT color="green">479</FONT>        // KEMID Historical Reporting Group<a name="line.479"></a>
+<FONT color="green">480</FONT>        public static final String KEMID_HIST_REP_GRP_KEMID = "kemid";<a name="line.480"></a>
+<FONT color="green">481</FONT>        public static final String KEMID_HIST_REP_GRP_LOT_NBR = "lotNumber";<a name="line.481"></a>
+<FONT color="green">482</FONT>        public static final String KEMID_HIST_REP_GRP_ACQ_DATE = "acquiredDate";<a name="line.482"></a>
+<FONT color="green">483</FONT>        public static final String KEMID_HIST_REP_GRP_COST = "cost";<a name="line.483"></a>
+<FONT color="green">484</FONT>        public static final String KEMID_HIST_REP_GRP_CRNT_ACCR = "currentAccrual";<a name="line.484"></a>
+<FONT color="green">485</FONT>        public static final String KEMID_HIST_REP_GRP_PRIOR_ACCR = "priorAccrual";<a name="line.485"></a>
+<FONT color="green">486</FONT>        public static final String KEMID_HIST_REP_GRP_LAST_TRAN_DATA = "lastTransactionDate";<a name="line.486"></a>
+<FONT color="green">487</FONT>        public static final String KEMID_HIST_REP_GRP_SEC_ID = "securityId";<a name="line.487"></a>
+<FONT color="green">488</FONT>        public static final String KEMID_HIST_REP_GRP_CD = "reportingGroupCode";<a name="line.488"></a>
+<FONT color="green">489</FONT>        public static final String KEMID_HIST_REP_GRP_REGIS_CD = "registrationCode";<a name="line.489"></a>
+<FONT color="green">490</FONT>        public static final String KEMID_HIST_REP_GRP_IP_IND = "ipIndicator";<a name="line.490"></a>
+<FONT color="green">491</FONT>        public static final String KEMID_HIST_REP_GRP_UNITS = "units";<a name="line.491"></a>
+<FONT color="green">492</FONT>        public static final String KEMID_HIST_REP_GRP_CARRY_VAL = "carryVal";<a name="line.492"></a>
+<FONT color="green">493</FONT>        public static final String KEMID_HIST_REP_GRP_MVAL = "marketVal";<a name="line.493"></a>
+<FONT color="green">494</FONT>        public static final String KEMID_HIST_REP_GRP_FY_EST_INC = "nextFYEstimatedIncome";<a name="line.494"></a>
+<FONT color="green">495</FONT>        public static final String KEMID_HIST_REP_GRP_FY_REM_EST_INC = "remainderOfFYEstimatedIncome";<a name="line.495"></a>
+<FONT color="green">496</FONT>        public static final String KEMID_HIST_REP_GRP_ANNL_INC_EST = "annualEstimatedIncome";<a name="line.496"></a>
+<FONT color="green">497</FONT>        public static final String KEMID_HIST_REP_GRP_KEMID_SHORT_TTL = "kemidObj.shortTitle";<a name="line.497"></a>
+<FONT color="green">498</FONT>        public static final String KEMID_HIST_REP_GRP_PURPOSE_DESC = "kemidObj.purpose.name";<a name="line.498"></a>
+<FONT color="green">499</FONT>        public static final String KEMID_HIST_REP_GRP_DESC = "reportingGroup.name";<a name="line.499"></a>
+<FONT color="green">500</FONT>        public static final String KEMID_HIST_REP_GRP_IP_IND_DESC = "incomePrincipalIndicator.name";<a name="line.500"></a>
+<FONT color="green">501</FONT>    <a name="line.501"></a>
+<FONT color="green">502</FONT>        // KEMID Historical Tax Lot<a name="line.502"></a>
+<FONT color="green">503</FONT>        public static final String KEMID_HIST_TAX_LOT_KEMID = "kemid";<a name="line.503"></a>
+<FONT color="green">504</FONT>        public static final String KEMID_HIST_TAX_LOT_SECURITY_ID = "securityId";<a name="line.504"></a>
+<FONT color="green">505</FONT>        public static final String KEMID_HIST_TAX_LOT_REGIS_CD = "registrationCode";<a name="line.505"></a>
+<FONT color="green">506</FONT>        public static final String KEMID_HIST_TAX_LOT_LOT_NBR = "lotNumber";<a name="line.506"></a>
+<FONT color="green">507</FONT>        public static final String KEMID_HIST_TAX_LOT_IP_IND = "incomePrincipalIndicator";<a name="line.507"></a>
+<FONT color="green">508</FONT>        public static final String KEMID_HIST_TAX_LOT_IP_IND_DESC = "incomePrincipal.name";<a name="line.508"></a>
+<FONT color="green">509</FONT>        public static final String KEMID_HIST_TAX_LOT_UNITS = "units";<a name="line.509"></a>
+<FONT color="green">510</FONT>        public static final String KEMID_HIST_TAX_LOT_COST = "cost";<a name="line.510"></a>
+<FONT color="green">511</FONT>        public static final String KEMID_HIST_TAX_LOT_HOLDING_MVAL = "holdingMarketValue";<a name="line.511"></a>
+<FONT color="green">512</FONT>        public static final String KEMID_HIST_TAX_LOT_ACQUIRED_DATE = "acquiredDate";<a name="line.512"></a>
+<FONT color="green">513</FONT>        public static final String KEMID_HIST_TAX_LOT_ANN_EST_INC = "annualEstimatedIncome";<a name="line.513"></a>
+<FONT color="green">514</FONT>        public static final String KEMID_HIST_TAX_LOT_REMAINDER_OF_FY_EST_INC = "remainderOfFYEstimatedIncome";<a name="line.514"></a>
+<FONT color="green">515</FONT>        public static final String KEMID_HIST_TAX_LOT_NEXT_FY_EST_INC = "nextFYEstimatedIncome";<a name="line.515"></a>
+<FONT color="green">516</FONT>        public static final String KEMID_HIST_TAX_LOT_LAST_TRAN_DATE = "lastTransactionDate";<a name="line.516"></a>
+<FONT color="green">517</FONT>        public static final String KEMID_HIST_TAX_LOT_CURRENT_ACCRUAL = "currentAccrual";<a name="line.517"></a>
+<FONT color="green">518</FONT>        public static final String KEMID_HIST_TAX_LOT_PRIOR_ACCRUAL = "priorAccrual";<a name="line.518"></a>
+<FONT color="green">519</FONT>        public static final String KEMID_HIST_TAX_LOT_KEMID_SHORT_TTL = "kemidObj.shortTitle";<a name="line.519"></a>
+<FONT color="green">520</FONT>        public static final String KEMID_HIST_TAX_LOT_KEMID_PURPOSE_CD = "kemidObj.purposeCode";<a name="line.520"></a>
+<FONT color="green">521</FONT>        public static final String KEMID_HIST_TAX_LOT_BALANCE_DATE = "balanceDate";<a name="line.521"></a>
+<FONT color="green">522</FONT>        public static final String KEMID_HIST_TAX_LOT_KEMID_CLOSED_IND = "kemidObj.close";<a name="line.522"></a>
+<FONT color="green">523</FONT>        public static final String KEMID_HIST_TAX_LOT_REP_GRP = "security.classCode.securityReportingGrp";<a name="line.523"></a>
+<FONT color="green">524</FONT>        public static final String KEMID_HIST_TAX_LOT_REGIS_DESC = "registration.name";<a name="line.524"></a>
+<FONT color="green">525</FONT>        public static final String KEMID_HIST_TAX_LOT_SEC_DESC = "security.description";<a name="line.525"></a>
+<FONT color="green">526</FONT>        public static final String KEMID_HIST_TAX_LOT_PURPOSE_DESC = "kemidObj.purpose.name";<a name="line.526"></a>
+<FONT color="green">527</FONT>        public static final String KEMID_HIST_TAX_LOT_INC_PRIN_DESC = "incomePrincipal.name";<a name="line.527"></a>
+<FONT color="green">528</FONT>    <a name="line.528"></a>
+<FONT color="green">529</FONT>        // KEMID fee method constants that are used in rule class<a name="line.529"></a>
+<FONT color="green">530</FONT>        public static final String FEE_CLASS_CODES_COLLECTION_NAME = "feeClassCodes";<a name="line.530"></a>
+<FONT color="green">531</FONT>        public static final String FEE_CLASS_CODE_INCLUDE = "include";<a name="line.531"></a>
+<FONT color="green">532</FONT>        public static final String FEE_SECURITY_INCLUDE = "include";<a name="line.532"></a>
+<FONT color="green">533</FONT>        public static final String FEE_SECURITY_COLLECTION_NAME = "feeSecurity";<a name="line.533"></a>
+<FONT color="green">534</FONT>        public static final String FEE_TRANSACTION_TYPE_COLLECTION_NAME = "feeTransactions";<a name="line.534"></a>
+<FONT color="green">535</FONT>        public static final String FEE_ENDOWMENT_TRANSACTION_CODE_COLLECTION_NAME = "feeEndowmentTransactionCodes";<a name="line.535"></a>
+<FONT color="green">536</FONT>        public static final String FEE_PAYMENT_TYPE_COLLECTION_NAME = "feePaymentTypes";<a name="line.536"></a>
+<FONT color="green">537</FONT>        public static final String FEE_CLASS_CODE_REF = "classCode";<a name="line.537"></a>
+<FONT color="green">538</FONT>        public static final String FEE_SECURITY_REF = "security";<a name="line.538"></a>
+<FONT color="green">539</FONT>        public static final String FEE_TRANSACTION_TYPE_REF = "transactionType";<a name="line.539"></a>
+<FONT color="green">540</FONT>        public static final String FEE_TRANSACTION_ARCHIVE_REF = "transactionArchive";<a name="line.540"></a>
+<FONT color="green">541</FONT>        public static final String FEE_ENDOWMENT_TRANSACTION_CODE_REF = "endowmentTransaction";<a name="line.541"></a>
+<FONT color="green">542</FONT>        public static final String FEE_CLASS_CODE_ATTRIBUTE = "feeClassCode";<a name="line.542"></a>
+<FONT color="green">543</FONT>        public static final String FEE_SECURITY_CODE_ATTRIBUTE = "securityCode";<a name="line.543"></a>
+<FONT color="green">544</FONT>        public static final String FEE_TRANSACTION_TYPE_CODE_ATTRIBUTE = "transactionTypeCode";<a name="line.544"></a>
+<FONT color="green">545</FONT>        public static final String FEE_TRANSACTION_DOCUMENT_TYPE_NAME_ATTRIBUTE = "documentTypeName";<a name="line.545"></a>
+<FONT color="green">546</FONT>        <a name="line.546"></a>
+<FONT color="green">547</FONT>        public static final String FEE_ENDOWMENT_TRANSACTION_TYPE_CODE_ATTRIBUTE = "endowmentTransactionCode";<a name="line.547"></a>
+<FONT color="green">548</FONT>        public static final String FEE_TYPE_CODE = "feeTypeCode";<a name="line.548"></a>
+<FONT color="green">549</FONT>        public static final String FEE_BASE_CODE = "feeBaseCode";<a name="line.549"></a>
+<FONT color="green">550</FONT>        public static final String FEE_BY_TRANSACTION_TYPE_CODE = "feeByTransactionType";<a name="line.550"></a>
+<FONT color="green">551</FONT>        public static final String FEE_BY_ENDOWMENT_TRANSACTION_TYPE_CODE = "feeByETranCode";<a name="line.551"></a>
+<FONT color="green">552</FONT>        public static final String FEE_EXPENSE_ENDOWMENT_TRANSACTION_CODE = "feeExpenseETranCode";<a name="line.552"></a>
+<FONT color="green">553</FONT>        public static final String FEE_BY_CLASS_CODE = "feeByClassCode";<a name="line.553"></a>
+<FONT color="green">554</FONT>        public static final String FEE_BY_SECURITY_CODE = "feeBySecurityCode";<a name="line.554"></a>
+<FONT color="green">555</FONT>        public static final String FEE_BALANCE_TYPES_CODE = "feeBalanceTypeCode";<a name="line.555"></a>
+<FONT color="green">556</FONT>        public static final String CORPUS_TO_PCT_TOLERANCE = "corpusPctTolerance";<a name="line.556"></a>
+<FONT color="green">557</FONT>        public static final String FIRST_FEE_BREAK_POINT = "firstFeeBreakpoint";<a name="line.557"></a>
+<FONT color="green">558</FONT>        public static final String SECOND_FEE_BREAK_POINT = "secondFeeBreakpoint";<a name="line.558"></a>
+<FONT color="green">559</FONT>        public static final String THIRD_FEE_RATE = "thirdFeeRate";<a name="line.559"></a>
+<FONT color="green">560</FONT>        public static final String FIRST_FEE_RATE = "firstFeeRate";<a name="line.560"></a>
+<FONT color="green">561</FONT>        public static final String SECOND_FEE_RATE = "secondFeeRate";<a name="line.561"></a>
+<FONT color="green">562</FONT>    <a name="line.562"></a>
+<FONT color="green">563</FONT>        // Tickler Constants<a name="line.563"></a>
+<FONT color="green">564</FONT>        public static final String TICKLER_NUMBER = "number";<a name="line.564"></a>
+<FONT color="green">565</FONT>        public static final String TICKLER_CODE = "typeCode";<a name="line.565"></a>
+<FONT color="green">566</FONT>        public static final String TICKLER_FREQUENCY_CODE = "frequencyCode";<a name="line.566"></a>
+<FONT color="green">567</FONT>        public static final String TICKLER_NEXT_DUE_DATE = "nextDueDate";<a name="line.567"></a>
+<FONT color="green">568</FONT>        public static final String TICKLER_DETAIL = "detail";<a name="line.568"></a>
+<FONT color="green">569</FONT>        public static final String TICKLER_ENTRY_DETAIL = "entryDate";<a name="line.569"></a>
+<FONT color="green">570</FONT>        public static final String TICKLER_TERMINATION_DATE = "terminationDate";<a name="line.570"></a>
+<FONT color="green">571</FONT>        public static final String TICKLER_ACTIVE_INDICATOR = "active";<a name="line.571"></a>
+<FONT color="green">572</FONT>        public static final String TICKLER_OBJECT_ID = "objectId";<a name="line.572"></a>
+<FONT color="green">573</FONT>        public static final String TICKLER_VERSION_NUMBER = "versionNumber";<a name="line.573"></a>
+<FONT color="green">574</FONT>        public static final String TICKLER_SECURITIES = "securities";<a name="line.574"></a>
+<FONT color="green">575</FONT>        public static final String TICKLER_TYPE_CODE = "code";<a name="line.575"></a>
+<FONT color="green">576</FONT>        public static final String TICKLER_KEMID = "kemId";<a name="line.576"></a>
+<FONT color="green">577</FONT>        public static final String TICKLER_SECURITYID = "securityId";<a name="line.577"></a>
+<FONT color="green">578</FONT>        public static final String TICKLER_RECIPIENT_PRINCIPALID = "principalId";<a name="line.578"></a>
+<FONT color="green">579</FONT>        public static final String TICKLER_LOOKUP_USER_ID_FIELD = "recipientPrincipals.contact.principalName";<a name="line.579"></a>
+<FONT color="green">580</FONT>        public static final String TICKLER_LOOKUP_UNIVERSAL_USER_ID_FIELD = "recipientPrincipals.principalId";<a name="line.580"></a>
+<FONT color="green">581</FONT>        public static final String TICKLER_RECIPIENT_GROUPID = "groupId";<a name="line.581"></a>
+<FONT color="green">582</FONT>        public static final String TICKLER_LOOKUP_GROUP_NAME_FIELD = "groupLookup.groupName";<a name="line.582"></a>
+<FONT color="green">583</FONT>        public static final String TICKLER_LOOKUP_GROUP_USER_ID_FIELD = "recipientGroups.groupId";<a name="line.583"></a>
+<FONT color="green">584</FONT>        public static final String TICKLER_LOOKUP_KEMID = "kemIds.kemId";<a name="line.584"></a>
+<FONT color="green">585</FONT>    <a name="line.585"></a>
+<FONT color="green">586</FONT>        // Transaction Line<a name="line.586"></a>
+<FONT color="green">587</FONT>        public static final String TRANSACTION_LINE_DOCUMENT_NUMBER = "documentNumber";<a name="line.587"></a>
+<FONT color="green">588</FONT>        public static final String TRANSACTION_LINE_TYPE_CODE = "transactionLineTypeCode";<a name="line.588"></a>
+<FONT color="green">589</FONT>        public static final String TRANSACTION_LINE_NUMBER = "transactionLineNumber";<a name="line.589"></a>
+<FONT color="green">590</FONT>    <a name="line.590"></a>
+<FONT color="green">591</FONT>        // Transaction Holding Lot Line<a name="line.591"></a>
+<FONT color="green">592</FONT>        public static final String TRANSACTION_HOLDING_LOT_NUMBER = "transactionHoldingLotNumber";<a name="line.592"></a>
+<FONT color="green">593</FONT>    <a name="line.593"></a>
+<FONT color="green">594</FONT>        // Transaction Document<a name="line.594"></a>
+<FONT color="green">595</FONT>        public static final String TRANSACTION_LINE_DESCRIPTION = "transactionLineDescription";<a name="line.595"></a>
+<FONT color="green">596</FONT>        public static final String TRANSACTION_DOCUMENT_NUMBER = "documentNumber";<a name="line.596"></a>
+<FONT color="green">597</FONT>    <a name="line.597"></a>
+<FONT color="green">598</FONT>        public static final String TRANSACTION_SECURITY_DOCUMENT_NUMBER = "documentNumber";<a name="line.598"></a>
+<FONT color="green">599</FONT>        public static final String TRANSACTION_SECURITY_LINE_TYPE_CODE = "securityLineTypeCode";<a name="line.599"></a>
+<FONT color="green">600</FONT>    <a name="line.600"></a>
+<FONT color="green">601</FONT>        public static final String TRANSACTION_LINE_ENDOWMENT_TRANSACTION_CODE = "etranCode";<a name="line.601"></a>
+<FONT color="green">602</FONT>        public static final String TRANSACTION_LINE_TRANSACTION_AMOUNT = "transactionAmount";<a name="line.602"></a>
+<FONT color="green">603</FONT>        public static final String TRANSACTION_LINE_TRANSACTION_UNITS = "transactionUnits";<a name="line.603"></a>
+<FONT color="green">604</FONT>        public static final String TRANSACTION_LINE_IP_INDICATOR_CODE = "transactionIPIndicatorCode";<a name="line.604"></a>
+<FONT color="green">605</FONT>        public static final String TRANSACTION_LINE_TRANSACTION_UNIT_ADJUSTMENT_AMOUNT = "unitAdjustmentAmount";<a name="line.605"></a>
+<FONT color="green">606</FONT>    <a name="line.606"></a>
+<FONT color="green">607</FONT>    <a name="line.607"></a>
+<FONT color="green">608</FONT>        public static final String TARGET_TRANSACTION_LINE_PREFIX = "newTargetTransactionLine.";<a name="line.608"></a>
+<FONT color="green">609</FONT>        public static final String SOURCE_TRANSACTION_LINE_PREFIX = "newSourceTransactionLine.";<a name="line.609"></a>
+<FONT color="green">610</FONT>    <a name="line.610"></a>
+<FONT color="green">611</FONT>        public static final String TARGET_ACCT_LINE_PREFIX = "newTargetAccountingLine.";<a name="line.611"></a>
+<FONT color="green">612</FONT>        public static final String SOURCE_ACCT_LINE_PREFIX = "newSourceAccountingLine.";<a name="line.612"></a>
+<FONT color="green">613</FONT>    <a name="line.613"></a>
+<FONT color="green">614</FONT>    <a name="line.614"></a>
+<FONT color="green">615</FONT>        public static final String EXISTING_SOURCE_TRANSACTION_LINE_PREFIX = "document.sourceTransactionLines";<a name="line.615"></a>
+<FONT color="green">616</FONT>        public static final String EXISTING_TARGET_TRANSACTION_LINE_PREFIX = "document.targetTransactionLines";<a name="line.616"></a>
+<FONT color="green">617</FONT>    <a name="line.617"></a>
+<FONT color="green">618</FONT>        public static final String EXISTING_SOURCE_ACCT_LINE_PREFIX = "document.sourceAccountingLines";<a name="line.618"></a>
+<FONT color="green">619</FONT>        public static final String EXISTING_TARGET_ACCT_LINE_PREFIX = "document.targetAccountingLines";<a name="line.619"></a>
+<FONT color="green">620</FONT>    <a name="line.620"></a>
+<FONT color="green">621</FONT>        public static final String TRANSACTION_SECURITY_ID = "securityID";<a name="line.621"></a>
+<FONT color="green">622</FONT>        public static final String TRANSACTION_REGISTRATION_ID = "registrationCode";<a name="line.622"></a>
+<FONT color="green">623</FONT>        public static final String TRANSACTION_IPINDICATOR = "transactionIPIndicatorCode";<a name="line.623"></a>
+<FONT color="green">624</FONT>        public static final String TRANSACTION_SECURITY = "security";<a name="line.624"></a>
+<FONT color="green">625</FONT>        public static final String TRANSACTION_REGISTRATION_CD = "registrationCodeObj";<a name="line.625"></a>
+<FONT color="green">626</FONT>    <a name="line.626"></a>
+<FONT color="green">627</FONT>        public static final String TRANSACTION_SOURCE_SECURITY_PREFIX = "document.sourceTransactionSecurity.";<a name="line.627"></a>
+<FONT color="green">628</FONT>        public static final String TRANSACTION_TARGET_SECURITY_PREFIX = "document.targetTransactionSecurity.";<a name="line.628"></a>
+<FONT color="green">629</FONT>    <a name="line.629"></a>
+<FONT color="green">630</FONT>        public static final String HISTORY_VALUE_ADJUSTMENT_SECURITY_ID = "securityId";<a name="line.630"></a>
+<FONT color="green">631</FONT>        public static final String HISTORY_VALUE_ADJUSTMENT_UNIT_VALUE = "securityUnitValue";<a name="line.631"></a>
+<FONT color="green">632</FONT>        public static final String HISTORY_VALUE_ADJUSTMENT_MARKET_VALUE = "securityMarketValue";<a name="line.632"></a>
+<FONT color="green">633</FONT>    <a name="line.633"></a>
+<FONT color="green">634</FONT>        // Holding Tax Lot Re-balance<a name="line.634"></a>
+<FONT color="green">635</FONT>        public static final String HOLDING_TAX_LOT_REBAL_LOTS_TAB = "holdingTaxLots";<a name="line.635"></a>
+<FONT color="green">636</FONT>        public static final String HOLDING_TAX_LOT_REBAL_INCOME_PRINCIPAL_INDICATOR = "incomePrincipalIndicator";<a name="line.636"></a>
+<FONT color="green">637</FONT>        public static final String HOLDING_TAX_LOT_REBAL_REGISTRATION_CODE = "registrationCode";<a name="line.637"></a>
+<FONT color="green">638</FONT>        public static final String HOLDING_TAX_LOT_REBAL_SECURITY_ID = "securityId";<a name="line.638"></a>
+<FONT color="green">639</FONT>        public static final String HOLDING_TAX_LOT_REBAL_KEMID = "kemid";<a name="line.639"></a>
+<FONT color="green">640</FONT>        <a name="line.640"></a>
+<FONT color="green">641</FONT>        // Transaction Archive/Security<a name="line.641"></a>
+<FONT color="green">642</FONT>        public static final String TRANSACTION_ARCHIVE_KEM_ID = "kemid";<a name="line.642"></a>
+<FONT color="green">643</FONT>        <a name="line.643"></a>
+<FONT color="green">644</FONT>        public static final String TRANSACTION_ARCHIVE_SECURITY_ID = "securityId";<a name="line.644"></a>
+<FONT color="green">645</FONT>        public static final String TRANSACTION_ARCHIVE_INCOME_PRINCIPAL_ID = "incomePrincipalIndicatorCode";<a name="line.645"></a>
+<FONT color="green">646</FONT>        <a name="line.646"></a>
+<FONT color="green">647</FONT>        public static final String TRANSACTION_ARCHIVE_DOCUMENT_NUMBER = "documentNumber";<a name="line.647"></a>
+<FONT color="green">648</FONT>        public static final String TRANSACTION_ARCHIVE_LINE_NUMBER = "lineNumber";<a name="line.648"></a>
+<FONT color="green">649</FONT>        public static final String TRANSACTION_ARCHIVE_LINE_TYPE_CODE = "lineTypeCode";<a name="line.649"></a>
+<FONT color="green">650</FONT>        public static final String TRANSACTION_ARCHIVE_CORPUS_INDICATOR = "corpusIndicator";<a name="line.650"></a>
+<FONT color="green">651</FONT>        public static final String TRANSACTION_ARCHIVE_SUB_TYPE_CODE = "subTypeCode";<a name="line.651"></a>
+<FONT color="green">652</FONT>    <a name="line.652"></a>
+<FONT color="green">653</FONT>        public static final String TRANSACTION_ARCHIVE_TYPE_CODE = "typeCode";<a name="line.653"></a>
+<FONT color="green">654</FONT>        public static final String TRANSACTION_ARCHIVE_POSTED_DATE = "postedDate";<a name="line.654"></a>
+<FONT color="green">655</FONT>        public static final String TRANSACTION_ARCHIVE_ETRAN_CODE = "etranCode";<a name="line.655"></a>
+<FONT color="green">656</FONT>    <a name="line.656"></a>
+<FONT color="green">657</FONT>        public static final String TRANSACTION_ARCHIVE_GREATER_AMOUNT = "greaterAmount";<a name="line.657"></a>
+<FONT color="green">658</FONT>        public static final String TRANSACTION_ARCHIVE_LESS_AMOUNT = "lessAmount";<a name="line.658"></a>
+<FONT color="green">659</FONT>        public static final String TRANSACTION_ARCHIVE_INCOME_PRINCIPAL_INDICATOR = "incomePrincipalIndicatorCode";<a name="line.659"></a>
+<FONT color="green">660</FONT>        public static final String TRANSACTION_ARCHIVE_INCOME_CASH_AMOUNT = "incomeCashAmount";<a name="line.660"></a>
+<FONT color="green">661</FONT>        public static final String TRANSACTION_ARCHIVE_PRINCIPAL_CASH_AMOUNT = "principalCashAmount";<a name="line.661"></a>
+<FONT color="green">662</FONT>    <a name="line.662"></a>
+<FONT color="green">663</FONT>        // Endowment Accounting Line<a name="line.663"></a>
+<FONT color="green">664</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_OBJECT_CD = "financialObjectCode";<a name="line.664"></a>
+<FONT color="green">665</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_CHART_CD = "chartOfAccountsCode";<a name="line.665"></a>
+<FONT color="green">666</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_ACCT_NBR = "accountNumber";<a name="line.666"></a>
+<FONT color="green">667</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_SUBACCT_NBR = "subAccountNumber";<a name="line.667"></a>
+<FONT color="green">668</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_SUBOBJ_CD = "financialSubObjectCode";<a name="line.668"></a>
+<FONT color="green">669</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_PROJECT_CD = "projectCode";<a name="line.669"></a>
+<FONT color="green">670</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_NBR = "accountingLineNumber";<a name="line.670"></a>
+<FONT color="green">671</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_ORG_REF_ID = "organizationReferenceId";<a name="line.671"></a>
+<FONT color="green">672</FONT>        public static final String ENDOWMENT_ACCOUNTING_LINE_AMOUNT = "amount";<a name="line.672"></a>
+<FONT color="green">673</FONT>    <a name="line.673"></a>
+<FONT color="green">674</FONT>        public static final String DOCUMENT_NUMBER = "documentNumber";<a name="line.674"></a>
+<FONT color="green">675</FONT>    <a name="line.675"></a>
+<FONT color="green">676</FONT>        // Endowment Recurring Cash Transfer<a name="line.676"></a>
+<FONT color="green">677</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_SOURCE_KEMID = "sourceKemid";<a name="line.677"></a>
+<FONT color="green">678</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_SOURCE_ETRAN_CODE = "sourceEtranCode";<a name="line.678"></a>
+<FONT color="green">679</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_ETRAN_CODE_OBJ = "etranCodeObj";<a name="line.679"></a>
+<FONT color="green">680</FONT>    <a name="line.680"></a>
+<FONT color="green">681</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_NEXT_PROC_DATE = "nextProcessDate";<a name="line.681"></a>
+<FONT color="green">682</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_FREQUENCY_CODE = "frequencyCode";<a name="line.682"></a>
+<FONT color="green">683</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TRANSACTION_TYPE = "transactionType";<a name="line.683"></a>
+<FONT color="green">684</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_KEMID = "targetKemid";<a name="line.684"></a>
+<FONT color="green">685</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_ETRAN_CODE = "targetEtranCode";<a name="line.685"></a>
+<FONT color="green">686</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_AMOUNT = "targetAmount";<a name="line.686"></a>
+<FONT color="green">687</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_PERCENT = "targetPercent";<a name="line.687"></a>
+<FONT color="green">688</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_USE_ETRAN_CODE = "targetUseEtranCode";<a name="line.688"></a>
+<FONT color="green">689</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_INCOME_OR_PRINCIPAL_CODE = "targetIncomeOrPrincipal";<a name="line.689"></a>
+<FONT color="green">690</FONT>    <a name="line.690"></a>
+<FONT color="green">691</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_COA_CODE = "targetChartOfAccountsCode";<a name="line.691"></a>
+<FONT color="green">692</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_ACCOUNT_NUMBER = "targetAccountsNumber";<a name="line.692"></a>
+<FONT color="green">693</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_OBJECT_CODE = "targetFinancialObjectCode";<a name="line.693"></a>
+<FONT color="green">694</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_FDOC_LINE_AMOUNT = "targetFdocLineAmount";<a name="line.694"></a>
+<FONT color="green">695</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_SUB_ACCOUNT_NUMBER = "targetSubAccountNumber";<a name="line.695"></a>
+<FONT color="green">696</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_SUB_OBJECT_CODE = "targetFinancialSubObjectCode";<a name="line.696"></a>
+<FONT color="green">697</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_PROJECT_CODE = "targetProjectCode";<a name="line.697"></a>
+<FONT color="green">698</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_ORG_REF_ID = "targetOrgReferenceId";<a name="line.698"></a>
+<FONT color="green">699</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_TARGET_ETRAN_CODE_OBJ = "targetEtranCodeObj";<a name="line.699"></a>
+<FONT color="green">700</FONT>    <a name="line.700"></a>
+<FONT color="green">701</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_KEMID_TARGET = "kemidTarget";<a name="line.701"></a>
+<FONT color="green">702</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_GL_TARGET = "glTarget";<a name="line.702"></a>
+<FONT color="green">703</FONT>        public static final String ENDOWMENT_RECURRING_CASH_TRANSF_ACTIVE_INDICATOR = "active";<a name="line.703"></a>
+<FONT color="green">704</FONT>    <a name="line.704"></a>
+<FONT color="green">705</FONT>        public static class ColumnNames {<a name="line.705"></a>
+<FONT color="green">706</FONT>    <a name="line.706"></a>
+<FONT color="green">707</FONT>            public static class UpdateCorpus {<a name="line.707"></a>
+<FONT color="green">708</FONT>                public static final String TRANSACTION_ARCHIVE_KEMID = "TRAN_KEMID";<a name="line.708"></a>
+<FONT color="green">709</FONT>                public static final String TRANSACTION_CORPUS_AMT = "TRAN_CORPUS_AMT";<a name="line.709"></a>
+<FONT color="green">710</FONT>                public static final String CRNT_ENDOW_CORPUS_VAL = "CRNT_CORPUS_VAL";<a name="line.710"></a>
+<FONT color="green">711</FONT>                public static final String CRNT_BALANCE_KEMID = "KEMID";<a name="line.711"></a>
+<FONT color="green">712</FONT>                public static final String CRNT_BALANCE_PRINCIPAL_AT_MARKET = "PRIN_AT_MARKET";<a name="line.712"></a>
+<FONT color="green">713</FONT>            }<a name="line.713"></a>
+<FONT color="green">714</FONT>            <a name="line.714"></a>
+<FONT color="green">715</FONT>            public static class GlInterfaceBatchProcessLine {<a name="line.715"></a>
+<FONT color="green">716</FONT>                public static final String TRANSACTION_ARCHIVE_FDOC_NBR = "FDOC_NBR";<a name="line.716"></a>
+<FONT color="green">717</FONT>                public static final String TRANSACTION_ARCHIVE_FDOC_LN_NBR = "FDOC_LN_NBR";<a name="line.717"></a>
+<FONT color="green">718</FONT>                public static final String TRANSACTION_ARCHIVE_FDOC_LN_TYP_CD = "FDOC_LN_TYP_CD";<a name="line.718"></a>
+<FONT color="green">719</FONT>                public static final String TRANSACTION_ARCHIVE_DOC_TYP_NM = "DOC_TYP_NM";<a name="line.719"></a>
+<FONT color="green">720</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_SUB_TYP_CD = "TRAN_SUB_TYP_CD";<a name="line.720"></a>
+<FONT color="green">721</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_ETRAN_CD = "TRAN_ETRAN_CD";<a name="line.721"></a>
+<FONT color="green">722</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_IP_IND_CD = "TRAN_IP_IND_CD";<a name="line.722"></a>
+<FONT color="green">723</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_PRIN_CSH_AMT = "TRAN_PRIN_CSH_AMT";<a name="line.723"></a>
+<FONT color="green">724</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_INC_CSH_AMT = "TRAN_INC_CSH_AMT";<a name="line.724"></a>
+<FONT color="green">725</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_SEC_ID = "TRAN_SEC_ID";<a name="line.725"></a>
+<FONT color="green">726</FONT>                public static final String TRANSACTION_ARCHIVE_KEM_ID = "TRAN_KEMID";<a name="line.726"></a>
+<FONT color="green">727</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_SEC_ETRAN_CD = "TRAN_SEC_ETRAN_CD";<a name="line.727"></a>
+<FONT color="green">728</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_SEC_COST = "TRAN_SEC_COST";<a name="line.728"></a>
+<FONT color="green">729</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_SEC_ST_GAIN_LOSS = "TRAN_SEC_ST_GAIN_LOSS";<a name="line.729"></a>
+<FONT color="green">730</FONT>                public static final String TRANSACTION_ARCHIVE_TRAN_SEC_LT_GAIN_LOSS = "TRAN_SEC_LT_GAIN_LOSS";<a name="line.730"></a>
+<FONT color="green">731</FONT>                public static final String TRANSACTION_ARCHIVE_CHRT_CD = "CHRT_CD";<a name="line.731"></a>
+<FONT color="green">732</FONT>                public static final String TRANSACTION_ARCHIVE_ACCT_NBR = "ACCT_NBR";<a name="line.732"></a>
+<FONT color="green">733</FONT>                public static final String TRANSACTION_ARCHIVE_OBJECT = "OBJECT";<a name="line.733"></a>
+<FONT color="green">734</FONT>            }<a name="line.734"></a>
+<FONT color="green">735</FONT>        }<a name="line.735"></a>
+<FONT color="green">736</FONT>        <a name="line.736"></a>
+<FONT color="green">737</FONT>        public static final String ENDOWMENT_HIST_CASH_KEMID = "kemid";<a name="line.737"></a>
+<FONT color="green">738</FONT>        public static final String ENDOWMENT_HIST_CASH_MED_ID = "monthEndDateId";<a name="line.738"></a>
+<FONT color="green">739</FONT>        <a name="line.739"></a>
+<FONT color="green">740</FONT>        public static final String CAMPUS_CODE = "campusCode";<a name="line.740"></a>
+<FONT color="green">741</FONT>    }<a name="line.741"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

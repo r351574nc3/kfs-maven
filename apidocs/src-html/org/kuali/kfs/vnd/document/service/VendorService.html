@@ -1,0 +1,256 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.vnd.document.service;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.List;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.kuali.kfs.vnd.businessobject.VendorAddress;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.kuali.kfs.vnd.businessobject.VendorContract;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.vnd.businessobject.VendorDetail;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.vnd.businessobject.VendorHeader;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>    public interface VendorService {<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>        public void saveVendorHeader(VendorDetail vendorDetail);<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>        /**<a name="line.31"></a>
+<FONT color="green">032</FONT>         * get the vendor detail with the given vendor number<a name="line.32"></a>
+<FONT color="green">033</FONT>         * @param vendorNumber the given vendor number<a name="line.33"></a>
+<FONT color="green">034</FONT>         * @return the vendor detail with the given vendor number if the vendor exists, otherwise, return null<a name="line.34"></a>
+<FONT color="green">035</FONT>         */<a name="line.35"></a>
+<FONT color="green">036</FONT>        public VendorDetail getByVendorNumber(String vendorNumber);<a name="line.36"></a>
+<FONT color="green">037</FONT>        <a name="line.37"></a>
+<FONT color="green">038</FONT>        public VendorDetail getVendorDetail(String vendorNumber); <a name="line.38"></a>
+<FONT color="green">039</FONT>        <a name="line.39"></a>
+<FONT color="green">040</FONT>        public VendorDetail getVendorDetail(Integer headerId, Integer detailId);<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        /**<a name="line.42"></a>
+<FONT color="green">043</FONT>         * Retrieves the VendorDetail which is the parent vendor with the given headerId. This is the method to use when working<a name="line.43"></a>
+<FONT color="green">044</FONT>         * backward from a division vendor to its parent vendor. This method throws RuntimeExceptions if there are found to be no parent<a name="line.44"></a>
+<FONT color="green">045</FONT>         * vendor or more than one parent vendor for the associated corporate structure.<a name="line.45"></a>
+<FONT color="green">046</FONT>         * <a name="line.46"></a>
+<FONT color="green">047</FONT>         * @param vendorHeaderGeneratedIdentifier The Header Id in Integer form<a name="line.47"></a>
+<FONT color="green">048</FONT>         * @return The VendorDetail of the parent vendor associated with the corporate structure indicated by the given Header Id, or<a name="line.48"></a>
+<FONT color="green">049</FONT>         *         null if there are no vendors associated with it.<a name="line.49"></a>
+<FONT color="green">050</FONT>         */<a name="line.50"></a>
+<FONT color="green">051</FONT>        public VendorDetail getParentVendor(Integer vendorHeaderGeneratedIdentifier);<a name="line.51"></a>
+<FONT color="green">052</FONT>    <a name="line.52"></a>
+<FONT color="green">053</FONT>        /**<a name="line.53"></a>
+<FONT color="green">054</FONT>         * Retrieves the VendorDetail using its vendorDunsNumber.<a name="line.54"></a>
+<FONT color="green">055</FONT>         * @param vendorDunsNumber the vendor's DUN number.<a name="line.55"></a>
+<FONT color="green">056</FONT>         * @return<a name="line.56"></a>
+<FONT color="green">057</FONT>         */<a name="line.57"></a>
+<FONT color="green">058</FONT>        public VendorDetail getVendorByDunsNumber(String vendorDunsNumber);<a name="line.58"></a>
+<FONT color="green">059</FONT>        <a name="line.59"></a>
+<FONT color="green">060</FONT>        /**<a name="line.60"></a>
+<FONT color="green">061</FONT>         * Gets the apo limit for the given parameters using the following logic:&lt;br&gt;<a name="line.61"></a>
+<FONT color="green">062</FONT>         * &lt;br&gt;<a name="line.62"></a>
+<FONT color="green">063</FONT>         * First it checks to see if an existing {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization} object exists for the<a name="line.63"></a>
+<FONT color="green">064</FONT>         * associated parameters. If one exists and it is not excluded (see<a name="line.64"></a>
+<FONT color="green">065</FONT>         * {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization#isVendorContractExcludeIndicator()}) this will return the value<a name="line.65"></a>
+<FONT color="green">066</FONT>         * of {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization#getVendorContractPurchaseOrderLimitAmount()}.&lt;br&gt;<a name="line.66"></a>
+<FONT color="green">067</FONT>         * &lt;br&gt;<a name="line.67"></a>
+<FONT color="green">068</FONT>         * If an associated {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization} object cannot be found then a valid<a name="line.68"></a>
+<FONT color="green">069</FONT>         * {@link org.kuali.kfs.vnd.businessobject.VendorContract} object will be sought. If one is found this method will return the value of<a name="line.69"></a>
+<FONT color="green">070</FONT>         * {@link org.kuali.kfs.vnd.businessobject.VendorContract#getOrganizationAutomaticPurchaseOrderLimit()}.&lt;br&gt;<a name="line.70"></a>
+<FONT color="green">071</FONT>         * &lt;br&gt;<a name="line.71"></a>
+<FONT color="green">072</FONT>         * If no valid {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization} or<a name="line.72"></a>
+<FONT color="green">073</FONT>         * {@link org.kuali.kfs.vnd.businessobject.VendorContract} objects can be found for the given parameters this method will return null.<a name="line.73"></a>
+<FONT color="green">074</FONT>         * <a name="line.74"></a>
+<FONT color="green">075</FONT>         * @param contractId id used to find {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization} object and<a name="line.75"></a>
+<FONT color="green">076</FONT>         *        {@link org.kuali.kfs.vnd.businessobject.VendorContract} object<a name="line.76"></a>
+<FONT color="green">077</FONT>         * @param chart chart code for use in finding {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization} object<a name="line.77"></a>
+<FONT color="green">078</FONT>         * @param org org code for use in finding {@link org.kuali.kfs.vnd.businessobject.VendorContractOrganization} object<a name="line.78"></a>
+<FONT color="green">079</FONT>         * @return the automatic purchase order limit amount from the contract found using the parameters. If parameters do not find<a name="line.79"></a>
+<FONT color="green">080</FONT>         *         valid vendor contract objects then null is returned.<a name="line.80"></a>
+<FONT color="green">081</FONT>         */<a name="line.81"></a>
+<FONT color="green">082</FONT>        public KualiDecimal getApoLimitFromContract(Integer contractId, String chart, String org);<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>        /**<a name="line.84"></a>
+<FONT color="green">085</FONT>         * Finds the addresses for the given vendor and then calls the method to determine the default address from this list.<a name="line.85"></a>
+<FONT color="green">086</FONT>         * <a name="line.86"></a>
+<FONT color="green">087</FONT>         * @param vendorHeaderId Integer - Header ID of vendor.<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @param vendorDetailId Integer - Detail ID of vendor.<a name="line.88"></a>
+<FONT color="green">089</FONT>         * @param addressType String - Address type of desired default.<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @param campus String - Campus of desired default.<a name="line.90"></a>
+<FONT color="green">091</FONT>         * @return VendorAddress Desired default address; return null is possible if no defaults set.<a name="line.91"></a>
+<FONT color="green">092</FONT>         */<a name="line.92"></a>
+<FONT color="green">093</FONT>        public VendorAddress getVendorDefaultAddress(Integer vendorHeaderId, Integer vendorDetailId, String addressType, String campus);<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * Finds the default address for the given addressType and campus from the address list passed in based on the following logic:<a name="line.96"></a>
+<FONT color="green">097</FONT>         * 1) The allDefaultAddress is defined by defaultAddressIndicator on VendorAddress. 2) If campus passed in is null, return<a name="line.97"></a>
+<FONT color="green">098</FONT>         * allDefaultAddress if found. 3) If campus passed in is not null, look in campus lists of addresses to see if given campus is<a name="line.98"></a>
+<FONT color="green">099</FONT>         * found for the given address type. If match found, return address. If no match found, return allDefaultAddress.<a name="line.99"></a>
+<FONT color="green">100</FONT>         * <a name="line.100"></a>
+<FONT color="green">101</FONT>         * @param addresses List of addresses for a vendor.<a name="line.101"></a>
+<FONT color="green">102</FONT>         * @param addressType String - Address type of the desired default sought.<a name="line.102"></a>
+<FONT color="green">103</FONT>         * @param campus String - Campus of the desired default sought.<a name="line.103"></a>
+<FONT color="green">104</FONT>         * @return VendorAddress Desired default address; return null is possible if no defaults set.<a name="line.104"></a>
+<FONT color="green">105</FONT>         */<a name="line.105"></a>
+<FONT color="green">106</FONT>        public VendorAddress getVendorDefaultAddress(List&lt;VendorAddress&gt; addresses, String addressType, String campus);<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>        /**<a name="line.108"></a>
+<FONT color="green">109</FONT>         * Checks to see if a the Vendor Document associated with the given document ID should route to the route path branch in<a name="line.109"></a>
+<FONT color="green">110</FONT>         * workflow where the document will stop for approvals.<a name="line.110"></a>
+<FONT color="green">111</FONT>         * <a name="line.111"></a>
+<FONT color="green">112</FONT>         * @param documentId<a name="line.112"></a>
+<FONT color="green">113</FONT>         * @return true if the vendor should be take the approval patch... false if the vendor can be 'auto approved'<a name="line.113"></a>
+<FONT color="green">114</FONT>         */<a name="line.114"></a>
+<FONT color="green">115</FONT>        public boolean shouldVendorRouteForApproval(String documentId);<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>        /**<a name="line.117"></a>
+<FONT color="green">118</FONT>         * Compares lists which have an isEqualForRouting method by using that method. An Equals() method would be wrong for the purpose<a name="line.118"></a>
+<FONT color="green">119</FONT>         * of comparing these because we want to compare only using certain specified attributes, which is what our isEqualForRouting<a name="line.119"></a>
+<FONT color="green">120</FONT>         * methods will do.<a name="line.120"></a>
+<FONT color="green">121</FONT>         * <a name="line.121"></a>
+<FONT color="green">122</FONT>         * @param list_a A List which implements VendorRoutingComparable (specifies isEqualForRouting)<a name="line.122"></a>
+<FONT color="green">123</FONT>         * @param list_b Another such list<a name="line.123"></a>
+<FONT color="green">124</FONT>         * @return True if all the member objects in the given lists are equal (as far as routing is concerned) at the same locations in<a name="line.124"></a>
+<FONT color="green">125</FONT>         *         the lists.<a name="line.125"></a>
+<FONT color="green">126</FONT>         */<a name="line.126"></a>
+<FONT color="green">127</FONT>        public boolean equalMemberLists(List&lt;? extends VendorRoutingComparable&gt; list_a, List&lt;? extends VendorRoutingComparable&gt; list_b);<a name="line.127"></a>
+<FONT color="green">128</FONT>    <a name="line.128"></a>
+<FONT color="green">129</FONT>        /**<a name="line.129"></a>
+<FONT color="green">130</FONT>         * This method is the place to put the calls to equality checks that are needed when deciding whether to route a vendor for<a name="line.130"></a>
+<FONT color="green">131</FONT>         * approval or directly to final status on the basis of what has changed. This method has been split out from<a name="line.131"></a>
+<FONT color="green">132</FONT>         * shouldVendorRouteForApproval for the convenience of unit testing, but might be useful for other purposes.<a name="line.132"></a>
+<FONT color="green">133</FONT>         * <a name="line.133"></a>
+<FONT color="green">134</FONT>         * @param newVDtl A VendorDetail object representing the state of the proposed change<a name="line.134"></a>
+<FONT color="green">135</FONT>         * @param newVHdr A VendorHeader object representing the state of the proposed change<a name="line.135"></a>
+<FONT color="green">136</FONT>         * @param oldVDtl A VendorDetail object from before the change<a name="line.136"></a>
+<FONT color="green">137</FONT>         * @param oldVHdr A VendorHeader object from before the change<a name="line.137"></a>
+<FONT color="green">138</FONT>         * @return True if no route-significant change occurred<a name="line.138"></a>
+<FONT color="green">139</FONT>         */<a name="line.139"></a>
+<FONT color="green">140</FONT>        public boolean noRouteSignificantChangeOccurred(VendorDetail newVDtl, VendorHeader newVHdr, VendorDetail oldVDtl, VendorHeader oldVHdr);<a name="line.140"></a>
+<FONT color="green">141</FONT>    <a name="line.141"></a>
+<FONT color="green">142</FONT>        /**<a name="line.142"></a>
+<FONT color="green">143</FONT>         * Indicates whether the vendor identified by the given &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; is an employee of the<a name="line.143"></a>
+<FONT color="green">144</FONT>         * institution. The vendor must have a valid tax id and it must be of type SSN (see<a name="line.144"></a>
+<FONT color="green">145</FONT>         * {@link org.kuali.kfs.vnd.VendorConstants#TAX_TYPE_SSN}).<a name="line.145"></a>
+<FONT color="green">146</FONT>         * <a name="line.146"></a>
+<FONT color="green">147</FONT>         * @param vendorHeaderGeneratedIdentifier The Header Id in Integer form<a name="line.147"></a>
+<FONT color="green">148</FONT>         * @return true if the vendor identified by the &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; given is an employee of the<a name="line.148"></a>
+<FONT color="green">149</FONT>         *         institution<a name="line.149"></a>
+<FONT color="green">150</FONT>         */<a name="line.150"></a>
+<FONT color="green">151</FONT>        public boolean isVendorInstitutionEmployee(Integer vendorHeaderGeneratedIdentifier);<a name="line.151"></a>
+<FONT color="green">152</FONT>    <a name="line.152"></a>
+<FONT color="green">153</FONT>        /**<a name="line.153"></a>
+<FONT color="green">154</FONT>         * Indicates whether the vendor identified by the given &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; is a non-resident alien<a name="line.154"></a>
+<FONT color="green">155</FONT>         * by checking the value of {@link org.kuali.kfs.vnd.businessobject.VendorHeader#getVendorForeignIndicator()}.<a name="line.155"></a>
+<FONT color="green">156</FONT>         * <a name="line.156"></a>
+<FONT color="green">157</FONT>         * @param vendorHeaderGeneratedIdentifier The Header Id in Integer form<a name="line.157"></a>
+<FONT color="green">158</FONT>         * @return true if the vendor identified by the &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; given is valid and is marked as a<a name="line.158"></a>
+<FONT color="green">159</FONT>         *         foreign vendor<a name="line.159"></a>
+<FONT color="green">160</FONT>         */<a name="line.160"></a>
+<FONT color="green">161</FONT>        public boolean isVendorForeign(Integer vendorHeaderGeneratedIdentifier);<a name="line.161"></a>
+<FONT color="green">162</FONT>    <a name="line.162"></a>
+<FONT color="green">163</FONT>        /**<a name="line.163"></a>
+<FONT color="green">164</FONT>         * Indicates whether the vendor identified by the given &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; is a subject payment vendor<a name="line.164"></a>
+<FONT color="green">165</FONT>         * by checking the value of {@link org.kuali.kfs.vnd.businessobject.VendorHeader#getVendorTypeCode()} to see if it equals "SP".<a name="line.165"></a>
+<FONT color="green">166</FONT>         * <a name="line.166"></a>
+<FONT color="green">167</FONT>         * @param vendorHeaderGeneratedIdentifier The Header Id in Integer form<a name="line.167"></a>
+<FONT color="green">168</FONT>         * @return true if the vendor identified by the &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; given is valid and has a vendor type code of "SP"<a name="line.168"></a>
+<FONT color="green">169</FONT>         */<a name="line.169"></a>
+<FONT color="green">170</FONT>        public boolean isSubjectPaymentVendor(Integer vendorHeaderGeneratedIdentifier);<a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>        /**<a name="line.172"></a>
+<FONT color="green">173</FONT>         * Indicates whether the vendor identified by the given &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; is a revolving fund code vendor<a name="line.173"></a>
+<FONT color="green">174</FONT>         * by checking the value of {@link org.kuali.kfs.vnd.businessobject.VendorHeader#getVendorTypeCode()} to see if it equals "RF".<a name="line.174"></a>
+<FONT color="green">175</FONT>         * <a name="line.175"></a>
+<FONT color="green">176</FONT>         * @param vendorHeaderGeneratedIdentifier The Header Id in Integer form<a name="line.176"></a>
+<FONT color="green">177</FONT>         * @return true if the vendor identified by the &lt;code&gt;vendorHeaderGeneratedIdentifier&lt;/code&gt; given is valid and has a vendor type code of "RF"<a name="line.177"></a>
+<FONT color="green">178</FONT>         */<a name="line.178"></a>
+<FONT color="green">179</FONT>        public boolean isRevolvingFundCodeVendor(Integer vendorHeaderGeneratedIdentifier);<a name="line.179"></a>
+<FONT color="green">180</FONT>            <a name="line.180"></a>
+<FONT color="green">181</FONT>        /**<a name="line.181"></a>
+<FONT color="green">182</FONT>         * This method retrieves the B2B Contract for the given Vendor (see method in VendorDao for criteria).<a name="line.182"></a>
+<FONT color="green">183</FONT>         *<a name="line.183"></a>
+<FONT color="green">184</FONT>         * @param vendorDetail Vendor info<a name="line.184"></a>
+<FONT color="green">185</FONT>         * @param campus Campus<a name="line.185"></a>
+<FONT color="green">186</FONT>         * @return VendorContract B2B Contract for given vendor<a name="line.186"></a>
+<FONT color="green">187</FONT>         */<a name="line.187"></a>
+<FONT color="green">188</FONT>        public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus);<a name="line.188"></a>
+<FONT color="green">189</FONT>    <a name="line.189"></a>
+<FONT color="green">190</FONT>    }<a name="line.190"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,422 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.fp.document.validation.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.kuali.kfs.fp.document.DisbursementVoucherConstants;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.kuali.kfs.fp.document.DisbursementVoucherDocument;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.sys.KFSKeyConstants;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.sys.document.AccountingDocument;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.sys.document.validation.GenericValidation;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.service.DictionaryValidationService;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kns.service.ParameterEvaluator;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.rice.kns.service.ParameterService;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.rice.kns.util.GlobalVariables;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.rice.kns.util.MessageMap;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>    public class DisbursementVoucherNonEmployeeTravelValidation extends GenericValidation {<a name="line.38"></a>
+<FONT color="green">039</FONT>        private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherNonEmployeeTravelValidation.class);<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>        private ParameterService parameterService;<a name="line.41"></a>
+<FONT color="green">042</FONT>        private DisbursementVoucherTaxService disbursementVoucherTaxService;<a name="line.42"></a>
+<FONT color="green">043</FONT>        private DisbursementVoucherTravelService disbursementVoucherTravelService;<a name="line.43"></a>
+<FONT color="green">044</FONT>        private DictionaryValidationService dictionaryValidationService;<a name="line.44"></a>
+<FONT color="green">045</FONT>        private AccountingDocument accountingDocumentForValidation;<a name="line.45"></a>
+<FONT color="green">046</FONT>        <a name="line.46"></a>
+<FONT color="green">047</FONT>        /**<a name="line.47"></a>
+<FONT color="green">048</FONT>         * @see org.kuali.kfs.sys.document.validation.Validation#validate(org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent)<a name="line.48"></a>
+<FONT color="green">049</FONT>         */<a name="line.49"></a>
+<FONT color="green">050</FONT>        public boolean validate(AttributedDocumentEvent event) {  <a name="line.50"></a>
+<FONT color="green">051</FONT>            LOG.debug("validate start");<a name="line.51"></a>
+<FONT color="green">052</FONT>            boolean isValid = true;<a name="line.52"></a>
+<FONT color="green">053</FONT>            <a name="line.53"></a>
+<FONT color="green">054</FONT>            DisbursementVoucherDocument document = (DisbursementVoucherDocument) accountingDocumentForValidation;<a name="line.54"></a>
+<FONT color="green">055</FONT>            DisbursementVoucherNonEmployeeTravel nonEmployeeTravel = document.getDvNonEmployeeTravel();<a name="line.55"></a>
+<FONT color="green">056</FONT>            <a name="line.56"></a>
+<FONT color="green">057</FONT>            // skip the validation if the payment reason is not noneployee travel or the payee is an employee<a name="line.57"></a>
+<FONT color="green">058</FONT>            if (!isTravelNonEmplPaymentReason(document) || document.getDvPayeeDetail().isEmployee()) {<a name="line.58"></a>
+<FONT color="green">059</FONT>                return true;<a name="line.59"></a>
+<FONT color="green">060</FONT>            }<a name="line.60"></a>
+<FONT color="green">061</FONT>            <a name="line.61"></a>
+<FONT color="green">062</FONT>            MessageMap errors = GlobalVariables.getMessageMap();<a name="line.62"></a>
+<FONT color="green">063</FONT>            errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);<a name="line.63"></a>
+<FONT color="green">064</FONT>            errors.addToErrorPath(KFSPropertyConstants.DV_NON_EMPLOYEE_TRAVEL);<a name="line.64"></a>
+<FONT color="green">065</FONT>            <a name="line.65"></a>
+<FONT color="green">066</FONT>            getDictionaryValidationService().validateBusinessObjectsRecursively(document.getDvNonEmployeeTravel(), 1);<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>            /* travel from and to state required if country is us */<a name="line.68"></a>
+<FONT color="green">069</FONT>            if (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(nonEmployeeTravel.getDvTravelFromCountryCode()) &amp;&amp; StringUtils.isBlank(nonEmployeeTravel.getDisbVchrTravelFromStateCode())) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                errors.putError(KFSPropertyConstants.DISB_VCHR_TRAVEL_FROM_STATE_CODE, KFSKeyConstants.ERROR_DV_TRAVEL_FROM_STATE);<a name="line.70"></a>
+<FONT color="green">071</FONT>                isValid = false;<a name="line.71"></a>
+<FONT color="green">072</FONT>            }<a name="line.72"></a>
+<FONT color="green">073</FONT>            <a name="line.73"></a>
+<FONT color="green">074</FONT>            if (KFSConstants.COUNTRY_CODE_UNITED_STATES.equals(nonEmployeeTravel.getDisbVchrTravelToCountryCode()) &amp;&amp; StringUtils.isBlank(nonEmployeeTravel.getDisbVchrTravelToStateCode())) {<a name="line.74"></a>
+<FONT color="green">075</FONT>                errors.putError(KFSPropertyConstants.DISB_VCHR_TRAVEL_TO_STATE_CODE, KFSKeyConstants.ERROR_DV_TRAVEL_TO_STATE);<a name="line.75"></a>
+<FONT color="green">076</FONT>                isValid = false;<a name="line.76"></a>
+<FONT color="green">077</FONT>            }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>            if (!isValid) {<a name="line.79"></a>
+<FONT color="green">080</FONT>                errors.removeFromErrorPath(KFSPropertyConstants.DV_NON_EMPLOYEE_TRAVEL);<a name="line.80"></a>
+<FONT color="green">081</FONT>                errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT);<a name="line.81"></a>
+<FONT color="green">082</FONT>                return false;<a name="line.82"></a>
+<FONT color="green">083</FONT>            }<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>            /* must fill in all required per diem fields if any field is filled in */<a name="line.85"></a>
+<FONT color="green">086</FONT>            boolean perDiemSectionComplete = validatePerDiemSection(document, errors);<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>            /* must fill in all required personal vehicle fields if any field is filled in */<a name="line.88"></a>
+<FONT color="green">089</FONT>            boolean personalVehicleSectionComplete = validatePersonalVehicleSection(document, errors);<a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>            /* must have per diem change message if actual amount is different from calculated amount */<a name="line.91"></a>
+<FONT color="green">092</FONT>            if (perDiemSectionComplete) { // Only validate if per diem section is filled in<a name="line.92"></a>
+<FONT color="green">093</FONT>                if (nonEmployeeTravel.getDisbVchrPerdiemCalculatedAmt().compareTo(nonEmployeeTravel.getDisbVchrPerdiemActualAmount()) != 0 &amp;&amp; StringUtils.isBlank(nonEmployeeTravel.getDvPerdiemChangeReasonText())) {<a name="line.93"></a>
+<FONT color="green">094</FONT>                    errors.putError(KFSPropertyConstants.DV_PERDIEM_CHANGE_REASON_TEXT, KFSKeyConstants.ERROR_DV_PERDIEM_CHANGE_REQUIRED);<a name="line.94"></a>
+<FONT color="green">095</FONT>                    isValid = false;<a name="line.95"></a>
+<FONT color="green">096</FONT>                }<a name="line.96"></a>
+<FONT color="green">097</FONT>            }<a name="line.97"></a>
+<FONT color="green">098</FONT>    <a name="line.98"></a>
+<FONT color="green">099</FONT>            /* make sure per diem fields have not changed since the per diem amount calculation */<a name="line.99"></a>
+<FONT color="green">100</FONT>            if (perDiemSectionComplete) { // Only validate if per diem section is filled in<a name="line.100"></a>
+<FONT color="green">101</FONT>                KualiDecimal calculatedPerDiem = getDisbursementVoucherTravelService().calculatePerDiemAmount(nonEmployeeTravel.getDvPerdiemStartDttmStamp(), nonEmployeeTravel.getDvPerdiemEndDttmStamp(), nonEmployeeTravel.getDisbVchrPerdiemRate());<a name="line.101"></a>
+<FONT color="green">102</FONT>                if (calculatedPerDiem.compareTo(nonEmployeeTravel.getDisbVchrPerdiemCalculatedAmt()) != 0) {<a name="line.102"></a>
+<FONT color="green">103</FONT>                    errors.putErrorWithoutFullErrorPath(KFSConstants.GENERAL_NONEMPLOYEE_TAB_ERRORS, KFSKeyConstants.ERROR_DV_PER_DIEM_CALC_CHANGE);<a name="line.103"></a>
+<FONT color="green">104</FONT>                    isValid = false;<a name="line.104"></a>
+<FONT color="green">105</FONT>                }<a name="line.105"></a>
+<FONT color="green">106</FONT>            }<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>            // validate the tax amount<a name="line.108"></a>
+<FONT color="green">109</FONT>            isValid &amp;= validateTravelAmount(document);<a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>            /* make sure mileage fields have not changed since the mileage amount calculation */<a name="line.111"></a>
+<FONT color="green">112</FONT>            if (personalVehicleSectionComplete) {<a name="line.112"></a>
+<FONT color="green">113</FONT>                KualiDecimal currentCalcAmt = document.getDvNonEmployeeTravel().getDisbVchrMileageCalculatedAmt();<a name="line.113"></a>
+<FONT color="green">114</FONT>                KualiDecimal currentActualAmt = document.getDvNonEmployeeTravel().getDisbVchrPersonalCarAmount();<a name="line.114"></a>
+<FONT color="green">115</FONT>                if (ObjectUtils.isNotNull(currentCalcAmt) &amp;&amp; ObjectUtils.isNotNull(currentActualAmt)) {<a name="line.115"></a>
+<FONT color="green">116</FONT>                    KualiDecimal calculatedMileageAmount = getDisbursementVoucherTravelService().calculateMileageAmount(document.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), document.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp());<a name="line.116"></a>
+<FONT color="green">117</FONT>                    if (calculatedMileageAmount.compareTo(document.getDvNonEmployeeTravel().getDisbVchrMileageCalculatedAmt()) != 0) {<a name="line.117"></a>
+<FONT color="green">118</FONT>                        errors.putErrorWithoutFullErrorPath(KFSConstants.GENERAL_NONEMPLOYEE_TAB_ERRORS, KFSKeyConstants.ERROR_DV_MILEAGE_CALC_CHANGE);<a name="line.118"></a>
+<FONT color="green">119</FONT>                        isValid = false;<a name="line.119"></a>
+<FONT color="green">120</FONT>                    }<a name="line.120"></a>
+<FONT color="green">121</FONT>    <a name="line.121"></a>
+<FONT color="green">122</FONT>                    // determine if the rule is flagged off in the parm setting<a name="line.122"></a>
+<FONT color="green">123</FONT>                    boolean performTravelMileageLimitInd = parameterService.getIndicatorParameter(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_ACTUAL_MILEAGE_LIMIT_PARM_NM);<a name="line.123"></a>
+<FONT color="green">124</FONT>                    if (performTravelMileageLimitInd) {<a name="line.124"></a>
+<FONT color="green">125</FONT>                        // if actual amount is greater than calculated amount<a name="line.125"></a>
+<FONT color="green">126</FONT>                        if (currentCalcAmt.subtract(currentActualAmt).isNegative()) {<a name="line.126"></a>
+<FONT color="green">127</FONT>                            errors.putError(KFSPropertyConstants.DV_PERSONAL_CAR_AMOUNT, KFSKeyConstants.ERROR_DV_ACTUAL_MILEAGE_TOO_HIGH);<a name="line.127"></a>
+<FONT color="green">128</FONT>                            isValid = false;<a name="line.128"></a>
+<FONT color="green">129</FONT>                        }<a name="line.129"></a>
+<FONT color="green">130</FONT>                    }<a name="line.130"></a>
+<FONT color="green">131</FONT>                }<a name="line.131"></a>
+<FONT color="green">132</FONT>            }<a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>            errors.removeFromErrorPath(KFSPropertyConstants.DV_NON_EMPLOYEE_TRAVEL);<a name="line.134"></a>
+<FONT color="green">135</FONT>            errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT);<a name="line.135"></a>
+<FONT color="green">136</FONT>    <a name="line.136"></a>
+<FONT color="green">137</FONT>            return isValid;<a name="line.137"></a>
+<FONT color="green">138</FONT>        }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>        /**<a name="line.140"></a>
+<FONT color="green">141</FONT>         * Determines if the given document has an income for tax<a name="line.141"></a>
+<FONT color="green">142</FONT>         * @param document document to check<a name="line.142"></a>
+<FONT color="green">143</FONT>         * @return true if it does have non-reportable income, false otherwise<a name="line.143"></a>
+<FONT color="green">144</FONT>         */<a name="line.144"></a>
+<FONT color="green">145</FONT>        protected boolean hasIncomeClassCode(DisbursementVoucherDocument document) {<a name="line.145"></a>
+<FONT color="green">146</FONT>            return StringUtils.isNotBlank(document.getDvNonResidentAlienTax().getIncomeClassCode());<a name="line.146"></a>
+<FONT color="green">147</FONT>        }<a name="line.147"></a>
+<FONT color="green">148</FONT>        <a name="line.148"></a>
+<FONT color="green">149</FONT>        /**<a name="line.149"></a>
+<FONT color="green">150</FONT>         * Determines if the tax on the document was gross up<a name="line.150"></a>
+<FONT color="green">151</FONT>         * @param document the document to check<a name="line.151"></a>
+<FONT color="green">152</FONT>         * @return true if the tax was gross up, false otherwise<a name="line.152"></a>
+<FONT color="green">153</FONT>         */<a name="line.153"></a>
+<FONT color="green">154</FONT>        protected boolean isGrossUp(DisbursementVoucherDocument document) {<a name="line.154"></a>
+<FONT color="green">155</FONT>            return document.getDvNonResidentAlienTax().isIncomeTaxGrossUpCode();<a name="line.155"></a>
+<FONT color="green">156</FONT>        }<a name="line.156"></a>
+<FONT color="green">157</FONT>        <a name="line.157"></a>
+<FONT color="green">158</FONT>        /**<a name="line.158"></a>
+<FONT color="green">159</FONT>         * Determines if tax should be taken into consideration when checking the total travel amount, and validates that it matches the paid amount<a name="line.159"></a>
+<FONT color="green">160</FONT>         * @param document the document to validate the non-employee total travel amount of<a name="line.160"></a>
+<FONT color="green">161</FONT>         * @return true if the document validated perfectly, false otherwise<a name="line.161"></a>
+<FONT color="green">162</FONT>         */<a name="line.162"></a>
+<FONT color="green">163</FONT>        protected boolean validateTravelAmount(DisbursementVoucherDocument document) {<a name="line.163"></a>
+<FONT color="green">164</FONT>            /* total on non-employee travel must equal Check Total */<a name="line.164"></a>
+<FONT color="green">165</FONT>            KualiDecimal paidAmount = document.getDisbVchrCheckTotalAmount();<a name="line.165"></a>
+<FONT color="green">166</FONT>            final boolean incomeClassCoded = hasIncomeClassCode(document);<a name="line.166"></a>
+<FONT color="green">167</FONT>            final boolean grossUp = isGrossUp(document);<a name="line.167"></a>
+<FONT color="green">168</FONT>            final KualiDecimal travelAmount = document.getDvNonEmployeeTravel().getTotalTravelAmount();<a name="line.168"></a>
+<FONT color="green">169</FONT>            if (incomeClassCoded &amp;&amp; !grossUp) {  // we're adding tax and not grossing up; we need to add the tax amount to the paid amount<a name="line.169"></a>
+<FONT color="green">170</FONT>                paidAmount = paidAmount.add(getDisbursementVoucherTaxService().getNonResidentAlienTaxAmount(document));<a name="line.170"></a>
+<FONT color="green">171</FONT>            }<a name="line.171"></a>
+<FONT color="green">172</FONT>            if (paidAmount.compareTo(travelAmount) != 0) {<a name="line.172"></a>
+<FONT color="green">173</FONT>                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(KFSConstants.DV_CHECK_TRAVEL_TOTAL_ERROR, KFSKeyConstants.ERROR_DV_TRAVEL_CHECK_TOTAL);<a name="line.173"></a>
+<FONT color="green">174</FONT>                return false;<a name="line.174"></a>
+<FONT color="green">175</FONT>            }<a name="line.175"></a>
+<FONT color="green">176</FONT>            return true;<a name="line.176"></a>
+<FONT color="green">177</FONT>        }<a name="line.177"></a>
+<FONT color="green">178</FONT>        <a name="line.178"></a>
+<FONT color="green">179</FONT>        /**<a name="line.179"></a>
+<FONT color="green">180</FONT>         * This method checks to see if the per diem section of the non employee travel tab contains any values. If this section<a name="line.180"></a>
+<FONT color="green">181</FONT>         * contains any values, the section is validated to ensure that all the required fields for this section are populated.<a name="line.181"></a>
+<FONT color="green">182</FONT>         * <a name="line.182"></a>
+<FONT color="green">183</FONT>         * @param document submitted disbursement voucher document<a name="line.183"></a>
+<FONT color="green">184</FONT>         * @param errors map containing any generated errors <a name="line.184"></a>
+<FONT color="green">185</FONT>         * @return true if per diem section is used by user and that all fields contain values.<a name="line.185"></a>
+<FONT color="green">186</FONT>         */<a name="line.186"></a>
+<FONT color="green">187</FONT>        private boolean validatePerDiemSection(DisbursementVoucherDocument document, MessageMap errors) {<a name="line.187"></a>
+<FONT color="green">188</FONT>            boolean perDiemSectionComplete = true;<a name="line.188"></a>
+<FONT color="green">189</FONT>    <a name="line.189"></a>
+<FONT color="green">190</FONT>            // Checks to see if any per diem fields are filled in<a name="line.190"></a>
+<FONT color="green">191</FONT>            boolean perDiemUsed = StringUtils.isNotBlank(document.getDvNonEmployeeTravel().getDisbVchrPerdiemCategoryName()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrPerdiemRate()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrPerdiemCalculatedAmt()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrPerdiemActualAmount());<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>            // If any per diem fields contain data, validates that all required per diem fields are filled in<a name="line.193"></a>
+<FONT color="green">194</FONT>            if (perDiemUsed) {<a name="line.194"></a>
+<FONT color="green">195</FONT>                if (StringUtils.isBlank(document.getDvNonEmployeeTravel().getDisbVchrPerdiemCategoryName())) {<a name="line.195"></a>
+<FONT color="green">196</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_PERDIEM_CATEGORY_NAME, KFSKeyConstants.ERROR_DV_PER_DIEM_CATEGORY);<a name="line.196"></a>
+<FONT color="green">197</FONT>                    perDiemSectionComplete = false;<a name="line.197"></a>
+<FONT color="green">198</FONT>                }<a name="line.198"></a>
+<FONT color="green">199</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrPerdiemRate())) {<a name="line.199"></a>
+<FONT color="green">200</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_PERDIEM_RATE, KFSKeyConstants.ERROR_DV_PER_DIEM_RATE);<a name="line.200"></a>
+<FONT color="green">201</FONT>                    perDiemSectionComplete = false;<a name="line.201"></a>
+<FONT color="green">202</FONT>                }<a name="line.202"></a>
+<FONT color="green">203</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrPerdiemCalculatedAmt())) {<a name="line.203"></a>
+<FONT color="green">204</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_PERDIEM_CALCULATED_AMT, KFSKeyConstants.ERROR_DV_PER_DIEM_CALC_AMT);<a name="line.204"></a>
+<FONT color="green">205</FONT>                    perDiemSectionComplete = false;<a name="line.205"></a>
+<FONT color="green">206</FONT>                }<a name="line.206"></a>
+<FONT color="green">207</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrPerdiemActualAmount())) {<a name="line.207"></a>
+<FONT color="green">208</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_PERDIEM_ACTUAL_AMOUNT, KFSKeyConstants.ERROR_DV_PER_DIEM_ACTUAL_AMT);<a name="line.208"></a>
+<FONT color="green">209</FONT>                    perDiemSectionComplete = false;<a name="line.209"></a>
+<FONT color="green">210</FONT>                }<a name="line.210"></a>
+<FONT color="green">211</FONT>            }<a name="line.211"></a>
+<FONT color="green">212</FONT>            perDiemSectionComplete = perDiemSectionComplete &amp;&amp; perDiemUsed;<a name="line.212"></a>
+<FONT color="green">213</FONT>            return perDiemSectionComplete;<a name="line.213"></a>
+<FONT color="green">214</FONT>        }<a name="line.214"></a>
+<FONT color="green">215</FONT>    <a name="line.215"></a>
+<FONT color="green">216</FONT>        /**<a name="line.216"></a>
+<FONT color="green">217</FONT>         * This method checks to see if the per diem section of the non employee travel tab contains any values. If this section<a name="line.217"></a>
+<FONT color="green">218</FONT>         * contains any values, the section is validated to ensure that all the required fields for this section are populated.<a name="line.218"></a>
+<FONT color="green">219</FONT>         * <a name="line.219"></a>
+<FONT color="green">220</FONT>         * @param document submitted disbursement voucher document<a name="line.220"></a>
+<FONT color="green">221</FONT>         * @param errors map containing any generated errors <a name="line.221"></a>
+<FONT color="green">222</FONT>         * @return true if per diem section is used by user and that all fields contain values.<a name="line.222"></a>
+<FONT color="green">223</FONT>         */<a name="line.223"></a>
+<FONT color="green">224</FONT>        private boolean validatePersonalVehicleSection(DisbursementVoucherDocument document, MessageMap errors) {<a name="line.224"></a>
+<FONT color="green">225</FONT>            boolean personalVehicleSectionComplete = true;<a name="line.225"></a>
+<FONT color="green">226</FONT>    <a name="line.226"></a>
+<FONT color="green">227</FONT>            // Checks to see if any per diem fields are filled in<a name="line.227"></a>
+<FONT color="green">228</FONT>            boolean personalVehilcleUsed = ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrAutoFromCityName()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrAutoFromStateCode()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrAutoToCityName()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrAutoToStateCode()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrMileageCalculatedAmt()) || ObjectUtils.isNotNull(document.getDvNonEmployeeTravel().getDisbVchrPersonalCarAmount());<a name="line.228"></a>
+<FONT color="green">229</FONT>    <a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>            // If any per diem fields contain data, validates that all required per diem fields are filled in<a name="line.231"></a>
+<FONT color="green">232</FONT>            if (personalVehilcleUsed) {<a name="line.232"></a>
+<FONT color="green">233</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrAutoFromCityName())) {<a name="line.233"></a>
+<FONT color="green">234</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_AUTO_FROM_CITY_NAME, KFSKeyConstants.ERROR_DV_AUTO_FROM_CITY);<a name="line.234"></a>
+<FONT color="green">235</FONT>                    personalVehicleSectionComplete = false;<a name="line.235"></a>
+<FONT color="green">236</FONT>                }<a name="line.236"></a>
+<FONT color="green">237</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrAutoToCityName())) {<a name="line.237"></a>
+<FONT color="green">238</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_AUTO_TO_CITY_NAME, KFSKeyConstants.ERROR_DV_AUTO_TO_CITY);<a name="line.238"></a>
+<FONT color="green">239</FONT>                    personalVehicleSectionComplete = false;<a name="line.239"></a>
+<FONT color="green">240</FONT>                }<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>                // are state fields required always or only for US travel?<a name="line.242"></a>
+<FONT color="green">243</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrAutoFromStateCode())) {<a name="line.243"></a>
+<FONT color="green">244</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_AUTO_FROM_STATE_CODE, KFSKeyConstants.ERROR_DV_AUTO_FROM_STATE);<a name="line.244"></a>
+<FONT color="green">245</FONT>                    personalVehicleSectionComplete = false;<a name="line.245"></a>
+<FONT color="green">246</FONT>                }<a name="line.246"></a>
+<FONT color="green">247</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrAutoToStateCode())) {<a name="line.247"></a>
+<FONT color="green">248</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_AUTO_TO_STATE_CODE, KFSKeyConstants.ERROR_DV_AUTO_TO_STATE);<a name="line.248"></a>
+<FONT color="green">249</FONT>                    personalVehicleSectionComplete = false;<a name="line.249"></a>
+<FONT color="green">250</FONT>                }<a name="line.250"></a>
+<FONT color="green">251</FONT>                // end state field validation<a name="line.251"></a>
+<FONT color="green">252</FONT>    <a name="line.252"></a>
+<FONT color="green">253</FONT>    <a name="line.253"></a>
+<FONT color="green">254</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount())) {<a name="line.254"></a>
+<FONT color="green">255</FONT>                    errors.putError(KFSPropertyConstants.DV_PERSONAL_CAR_MILEAGE_AMOUNT, KFSKeyConstants.ERROR_DV_MILEAGE_AMT);<a name="line.255"></a>
+<FONT color="green">256</FONT>                    personalVehicleSectionComplete = false;<a name="line.256"></a>
+<FONT color="green">257</FONT>                }<a name="line.257"></a>
+<FONT color="green">258</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrMileageCalculatedAmt())) {<a name="line.258"></a>
+<FONT color="green">259</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_MILEAGE_CALCULATED_AMT, KFSKeyConstants.ERROR_DV_MILEAGE_CALC_AMT);<a name="line.259"></a>
+<FONT color="green">260</FONT>                    personalVehicleSectionComplete = false;<a name="line.260"></a>
+<FONT color="green">261</FONT>                }<a name="line.261"></a>
+<FONT color="green">262</FONT>                if (ObjectUtils.isNull(document.getDvNonEmployeeTravel().getDisbVchrPersonalCarAmount())) {<a name="line.262"></a>
+<FONT color="green">263</FONT>                    errors.putError(KFSPropertyConstants.DISB_VCHR_PERSONAL_CAR_AMOUNT, KFSKeyConstants.ERROR_DV_MILEAGE_ACTUAL_AMT);<a name="line.263"></a>
+<FONT color="green">264</FONT>                    personalVehicleSectionComplete = false;<a name="line.264"></a>
+<FONT color="green">265</FONT>                }<a name="line.265"></a>
+<FONT color="green">266</FONT>            }<a name="line.266"></a>
+<FONT color="green">267</FONT>            personalVehicleSectionComplete = personalVehicleSectionComplete &amp;&amp; personalVehilcleUsed;<a name="line.267"></a>
+<FONT color="green">268</FONT>            return personalVehicleSectionComplete;<a name="line.268"></a>
+<FONT color="green">269</FONT>        }<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>        /**<a name="line.271"></a>
+<FONT color="green">272</FONT>         * Returns whether the document's payment reason is for travel by a non-employee<a name="line.272"></a>
+<FONT color="green">273</FONT>         * <a name="line.273"></a>
+<FONT color="green">274</FONT>         * @param disbursementVoucherDocument submitted disbursement voucher document<a name="line.274"></a>
+<FONT color="green">275</FONT>         * @return true if payment reason is travel by a non-employee<a name="line.275"></a>
+<FONT color="green">276</FONT>         * <a name="line.276"></a>
+<FONT color="green">277</FONT>         */<a name="line.277"></a>
+<FONT color="green">278</FONT>        private boolean isTravelNonEmplPaymentReason(DisbursementVoucherDocument disbursementVoucherDocument) {<a name="line.278"></a>
+<FONT color="green">279</FONT>            ParameterEvaluator travelNonEmplPaymentReasonEvaluator = parameterService.getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_PAY_REASONS_PARM_NM, disbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode());<a name="line.279"></a>
+<FONT color="green">280</FONT>            return travelNonEmplPaymentReasonEvaluator.evaluationSucceeds();<a name="line.280"></a>
+<FONT color="green">281</FONT>        }<a name="line.281"></a>
+<FONT color="green">282</FONT>    <a name="line.282"></a>
+<FONT color="green">283</FONT>        /**<a name="line.283"></a>
+<FONT color="green">284</FONT>         * Sets the accountingDocumentForValidation attribute value.<a name="line.284"></a>
+<FONT color="green">285</FONT>         * <a name="line.285"></a>
+<FONT color="green">286</FONT>         * @param accountingDocumentForValidation The accountingDocumentForValidation to set.<a name="line.286"></a>
+<FONT color="green">287</FONT>         */<a name="line.287"></a>
+<FONT color="green">288</FONT>        public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {<a name="line.288"></a>
+<FONT color="green">289</FONT>            this.accountingDocumentForValidation = accountingDocumentForValidation;<a name="line.289"></a>
+<FONT color="green">290</FONT>        }<a name="line.290"></a>
+<FONT color="green">291</FONT>    <a name="line.291"></a>
+<FONT color="green">292</FONT>        /**<a name="line.292"></a>
+<FONT color="green">293</FONT>         * Sets the parameterService attribute value.<a name="line.293"></a>
+<FONT color="green">294</FONT>         * @param parameterService The parameterService to set.<a name="line.294"></a>
+<FONT color="green">295</FONT>         */<a name="line.295"></a>
+<FONT color="green">296</FONT>        public void setParameterService(ParameterService parameterService) {<a name="line.296"></a>
+<FONT color="green">297</FONT>            this.parameterService = parameterService;<a name="line.297"></a>
+<FONT color="green">298</FONT>        }<a name="line.298"></a>
+<FONT color="green">299</FONT>    <a name="line.299"></a>
+<FONT color="green">300</FONT>        /**<a name="line.300"></a>
+<FONT color="green">301</FONT>         * Gets the accountingDocumentForValidation attribute. <a name="line.301"></a>
+<FONT color="green">302</FONT>         * @return Returns the accountingDocumentForValidation.<a name="line.302"></a>
+<FONT color="green">303</FONT>         */<a name="line.303"></a>
+<FONT color="green">304</FONT>        public AccountingDocument getAccountingDocumentForValidation() {<a name="line.304"></a>
+<FONT color="green">305</FONT>            return accountingDocumentForValidation;<a name="line.305"></a>
+<FONT color="green">306</FONT>        }<a name="line.306"></a>
+<FONT color="green">307</FONT>    <a name="line.307"></a>
+<FONT color="green">308</FONT>        /**<a name="line.308"></a>
+<FONT color="green">309</FONT>         * Gets the disbursementVoucherTaxService attribute. <a name="line.309"></a>
+<FONT color="green">310</FONT>         * @return Returns the disbursementVoucherTaxService.<a name="line.310"></a>
+<FONT color="green">311</FONT>         */<a name="line.311"></a>
+<FONT color="green">312</FONT>        public DisbursementVoucherTaxService getDisbursementVoucherTaxService() {<a name="line.312"></a>
+<FONT color="green">313</FONT>            return disbursementVoucherTaxService;<a name="line.313"></a>
+<FONT color="green">314</FONT>        }<a name="line.314"></a>
+<FONT color="green">315</FONT>    <a name="line.315"></a>
+<FONT color="green">316</FONT>        /**<a name="line.316"></a>
+<FONT color="green">317</FONT>         * Sets the disbursementVoucherTaxService attribute value.<a name="line.317"></a>
+<FONT color="green">318</FONT>         * @param disbursementVoucherTaxService The disbursementVoucherTaxService to set.<a name="line.318"></a>
+<FONT color="green">319</FONT>         */<a name="line.319"></a>
+<FONT color="green">320</FONT>        public void setDisbursementVoucherTaxService(DisbursementVoucherTaxService disbursementVoucherTaxService) {<a name="line.320"></a>
+<FONT color="green">321</FONT>            this.disbursementVoucherTaxService = disbursementVoucherTaxService;<a name="line.321"></a>
+<FONT color="green">322</FONT>        }<a name="line.322"></a>
+<FONT color="green">323</FONT>    <a name="line.323"></a>
+<FONT color="green">324</FONT>        /**<a name="line.324"></a>
+<FONT color="green">325</FONT>         * Gets the disbursementVoucherTravelService attribute. <a name="line.325"></a>
+<FONT color="green">326</FONT>         * @return Returns the disbursementVoucherTravelService.<a name="line.326"></a>
+<FONT color="green">327</FONT>         */<a name="line.327"></a>
+<FONT color="green">328</FONT>        public DisbursementVoucherTravelService getDisbursementVoucherTravelService() {<a name="line.328"></a>
+<FONT color="green">329</FONT>            return disbursementVoucherTravelService;<a name="line.329"></a>
+<FONT color="green">330</FONT>        }<a name="line.330"></a>
+<FONT color="green">331</FONT>    <a name="line.331"></a>
+<FONT color="green">332</FONT>        /**<a name="line.332"></a>
+<FONT color="green">333</FONT>         * Sets the disbursementVoucherTravelService attribute value.<a name="line.333"></a>
+<FONT color="green">334</FONT>         * @param disbursementVoucherTravelService The disbursementVoucherTravelService to set.<a name="line.334"></a>
+<FONT color="green">335</FONT>         */<a name="line.335"></a>
+<FONT color="green">336</FONT>        public void setDisbursementVoucherTravelService(DisbursementVoucherTravelService disbursementVoucherTravelService) {<a name="line.336"></a>
+<FONT color="green">337</FONT>            this.disbursementVoucherTravelService = disbursementVoucherTravelService;<a name="line.337"></a>
+<FONT color="green">338</FONT>        }<a name="line.338"></a>
+<FONT color="green">339</FONT>    <a name="line.339"></a>
+<FONT color="green">340</FONT>        /**<a name="line.340"></a>
+<FONT color="green">341</FONT>         * Gets the dictionaryValidationService attribute. <a name="line.341"></a>
+<FONT color="green">342</FONT>         * @return Returns the dictionaryValidationService.<a name="line.342"></a>
+<FONT color="green">343</FONT>         */<a name="line.343"></a>
+<FONT color="green">344</FONT>        public DictionaryValidationService getDictionaryValidationService() {<a name="line.344"></a>
+<FONT color="green">345</FONT>            return dictionaryValidationService;<a name="line.345"></a>
+<FONT color="green">346</FONT>        }<a name="line.346"></a>
+<FONT color="green">347</FONT>    <a name="line.347"></a>
+<FONT color="green">348</FONT>        /**<a name="line.348"></a>
+<FONT color="green">349</FONT>         * Sets the dictionaryValidationService attribute value.<a name="line.349"></a>
+<FONT color="green">350</FONT>         * @param dictionaryValidationService The dictionaryValidationService to set.<a name="line.350"></a>
+<FONT color="green">351</FONT>         */<a name="line.351"></a>
+<FONT color="green">352</FONT>        public void setDictionaryValidationService(DictionaryValidationService dictionaryValidationService) {<a name="line.352"></a>
+<FONT color="green">353</FONT>            this.dictionaryValidationService = dictionaryValidationService;<a name="line.353"></a>
+<FONT color="green">354</FONT>        }<a name="line.354"></a>
+<FONT color="green">355</FONT>        <a name="line.355"></a>
+<FONT color="green">356</FONT>    }<a name="line.356"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

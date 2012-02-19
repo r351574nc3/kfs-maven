@@ -1,0 +1,144 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.fp.document.service;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.List;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.kuali.kfs.fp.document.CashReceiptDocument;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.kuali.rice.kim.bo.Person;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    /**<a name="line.23"></a>
+<FONT color="green">024</FONT>     * <a name="line.24"></a>
+<FONT color="green">025</FONT>     * This service interface defines the methods that a CashReceiptService implementation must provide.<a name="line.25"></a>
+<FONT color="green">026</FONT>     */<a name="line.26"></a>
+<FONT color="green">027</FONT>    public interface CashReceiptService {<a name="line.27"></a>
+<FONT color="green">028</FONT>        /**<a name="line.28"></a>
+<FONT color="green">029</FONT>         * This method retrieves the cash receipt verification unit for the given user.<a name="line.29"></a>
+<FONT color="green">030</FONT>         * <a name="line.30"></a>
+<FONT color="green">031</FONT>         * TODO: change this to do something other than return null (which will require updating CashReceiptDocumentAuthorizer, since<a name="line.31"></a>
+<FONT color="green">032</FONT>         * that's the one place I'm sure that returning a null is interpreted to mean that a user is a member of no verificationUnit)<a name="line.32"></a>
+<FONT color="green">033</FONT>         * <a name="line.33"></a>
+<FONT color="green">034</FONT>         * @param user The user to retrieve the cash receipt verification unit for.<a name="line.34"></a>
+<FONT color="green">035</FONT>         * @return Cash receipt verificationUnit campusCode associated with the given user; null if the user is not a member of any verification campus.<a name="line.35"></a>
+<FONT color="green">036</FONT>         */<a name="line.36"></a>
+<FONT color="green">037</FONT>        public String getCashReceiptVerificationUnitForUser(Person user);<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        /**<a name="line.39"></a>
+<FONT color="green">040</FONT>         * Returns a List of CashReceiptDocuments for the given verification unit whose status matches the given status code.<a name="line.40"></a>
+<FONT color="green">041</FONT>         * <a name="line.41"></a>
+<FONT color="green">042</FONT>         * @param verificationUnit A verification unit for a cash receipt.<a name="line.42"></a>
+<FONT color="green">043</FONT>         * @param statusCode A cash receipt status code.<a name="line.43"></a>
+<FONT color="green">044</FONT>         * @return List of CashReceiptDocument instances.<a name="line.44"></a>
+<FONT color="green">045</FONT>         * @throws IllegalArgumentException Thrown if verificationUnit is blank<a name="line.45"></a>
+<FONT color="green">046</FONT>         * @throws IllegalArgumentException Thrown if statusCode is blank<a name="line.46"></a>
+<FONT color="green">047</FONT>         */<a name="line.47"></a>
+<FONT color="green">048</FONT>        public List getCashReceipts(String verificationUnit, String statusCode);<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        /**<a name="line.50"></a>
+<FONT color="green">051</FONT>         * Returns a List of CashReceiptDocuments for the given verificationUnit whose status matches any of the status codes in the<a name="line.51"></a>
+<FONT color="green">052</FONT>         * given String[].<a name="line.52"></a>
+<FONT color="green">053</FONT>         * <a name="line.53"></a>
+<FONT color="green">054</FONT>         * @param verificationUnit A verification unit for a cash receipt.<a name="line.54"></a>
+<FONT color="green">055</FONT>         * @param statii A collection of potential cash receipt document statuses.<a name="line.55"></a>
+<FONT color="green">056</FONT>         * @return List of CashReceiptDocument instances.<a name="line.56"></a>
+<FONT color="green">057</FONT>         * @throws IllegalArgumentException Thrown if verificationUnit is blank<a name="line.57"></a>
+<FONT color="green">058</FONT>         * @throws IllegalArgumentException Thrown if statii is null or empty or contains any blank statusCodes<a name="line.58"></a>
+<FONT color="green">059</FONT>         */<a name="line.59"></a>
+<FONT color="green">060</FONT>        public List getCashReceipts(String verificationUnit, String[] statii);<a name="line.60"></a>
+<FONT color="green">061</FONT>        <a name="line.61"></a>
+<FONT color="green">062</FONT>        /**<a name="line.62"></a>
+<FONT color="green">063</FONT>         * This adds the currency and coin details associated with this Cash Receipt document to the proper cash drawer and to the<a name="line.63"></a>
+<FONT color="green">064</FONT>         * cumulative Cash Receipt details for the document which opened the cash drawer.<a name="line.64"></a>
+<FONT color="green">065</FONT>         * <a name="line.65"></a>
+<FONT color="green">066</FONT>         * @param crDoc The cash receipt document with cash details to add to the cash drawer.<a name="line.66"></a>
+<FONT color="green">067</FONT>         */<a name="line.67"></a>
+<FONT color="green">068</FONT>        public void addCashDetailsToCashDrawer(CashReceiptDocument crDoc);<a name="line.68"></a>
+<FONT color="green">069</FONT>        <a name="line.69"></a>
+<FONT color="green">070</FONT>        /**<a name="line.70"></a>
+<FONT color="green">071</FONT>         * Checks whether the CashReceiptDocument's cash totals are invalid, generating global errors if so.<a name="line.71"></a>
+<FONT color="green">072</FONT>         * <a name="line.72"></a>
+<FONT color="green">073</FONT>         * @param cashReceiptDocument submitted cash receipt document<a name="line.73"></a>
+<FONT color="green">074</FONT>         * @return true if CashReceiptDocument's cash totals are valid<a name="line.74"></a>
+<FONT color="green">075</FONT>         */<a name="line.75"></a>
+<FONT color="green">076</FONT>        public abstract boolean areCashTotalsInvalid(CashReceiptDocument cashReceiptDocument);<a name="line.76"></a>
+<FONT color="green">077</FONT>    }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

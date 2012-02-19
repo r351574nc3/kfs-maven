@@ -1,0 +1,331 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.cg.document.validation.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.Collection;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.apache.log4j.Logger;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.module.cg.businessobject.Award;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.module.cg.businessobject.AwardAccount;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.module.cg.businessobject.AwardOrganization;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.cg.businessobject.AwardSubcontractor;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.sys.KFSKeyConstants;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kim.bo.Person;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.rice.kns.bo.PersistableBusinessObject;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.rice.kns.document.MaintenanceDocument;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.rice.kns.service.DataDictionaryService;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.rice.kns.util.GlobalVariables;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>    /**<a name="line.38"></a>
+<FONT color="green">039</FONT>     * Rules for the Award maintenance document.<a name="line.39"></a>
+<FONT color="green">040</FONT>     */<a name="line.40"></a>
+<FONT color="green">041</FONT>    public class AwardRule extends CGMaintenanceDocumentRuleBase {<a name="line.41"></a>
+<FONT color="green">042</FONT>        protected static Logger LOG = org.apache.log4j.Logger.getLogger(AwardRule.class);<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        protected Award newAwardCopy;<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        @Override<a name="line.46"></a>
+<FONT color="green">047</FONT>        protected boolean processCustomSaveDocumentBusinessRules(MaintenanceDocument document) {<a name="line.47"></a>
+<FONT color="green">048</FONT>            LOG.info("Entering AwardRule.processCustomSaveDocumentBusinessRules");<a name="line.48"></a>
+<FONT color="green">049</FONT>            processCustomRouteDocumentBusinessRules(document);<a name="line.49"></a>
+<FONT color="green">050</FONT>            LOG.info("Leaving AwardRule.processCustomSaveDocumentBusinessRules");<a name="line.50"></a>
+<FONT color="green">051</FONT>            return true; // save despite error messages<a name="line.51"></a>
+<FONT color="green">052</FONT>        }<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>        @Override<a name="line.54"></a>
+<FONT color="green">055</FONT>        protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {<a name="line.55"></a>
+<FONT color="green">056</FONT>            LOG.info("Entering AwardRule.processCustomRouteDocumentBusinessRules");<a name="line.56"></a>
+<FONT color="green">057</FONT>            boolean success = true;<a name="line.57"></a>
+<FONT color="green">058</FONT>            success &amp;= checkProposal();<a name="line.58"></a>
+<FONT color="green">059</FONT>            success &amp;= checkEndAfterBegin(newAwardCopy.getAwardBeginningDate(), newAwardCopy.getAwardEndingDate(), KFSPropertyConstants.AWARD_ENDING_DATE);<a name="line.59"></a>
+<FONT color="green">060</FONT>            success &amp;= checkPrimary(newAwardCopy.getAwardOrganizations(), AwardOrganization.class, KFSPropertyConstants.AWARD_ORGRANIZATIONS, Award.class);<a name="line.60"></a>
+<FONT color="green">061</FONT>            success &amp;= checkPrimary(newAwardCopy.getAwardProjectDirectors(), AwardProjectDirector.class, KFSPropertyConstants.AWARD_PROJECT_DIRECTORS, Award.class);<a name="line.61"></a>
+<FONT color="green">062</FONT>            success &amp;= checkAccounts();<a name="line.62"></a>
+<FONT color="green">063</FONT>            success &amp;= checkProjectDirectorsExist(newAwardCopy.getAwardProjectDirectors(), AwardProjectDirector.class, KFSPropertyConstants.AWARD_PROJECT_DIRECTORS);<a name="line.63"></a>
+<FONT color="green">064</FONT>            success &amp;= checkProjectDirectorsExist(newAwardCopy.getAwardAccounts(), AwardAccount.class, KFSPropertyConstants.AWARD_ACCOUNTS);<a name="line.64"></a>
+<FONT color="green">065</FONT>            success &amp;= checkProjectDirectorsStatuses(newAwardCopy.getAwardProjectDirectors(), AwardProjectDirector.class, KFSPropertyConstants.AWARD_PROJECT_DIRECTORS);<a name="line.65"></a>
+<FONT color="green">066</FONT>            success &amp;= checkFederalPassThrough();<a name="line.66"></a>
+<FONT color="green">067</FONT>            success &amp;= checkAgencyNotEqualToFederalPassThroughAgency(newAwardCopy.getAgency(), newAwardCopy.getFederalPassThroughAgency(), KFSPropertyConstants.AGENCY_NUMBER, KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY_NUMBER);<a name="line.67"></a>
+<FONT color="green">068</FONT>            LOG.info("Leaving AwardRule.processCustomRouteDocumentBusinessRules");<a name="line.68"></a>
+<FONT color="green">069</FONT>            return success;<a name="line.69"></a>
+<FONT color="green">070</FONT>        }<a name="line.70"></a>
+<FONT color="green">071</FONT>    <a name="line.71"></a>
+<FONT color="green">072</FONT>        /**<a name="line.72"></a>
+<FONT color="green">073</FONT>         * checks to see if at least 1 award account exists<a name="line.73"></a>
+<FONT color="green">074</FONT>         * <a name="line.74"></a>
+<FONT color="green">075</FONT>         * @return true if the award contains at least 1 {@link AwardAccount}, false otherwise<a name="line.75"></a>
+<FONT color="green">076</FONT>         */<a name="line.76"></a>
+<FONT color="green">077</FONT>        protected boolean checkAccounts() {<a name="line.77"></a>
+<FONT color="green">078</FONT>            boolean success = true;<a name="line.78"></a>
+<FONT color="green">079</FONT>            Collection&lt;AwardAccount&gt; awardAccounts = newAwardCopy.getAwardAccounts();<a name="line.79"></a>
+<FONT color="green">080</FONT>    <a name="line.80"></a>
+<FONT color="green">081</FONT>            if (ObjectUtils.isNull(awardAccounts) || awardAccounts.isEmpty()) {<a name="line.81"></a>
+<FONT color="green">082</FONT>                String elementLabel = SpringContext.getBean(DataDictionaryService.class).getCollectionElementLabel(Award.class.getName(), KFSPropertyConstants.AWARD_ACCOUNTS, AwardAccount.class);<a name="line.82"></a>
+<FONT color="green">083</FONT>                putFieldError(KFSPropertyConstants.AWARD_ACCOUNTS, KFSKeyConstants.ERROR_ONE_REQUIRED, elementLabel);<a name="line.83"></a>
+<FONT color="green">084</FONT>                success = false;<a name="line.84"></a>
+<FONT color="green">085</FONT>            }<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>            return success;<a name="line.87"></a>
+<FONT color="green">088</FONT>        }<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>        /**<a name="line.90"></a>
+<FONT color="green">091</FONT>         * checks to see if:<a name="line.91"></a>
+<FONT color="green">092</FONT>         * &lt;ol&gt;<a name="line.92"></a>
+<FONT color="green">093</FONT>         * &lt;li&gt;a proposal has already been awarded<a name="line.93"></a>
+<FONT color="green">094</FONT>         * &lt;li&gt;a proposal is inactive<a name="line.94"></a>
+<FONT color="green">095</FONT>         * &lt;/ol&gt;<a name="line.95"></a>
+<FONT color="green">096</FONT>         * <a name="line.96"></a>
+<FONT color="green">097</FONT>         * @return<a name="line.97"></a>
+<FONT color="green">098</FONT>         */<a name="line.98"></a>
+<FONT color="green">099</FONT>        protected boolean checkProposal() {<a name="line.99"></a>
+<FONT color="green">100</FONT>            boolean success = true;<a name="line.100"></a>
+<FONT color="green">101</FONT>            if (AwardRuleUtil.isProposalAwarded(newAwardCopy)) {<a name="line.101"></a>
+<FONT color="green">102</FONT>                putFieldError(KFSPropertyConstants.PROPOSAL_NUMBER, KFSKeyConstants.ERROR_AWARD_PROPOSAL_AWARDED, newAwardCopy.getProposalNumber().toString());<a name="line.102"></a>
+<FONT color="green">103</FONT>                success = false;<a name="line.103"></a>
+<FONT color="green">104</FONT>            }<a name="line.104"></a>
+<FONT color="green">105</FONT>            // SEE KULCG-315 for details on why this code is commented out.<a name="line.105"></a>
+<FONT color="green">106</FONT>            // else if (AwardRuleUtil.isProposalInactive(newAwardCopy)) {<a name="line.106"></a>
+<FONT color="green">107</FONT>            // putFieldError(KFSPropertyConstants.PROPOSAL_NUMBER, KFSKeyConstants.ERROR_AWARD_PROPOSAL_INACTIVE,<a name="line.107"></a>
+<FONT color="green">108</FONT>            // newAwardCopy.getProposalNumber().toString());<a name="line.108"></a>
+<FONT color="green">109</FONT>            // }<a name="line.109"></a>
+<FONT color="green">110</FONT>    <a name="line.110"></a>
+<FONT color="green">111</FONT>            return success;<a name="line.111"></a>
+<FONT color="green">112</FONT>        }<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>        /**<a name="line.114"></a>
+<FONT color="green">115</FONT>         * checks if the required federal pass through fields are filled in if the federal pass through indicator is yes<a name="line.115"></a>
+<FONT color="green">116</FONT>         * <a name="line.116"></a>
+<FONT color="green">117</FONT>         * @return<a name="line.117"></a>
+<FONT color="green">118</FONT>         */<a name="line.118"></a>
+<FONT color="green">119</FONT>        protected boolean checkFederalPassThrough() {<a name="line.119"></a>
+<FONT color="green">120</FONT>            boolean success = true;<a name="line.120"></a>
+<FONT color="green">121</FONT>            success = super.checkFederalPassThrough(newAwardCopy.getFederalPassThroughIndicator(), newAwardCopy.getAgency(), newAwardCopy.getFederalPassThroughAgencyNumber(), Award.class, KFSPropertyConstants.FEDERAL_PASS_THROUGH_INDICATOR);<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>            if (newAwardCopy.getFederalPassThroughIndicator()) {<a name="line.123"></a>
+<FONT color="green">124</FONT>                String indicatorLabel = SpringContext.getBean(DataDictionaryService.class).getAttributeErrorLabel(Award.class, KFSPropertyConstants.FEDERAL_PASS_THROUGH_INDICATOR);<a name="line.124"></a>
+<FONT color="green">125</FONT>                if (StringUtils.isBlank(newAwardCopy.getFederalPassThroughAgencyNumber())) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                    putFieldError(KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY_NUMBER, KFSKeyConstants.ERROR_FPT_AGENCY_NUMBER_REQUIRED);<a name="line.126"></a>
+<FONT color="green">127</FONT>                    success = false;<a name="line.127"></a>
+<FONT color="green">128</FONT>                }<a name="line.128"></a>
+<FONT color="green">129</FONT>            }<a name="line.129"></a>
+<FONT color="green">130</FONT>            <a name="line.130"></a>
+<FONT color="green">131</FONT>            return success;<a name="line.131"></a>
+<FONT color="green">132</FONT>        }<a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>        /**<a name="line.134"></a>
+<FONT color="green">135</FONT>         * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#setupConvenienceObjects()<a name="line.135"></a>
+<FONT color="green">136</FONT>         */<a name="line.136"></a>
+<FONT color="green">137</FONT>        @Override<a name="line.137"></a>
+<FONT color="green">138</FONT>        public void setupConvenienceObjects() {<a name="line.138"></a>
+<FONT color="green">139</FONT>            // oldAward = (Award) super.getOldBo();<a name="line.139"></a>
+<FONT color="green">140</FONT>            newAwardCopy = (Award) super.getNewBo();<a name="line.140"></a>
+<FONT color="green">141</FONT>        }<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>        /**<a name="line.143"></a>
+<FONT color="green">144</FONT>         * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument,<a name="line.144"></a>
+<FONT color="green">145</FONT>         *      java.lang.String, org.kuali.rice.kns.bo.PersistableBusinessObject)<a name="line.145"></a>
+<FONT color="green">146</FONT>         */<a name="line.146"></a>
+<FONT color="green">147</FONT>        @Override<a name="line.147"></a>
+<FONT color="green">148</FONT>        public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {<a name="line.148"></a>
+<FONT color="green">149</FONT>            boolean success = true;<a name="line.149"></a>
+<FONT color="green">150</FONT>    <a name="line.150"></a>
+<FONT color="green">151</FONT>            if (bo instanceof AwardProjectDirector) {<a name="line.151"></a>
+<FONT color="green">152</FONT>                AwardProjectDirector awardProjectDirector = (AwardProjectDirector) bo;<a name="line.152"></a>
+<FONT color="green">153</FONT>                success = this.checkAwardProjectDirector(awardProjectDirector);<a name="line.153"></a>
+<FONT color="green">154</FONT>            }<a name="line.154"></a>
+<FONT color="green">155</FONT>            else if (bo instanceof AwardAccount) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                AwardAccount awardAccount = (AwardAccount) bo;<a name="line.156"></a>
+<FONT color="green">157</FONT>                success = this.checkAwardAccount(awardAccount);<a name="line.157"></a>
+<FONT color="green">158</FONT>            }<a name="line.158"></a>
+<FONT color="green">159</FONT>            else if (bo instanceof AwardSubcontractor) {<a name="line.159"></a>
+<FONT color="green">160</FONT>                AwardSubcontractor awardSubcontractor = (AwardSubcontractor) bo;<a name="line.160"></a>
+<FONT color="green">161</FONT>                success = this.checkAwardSubcontractor(awardSubcontractor);<a name="line.161"></a>
+<FONT color="green">162</FONT>            }<a name="line.162"></a>
+<FONT color="green">163</FONT>            else if (bo instanceof AwardOrganization) {<a name="line.163"></a>
+<FONT color="green">164</FONT>                AwardOrganization awardOrganization = (AwardOrganization) bo;<a name="line.164"></a>
+<FONT color="green">165</FONT>                success = this.checkAwardOrganization(awardOrganization);<a name="line.165"></a>
+<FONT color="green">166</FONT>            }<a name="line.166"></a>
+<FONT color="green">167</FONT>    <a name="line.167"></a>
+<FONT color="green">168</FONT>            return success;<a name="line.168"></a>
+<FONT color="green">169</FONT>        }<a name="line.169"></a>
+<FONT color="green">170</FONT>    <a name="line.170"></a>
+<FONT color="green">171</FONT>        // check if the given award organization exists<a name="line.171"></a>
+<FONT color="green">172</FONT>        protected boolean checkAwardOrganization(AwardOrganization awardOrganization) {<a name="line.172"></a>
+<FONT color="green">173</FONT>            boolean success = true;<a name="line.173"></a>
+<FONT color="green">174</FONT>            int originalErrorCount = GlobalVariables.getMessageMap().getErrorCount();<a name="line.174"></a>
+<FONT color="green">175</FONT>            String errorPathPrefix = KFSConstants.MAINTENANCE_ADD_PREFIX + KFSPropertyConstants.AWARD_ORGRANIZATIONS + ".";<a name="line.175"></a>
+<FONT color="green">176</FONT>    <a name="line.176"></a>
+<FONT color="green">177</FONT>            this.getDictionaryValidationService().validateBusinessObject(awardOrganization);<a name="line.177"></a>
+<FONT color="green">178</FONT>            if (StringUtils.isNotBlank(awardOrganization.getOrganizationCode()) &amp;&amp; StringUtils.isNotBlank(awardOrganization.getChartOfAccountsCode())) {<a name="line.178"></a>
+<FONT color="green">179</FONT>                awardOrganization.refreshReferenceObject(KFSPropertyConstants.ORGANIZATION);<a name="line.179"></a>
+<FONT color="green">180</FONT>    <a name="line.180"></a>
+<FONT color="green">181</FONT>                if (ObjectUtils.isNull(awardOrganization.getOrganization())) {<a name="line.181"></a>
+<FONT color="green">182</FONT>                    String label = this.getDataDictionaryService().getAttributeLabel(AwardOrganization.class, KFSPropertyConstants.ORGANIZATION_CODE);<a name="line.182"></a>
+<FONT color="green">183</FONT>                    String message = label + "(" + awardOrganization.getOrganizationCode() + ")";<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>                    putFieldError(errorPathPrefix + KFSPropertyConstants.ORGANIZATION_CODE, KFSKeyConstants.ERROR_EXISTENCE, message);<a name="line.185"></a>
+<FONT color="green">186</FONT>                }<a name="line.186"></a>
+<FONT color="green">187</FONT>            }<a name="line.187"></a>
+<FONT color="green">188</FONT>    <a name="line.188"></a>
+<FONT color="green">189</FONT>            success &amp;= GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;<a name="line.189"></a>
+<FONT color="green">190</FONT>    <a name="line.190"></a>
+<FONT color="green">191</FONT>            return success;<a name="line.191"></a>
+<FONT color="green">192</FONT>        }<a name="line.192"></a>
+<FONT color="green">193</FONT>    <a name="line.193"></a>
+<FONT color="green">194</FONT>        // check if the given award subcontrator exists<a name="line.194"></a>
+<FONT color="green">195</FONT>        protected boolean checkAwardSubcontractor(AwardSubcontractor awardSubcontractor) {<a name="line.195"></a>
+<FONT color="green">196</FONT>            boolean success = true;<a name="line.196"></a>
+<FONT color="green">197</FONT>            int originalErrorCount = GlobalVariables.getMessageMap().getErrorCount();<a name="line.197"></a>
+<FONT color="green">198</FONT>            String errorPathPrefix = KFSConstants.MAINTENANCE_ADD_PREFIX + KFSPropertyConstants.AWARD_SUBCONTRACTORS + ".";<a name="line.198"></a>
+<FONT color="green">199</FONT>    <a name="line.199"></a>
+<FONT color="green">200</FONT>            this.getDictionaryValidationService().validateBusinessObject(awardSubcontractor);<a name="line.200"></a>
+<FONT color="green">201</FONT>            if (StringUtils.isNotBlank(awardSubcontractor.getSubcontractorNumber())) {<a name="line.201"></a>
+<FONT color="green">202</FONT>                awardSubcontractor.refreshReferenceObject("subcontractor");<a name="line.202"></a>
+<FONT color="green">203</FONT>    <a name="line.203"></a>
+<FONT color="green">204</FONT>                if (ObjectUtils.isNull(awardSubcontractor.getSubcontractor())) {<a name="line.204"></a>
+<FONT color="green">205</FONT>                    String label = this.getDataDictionaryService().getAttributeLabel(AwardSubcontractor.class, KFSPropertyConstants.SUBCONTRACTOR_NUMBER);<a name="line.205"></a>
+<FONT color="green">206</FONT>                    String message = label + "(" + awardSubcontractor.getSubcontractorNumber() + ")";<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>                    putFieldError(errorPathPrefix + KFSPropertyConstants.SUBCONTRACTOR_NUMBER, KFSKeyConstants.ERROR_EXISTENCE, message);<a name="line.208"></a>
+<FONT color="green">209</FONT>                }<a name="line.209"></a>
+<FONT color="green">210</FONT>            }<a name="line.210"></a>
+<FONT color="green">211</FONT>    <a name="line.211"></a>
+<FONT color="green">212</FONT>            success &amp;= GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;<a name="line.212"></a>
+<FONT color="green">213</FONT>    <a name="line.213"></a>
+<FONT color="green">214</FONT>            return success;<a name="line.214"></a>
+<FONT color="green">215</FONT>        }<a name="line.215"></a>
+<FONT color="green">216</FONT>    <a name="line.216"></a>
+<FONT color="green">217</FONT>        // check if the given award account exists<a name="line.217"></a>
+<FONT color="green">218</FONT>        protected boolean checkAwardAccount(AwardAccount awardAccount) {<a name="line.218"></a>
+<FONT color="green">219</FONT>            boolean success = true;<a name="line.219"></a>
+<FONT color="green">220</FONT>            int originalErrorCount = GlobalVariables.getMessageMap().getErrorCount();<a name="line.220"></a>
+<FONT color="green">221</FONT>            String errorPathPrefix = KFSConstants.MAINTENANCE_ADD_PREFIX + KFSPropertyConstants.AWARD_ACCOUNTS + ".";<a name="line.221"></a>
+<FONT color="green">222</FONT>    <a name="line.222"></a>
+<FONT color="green">223</FONT>            this.getDictionaryValidationService().validateBusinessObject(awardAccount);<a name="line.223"></a>
+<FONT color="green">224</FONT>            if (StringUtils.isNotBlank(awardAccount.getAccountNumber()) &amp;&amp; StringUtils.isNotBlank(awardAccount.getChartOfAccountsCode())) {<a name="line.224"></a>
+<FONT color="green">225</FONT>                awardAccount.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);<a name="line.225"></a>
+<FONT color="green">226</FONT>    <a name="line.226"></a>
+<FONT color="green">227</FONT>                if (ObjectUtils.isNull(awardAccount.getAccount())) {<a name="line.227"></a>
+<FONT color="green">228</FONT>                    String label = this.getDataDictionaryService().getAttributeLabel(AwardAccount.class, KFSPropertyConstants.ACCOUNT_NUMBER);<a name="line.228"></a>
+<FONT color="green">229</FONT>                    String message = label + "(" + awardAccount.getChartOfAccountsCode() + "-" + awardAccount.getAccountNumber() + ")";<a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>                    putFieldError(errorPathPrefix + KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_EXISTENCE, message);<a name="line.231"></a>
+<FONT color="green">232</FONT>                }<a name="line.232"></a>
+<FONT color="green">233</FONT>            }<a name="line.233"></a>
+<FONT color="green">234</FONT>    <a name="line.234"></a>
+<FONT color="green">235</FONT>            Person projectDirector = awardAccount.getProjectDirector();<a name="line.235"></a>
+<FONT color="green">236</FONT>            if (StringUtils.isBlank(awardAccount.getPrincipalId()) || ObjectUtils.isNull(projectDirector)) {<a name="line.236"></a>
+<FONT color="green">237</FONT>                String label = this.getDataDictionaryService().getAttributeLabel(AwardAccount.class, "projectDirector.principalName");<a name="line.237"></a>
+<FONT color="green">238</FONT>                String message = label + "(" + awardAccount.getPrincipalId() + ")";<a name="line.238"></a>
+<FONT color="green">239</FONT>    <a name="line.239"></a>
+<FONT color="green">240</FONT>                putFieldError(errorPathPrefix + "projectDirector.principalName", KFSKeyConstants.ERROR_EXISTENCE, message);<a name="line.240"></a>
+<FONT color="green">241</FONT>            }<a name="line.241"></a>
+<FONT color="green">242</FONT>    <a name="line.242"></a>
+<FONT color="green">243</FONT>            success &amp;= GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;<a name="line.243"></a>
+<FONT color="green">244</FONT>    <a name="line.244"></a>
+<FONT color="green">245</FONT>            return success;<a name="line.245"></a>
+<FONT color="green">246</FONT>        }<a name="line.246"></a>
+<FONT color="green">247</FONT>    <a name="line.247"></a>
+<FONT color="green">248</FONT>        // check if the given award project director exists<a name="line.248"></a>
+<FONT color="green">249</FONT>        protected boolean checkAwardProjectDirector(AwardProjectDirector awardProjectDirector) {<a name="line.249"></a>
+<FONT color="green">250</FONT>            boolean success = true;<a name="line.250"></a>
+<FONT color="green">251</FONT>    <a name="line.251"></a>
+<FONT color="green">252</FONT>            Person projectDirector = awardProjectDirector.getProjectDirector();<a name="line.252"></a>
+<FONT color="green">253</FONT>            if (StringUtils.isBlank(awardProjectDirector.getPrincipalId()) || ObjectUtils.isNull(projectDirector)) {<a name="line.253"></a>
+<FONT color="green">254</FONT>                String errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + KFSPropertyConstants.AWARD_PROJECT_DIRECTORS + "." + "projectDirector.principalName";<a name="line.254"></a>
+<FONT color="green">255</FONT>                String label = this.getDataDictionaryService().getAttributeLabel(AwardProjectDirector.class, "projectDirector.principalName");<a name="line.255"></a>
+<FONT color="green">256</FONT>                String message = label + "(" + awardProjectDirector.getPrincipalId() + ")";<a name="line.256"></a>
+<FONT color="green">257</FONT>                <a name="line.257"></a>
+<FONT color="green">258</FONT>                putFieldError(errorPath, KFSKeyConstants.ERROR_EXISTENCE, message);<a name="line.258"></a>
+<FONT color="green">259</FONT>    <a name="line.259"></a>
+<FONT color="green">260</FONT>                success &amp;= false;<a name="line.260"></a>
+<FONT color="green">261</FONT>            }<a name="line.261"></a>
+<FONT color="green">262</FONT>    <a name="line.262"></a>
+<FONT color="green">263</FONT>            return success;<a name="line.263"></a>
+<FONT color="green">264</FONT>        }<a name="line.264"></a>
+<FONT color="green">265</FONT>    }<a name="line.265"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

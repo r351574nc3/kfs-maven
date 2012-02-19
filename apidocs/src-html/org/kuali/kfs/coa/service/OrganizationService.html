@@ -1,0 +1,160 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.coa.service;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.List;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.kuali.kfs.coa.businessobject.Organization;<a name="line.20"></a>
+<FONT color="green">021</FONT>    <a name="line.21"></a>
+<FONT color="green">022</FONT>    /**<a name="line.22"></a>
+<FONT color="green">023</FONT>     * This interface defines methods that an Org Service must provide.<a name="line.23"></a>
+<FONT color="green">024</FONT>     */<a name="line.24"></a>
+<FONT color="green">025</FONT>    public interface OrganizationService {<a name="line.25"></a>
+<FONT color="green">026</FONT>        /**<a name="line.26"></a>
+<FONT color="green">027</FONT>         * This method retrieves an organization instance by its composite primary keys (parameters passed in).<a name="line.27"></a>
+<FONT color="green">028</FONT>         * <a name="line.28"></a>
+<FONT color="green">029</FONT>         * @param chartOfAccountsCode<a name="line.29"></a>
+<FONT color="green">030</FONT>         * @param organizationCode<a name="line.30"></a>
+<FONT color="green">031</FONT>         * @return An Org instance.<a name="line.31"></a>
+<FONT color="green">032</FONT>         */<a name="line.32"></a>
+<FONT color="green">033</FONT>        public Organization getByPrimaryId(String chartOfAccountsCode, String organizationCode);<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        /**<a name="line.35"></a>
+<FONT color="green">036</FONT>         * Method is used by KualiOrgReviewAttribute to enable caching of orgs for routing.<a name="line.36"></a>
+<FONT color="green">037</FONT>         * <a name="line.37"></a>
+<FONT color="green">038</FONT>         * @see org.kuali.kfs.coa.service.OrganizationService#getByPrimaryId(java.lang.String, java.lang.String)<a name="line.38"></a>
+<FONT color="green">039</FONT>         */<a name="line.39"></a>
+<FONT color="green">040</FONT>        public Organization getByPrimaryIdWithCaching(String chartOfAccountsCode, String organizationCode);<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        /**<a name="line.42"></a>
+<FONT color="green">043</FONT>         * Retrieves a List of Accounts that are active, and are tied to this Org. If there are no Accounts that meet this criteria, an<a name="line.43"></a>
+<FONT color="green">044</FONT>         * empty list will be returned.<a name="line.44"></a>
+<FONT color="green">045</FONT>         * <a name="line.45"></a>
+<FONT color="green">046</FONT>         * @param chartOfAccountsCode - chartCode for the Org you want Accounts for<a name="line.46"></a>
+<FONT color="green">047</FONT>         * @param organizationCode - orgCode for the Org you want Accounts for<a name="line.47"></a>
+<FONT color="green">048</FONT>         * @return A List of Accounts that are active, and tied to this Org<a name="line.48"></a>
+<FONT color="green">049</FONT>         */<a name="line.49"></a>
+<FONT color="green">050</FONT>        public List getActiveAccountsByOrg(String chartOfAccountsCode, String organizationCode);<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        /**<a name="line.52"></a>
+<FONT color="green">053</FONT>         * Retrieves a List of Orgs that are active, and that ReportTo this Org If there are no Orgs that meet this criteria, an empty<a name="line.53"></a>
+<FONT color="green">054</FONT>         * list will be returned.<a name="line.54"></a>
+<FONT color="green">055</FONT>         * <a name="line.55"></a>
+<FONT color="green">056</FONT>         * @param chartOfAccountsCode - chartCode for the Org you want Child Orgs for<a name="line.56"></a>
+<FONT color="green">057</FONT>         * @param organizationCode - orgCode for the Org you want Child Orgs for<a name="line.57"></a>
+<FONT color="green">058</FONT>         * @return A List of Orgs that are active, and report to this Org<a name="line.58"></a>
+<FONT color="green">059</FONT>         */<a name="line.59"></a>
+<FONT color="green">060</FONT>        public List getActiveChildOrgs(String chartOfAccountsCode, String organizationCode);<a name="line.60"></a>
+<FONT color="green">061</FONT>        <a name="line.61"></a>
+<FONT color="green">062</FONT>        /**<a name="line.62"></a>
+<FONT color="green">063</FONT>         * Returns a list of active organizations with the given organization type code.<a name="line.63"></a>
+<FONT color="green">064</FONT>         * <a name="line.64"></a>
+<FONT color="green">065</FONT>         * @param organizationTypeCode<a name="line.65"></a>
+<FONT color="green">066</FONT>         * @return<a name="line.66"></a>
+<FONT color="green">067</FONT>         */<a name="line.67"></a>
+<FONT color="green">068</FONT>        public List&lt;Organization&gt; getActiveOrgsByType(String organizationTypeCode);<a name="line.68"></a>
+<FONT color="green">069</FONT>    <a name="line.69"></a>
+<FONT color="green">070</FONT>        <a name="line.70"></a>
+<FONT color="green">071</FONT>        /**<a name="line.71"></a>
+<FONT color="green">072</FONT>         * Returns a list of active financial processing organizations.<a name="line.72"></a>
+<FONT color="green">073</FONT>         * <a name="line.73"></a>
+<FONT color="green">074</FONT>         * @return A List of Orgs that are active and financial processing.<a name="line.74"></a>
+<FONT color="green">075</FONT>         */<a name="line.75"></a>
+<FONT color="green">076</FONT>        public List&lt;Organization&gt; getActiveFinancialOrgs();<a name="line.76"></a>
+<FONT color="green">077</FONT>        <a name="line.77"></a>
+<FONT color="green">078</FONT>        /**<a name="line.78"></a>
+<FONT color="green">079</FONT>         * returns the chart and organization of the ACTIVE root-level organization<a name="line.79"></a>
+<FONT color="green">080</FONT>         */<a name="line.80"></a>
+<FONT color="green">081</FONT>        public String[] getRootOrganizationCode();<a name="line.81"></a>
+<FONT color="green">082</FONT>        <a name="line.82"></a>
+<FONT color="green">083</FONT>        /**<a name="line.83"></a>
+<FONT color="green">084</FONT>         * This method traverses the hierarchy to see if the organization represented by the potentialChildChartCode and potentialChildOrganizationCode <a name="line.84"></a>
+<FONT color="green">085</FONT>         * reports to the organization represented by the potentialParentChartCode and potentialParentOrganizationCode<a name="line.85"></a>
+<FONT color="green">086</FONT>         * <a name="line.86"></a>
+<FONT color="green">087</FONT>         * @param potentialChildChartCode<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @param potentialChildOrganizationCode<a name="line.88"></a>
+<FONT color="green">089</FONT>         * @param potentialParentChartCode<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @param potentialParentOrganizationCode<a name="line.90"></a>
+<FONT color="green">091</FONT>         * @return boolean indicating whether the organization represented by the first two parameters reports to one represented by the last two parameters<a name="line.91"></a>
+<FONT color="green">092</FONT>         */<a name="line.92"></a>
+<FONT color="green">093</FONT>        public boolean isParentOrganization(String potentialChildChartCode, String potentialChildOrganizationCode, String potentialParentChartCode, String potentialParentOrganizationCode);<a name="line.93"></a>
+<FONT color="green">094</FONT>    }<a name="line.94"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
