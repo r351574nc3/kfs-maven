@@ -270,7 +270,6 @@
                     <directory>src/main/webapp</directory>
                     <includes>
                       <include>index.jsp</include>
-                      <include>portal.jsp</include>
                       <include>kcb/</include>
                       <include>ken/</include>
                       <include>kew/</include>
