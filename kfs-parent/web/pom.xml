@@ -26,6 +26,10 @@ limitations under the License.
   <artifactId>kfs-web</artifactId>
   <packaging>war</packaging>
 
+  <properties>
+    <kfs.external.package.phase>false</kfs.external.package.phase>
+  </properties>
+
   <build>
     <finalName>${project.parent.name}-${environment}</finalName>
     <filters>

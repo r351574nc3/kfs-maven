@@ -118,7 +118,8 @@ limitations under the License.
     <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
 
     <kfs-site.generateReports>true</kfs-site.generateReports>
-    
+    <kfs.external.package.phase>package</kfs.external.package.phase>    
+    <kfs.source.package.phase>package</kfs.source.package.phase>    
 
     <!-- Servlet API Version -->
     <jsp.version>2.0</jsp.version>
@@ -1432,7 +1433,7 @@ limitations under the License.
           <executions>
             <execution>
               <id>make-assembly</id>
-              <phase>package</phase>
+              <phase>${kfs.external.package.phase}</phase>
               <goals>
                 <goal>single</goal>
               </goals>
@@ -1445,7 +1446,7 @@ limitations under the License.
             </execution>
             <execution>
               <id>package-sources</id>
-              <phase>package</phase>
+              <phase>${kfs.source.package.phase}</phase>
               <goals>
                 <goal>single</goal>
               </goals>
