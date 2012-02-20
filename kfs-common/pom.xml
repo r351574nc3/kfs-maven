@@ -118,8 +118,8 @@ limitations under the License.
     <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
 
     <kfs-site.generateReports>true</kfs-site.generateReports>
-    <kfs.external.package.phase>package</kfs.external.package.phase>    
-    <kfs.source.package.phase>package</kfs.source.package.phase>    
+    <kfs.external.package.phase>none</kfs.external.package.phase>    
+    <kfs.source.package.phase>none</kfs.source.package.phase>    
 
     <!-- Servlet API Version -->
     <jsp.version>2.0</jsp.version>

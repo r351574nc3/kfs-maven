@@ -26,6 +26,11 @@
   <artifactId>kfs-config</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <kfs.sources.package.phase>package</kfs.sources.package.phase>
+    <kfs.external.package.phase>package</kfs.external.package.phase>
+  </properties>
+
   <build>
     <filters>
       <filter>${user.home}/kfs-build.properties</filter>
