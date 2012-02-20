@@ -1376,27 +1376,31 @@ limitations under the License.
     <profile>
       <id>sources</id>
       <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>${maven-assembly-plugin.version}</version>
-            <executions>
-              <execution>
-                <id>package-sources</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <formats>tar.bz2</formats>
-                  <descriptorRefs>
-                    <descriptorRef>src</descriptorRef>
-                  </descriptorRefs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>              
-        </plugins>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <version>${maven-assembly-plugin.version}</version>
+              <executions>
+                <execution>
+                  <id>package-sources</id>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>single</goal>
+                  </goals>
+                  <configuration>
+                    <formats>
+                      <format>tar.bz2</format>
+                    </formats>
+                    <descriptorRefs>
+                      <descriptorRef>src</descriptorRef>
+                    </descriptorRefs>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>              
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>
