@@ -102,7 +102,6 @@
                   <overWrite>true</overWrite>
                 </artifactItem>
               </artifactItems>
-              <excludes>pom.xml</excludes>
               <outputDirectory>${basedir}</outputDirectory>
             </configuration>
           </execution>
