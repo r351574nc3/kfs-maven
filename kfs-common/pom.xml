@@ -1388,6 +1388,7 @@ limitations under the License.
                   <goal>single</goal>
                 </goals>
                 <configuration>
+                  <formats>tar.bz2</formats>
                   <descriptorRefs>
                     <descriptorRef>src</descriptorRef>
                   </descriptorRefs>
