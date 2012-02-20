@@ -102,9 +102,7 @@
                   <overWrite>true</overWrite>
                 </artifactItem>
               </artifactItems>
-              <includes>
-                kfs-config-${kfs.maven.version}/**/*
-              </includes>
+              <excludes>pom.xml</excludes>
               <outputDirectory>${basedir}</outputDirectory>
             </configuration>
           </execution>
