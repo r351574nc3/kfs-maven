@@ -27,7 +27,7 @@ limitations under the License.
   <packaging>war</packaging>
 
   <properties>
-    <kfs.sources.package.phase>package</kfs.sources.package.phase>
+    <kfs.source.package.phase>package</kfs.source.package.phase>
   </properties>
 
   <build>

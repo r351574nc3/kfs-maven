@@ -27,7 +27,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <kfs.sources.package.phase>package</kfs.sources.package.phase>
+    <kfs.source.package.phase>package</kfs.source.package.phase>
     <kfs.external.package.phase>package</kfs.external.package.phase>
   </properties>
 
