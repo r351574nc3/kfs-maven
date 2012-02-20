@@ -1376,31 +1376,11 @@ limitations under the License.
     <profile>
       <id>sources</id>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <version>${maven-assembly-plugin.version}</version>
-              <executions>
-                <execution>
-                  <id>package-sources</id>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                  <configuration>
-                    <formats>
-                      <format>tar.bz2</format>
-                    </formats>
-                    <descriptorRefs>
-                      <descriptorRef>src</descriptorRef>
-                    </descriptorRefs>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>              
-          </plugins>
-        </pluginManagement>
+        <plugins>
+          <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
@@ -1427,6 +1407,19 @@ limitations under the License.
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>${maven-assembly-plugin.version}</version>
           <dependencies>
@@ -1436,12 +1429,6 @@ limitations under the License.
               <version>0.0.1</version>
             </dependency>
           </dependencies>
-          <configuration>
-            <!-- This is where we use our shared assembly descriptor -->
-            <descriptorRefs>
-              <descriptorRef>external-config-assembly</descriptorRef>
-            </descriptorRefs>
-          </configuration>
           <executions>
             <execution>
               <id>make-assembly</id>
@@ -1449,6 +1436,27 @@ limitations under the License.
               <goals>
                 <goal>single</goal>
               </goals>
+              <configuration>
+                <!-- This is where we use our shared assembly descriptor -->
+                <descriptorRefs>
+                  <descriptorRef>external-config-assembly</descriptorRef>
+                </descriptorRefs>
+              </configuration>
+            </execution>
+            <execution>
+              <id>package-sources</id>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <formats>
+                  <format>tar.bz2</format>
+                </formats>
+                <descriptorRefs>
+                  <descriptorRef>src-assembly</descriptorRef>
+                </descriptorRefs>
+              </configuration>
             </execution>
           </executions>
         </plugin>              
