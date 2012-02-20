@@ -1373,17 +1373,6 @@ limitations under the License.
         <kuali.coeus.spring.files>,org/kuali/kfs/module/external/kc/spring-kc.xml</kuali.coeus.spring.files>
       </properties>
     </profile>
-
-    <profile>
-      <id>sources</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-source-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 
   <build>

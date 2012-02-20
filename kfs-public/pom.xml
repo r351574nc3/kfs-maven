@@ -30,137 +30,161 @@
   <inceptionYear>2012</inceptionYear>
   <version>0.0.1</version>
   <description></description>
-  <url>http://${kuali.site.hostname}/rice/${project.version}</url>
 
   <licenses>
-    <license>
-      <name>Leo Przybylski Educational Community License 2.0</name>
-      <url>http://www.opensource.org/licenses/ecl2.txt</url>
-      <distribution>manual</distribution>
-    </license>
   </licenses>
   
-  <developers>
-    <developer>
-      <id>leo</id>
-      <name>Leo Przybylski</name>
-      <email>leo@rsmart.com</email>
-      <url>http://kualigan.blogspot.com</url>
-      <organization>rsmart</organization>
-      <organizationUrl>http://www.rsmart.com</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>-7</timezone>
-      <properties>
-        <picUrl>http://www.gravatar.com/avatar/6be04114e185b6fa626a0ee530db34e4.png</picUrl>
-      </properties>
-    </developer>
-  </developers>
-  
   <ciManagement>
-    <url>http://jenkins.leosandbox.org</url>
   </ciManagement>
+  <issueManagement>
+  </issueManagement>
+  <developers>
+  </developers>
+  <url>${kuali.site.public.url}</url>
+  <distributionManagement>
+    <downloadUrl>${kuali.site.download.url}</downloadUrl>
+    <site>
+      <id>${kuali.site.server.id}</id>
+      <name>Kuali Maven Site</name>
+      <url>${kuali.site.publish.url}</url>
+    </site>
+    <repository>
+      <id>${kuali.repo.release.id}</id>
+      <name>${kuali.repo.release.name}</name>
+      <url>${kuali.repo.release.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>${kuali.repo.snapshot.id}</id>
+      <name>${kuali.repo.snapshot.name}</name>
+      <url>${kuali.repo.snapshot.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <scm>
+    <connection></connection>
+    <developerConnection></developerConnection>
+    <url></url>
+  </scm>
 
-<!-- Properties later populated into configuration.properties -->
-<properties>
-  <kfs.maven.groupId>org.kuali.kfs</kfs.maven.groupId>
-  <kfs.maven.version>4.1.1-maven-SNAPSHOT</kfs.maven.version>
-  <kfs.external.unpack.phase>none</kfs.external.unpack.phase>
-  <kfs.web.unpack.phase>none</kfs.web.unpack.phase>
-</properties>
+  <!-- Properties later populated into configuration.properties -->
+  <properties>
+    <kuali.site.server.id></kuali.site.server.id>
+    <kuali.site.publish.url></kuali.site.publish.url>
+    <kuali.repo.release.id></kuali.repo.release.id>
+    <kuali.repo.release.name></kuali.repo.release.name>
+    <kuali.repo.release.url></kuali.repo.release.url>
+    <kuali.repo.snapshot.id></kuali.repo.snapshot.id>
+    <kuali.repo.snapshot.name></kuali.repo.snapshot.name>
+    <kuali.repo.snapshot.url></kuali.repo.snapshot.url>
 
-<dependencies>
-  <dependency>
-    <groupId>org.kuali.kfs</groupId>
-    <artifactId>kfs-config</artifactId>
-    <version>${kfs.maven.version}</version>
-    <classifier>src</classifier>
-    <type>tar.bz2</type>
-  </dependency>
-</dependencies>
+    <kuali.nexus.sonatype.url></kuali.nexus.sonatype.url>
+    <kuali.nexus.sonatype.description>Releasing ${project.artifactId} version ${project.version}</kuali.nexus.sonatype.description>
+    <kuali.nexus.sonatype.phase>none</kuali.nexus.sonatype.phase>
+    <kuali.nexus.sonatype.automatic>true</kuali.nexus.sonatype.automatic>
+    <kuali.nexus.sonatype.promote.auto.select.override>true</kuali.nexus.sonatype.promote.auto.select.override>
+    <kuali.nexus.sonatype.release.repository.id>releases</kuali.nexus.sonatype.release.repository.id>
 
-<build>
-  <pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>${maven-dependency-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>unpack-external</id>
-            <phase>${kfs.external.unpack.phase}</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <classifier>src</classifier>
-                  <groupId>org.kuali.kfs</groupId>
-                  <artifactId>kfs-config</artifactId>
-                  <version>${kfs.maven.version}</version>
-                  <type>tar.bz2</type>
-                  <overWrite>false</overWrite>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${basedir}</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>unpack-web</id>
-            <phase>${kfs.web.unpack.phase}</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <classifier>src</classifier>
-                  <groupId>org.kuali.kfs</groupId>
-                  <artifactId>kfs-web</artifactId>
-                  <version>${kfs.maven.version}</version>
-                  <type>tar.bz2</type>
-                  <overWrite>false</overWrite>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${basedir}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+    <kuali.repo.release.id>sonatype-nexus-staging</kuali.repo.release.id>
+    <kuali.repo.release.name>Sonatype Nexus Release Repository</kuali.repo.release.name>
+    <kuali.repo.release.url>${kuali.nexus.sonatype.url}/service/local/staging/deploy/maven2</kuali.repo.release.url>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>${maven-war-plugin.version}</version>
-        <configuration>
-          <overlays>
-            <overlay>
-              <groupId>${kfs.maven.groupId}</groupId>
-              <artifactId>kfs-web</artifactId>
-              <excludes>
-                <exclude>WEB-INF/classes/ApplicationResources.properties</exclude>
-                <exclude>WEB-INF/classes/configuration.properties</exclude>
-                <exclude>WEB-INF/tags/portal/</exclude>
-              </excludes>
-            </overlay>
-          </overlays>
-          <webResources>
-            <resource>
-              <filtering>true</filtering>
-              <!-- this is relative to the pom.xml directory -->
-              <directory>src/main/webapp/</directory>
-              <includes>
-                <include>**/web.xml</include>
-              </includes>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
-    </plugins>
-  </pluginManagement>
-</build>
+
+    <kfs.maven.groupId>org.kuali.kfs</kfs.maven.groupId>
+    <kfs.maven.version>4.1.1-maven-SNAPSHOT</kfs.maven.version>
+    <kfs.external.unpack.phase>none</kfs.external.unpack.phase>
+    <kfs.web.unpack.phase>none</kfs.web.unpack.phase>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.kuali.kfs</groupId>
+      <artifactId>kfs-config</artifactId>
+      <version>${kfs.maven.version}</version>
+      <classifier>src</classifier>
+      <type>tar.bz2</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>unpack-external</id>
+              <phase>${kfs.external.unpack.phase}</phase>
+              <goals>
+                <goal>unpack</goal>
+              </goals>
+              <configuration>
+                <artifactItems>
+                  <artifactItem>
+                    <classifier>src</classifier>
+                    <groupId>org.kuali.kfs</groupId>
+                    <artifactId>kfs-config</artifactId>
+                    <version>${kfs.maven.version}</version>
+                    <type>tar.bz2</type>
+                    <overWrite>false</overWrite>
+                  </artifactItem>
+                </artifactItems>
+                <outputDirectory>${basedir}</outputDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <id>unpack-web</id>
+              <phase>${kfs.web.unpack.phase}</phase>
+              <goals>
+                <goal>unpack</goal>
+              </goals>
+              <configuration>
+                <artifactItems>
+                  <artifactItem>
+                    <classifier>src</classifier>
+                    <groupId>org.kuali.kfs</groupId>
+                    <artifactId>kfs-web</artifactId>
+                    <version>${kfs.maven.version}</version>
+                    <type>tar.bz2</type>
+                    <overWrite>false</overWrite>
+                  </artifactItem>
+                </artifactItems>
+                <outputDirectory>${basedir}</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven-war-plugin.version}</version>
+          <configuration>
+            <overlays>
+              <overlay>
+                <groupId>${kfs.maven.groupId}</groupId>
+                <artifactId>kfs-web</artifactId>
+                <excludes>
+                  <exclude>WEB-INF/classes/ApplicationResources.properties</exclude>
+                  <exclude>WEB-INF/classes/configuration.properties</exclude>
+                  <exclude>WEB-INF/tags/portal/</exclude>
+                </excludes>
+              </overlay>
+            </overlays>
+            <webResources>
+              <resource>
+                <filtering>true</filtering>
+                <!-- this is relative to the pom.xml directory -->
+                <directory>src/main/webapp/</directory>
+                <includes>
+                  <include>**/web.xml</include>
+                </includes>
+              </resource>
+            </webResources>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
 </project>
