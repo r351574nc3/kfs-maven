@@ -1378,24 +1378,23 @@ limitations under the License.
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>2.1.2</version>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>${maven-assembly-plugin.version}</version>
             <executions>
               <execution>
-                <id>attach-sources</id>
+                <id>package-sources</id>
+                <phase>package</phase>
                 <goals>
-                  <goal>jar-no-fork</goal>
+                  <goal>single</goal>
                 </goals>
                 <configuration>
-                  <forceCreation>true</forceCreation>
-                  <includes>
-                    <include>**/*</include>
-                  </includes>
+                  <descriptorRefs>
+                    <descriptorRef>src</descriptorRef>
+                  </descriptorRefs>
                 </configuration>
               </execution>
             </executions>
-          </plugin>
+          </plugin>              
         </plugins>
       </build>
     </profile>
@@ -1579,13 +1578,6 @@ limitations under the License.
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>r07</version>
-      </dependency>
-      <dependency>
-        <groupId>com.oracle</groupId>
-        <artifactId>ojdbc14</artifactId>
-        <version>${oracle.version}</version>
-        <!-- should be provided once embedded jetty is figured out -->
-        <scope>test</scope>
       </dependency>
       <!-- do not change to 1.8.3 or struts breaks -->
       <dependency>
@@ -1777,13 +1769,6 @@ limitations under the License.
         <artifactId>log4j</artifactId>
         <version>1.2.16</version>
       </dependency>			
-      <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.version}</version>
-        <!-- should be provided once embedded jetty is figured out -->
-        <scope>test</scope>
-      </dependency>
       <dependency>
         <groupId>net.sourceforge.htmlunit</groupId>
         <artifactId>htmlunit</artifactId>

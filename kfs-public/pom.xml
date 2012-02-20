@@ -72,13 +72,11 @@
     <groupId>org.kuali.kfs</groupId>
     <artifactId>kfs-config</artifactId>
     <version>${kfs.maven.version}</version>
-    <type>zip</type>
-    <classifier>external</classifier>
+    <classifier>sources</classifier>
   </dependency>
 </dependencies>
 
 <build>
-  <!--
   <pluginManagement>
     <plugins>
       <plugin>
@@ -95,8 +93,9 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.kuali.rice</groupId>
-                  <artifactId>rice-web</artifactId>
+                  <classifier>sources</classifier>
+                  <groupId>org.kuali.kfs</groupId>
+                  <artifactId>kfs-config</artifactId>
                   <version>${kfs.maven.version}</version>
                   <type>jar</type>
                   <overWrite>true</overWrite>
@@ -117,7 +116,6 @@
       <artifactId>maven-dependency-plugin</artifactId>
     </plugin>
   </plugins>
-  -->
 </build>
 
 </project>
