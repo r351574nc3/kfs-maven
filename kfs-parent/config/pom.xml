@@ -24,7 +24,7 @@
     <version>4.1.1-maven-SNAPSHOT</version>
   </parent>
   <artifactId>kfs-config</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <build>
     <filters>

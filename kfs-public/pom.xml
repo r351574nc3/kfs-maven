@@ -19,15 +19,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.kuali.pom</groupId>
-    <artifactId>kuali-common</artifactId>
-    <version>1.0.31</version>
+    <groupId>org.kuali.kfs</groupId>
+    <artifactId>kfs-parent</artifactId>
+    <version>4.1.1-maven-SNAPSHOT</version>
   </parent>
   <groupId>org.kuali.pom</groupId>
   <artifactId>kfs-public</artifactId>
   <packaging>pom</packaging>
   <name>kfs-public-pom</name>
-  <inceptionYear>2005</inceptionYear>
+  <inceptionYear>2012</inceptionYear>
   <version>0.0.1</version>
   <description></description>
   <url>http://${kuali.site.hostname}/rice/${project.version}</url>
@@ -64,6 +64,60 @@
 
 <!-- Properties later populated into configuration.properties -->
 <properties>
+  <kfs.maven.version>4.1.1-maven-SNAPSHOT</kfs.maven.version>
 </properties>
+
+<dependencies>
+  <dependency>
+    <groupId>org.kuali.kfs</groupId>
+    <artifactId>kfs-config</artifactId>
+    <version>${kfs.maven.version}</version>
+    <type>zip</type>
+    <classifier>external</classifier>
+  </dependency>
+</dependencies>
+
+<build>
+  <!--
+  <pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven-dependency-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>unpack-filters</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.kuali.rice</groupId>
+                  <artifactId>rice-web</artifactId>
+                  <version>${kfs.maven.version}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>src/main/filters</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+              <includes>*/**</includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </pluginManagement>
+ 
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-dependency-plugin</artifactId>
+    </plugin>
+  </plugins>
+  -->
+</build>
 
 </project>
