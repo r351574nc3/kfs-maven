@@ -251,7 +251,7 @@ limitations under the License.
                       <artifactId>rice-web</artifactId>
                       <version>${rice.snapshot.web.version}</version>
                       <type>war</type>
-                      <overWrite>true</overWrite>
+                      <overWrite>false</overWrite>
                       <outputDirectory>src/main/webapp</outputDirectory>
                     </artifactItem>
                   </artifactItems>
