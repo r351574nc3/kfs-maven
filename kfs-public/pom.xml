@@ -130,6 +130,35 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${maven-war-plugin.version}</version>
+        <configuration>
+          <overlays>
+            <overlay>
+              <groupId>${kfs.maven.groupId}</groupId>
+              <artifactId>kfs-web</artifactId>
+              <excludes>
+                <exclude>WEB-INF/classes/ApplicationResources.properties</exclude>
+                <exclude>WEB-INF/classes/configuration.properties</exclude>
+                <exclude>WEB-INF/tags/portal/</exclude>
+              </excludes>
+            </overlay>
+          </overlays>
+          <webResources>
+            <resource>
+              <filtering>true</filtering>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>src/main/webapp/</directory>
+              <includes>
+                <include>**/web.xml</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
     </plugins>
   </pluginManagement>
 </build>
