@@ -64,7 +64,10 @@
 
 <!-- Properties later populated into configuration.properties -->
 <properties>
+  <kfs.maven.groupId>org.kuali.kfs</kfs.maven.groupId>
   <kfs.maven.version>4.1.1-maven-SNAPSHOT</kfs.maven.version>
+  <kfs.external.unpack.phase>none</kfs.external.unpack.phase>
+  <kfs.web.unpack.phase>none</kfs.web.unpack.phase>
 </properties>
 
 <dependencies>
@@ -86,10 +89,10 @@
         <version>${maven-dependency-plugin.version}</version>
         <executions>
           <execution>
-            <id>unpack-filters</id>
-            <phase>generate-resources</phase>
+            <id>unpack-external</id>
+            <phase>${kfs.external.unpack.phase}</phase>
             <goals>
-              <goal>unpack-dependencies</goal>
+              <goal>unpack</goal>
             </goals>
             <configuration>
               <artifactItems>
@@ -97,6 +100,26 @@
                   <classifier>src</classifier>
                   <groupId>org.kuali.kfs</groupId>
                   <artifactId>kfs-config</artifactId>
+                  <version>${kfs.maven.version}</version>
+                  <type>tar.bz2</type>
+                  <overWrite>true</overWrite>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${basedir}</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack-web</id>
+            <phase>${kfs.web.unpack.phase}</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <classifier>src</classifier>
+                  <groupId>org.kuali.kfs</groupId>
+                  <artifactId>kfs-web</artifactId>
                   <version>${kfs.maven.version}</version>
                   <type>tar.bz2</type>
                   <overWrite>true</overWrite>
