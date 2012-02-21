@@ -4,8 +4,39 @@ great user documentation and developer information, and
 we're really excited that you've taken the time to visit
 this site.
 
-What is kfs-maven
+What is kfs-maven?
 
- This is a project that is really a reference to exploring ways to use maven to build, deploy, and manage changes within KFS
+ This is a project that is really a reference to exploring ways to use
+ maven to build, deploy, and manage changes within KFS.
 
 * Checkout our {{{https://plus.google.com/b/104739097471160120761/}G+ Page}}
+
+Where is it Going?
+ 
+ Eventually, this will become a reference implementation for getting
+ started with KFS quickly.
+
+ * First we want to start with Maven
+
+   Once maven becomes a popular way to manage KFS and we establish
+   some better practices, We'll move on to other things
+
+ * One of the Goals of the Reference is to be Simple
+   
+   I want it so simple that any administrator or anyone can get up and
+   running with KFS. Right now there is testdrive which is nice for
+   playing with it, but you want control over your own data. You want
+   an easy to manage system that doesn't take a day at the bootcamp to
+   get started with.
+
+  ** Automated Database Setup
+
+     Right now, just the implementation of the software is going
+     up. Databases also must be managed. How about setting one up in
+     the reference implementation? How about with liquibase?
+
+ * Pave the Way for Even Simpler Implementations
+
+   Why stop with reference implementations? How about real deployable
+   implementations?
+
