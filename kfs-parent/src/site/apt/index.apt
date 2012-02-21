@@ -16,12 +16,12 @@ Where is it Going?
  Eventually, this will become a reference implementation for getting
  started with KFS quickly.
 
- * First we want to start with Maven
+* First we want to start with Maven
 
    Once maven becomes a popular way to manage KFS and we establish
    some better practices, We'll move on to other things
 
- * One of the Goals of the Reference is to be Simple
+* One of the Goals of the Reference is to be Simple
    
    I want it so simple that any administrator or anyone can get up and
    running with KFS. Right now there is testdrive which is nice for
@@ -29,13 +29,13 @@ Where is it Going?
    an easy to manage system that doesn't take a day at the bootcamp to
    get started with.
 
-  ** Automated Database Setup
+** Automated Database Setup
 
-     Right now, just the implementation of the software is going
-     up. Databases also must be managed. How about setting one up in
-     the reference implementation? How about with liquibase?
+ Right now, just the implementation of the software is going
+up. Databases also must be managed. How about setting one up in
+the reference implementation? How about with liquibase?
 
- * Pave the Way for Even Simpler Implementations
+* Pave the Way for Even Simpler Implementations
 
    Why stop with reference implementations? How about real deployable
    implementations?

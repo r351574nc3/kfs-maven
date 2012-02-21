@@ -3,18 +3,24 @@ Usage
 To get into using this project
 
 * Checkout from github
+
   ----------------------------------------
   git clone git@github.com:r351574nc3/kfs-maven.git
   ----------------------------------------
+
 * Install assembly
+
   ----------------------------------------
   cd kfs-assembly
   mvn clean install
   ----------------------------------------  
+
 * Install common POM
+
   ----------------------------------------
   cd kfs-common
   mvn clean install
   ----------------------------------------  
+
 * Setup database
   Check back here later for this.
