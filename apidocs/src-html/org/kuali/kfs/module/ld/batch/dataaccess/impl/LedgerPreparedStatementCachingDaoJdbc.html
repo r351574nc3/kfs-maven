@@ -1,0 +1,366 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.module.ld.batch.dataaccess.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.sql.PreparedStatement;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.sql.ResultSet;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.sql.SQLException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.HashMap;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.Map;<a name="line.22"></a>
+<FONT color="green">023</FONT>    <a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.module.ld.batch.dataaccess.LedgerPreparedStatementCachingDao;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.module.ld.businessobject.LaborObject;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.module.ld.businessobject.LedgerBalance;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.module.ld.businessobject.LedgerEntry;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.sys.batch.dataaccess.impl.AbstractPreparedStatementCachingDaoJdbc;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.rice.kns.util.Guid;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>    public class LedgerPreparedStatementCachingDaoJdbc extends AbstractPreparedStatementCachingDaoJdbc implements LedgerPreparedStatementCachingDao {<a name="line.32"></a>
+<FONT color="green">033</FONT>        static final Map&lt;String,String&gt; sql = new HashMap&lt;String,String&gt;();<a name="line.33"></a>
+<FONT color="green">034</FONT>        static {<a name="line.34"></a>
+<FONT color="green">035</FONT>            sql.put(RETRIEVE_PREFIX + LaborObject.class, "select finobj_frngslry_cd from LD_LABOR_OBJ_T where univ_fiscal_yr = ? and fin_coa_cd = ? and fin_object_cd = ?");<a name="line.35"></a>
+<FONT color="green">036</FONT>            sql.put(RETRIEVE_PREFIX + Integer.class, "select max(trn_entr_seq_nbr) from LD_LDGR_ENTR_T where univ_fiscal_yr = ? and fin_coa_cd = ? and account_nbr = ? and sub_acct_nbr = ? and fin_object_cd = ? and fin_sub_obj_cd = ? and fin_balance_typ_cd = ? and fin_obj_typ_cd = ? and univ_fiscal_prd_cd = ? and fdoc_typ_cd = ? and fs_origin_cd = ? and fdoc_nbr = ?");<a name="line.36"></a>
+<FONT color="green">037</FONT>            sql.put(RETRIEVE_PREFIX + LedgerBalance.class, "select ACLN_ANNL_BAL_AMT, FIN_BEG_BAL_LN_AMT, CONTR_GR_BB_AC_AMT, MO1_ACCT_LN_AMT, MO2_ACCT_LN_AMT, MO3_ACCT_LN_AMT, MO4_ACCT_LN_AMT, MO5_ACCT_LN_AMT, MO6_ACCT_LN_AMT, MO7_ACCT_LN_AMT, MO8_ACCT_LN_AMT, MO9_ACCT_LN_AMT, MO10_ACCT_LN_AMT, MO11_ACCT_LN_AMT, MO12_ACCT_LN_AMT, MO13_ACCT_LN_AMT from LD_LDGR_BAL_T where UNIV_FISCAL_YR = ? and FIN_COA_CD = ? and ACCOUNT_NBR = ? and SUB_ACCT_NBR = ? and FIN_OBJECT_CD = ? and FIN_SUB_OBJ_CD = ? and FIN_BALANCE_TYP_CD = ? and FIN_OBJ_TYP_CD = ? and POSITION_NBR = ? and EMPLID = ?");<a name="line.37"></a>
+<FONT color="green">038</FONT>            sql.put(INSERT_PREFIX + LedgerBalance.class, "insert into LD_LDGR_BAL_T (UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD, FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, POSITION_NBR, EMPLID, OBJ_ID, VER_NBR, ACLN_ANNL_BAL_AMT, FIN_BEG_BAL_LN_AMT, CONTR_GR_BB_AC_AMT, MO1_ACCT_LN_AMT, MO2_ACCT_LN_AMT, MO3_ACCT_LN_AMT, MO4_ACCT_LN_AMT, MO5_ACCT_LN_AMT, MO6_ACCT_LN_AMT, MO7_ACCT_LN_AMT, MO8_ACCT_LN_AMT, MO9_ACCT_LN_AMT, MO10_ACCT_LN_AMT, MO11_ACCT_LN_AMT, MO12_ACCT_LN_AMT, MO13_ACCT_LN_AMT, TIMESTAMP) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");<a name="line.38"></a>
+<FONT color="green">039</FONT>            sql.put(UPDATE_PREFIX + LedgerBalance.class, "update LD_LDGR_BAL_T set ACLN_ANNL_BAL_AMT = ?, FIN_BEG_BAL_LN_AMT = ?, CONTR_GR_BB_AC_AMT = ?, MO1_ACCT_LN_AMT = ?, MO2_ACCT_LN_AMT = ?, MO3_ACCT_LN_AMT = ?, MO4_ACCT_LN_AMT = ?, MO5_ACCT_LN_AMT = ?, MO6_ACCT_LN_AMT = ?, MO7_ACCT_LN_AMT = ?, MO8_ACCT_LN_AMT = ?, MO9_ACCT_LN_AMT = ?, MO10_ACCT_LN_AMT = ?, MO11_ACCT_LN_AMT = ?, MO12_ACCT_LN_AMT = ?, MO13_ACCT_LN_AMT = ?, TIMESTAMP = ? where UNIV_FISCAL_YR = ? and FIN_COA_CD = ? and ACCOUNT_NBR = ? and SUB_ACCT_NBR = ? and FIN_OBJECT_CD = ? and FIN_SUB_OBJ_CD = ? and FIN_BALANCE_TYP_CD = ? and FIN_OBJ_TYP_CD = ? and POSITION_NBR = ? and EMPLID = ?");<a name="line.39"></a>
+<FONT color="green">040</FONT>            sql.put(INSERT_PREFIX + LedgerEntry.class, "INSERT INTO LD_LDGR_ENTR_T (UNIV_FISCAL_YR, FIN_COA_CD,ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD, FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, UNIV_FISCAL_PRD_CD, FDOC_TYP_CD, FS_ORIGIN_CD, FDOC_NBR, TRN_ENTR_SEQ_NBR, OBJ_ID, VER_NBR, POSITION_NBR, PROJECT_CD, TRN_LDGR_ENTR_DESC, TRN_LDGR_ENTR_AMT, TRN_DEBIT_CRDT_CD, TRANSACTION_DT, ORG_DOC_NBR, ORG_REFERENCE_ID, FDOC_REF_TYP_CD, FS_REF_ORIGIN_CD, FDOC_REF_NBR, FDOC_REVERSAL_DT, TRN_ENCUM_UPDT_CD, TRN_POST_DT, PAY_PERIOD_END_DT, TRN_TOTAL_HR, PYRL_DT_FSCL_YR, PYRL_DT_FSCLPRD_CD, EMPLID, EMPL_RCD, ERNCD, PAYGROUP, SAL_ADMIN_PLAN, GRADE, RUN_ID, LL_ORIG_FIN_COA_CD, LL_ORIG_ACCT_NBR, LL_ORIG_SUB_ACCT_NBR, LL_ORIG_FIN_OBJECT_CD, LL_ORIG_FIN_SUB_OBJ_CD, COMPANY, SETID, TIMESTAMP) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");<a name="line.40"></a>
+<FONT color="green">041</FONT>        }<a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>        @Override<a name="line.43"></a>
+<FONT color="green">044</FONT>        protected Map&lt;String, String&gt; getSql() {<a name="line.44"></a>
+<FONT color="green">045</FONT>            return sql;<a name="line.45"></a>
+<FONT color="green">046</FONT>        }<a name="line.46"></a>
+<FONT color="green">047</FONT>        <a name="line.47"></a>
+<FONT color="green">048</FONT>        public LaborObject getLaborObject(final Integer fiscalYear, final String chartCode, final String objectCode) {<a name="line.48"></a>
+<FONT color="green">049</FONT>            return new RetrievingJdbcWrapper&lt;LaborObject&gt;() {<a name="line.49"></a>
+<FONT color="green">050</FONT>                @Override<a name="line.50"></a>
+<FONT color="green">051</FONT>                protected void populateStatement(PreparedStatement preparedStatement) throws SQLException {<a name="line.51"></a>
+<FONT color="green">052</FONT>                    preparedStatement.setInt(1, fiscalYear);<a name="line.52"></a>
+<FONT color="green">053</FONT>                    preparedStatement.setString(2, chartCode);<a name="line.53"></a>
+<FONT color="green">054</FONT>                    preparedStatement.setString(3, objectCode);<a name="line.54"></a>
+<FONT color="green">055</FONT>                }<a name="line.55"></a>
+<FONT color="green">056</FONT>                @Override<a name="line.56"></a>
+<FONT color="green">057</FONT>                protected LaborObject extractResult(ResultSet resultSet) throws SQLException {<a name="line.57"></a>
+<FONT color="green">058</FONT>                    LaborObject laborObject = new LaborObject();<a name="line.58"></a>
+<FONT color="green">059</FONT>                    laborObject.setUniversityFiscalYear(fiscalYear);<a name="line.59"></a>
+<FONT color="green">060</FONT>                    laborObject.setChartOfAccountsCode(chartCode);<a name="line.60"></a>
+<FONT color="green">061</FONT>                    laborObject.setFinancialObjectCode(objectCode);<a name="line.61"></a>
+<FONT color="green">062</FONT>                    laborObject.setFinancialObjectFringeOrSalaryCode(resultSet.getString(1)); <a name="line.62"></a>
+<FONT color="green">063</FONT>                    return laborObject;<a name="line.63"></a>
+<FONT color="green">064</FONT>                }<a name="line.64"></a>
+<FONT color="green">065</FONT>            }.get(LaborObject.class);<a name="line.65"></a>
+<FONT color="green">066</FONT>        }<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>        public int getMaxLaborSequenceNumber(final LedgerEntry t) {<a name="line.68"></a>
+<FONT color="green">069</FONT>            return new RetrievingJdbcWrapper&lt;Integer&gt;() {<a name="line.69"></a>
+<FONT color="green">070</FONT>                @Override<a name="line.70"></a>
+<FONT color="green">071</FONT>                protected void populateStatement(PreparedStatement preparedStatement) throws SQLException {<a name="line.71"></a>
+<FONT color="green">072</FONT>                    preparedStatement.setInt(1, t.getUniversityFiscalYear());<a name="line.72"></a>
+<FONT color="green">073</FONT>                    preparedStatement.setString(2, t.getChartOfAccountsCode());<a name="line.73"></a>
+<FONT color="green">074</FONT>                    preparedStatement.setString(3, t.getAccountNumber());<a name="line.74"></a>
+<FONT color="green">075</FONT>                    preparedStatement.setString(4, t.getSubAccountNumber());<a name="line.75"></a>
+<FONT color="green">076</FONT>                    preparedStatement.setString(5, t.getFinancialObjectCode());<a name="line.76"></a>
+<FONT color="green">077</FONT>                    preparedStatement.setString(6, t.getFinancialSubObjectCode());<a name="line.77"></a>
+<FONT color="green">078</FONT>                    preparedStatement.setString(7, t.getFinancialBalanceTypeCode());<a name="line.78"></a>
+<FONT color="green">079</FONT>                    preparedStatement.setString(8, t.getFinancialObjectTypeCode());<a name="line.79"></a>
+<FONT color="green">080</FONT>                    preparedStatement.setString(9, t.getUniversityFiscalPeriodCode());<a name="line.80"></a>
+<FONT color="green">081</FONT>                    preparedStatement.setString(10, t.getFinancialDocumentTypeCode());<a name="line.81"></a>
+<FONT color="green">082</FONT>                    preparedStatement.setString(11, t.getFinancialSystemOriginationCode());<a name="line.82"></a>
+<FONT color="green">083</FONT>                    preparedStatement.setString(12, t.getDocumentNumber());<a name="line.83"></a>
+<FONT color="green">084</FONT>                }<a name="line.84"></a>
+<FONT color="green">085</FONT>                @Override<a name="line.85"></a>
+<FONT color="green">086</FONT>                protected Integer extractResult(ResultSet resultSet) throws SQLException {<a name="line.86"></a>
+<FONT color="green">087</FONT>                    return resultSet.getInt(1);<a name="line.87"></a>
+<FONT color="green">088</FONT>                }<a name="line.88"></a>
+<FONT color="green">089</FONT>            }.get(Integer.class);<a name="line.89"></a>
+<FONT color="green">090</FONT>        }<a name="line.90"></a>
+<FONT color="green">091</FONT>        <a name="line.91"></a>
+<FONT color="green">092</FONT>        public LedgerBalance getLedgerBalance(final LedgerBalance lb) {<a name="line.92"></a>
+<FONT color="green">093</FONT>            return new RetrievingJdbcWrapper&lt;LedgerBalance&gt;() {<a name="line.93"></a>
+<FONT color="green">094</FONT>                @Override<a name="line.94"></a>
+<FONT color="green">095</FONT>                protected void populateStatement(PreparedStatement preparedStatement) throws SQLException {<a name="line.95"></a>
+<FONT color="green">096</FONT>                    preparedStatement.setInt(1, lb.getUniversityFiscalYear());<a name="line.96"></a>
+<FONT color="green">097</FONT>                    preparedStatement.setString(2, lb.getChartOfAccountsCode());<a name="line.97"></a>
+<FONT color="green">098</FONT>                    preparedStatement.setString(3, lb.getAccountNumber());<a name="line.98"></a>
+<FONT color="green">099</FONT>                    preparedStatement.setString(4, lb.getSubAccountNumber());<a name="line.99"></a>
+<FONT color="green">100</FONT>                    preparedStatement.setString(5, lb.getFinancialObjectCode());<a name="line.100"></a>
+<FONT color="green">101</FONT>                    preparedStatement.setString(6, lb.getFinancialSubObjectCode());<a name="line.101"></a>
+<FONT color="green">102</FONT>                    preparedStatement.setString(7, lb.getFinancialBalanceTypeCode());<a name="line.102"></a>
+<FONT color="green">103</FONT>                    preparedStatement.setString(8, lb.getFinancialObjectTypeCode());<a name="line.103"></a>
+<FONT color="green">104</FONT>                    preparedStatement.setString(9, lb.getPositionNumber());<a name="line.104"></a>
+<FONT color="green">105</FONT>                    preparedStatement.setString(10, lb.getEmplid());<a name="line.105"></a>
+<FONT color="green">106</FONT>                }<a name="line.106"></a>
+<FONT color="green">107</FONT>                @Override<a name="line.107"></a>
+<FONT color="green">108</FONT>                protected LedgerBalance extractResult(ResultSet resultSet) throws SQLException {<a name="line.108"></a>
+<FONT color="green">109</FONT>                    LedgerBalance ledgerBalance = new LedgerBalance();<a name="line.109"></a>
+<FONT color="green">110</FONT>                    ledgerBalance.setUniversityFiscalYear(lb.getUniversityFiscalYear());<a name="line.110"></a>
+<FONT color="green">111</FONT>                    ledgerBalance.setChartOfAccountsCode(lb.getChartOfAccountsCode());<a name="line.111"></a>
+<FONT color="green">112</FONT>                    ledgerBalance.setAccountNumber(lb.getAccountNumber());<a name="line.112"></a>
+<FONT color="green">113</FONT>                    ledgerBalance.setSubAccountNumber(lb.getSubAccountNumber());<a name="line.113"></a>
+<FONT color="green">114</FONT>                    ledgerBalance.setFinancialObjectCode(lb.getFinancialObjectCode());<a name="line.114"></a>
+<FONT color="green">115</FONT>                    ledgerBalance.setFinancialSubObjectCode(lb.getFinancialSubObjectCode());<a name="line.115"></a>
+<FONT color="green">116</FONT>                    ledgerBalance.setFinancialBalanceTypeCode(lb.getFinancialBalanceTypeCode());<a name="line.116"></a>
+<FONT color="green">117</FONT>                    ledgerBalance.setFinancialObjectTypeCode(lb.getFinancialObjectTypeCode());<a name="line.117"></a>
+<FONT color="green">118</FONT>                    ledgerBalance.setPositionNumber(lb.getPositionNumber());<a name="line.118"></a>
+<FONT color="green">119</FONT>                    ledgerBalance.setEmplid(lb.getEmplid());<a name="line.119"></a>
+<FONT color="green">120</FONT>                    ledgerBalance.setAccountLineAnnualBalanceAmount(new KualiDecimal(resultSet.getBigDecimal(1)));<a name="line.120"></a>
+<FONT color="green">121</FONT>                    ledgerBalance.setBeginningBalanceLineAmount(new KualiDecimal(resultSet.getBigDecimal(2)));<a name="line.121"></a>
+<FONT color="green">122</FONT>                    ledgerBalance.setContractsGrantsBeginningBalanceAmount(new KualiDecimal(resultSet.getBigDecimal(3)));<a name="line.122"></a>
+<FONT color="green">123</FONT>                    ledgerBalance.setMonth1Amount(new KualiDecimal(resultSet.getBigDecimal(4)));<a name="line.123"></a>
+<FONT color="green">124</FONT>                    ledgerBalance.setMonth2Amount(new KualiDecimal(resultSet.getBigDecimal(5)));<a name="line.124"></a>
+<FONT color="green">125</FONT>                    ledgerBalance.setMonth3Amount(new KualiDecimal(resultSet.getBigDecimal(6)));<a name="line.125"></a>
+<FONT color="green">126</FONT>                    ledgerBalance.setMonth4Amount(new KualiDecimal(resultSet.getBigDecimal(7)));<a name="line.126"></a>
+<FONT color="green">127</FONT>                    ledgerBalance.setMonth5Amount(new KualiDecimal(resultSet.getBigDecimal(8)));<a name="line.127"></a>
+<FONT color="green">128</FONT>                    ledgerBalance.setMonth6Amount(new KualiDecimal(resultSet.getBigDecimal(9)));<a name="line.128"></a>
+<FONT color="green">129</FONT>                    ledgerBalance.setMonth7Amount(new KualiDecimal(resultSet.getBigDecimal(10)));<a name="line.129"></a>
+<FONT color="green">130</FONT>                    ledgerBalance.setMonth8Amount(new KualiDecimal(resultSet.getBigDecimal(11)));<a name="line.130"></a>
+<FONT color="green">131</FONT>                    ledgerBalance.setMonth9Amount(new KualiDecimal(resultSet.getBigDecimal(12)));<a name="line.131"></a>
+<FONT color="green">132</FONT>                    ledgerBalance.setMonth10Amount(new KualiDecimal(resultSet.getBigDecimal(13)));<a name="line.132"></a>
+<FONT color="green">133</FONT>                    ledgerBalance.setMonth11Amount(new KualiDecimal(resultSet.getBigDecimal(14)));<a name="line.133"></a>
+<FONT color="green">134</FONT>                    ledgerBalance.setMonth12Amount(new KualiDecimal(resultSet.getBigDecimal(15)));<a name="line.134"></a>
+<FONT color="green">135</FONT>                    ledgerBalance.setMonth13Amount(new KualiDecimal(resultSet.getBigDecimal(16)));<a name="line.135"></a>
+<FONT color="green">136</FONT>                    return ledgerBalance;<a name="line.136"></a>
+<FONT color="green">137</FONT>                }<a name="line.137"></a>
+<FONT color="green">138</FONT>            }.get(LedgerBalance.class);<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
+<FONT color="green">140</FONT>    <a name="line.140"></a>
+<FONT color="green">141</FONT>        public void insertLedgerBalance(final LedgerBalance ledgerBalance) {<a name="line.141"></a>
+<FONT color="green">142</FONT>            new InsertingJdbcWrapper&lt;LedgerBalance&gt;() {<a name="line.142"></a>
+<FONT color="green">143</FONT>                @Override<a name="line.143"></a>
+<FONT color="green">144</FONT>                protected void populateStatement(PreparedStatement preparedStatement) throws SQLException {<a name="line.144"></a>
+<FONT color="green">145</FONT>                    preparedStatement.setInt(1, ledgerBalance.getUniversityFiscalYear());<a name="line.145"></a>
+<FONT color="green">146</FONT>                    preparedStatement.setString(2, ledgerBalance.getChartOfAccountsCode());<a name="line.146"></a>
+<FONT color="green">147</FONT>                    preparedStatement.setString(3, ledgerBalance.getAccountNumber());<a name="line.147"></a>
+<FONT color="green">148</FONT>                    preparedStatement.setString(4, ledgerBalance.getSubAccountNumber());<a name="line.148"></a>
+<FONT color="green">149</FONT>                    preparedStatement.setString(5, ledgerBalance.getFinancialObjectCode());<a name="line.149"></a>
+<FONT color="green">150</FONT>                    preparedStatement.setString(6, ledgerBalance.getFinancialSubObjectCode());<a name="line.150"></a>
+<FONT color="green">151</FONT>                    preparedStatement.setString(7, ledgerBalance.getFinancialBalanceTypeCode());<a name="line.151"></a>
+<FONT color="green">152</FONT>                    preparedStatement.setString(8, ledgerBalance.getFinancialObjectTypeCode());<a name="line.152"></a>
+<FONT color="green">153</FONT>                    preparedStatement.setString(9, ledgerBalance.getPositionNumber());<a name="line.153"></a>
+<FONT color="green">154</FONT>                    preparedStatement.setString(10, ledgerBalance.getEmplid());<a name="line.154"></a>
+<FONT color="green">155</FONT>                    if (ledgerBalance.getObjectId() == null) {<a name="line.155"></a>
+<FONT color="green">156</FONT>                        preparedStatement.setString(11, new Guid().toString());<a name="line.156"></a>
+<FONT color="green">157</FONT>                    }<a name="line.157"></a>
+<FONT color="green">158</FONT>                    else {<a name="line.158"></a>
+<FONT color="green">159</FONT>                        preparedStatement.setString(11, ledgerBalance.getObjectId());<a name="line.159"></a>
+<FONT color="green">160</FONT>                    }<a name="line.160"></a>
+<FONT color="green">161</FONT>                    if (ledgerBalance.getVersionNumber() == null) {<a name="line.161"></a>
+<FONT color="green">162</FONT>                        preparedStatement.setLong(12, 1);<a name="line.162"></a>
+<FONT color="green">163</FONT>                    }<a name="line.163"></a>
+<FONT color="green">164</FONT>                    else {<a name="line.164"></a>
+<FONT color="green">165</FONT>                        preparedStatement.setLong(12, ledgerBalance.getVersionNumber());<a name="line.165"></a>
+<FONT color="green">166</FONT>                    }<a name="line.166"></a>
+<FONT color="green">167</FONT>                    preparedStatement.setBigDecimal(13, ledgerBalance.getAccountLineAnnualBalanceAmount().bigDecimalValue());<a name="line.167"></a>
+<FONT color="green">168</FONT>                    preparedStatement.setBigDecimal(14, ledgerBalance.getBeginningBalanceLineAmount().bigDecimalValue());<a name="line.168"></a>
+<FONT color="green">169</FONT>                    preparedStatement.setBigDecimal(15, ledgerBalance.getContractsGrantsBeginningBalanceAmount().bigDecimalValue());<a name="line.169"></a>
+<FONT color="green">170</FONT>                    preparedStatement.setBigDecimal(16, ledgerBalance.getMonth1Amount().bigDecimalValue());<a name="line.170"></a>
+<FONT color="green">171</FONT>                    preparedStatement.setBigDecimal(17, ledgerBalance.getMonth2Amount().bigDecimalValue());<a name="line.171"></a>
+<FONT color="green">172</FONT>                    preparedStatement.setBigDecimal(18, ledgerBalance.getMonth3Amount().bigDecimalValue());<a name="line.172"></a>
+<FONT color="green">173</FONT>                    preparedStatement.setBigDecimal(19, ledgerBalance.getMonth4Amount().bigDecimalValue());<a name="line.173"></a>
+<FONT color="green">174</FONT>                    preparedStatement.setBigDecimal(20, ledgerBalance.getMonth5Amount().bigDecimalValue());<a name="line.174"></a>
+<FONT color="green">175</FONT>                    preparedStatement.setBigDecimal(21, ledgerBalance.getMonth6Amount().bigDecimalValue());<a name="line.175"></a>
+<FONT color="green">176</FONT>                    preparedStatement.setBigDecimal(22, ledgerBalance.getMonth7Amount().bigDecimalValue());<a name="line.176"></a>
+<FONT color="green">177</FONT>                    preparedStatement.setBigDecimal(23, ledgerBalance.getMonth8Amount().bigDecimalValue());<a name="line.177"></a>
+<FONT color="green">178</FONT>                    preparedStatement.setBigDecimal(24, ledgerBalance.getMonth9Amount().bigDecimalValue());<a name="line.178"></a>
+<FONT color="green">179</FONT>                    preparedStatement.setBigDecimal(25, ledgerBalance.getMonth10Amount().bigDecimalValue());<a name="line.179"></a>
+<FONT color="green">180</FONT>                    preparedStatement.setBigDecimal(26, ledgerBalance.getMonth11Amount().bigDecimalValue());<a name="line.180"></a>
+<FONT color="green">181</FONT>                    preparedStatement.setBigDecimal(27, ledgerBalance.getMonth12Amount().bigDecimalValue());<a name="line.181"></a>
+<FONT color="green">182</FONT>                    preparedStatement.setBigDecimal(28, ledgerBalance.getMonth13Amount().bigDecimalValue());<a name="line.182"></a>
+<FONT color="green">183</FONT>                    preparedStatement.setTimestamp(29, dateTimeService.getCurrentTimestamp());<a name="line.183"></a>
+<FONT color="green">184</FONT>               }<a name="line.184"></a>
+<FONT color="green">185</FONT>            }.execute(LedgerBalance.class);<a name="line.185"></a>
+<FONT color="green">186</FONT>        }<a name="line.186"></a>
+<FONT color="green">187</FONT>    <a name="line.187"></a>
+<FONT color="green">188</FONT>        public void updateLedgerBalance(final LedgerBalance ledgerBalance) {<a name="line.188"></a>
+<FONT color="green">189</FONT>            new UpdatingJdbcWrapper&lt;LedgerBalance&gt;() {<a name="line.189"></a>
+<FONT color="green">190</FONT>                @Override<a name="line.190"></a>
+<FONT color="green">191</FONT>                protected void populateStatement(PreparedStatement preparedStatement) throws SQLException {<a name="line.191"></a>
+<FONT color="green">192</FONT>                    preparedStatement.setBigDecimal(1, ledgerBalance.getAccountLineAnnualBalanceAmount().bigDecimalValue());<a name="line.192"></a>
+<FONT color="green">193</FONT>                    preparedStatement.setBigDecimal(2, ledgerBalance.getBeginningBalanceLineAmount().bigDecimalValue());<a name="line.193"></a>
+<FONT color="green">194</FONT>                    preparedStatement.setBigDecimal(3, ledgerBalance.getContractsGrantsBeginningBalanceAmount().bigDecimalValue());<a name="line.194"></a>
+<FONT color="green">195</FONT>                    preparedStatement.setBigDecimal(4, ledgerBalance.getMonth1Amount().bigDecimalValue());<a name="line.195"></a>
+<FONT color="green">196</FONT>                    preparedStatement.setBigDecimal(5, ledgerBalance.getMonth2Amount().bigDecimalValue());<a name="line.196"></a>
+<FONT color="green">197</FONT>                    preparedStatement.setBigDecimal(6, ledgerBalance.getMonth3Amount().bigDecimalValue());<a name="line.197"></a>
+<FONT color="green">198</FONT>                    preparedStatement.setBigDecimal(7, ledgerBalance.getMonth4Amount().bigDecimalValue());<a name="line.198"></a>
+<FONT color="green">199</FONT>                    preparedStatement.setBigDecimal(8, ledgerBalance.getMonth5Amount().bigDecimalValue());<a name="line.199"></a>
+<FONT color="green">200</FONT>                    preparedStatement.setBigDecimal(9, ledgerBalance.getMonth6Amount().bigDecimalValue());<a name="line.200"></a>
+<FONT color="green">201</FONT>                    preparedStatement.setBigDecimal(10, ledgerBalance.getMonth7Amount().bigDecimalValue());<a name="line.201"></a>
+<FONT color="green">202</FONT>                    preparedStatement.setBigDecimal(11, ledgerBalance.getMonth8Amount().bigDecimalValue());<a name="line.202"></a>
+<FONT color="green">203</FONT>                    preparedStatement.setBigDecimal(12, ledgerBalance.getMonth9Amount().bigDecimalValue());<a name="line.203"></a>
+<FONT color="green">204</FONT>                    preparedStatement.setBigDecimal(13, ledgerBalance.getMonth10Amount().bigDecimalValue());<a name="line.204"></a>
+<FONT color="green">205</FONT>                    preparedStatement.setBigDecimal(14, ledgerBalance.getMonth11Amount().bigDecimalValue());<a name="line.205"></a>
+<FONT color="green">206</FONT>                    preparedStatement.setBigDecimal(15, ledgerBalance.getMonth12Amount().bigDecimalValue());<a name="line.206"></a>
+<FONT color="green">207</FONT>                    preparedStatement.setBigDecimal(16, ledgerBalance.getMonth13Amount().bigDecimalValue());<a name="line.207"></a>
+<FONT color="green">208</FONT>                    preparedStatement.setTimestamp(17, dateTimeService.getCurrentTimestamp());<a name="line.208"></a>
+<FONT color="green">209</FONT>                    preparedStatement.setInt(18, ledgerBalance.getUniversityFiscalYear());<a name="line.209"></a>
+<FONT color="green">210</FONT>                    preparedStatement.setString(19, ledgerBalance.getChartOfAccountsCode());<a name="line.210"></a>
+<FONT color="green">211</FONT>                    preparedStatement.setString(20, ledgerBalance.getAccountNumber());<a name="line.211"></a>
+<FONT color="green">212</FONT>                    preparedStatement.setString(21, ledgerBalance.getSubAccountNumber());<a name="line.212"></a>
+<FONT color="green">213</FONT>                    preparedStatement.setString(22, ledgerBalance.getFinancialObjectCode());<a name="line.213"></a>
+<FONT color="green">214</FONT>                    preparedStatement.setString(23, ledgerBalance.getFinancialSubObjectCode());<a name="line.214"></a>
+<FONT color="green">215</FONT>                    preparedStatement.setString(24, ledgerBalance.getFinancialBalanceTypeCode());<a name="line.215"></a>
+<FONT color="green">216</FONT>                    preparedStatement.setString(25, ledgerBalance.getFinancialObjectTypeCode());<a name="line.216"></a>
+<FONT color="green">217</FONT>                    preparedStatement.setString(26, ledgerBalance.getPositionNumber());<a name="line.217"></a>
+<FONT color="green">218</FONT>                    preparedStatement.setString(27, ledgerBalance.getEmplid());<a name="line.218"></a>
+<FONT color="green">219</FONT>               }<a name="line.219"></a>
+<FONT color="green">220</FONT>            }.execute(LedgerBalance.class);<a name="line.220"></a>
+<FONT color="green">221</FONT>        }<a name="line.221"></a>
+<FONT color="green">222</FONT>        <a name="line.222"></a>
+<FONT color="green">223</FONT>        public void insertLedgerEntry(final LedgerEntry ledgerEntry) {<a name="line.223"></a>
+<FONT color="green">224</FONT>            new InsertingJdbcWrapper&lt;LedgerEntry&gt;() {<a name="line.224"></a>
+<FONT color="green">225</FONT>                @Override<a name="line.225"></a>
+<FONT color="green">226</FONT>                protected void populateStatement(PreparedStatement preparedStatement) throws SQLException {<a name="line.226"></a>
+<FONT color="green">227</FONT>                    preparedStatement.setInt(1, ledgerEntry.getUniversityFiscalYear());<a name="line.227"></a>
+<FONT color="green">228</FONT>                    preparedStatement.setString(2, ledgerEntry.getChartOfAccountsCode());<a name="line.228"></a>
+<FONT color="green">229</FONT>                    preparedStatement.setString(3, ledgerEntry.getAccountNumber());<a name="line.229"></a>
+<FONT color="green">230</FONT>                    preparedStatement.setString(4, ledgerEntry.getSubAccountNumber());<a name="line.230"></a>
+<FONT color="green">231</FONT>                    preparedStatement.setString(5, ledgerEntry.getFinancialObjectCode());<a name="line.231"></a>
+<FONT color="green">232</FONT>                    preparedStatement.setString(6, ledgerEntry.getFinancialSubObjectCode());<a name="line.232"></a>
+<FONT color="green">233</FONT>                    preparedStatement.setString(7, ledgerEntry.getFinancialBalanceTypeCode());<a name="line.233"></a>
+<FONT color="green">234</FONT>                    preparedStatement.setString(8, ledgerEntry.getFinancialObjectTypeCode());<a name="line.234"></a>
+<FONT color="green">235</FONT>                    preparedStatement.setString(9, ledgerEntry.getUniversityFiscalPeriodCode());<a name="line.235"></a>
+<FONT color="green">236</FONT>                    preparedStatement.setString(10, ledgerEntry.getFinancialDocumentTypeCode());<a name="line.236"></a>
+<FONT color="green">237</FONT>                    preparedStatement.setString(11, ledgerEntry.getFinancialSystemOriginationCode());<a name="line.237"></a>
+<FONT color="green">238</FONT>                    preparedStatement.setString(12, ledgerEntry.getDocumentNumber());<a name="line.238"></a>
+<FONT color="green">239</FONT>                    preparedStatement.setInt(13, ledgerEntry.getTransactionLedgerEntrySequenceNumber());<a name="line.239"></a>
+<FONT color="green">240</FONT>                    if (ledgerEntry.getObjectId() == null) {<a name="line.240"></a>
+<FONT color="green">241</FONT>                        preparedStatement.setString(14, new Guid().toString());<a name="line.241"></a>
+<FONT color="green">242</FONT>                    }<a name="line.242"></a>
+<FONT color="green">243</FONT>                    else<a name="line.243"></a>
+<FONT color="green">244</FONT>                    {<a name="line.244"></a>
+<FONT color="green">245</FONT>                        preparedStatement.setString(14, ledgerEntry.getObjectId());<a name="line.245"></a>
+<FONT color="green">246</FONT>                    }<a name="line.246"></a>
+<FONT color="green">247</FONT>                    if (ledgerEntry.getVersionNumber() == null) {<a name="line.247"></a>
+<FONT color="green">248</FONT>                        preparedStatement.setLong(15, 1);<a name="line.248"></a>
+<FONT color="green">249</FONT>                    }<a name="line.249"></a>
+<FONT color="green">250</FONT>                    else<a name="line.250"></a>
+<FONT color="green">251</FONT>                    {<a name="line.251"></a>
+<FONT color="green">252</FONT>                        preparedStatement.setLong(15, ledgerEntry.getVersionNumber()); <a name="line.252"></a>
+<FONT color="green">253</FONT>                    }<a name="line.253"></a>
+<FONT color="green">254</FONT>                    preparedStatement.setString(16, ledgerEntry.getPositionNumber());<a name="line.254"></a>
+<FONT color="green">255</FONT>                    preparedStatement.setString(17, ledgerEntry.getProjectCode());<a name="line.255"></a>
+<FONT color="green">256</FONT>                    preparedStatement.setString(18, ledgerEntry.getTransactionLedgerEntryDescription());<a name="line.256"></a>
+<FONT color="green">257</FONT>                    preparedStatement.setBigDecimal(19, ledgerEntry.getTransactionLedgerEntryAmount().bigDecimalValue());<a name="line.257"></a>
+<FONT color="green">258</FONT>                    preparedStatement.setString(20, ledgerEntry.getTransactionDebitCreditCode());<a name="line.258"></a>
+<FONT color="green">259</FONT>                    preparedStatement.setDate(21, ledgerEntry.getTransactionDate());<a name="line.259"></a>
+<FONT color="green">260</FONT>                    preparedStatement.setString(22, ledgerEntry.getOrganizationDocumentNumber());<a name="line.260"></a>
+<FONT color="green">261</FONT>                    preparedStatement.setString(23, ledgerEntry.getOrganizationReferenceId());<a name="line.261"></a>
+<FONT color="green">262</FONT>                    preparedStatement.setString(24, ledgerEntry.getReferenceFinancialDocumentTypeCode());<a name="line.262"></a>
+<FONT color="green">263</FONT>                    preparedStatement.setString(25, ledgerEntry.getReferenceFinancialSystemOriginationCode());<a name="line.263"></a>
+<FONT color="green">264</FONT>                    preparedStatement.setString(26, ledgerEntry.getReferenceFinancialDocumentNumber());<a name="line.264"></a>
+<FONT color="green">265</FONT>                    preparedStatement.setDate(27, ledgerEntry.getFinancialDocumentReversalDate());<a name="line.265"></a>
+<FONT color="green">266</FONT>                    preparedStatement.setString(28, ledgerEntry.getTransactionEncumbranceUpdateCode());<a name="line.266"></a>
+<FONT color="green">267</FONT>                    preparedStatement.setDate(29, ledgerEntry.getTransactionPostingDate());<a name="line.267"></a>
+<FONT color="green">268</FONT>                    preparedStatement.setDate(30, ledgerEntry.getPayPeriodEndDate());<a name="line.268"></a>
+<FONT color="green">269</FONT>                    preparedStatement.setBigDecimal(31, ledgerEntry.getTransactionTotalHours());<a name="line.269"></a>
+<FONT color="green">270</FONT>                    if (ledgerEntry.getPayrollEndDateFiscalYear() == null) {<a name="line.270"></a>
+<FONT color="green">271</FONT>                        preparedStatement.setNull(32, java.sql.Types.INTEGER);<a name="line.271"></a>
+<FONT color="green">272</FONT>                    }<a name="line.272"></a>
+<FONT color="green">273</FONT>                    else {<a name="line.273"></a>
+<FONT color="green">274</FONT>                        preparedStatement.setInt(32, ledgerEntry.getPayrollEndDateFiscalYear());<a name="line.274"></a>
+<FONT color="green">275</FONT>                    }<a name="line.275"></a>
+<FONT color="green">276</FONT>                    preparedStatement.setString(33, ledgerEntry.getPayrollEndDateFiscalPeriodCode());<a name="line.276"></a>
+<FONT color="green">277</FONT>                    preparedStatement.setString(34, ledgerEntry.getEmplid());<a name="line.277"></a>
+<FONT color="green">278</FONT>                    if (ledgerEntry.getEmployeeRecord() == null) {<a name="line.278"></a>
+<FONT color="green">279</FONT>                        preparedStatement.setNull(35, java.sql.Types.INTEGER);<a name="line.279"></a>
+<FONT color="green">280</FONT>                    }<a name="line.280"></a>
+<FONT color="green">281</FONT>                    else {<a name="line.281"></a>
+<FONT color="green">282</FONT>                        preparedStatement.setInt(35, ledgerEntry.getEmployeeRecord());<a name="line.282"></a>
+<FONT color="green">283</FONT>                    }<a name="line.283"></a>
+<FONT color="green">284</FONT>                    preparedStatement.setString(36, ledgerEntry.getEarnCode());<a name="line.284"></a>
+<FONT color="green">285</FONT>                    preparedStatement.setString(37, ledgerEntry.getPayGroup());<a name="line.285"></a>
+<FONT color="green">286</FONT>                    preparedStatement.setString(38, ledgerEntry.getSalaryAdministrationPlan());<a name="line.286"></a>
+<FONT color="green">287</FONT>                    preparedStatement.setString(39, ledgerEntry.getGrade());<a name="line.287"></a>
+<FONT color="green">288</FONT>                    preparedStatement.setString(40, ledgerEntry.getRunIdentifier());<a name="line.288"></a>
+<FONT color="green">289</FONT>                    preparedStatement.setString(41, ledgerEntry.getLaborLedgerOriginalChartOfAccountsCode());<a name="line.289"></a>
+<FONT color="green">290</FONT>                    preparedStatement.setString(42, ledgerEntry.getLaborLedgerOriginalAccountNumber());<a name="line.290"></a>
+<FONT color="green">291</FONT>                    preparedStatement.setString(43, ledgerEntry.getLaborLedgerOriginalSubAccountNumber());<a name="line.291"></a>
+<FONT color="green">292</FONT>                    preparedStatement.setString(44, ledgerEntry.getLaborLedgerOriginalFinancialObjectCode());<a name="line.292"></a>
+<FONT color="green">293</FONT>                    preparedStatement.setString(45, ledgerEntry.getLaborLedgerOriginalFinancialSubObjectCode());<a name="line.293"></a>
+<FONT color="green">294</FONT>                    preparedStatement.setString(46, ledgerEntry.getHrmsCompany());<a name="line.294"></a>
+<FONT color="green">295</FONT>                    preparedStatement.setString(47, ledgerEntry.getSetid());<a name="line.295"></a>
+<FONT color="green">296</FONT>                    preparedStatement.setTimestamp(48, ledgerEntry.getTransactionDateTimeStamp());<a name="line.296"></a>
+<FONT color="green">297</FONT>               }<a name="line.297"></a>
+<FONT color="green">298</FONT>            }.execute(LedgerEntry.class);<a name="line.298"></a>
+<FONT color="green">299</FONT>        }<a name="line.299"></a>
+<FONT color="green">300</FONT>    }<a name="line.300"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

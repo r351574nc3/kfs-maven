@@ -1,0 +1,705 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.pdp.batch.service.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.io.BufferedWriter;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.io.FileWriter;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.io.IOException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.sql.Timestamp;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.text.MessageFormat;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.text.SimpleDateFormat;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.Date;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.HashMap;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.util.Iterator;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.util.List;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import java.util.Map;<a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.kfs.pdp.PdpConstants;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.kfs.pdp.PdpKeyConstants;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.kfs.pdp.batch.service.ExtractPaymentService;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.kfs.pdp.businessobject.CustomerProfile;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.kfs.pdp.businessobject.PaymentDetail;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.kfs.pdp.businessobject.PaymentGroup;<a name="line.35"></a>
+<FONT color="green">036</FONT>    import org.kuali.kfs.pdp.businessobject.PaymentGroupHistory;<a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.kuali.kfs.pdp.businessobject.PaymentNoteText;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.kuali.kfs.pdp.businessobject.PaymentProcess;<a name="line.38"></a>
+<FONT color="green">039</FONT>    import org.kuali.kfs.pdp.businessobject.PaymentStatus;<a name="line.39"></a>
+<FONT color="green">040</FONT>    import org.kuali.kfs.pdp.dataaccess.PaymentGroupHistoryDao;<a name="line.40"></a>
+<FONT color="green">041</FONT>    import org.kuali.kfs.pdp.dataaccess.ProcessDao;<a name="line.41"></a>
+<FONT color="green">042</FONT>    import org.kuali.kfs.pdp.service.PaymentDetailService;<a name="line.42"></a>
+<FONT color="green">043</FONT>    import org.kuali.kfs.pdp.service.PaymentGroupService;<a name="line.43"></a>
+<FONT color="green">044</FONT>    import org.kuali.kfs.pdp.service.PdpEmailService;<a name="line.44"></a>
+<FONT color="green">045</FONT>    import org.kuali.kfs.sys.businessobject.Bank;<a name="line.45"></a>
+<FONT color="green">046</FONT>    import org.kuali.rice.kns.bo.Country;<a name="line.46"></a>
+<FONT color="green">047</FONT>    import org.kuali.rice.kns.service.BusinessObjectService;<a name="line.47"></a>
+<FONT color="green">048</FONT>    import org.kuali.rice.kns.service.CountryService;<a name="line.48"></a>
+<FONT color="green">049</FONT>    import org.kuali.rice.kns.service.DateTimeService;<a name="line.49"></a>
+<FONT color="green">050</FONT>    import org.kuali.rice.kns.service.KualiConfigurationService;<a name="line.50"></a>
+<FONT color="green">051</FONT>    import org.kuali.rice.kns.service.ParameterService;<a name="line.51"></a>
+<FONT color="green">052</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.52"></a>
+<FONT color="green">053</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.53"></a>
+<FONT color="green">054</FONT>    import org.springframework.transaction.annotation.Transactional;<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>    @Transactional<a name="line.56"></a>
+<FONT color="green">057</FONT>    public class ExtractPaymentServiceImpl implements ExtractPaymentService {<a name="line.57"></a>
+<FONT color="green">058</FONT>        private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ExtractPaymentServiceImpl.class);<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>        protected String directoryName;<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>        protected DateTimeService dateTimeService;<a name="line.62"></a>
+<FONT color="green">063</FONT>        protected ParameterService parameterService;<a name="line.63"></a>
+<FONT color="green">064</FONT>        protected PaymentGroupService paymentGroupService;<a name="line.64"></a>
+<FONT color="green">065</FONT>        protected PaymentDetailService paymentDetailService;<a name="line.65"></a>
+<FONT color="green">066</FONT>        protected PaymentGroupHistoryDao paymentGroupHistoryDao;<a name="line.66"></a>
+<FONT color="green">067</FONT>        protected ProcessDao processDao;<a name="line.67"></a>
+<FONT color="green">068</FONT>        protected PdpEmailService paymentFileEmailService;<a name="line.68"></a>
+<FONT color="green">069</FONT>        protected BusinessObjectService businessObjectService;<a name="line.69"></a>
+<FONT color="green">070</FONT>        protected KualiConfigurationService kualiConfigurationService;<a name="line.70"></a>
+<FONT color="green">071</FONT>        protected CountryService countryService;<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>        // Set this to true to run this process without updating the database. This<a name="line.73"></a>
+<FONT color="green">074</FONT>        // should stay false for production.<a name="line.74"></a>
+<FONT color="green">075</FONT>        public static boolean testMode = false;<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>        protected String getOutputFile(String fileprefix, Date runDate) {<a name="line.77"></a>
+<FONT color="green">078</FONT>            String filename = directoryName + "/" + fileprefix + "_";<a name="line.78"></a>
+<FONT color="green">079</FONT>            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");<a name="line.79"></a>
+<FONT color="green">080</FONT>            filename = filename + sdf.format(runDate);<a name="line.80"></a>
+<FONT color="green">081</FONT>            filename = filename + ".xml";<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>            return filename;<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>        /**<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @see org.kuali.kfs.pdp.batch.service.ExtractPaymentService#extractCancelledChecks()<a name="line.87"></a>
+<FONT color="green">088</FONT>         */<a name="line.88"></a>
+<FONT color="green">089</FONT>        public void extractCanceledChecks() {<a name="line.89"></a>
+<FONT color="green">090</FONT>            LOG.debug("extractCancelledChecks() started");<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>            Date processDate = dateTimeService.getCurrentDate();<a name="line.92"></a>
+<FONT color="green">093</FONT>            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>            String checkCancelledFilePrefix = this.kualiConfigurationService.getPropertyString(PdpKeyConstants.ExtractPayment.CHECK_CANCEL_FILENAME);<a name="line.95"></a>
+<FONT color="green">096</FONT>            checkCancelledFilePrefix = MessageFormat.format(checkCancelledFilePrefix, new Object[] { null });<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>            String filename = getOutputFile(checkCancelledFilePrefix, processDate);<a name="line.98"></a>
+<FONT color="green">099</FONT>            LOG.debug("extractCanceledChecks() filename = " + filename);<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>            // Open file<a name="line.101"></a>
+<FONT color="green">102</FONT>            BufferedWriter os = null;<a name="line.102"></a>
+<FONT color="green">103</FONT>    <a name="line.103"></a>
+<FONT color="green">104</FONT>            try {<a name="line.104"></a>
+<FONT color="green">105</FONT>                os = new BufferedWriter(new FileWriter(filename));<a name="line.105"></a>
+<FONT color="green">106</FONT>                os.write("&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n");<a name="line.106"></a>
+<FONT color="green">107</FONT>                writeOpenTag(os, 0, "canceledChecks");<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>                Iterator paymentIterator = paymentGroupHistoryDao.getCanceledChecks();<a name="line.109"></a>
+<FONT color="green">110</FONT>                while (paymentIterator.hasNext()) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                    PaymentGroupHistory history = (PaymentGroupHistory) paymentIterator.next();<a name="line.111"></a>
+<FONT color="green">112</FONT>    <a name="line.112"></a>
+<FONT color="green">113</FONT>                    writeOpenTag(os, 2, "check");<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>                    writeBank(os, 4, history.getPaymentGroup().getBank());<a name="line.115"></a>
+<FONT color="green">116</FONT>                    writePayee(os, 4, history.getPaymentGroup());<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>                    writeTag(os, 4, "netAmount", history.getPaymentGroup().getNetPaymentAmount().toString());<a name="line.118"></a>
+<FONT color="green">119</FONT>                    if (ObjectUtils.isNotNull(history.getOrigDisburseNbr())) {<a name="line.119"></a>
+<FONT color="green">120</FONT>                        writeTag(os, 4, "disbursementNumber", history.getOrigDisburseNbr().toString());<a name="line.120"></a>
+<FONT color="green">121</FONT>                    }<a name="line.121"></a>
+<FONT color="green">122</FONT>                    else {<a name="line.122"></a>
+<FONT color="green">123</FONT>                        writeTag(os, 4, "disbursementNumber", history.getPaymentGroup().getDisbursementNbr().toString());<a name="line.123"></a>
+<FONT color="green">124</FONT>                    }<a name="line.124"></a>
+<FONT color="green">125</FONT>                    if (ObjectUtils.isNotNull(history.getPaymentGroup().getDisbursementType())) {<a name="line.125"></a>
+<FONT color="green">126</FONT>                        writeTag(os, 4, "disbursementType", history.getPaymentGroup().getDisbursementType().getCode());<a name="line.126"></a>
+<FONT color="green">127</FONT>                    }<a name="line.127"></a>
+<FONT color="green">128</FONT>                    else {<a name="line.128"></a>
+<FONT color="green">129</FONT>                        writeTag(os, 4, "disbursementType", history.getDisbursementType().getCode());<a name="line.129"></a>
+<FONT color="green">130</FONT>                    }<a name="line.130"></a>
+<FONT color="green">131</FONT>    <a name="line.131"></a>
+<FONT color="green">132</FONT>                    writeCloseTag(os, 2, "check");<a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>                    if (!testMode) {<a name="line.134"></a>
+<FONT color="green">135</FONT>                        history.setLastUpdate(new Timestamp(processDate.getTime()));<a name="line.135"></a>
+<FONT color="green">136</FONT>                        history.setPmtCancelExtractDate(new Timestamp(processDate.getTime()));<a name="line.136"></a>
+<FONT color="green">137</FONT>                        history.setPmtCancelExtractStat(Boolean.TRUE);<a name="line.137"></a>
+<FONT color="green">138</FONT>                        history.setChangeTime(new Timestamp(new Date().getTime()));<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>                        this.businessObjectService.save(history);<a name="line.140"></a>
+<FONT color="green">141</FONT>                    }<a name="line.141"></a>
+<FONT color="green">142</FONT>                }<a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>                writeCloseTag(os, 0, "canceledChecks");<a name="line.144"></a>
+<FONT color="green">145</FONT>            }<a name="line.145"></a>
+<FONT color="green">146</FONT>            catch (IOException ie) {<a name="line.146"></a>
+<FONT color="green">147</FONT>                LOG.error("extractCanceledChecks() Problem reading file:  " + filename, ie);<a name="line.147"></a>
+<FONT color="green">148</FONT>                throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());<a name="line.148"></a>
+<FONT color="green">149</FONT>            }<a name="line.149"></a>
+<FONT color="green">150</FONT>            finally {<a name="line.150"></a>
+<FONT color="green">151</FONT>                // Close file<a name="line.151"></a>
+<FONT color="green">152</FONT>                if (os != null) {<a name="line.152"></a>
+<FONT color="green">153</FONT>                    try {<a name="line.153"></a>
+<FONT color="green">154</FONT>                        os.close();<a name="line.154"></a>
+<FONT color="green">155</FONT>                    }<a name="line.155"></a>
+<FONT color="green">156</FONT>                    catch (IOException ie) {<a name="line.156"></a>
+<FONT color="green">157</FONT>                        // Not much we can do now<a name="line.157"></a>
+<FONT color="green">158</FONT>                    }<a name="line.158"></a>
+<FONT color="green">159</FONT>                }<a name="line.159"></a>
+<FONT color="green">160</FONT>            }<a name="line.160"></a>
+<FONT color="green">161</FONT>        }<a name="line.161"></a>
+<FONT color="green">162</FONT>    <a name="line.162"></a>
+<FONT color="green">163</FONT>        /**<a name="line.163"></a>
+<FONT color="green">164</FONT>         * @see org.kuali.kfs.pdp.batch.service.ExtractPaymentService#extractAchPayments()<a name="line.164"></a>
+<FONT color="green">165</FONT>         */<a name="line.165"></a>
+<FONT color="green">166</FONT>        public void extractAchPayments() {<a name="line.166"></a>
+<FONT color="green">167</FONT>            LOG.debug("extractAchPayments() started");<a name="line.167"></a>
+<FONT color="green">168</FONT>    <a name="line.168"></a>
+<FONT color="green">169</FONT>            Date processDate = dateTimeService.getCurrentDate();<a name="line.169"></a>
+<FONT color="green">170</FONT>            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");<a name="line.170"></a>
+<FONT color="green">171</FONT>            PaymentStatus extractedStatus = (PaymentStatus) this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);<a name="line.171"></a>
+<FONT color="green">172</FONT>    <a name="line.172"></a>
+<FONT color="green">173</FONT>            String achFilePrefix = this.kualiConfigurationService.getPropertyString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);<a name="line.173"></a>
+<FONT color="green">174</FONT>            achFilePrefix = MessageFormat.format(achFilePrefix, new Object[] { null });<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>            String filename = getOutputFile(achFilePrefix, processDate);<a name="line.176"></a>
+<FONT color="green">177</FONT>            LOG.debug("extractAchPayments() filename = " + filename);<a name="line.177"></a>
+<FONT color="green">178</FONT>    <a name="line.178"></a>
+<FONT color="green">179</FONT>            // Open file<a name="line.179"></a>
+<FONT color="green">180</FONT>            BufferedWriter os = null;<a name="line.180"></a>
+<FONT color="green">181</FONT>    <a name="line.181"></a>
+<FONT color="green">182</FONT>            writeExtractAchFile(extractedStatus, filename, processDate, sdf);<a name="line.182"></a>
+<FONT color="green">183</FONT>    <a name="line.183"></a>
+<FONT color="green">184</FONT>        }<a name="line.184"></a>
+<FONT color="green">185</FONT>    <a name="line.185"></a>
+<FONT color="green">186</FONT>        /**<a name="line.186"></a>
+<FONT color="green">187</FONT>         * @see org.kuali.kfs.pdp.batch.service.ExtractPaymentService#extractChecks()<a name="line.187"></a>
+<FONT color="green">188</FONT>         */<a name="line.188"></a>
+<FONT color="green">189</FONT>        public void extractChecks() {<a name="line.189"></a>
+<FONT color="green">190</FONT>            LOG.debug("extractChecks() started");<a name="line.190"></a>
+<FONT color="green">191</FONT>    <a name="line.191"></a>
+<FONT color="green">192</FONT>            Date processDate = dateTimeService.getCurrentDate();<a name="line.192"></a>
+<FONT color="green">193</FONT>            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");<a name="line.193"></a>
+<FONT color="green">194</FONT>            PaymentStatus extractedStatus = (PaymentStatus) this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>            String checkFilePrefix = this.kualiConfigurationService.getPropertyString(PdpKeyConstants.ExtractPayment.CHECK_FILENAME);<a name="line.196"></a>
+<FONT color="green">197</FONT>            checkFilePrefix = MessageFormat.format(checkFilePrefix, new Object[] { null });<a name="line.197"></a>
+<FONT color="green">198</FONT>    <a name="line.198"></a>
+<FONT color="green">199</FONT>            String filename = getOutputFile(checkFilePrefix, processDate);<a name="line.199"></a>
+<FONT color="green">200</FONT>            LOG.debug("extractChecks() filename: " + filename);<a name="line.200"></a>
+<FONT color="green">201</FONT>    <a name="line.201"></a>
+<FONT color="green">202</FONT>            List&lt;PaymentProcess&gt; extractsToRun = this.processDao.getAllExtractsToRun();<a name="line.202"></a>
+<FONT color="green">203</FONT>            for (PaymentProcess extractToRun : extractsToRun) {<a name="line.203"></a>
+<FONT color="green">204</FONT>                writeExtractCheckFile(extractedStatus, extractToRun, filename, extractToRun.getId().intValue());<a name="line.204"></a>
+<FONT color="green">205</FONT>                this.processDao.setExtractProcessAsComplete(extractToRun);<a name="line.205"></a>
+<FONT color="green">206</FONT>            }<a name="line.206"></a>
+<FONT color="green">207</FONT>        }<a name="line.207"></a>
+<FONT color="green">208</FONT>    <a name="line.208"></a>
+<FONT color="green">209</FONT>        protected void writeExtractCheckFile(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId) {<a name="line.209"></a>
+<FONT color="green">210</FONT>            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");<a name="line.210"></a>
+<FONT color="green">211</FONT>            Date processDate = dateTimeService.getCurrentDate();<a name="line.211"></a>
+<FONT color="green">212</FONT>            BufferedWriter os = null;<a name="line.212"></a>
+<FONT color="green">213</FONT>    <a name="line.213"></a>
+<FONT color="green">214</FONT>            try {<a name="line.214"></a>
+<FONT color="green">215</FONT>                os = new BufferedWriter(new FileWriter(filename));<a name="line.215"></a>
+<FONT color="green">216</FONT>                os.write("&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n");<a name="line.216"></a>
+<FONT color="green">217</FONT>                writeOpenTagAttribute(os, 0, "checks", "processId", processId.toString(), "campusCode", p.getCampusCode());<a name="line.217"></a>
+<FONT color="green">218</FONT>    <a name="line.218"></a>
+<FONT color="green">219</FONT>                List&lt;String&gt; bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId, PdpConstants.DisbursementTypeCodes.CHECK);<a name="line.219"></a>
+<FONT color="green">220</FONT>    <a name="line.220"></a>
+<FONT color="green">221</FONT>                for (String bankCode : bankCodes) {<a name="line.221"></a>
+<FONT color="green">222</FONT>                    List&lt;Integer&gt; disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);<a name="line.222"></a>
+<FONT color="green">223</FONT>                    for (Iterator&lt;Integer&gt; iter = disbNbrs.iterator(); iter.hasNext();) {<a name="line.223"></a>
+<FONT color="green">224</FONT>                        Integer disbursementNbr = iter.next();<a name="line.224"></a>
+<FONT color="green">225</FONT>    <a name="line.225"></a>
+<FONT color="green">226</FONT>                        boolean first = true;<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>                        KualiDecimal totalNetAmount = new KualiDecimal(0);<a name="line.228"></a>
+<FONT color="green">229</FONT>    <a name="line.229"></a>
+<FONT color="green">230</FONT>                        // this seems wasteful, but since the total net amount is needed on the first payment detail...it's needed<a name="line.230"></a>
+<FONT color="green">231</FONT>                        Iterator&lt;PaymentDetail&gt; i2 = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);<a name="line.231"></a>
+<FONT color="green">232</FONT>                        while (i2.hasNext()) {<a name="line.232"></a>
+<FONT color="green">233</FONT>                            PaymentDetail pd = i2.next();<a name="line.233"></a>
+<FONT color="green">234</FONT>                            totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());<a name="line.234"></a>
+<FONT color="green">235</FONT>                        }<a name="line.235"></a>
+<FONT color="green">236</FONT>    <a name="line.236"></a>
+<FONT color="green">237</FONT>                        Iterator&lt;PaymentDetail&gt; paymentDetails = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);<a name="line.237"></a>
+<FONT color="green">238</FONT>                        while (paymentDetails.hasNext()) {<a name="line.238"></a>
+<FONT color="green">239</FONT>                            PaymentDetail pd = paymentDetails.next();<a name="line.239"></a>
+<FONT color="green">240</FONT>                            PaymentGroup pg = pd.getPaymentGroup();<a name="line.240"></a>
+<FONT color="green">241</FONT>                            if (!testMode) {<a name="line.241"></a>
+<FONT color="green">242</FONT>                                pg.setDisbursementDate(new java.sql.Date(processDate.getTime()));<a name="line.242"></a>
+<FONT color="green">243</FONT>                                pg.setPaymentStatus(extractedStatus);<a name="line.243"></a>
+<FONT color="green">244</FONT>                                this.businessObjectService.save(pg);<a name="line.244"></a>
+<FONT color="green">245</FONT>                            }<a name="line.245"></a>
+<FONT color="green">246</FONT>    <a name="line.246"></a>
+<FONT color="green">247</FONT>                            if (first) {<a name="line.247"></a>
+<FONT color="green">248</FONT>                                writeOpenTagAttribute(os, 2, "check", "disbursementNbr", pg.getDisbursementNbr().toString());<a name="line.248"></a>
+<FONT color="green">249</FONT>    <a name="line.249"></a>
+<FONT color="green">250</FONT>                                // Write check level information<a name="line.250"></a>
+<FONT color="green">251</FONT>    <a name="line.251"></a>
+<FONT color="green">252</FONT>                                writeBank(os, 4, pg.getBank());<a name="line.252"></a>
+<FONT color="green">253</FONT>    <a name="line.253"></a>
+<FONT color="green">254</FONT>                                writeTag(os, 4, "disbursementDate", sdf.format(processDate));<a name="line.254"></a>
+<FONT color="green">255</FONT>                                writeTag(os, 4, "netAmount", totalNetAmount.toString());<a name="line.255"></a>
+<FONT color="green">256</FONT>    <a name="line.256"></a>
+<FONT color="green">257</FONT>                                writePayee(os, 4, pg);<a name="line.257"></a>
+<FONT color="green">258</FONT>                                writeTag(os, 4, "campusAddressIndicator", pg.getCampusAddress().booleanValue() ? "Y" : "N");<a name="line.258"></a>
+<FONT color="green">259</FONT>                                writeTag(os, 4, "attachmentIndicator", pg.getPymtAttachment().booleanValue() ? "Y" : "N");<a name="line.259"></a>
+<FONT color="green">260</FONT>                                writeTag(os, 4, "specialHandlingIndicator", pg.getPymtSpecialHandling().booleanValue() ? "Y" : "N");<a name="line.260"></a>
+<FONT color="green">261</FONT>                                writeTag(os, 4, "immediatePaymentIndicator", pg.getProcessImmediate().booleanValue() ? "Y" : "N");<a name="line.261"></a>
+<FONT color="green">262</FONT>                                writeTag(os, 4, "customerUnivNbr", pg.getCustomerInstitutionNumber());<a name="line.262"></a>
+<FONT color="green">263</FONT>                                writeTag(os, 4, "paymentDate", sdf.format(pg.getPaymentDate()));<a name="line.263"></a>
+<FONT color="green">264</FONT>    <a name="line.264"></a>
+<FONT color="green">265</FONT>                                // Write customer profile information<a name="line.265"></a>
+<FONT color="green">266</FONT>                                CustomerProfile cp = pg.getBatch().getCustomerProfile();<a name="line.266"></a>
+<FONT color="green">267</FONT>                                writeCustomerProfile(os, 4, cp);<a name="line.267"></a>
+<FONT color="green">268</FONT>    <a name="line.268"></a>
+<FONT color="green">269</FONT>                                writeOpenTag(os, 4, "payments");<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>                            }<a name="line.271"></a>
+<FONT color="green">272</FONT>    <a name="line.272"></a>
+<FONT color="green">273</FONT>                            writeOpenTag(os, 6, "payment");<a name="line.273"></a>
+<FONT color="green">274</FONT>    <a name="line.274"></a>
+<FONT color="green">275</FONT>                            writeTag(os, 8, "purchaseOrderNbr", pd.getPurchaseOrderNbr());<a name="line.275"></a>
+<FONT color="green">276</FONT>                            writeTag(os, 8, "invoiceNbr", pd.getInvoiceNbr());<a name="line.276"></a>
+<FONT color="green">277</FONT>                            writeTag(os, 8, "requisitionNbr", pd.getRequisitionNbr());<a name="line.277"></a>
+<FONT color="green">278</FONT>                            writeTag(os, 8, "custPaymentDocNbr", pd.getCustPaymentDocNbr());<a name="line.278"></a>
+<FONT color="green">279</FONT>                            writeTag(os, 8, "invoiceDate", sdf.format(pd.getInvoiceDate()));<a name="line.279"></a>
+<FONT color="green">280</FONT>    <a name="line.280"></a>
+<FONT color="green">281</FONT>                            writeTag(os, 8, "origInvoiceAmount", pd.getOrigInvoiceAmount().toString());<a name="line.281"></a>
+<FONT color="green">282</FONT>                            writeTag(os, 8, "netPaymentAmount", pd.getNetPaymentAmount().toString());<a name="line.282"></a>
+<FONT color="green">283</FONT>                            writeTag(os, 8, "invTotDiscountAmount", pd.getInvTotDiscountAmount().toString());<a name="line.283"></a>
+<FONT color="green">284</FONT>                            writeTag(os, 8, "invTotShipAmount", pd.getInvTotShipAmount().toString());<a name="line.284"></a>
+<FONT color="green">285</FONT>                            writeTag(os, 8, "invTotOtherDebitAmount", pd.getInvTotOtherDebitAmount().toString());<a name="line.285"></a>
+<FONT color="green">286</FONT>                            writeTag(os, 8, "invTotOtherCreditAmount", pd.getInvTotOtherCreditAmount().toString());<a name="line.286"></a>
+<FONT color="green">287</FONT>    <a name="line.287"></a>
+<FONT color="green">288</FONT>                            writeOpenTag(os, 8, "notes");<a name="line.288"></a>
+<FONT color="green">289</FONT>                            for (Iterator ix = pd.getNotes().iterator(); ix.hasNext();) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                                PaymentNoteText note = (PaymentNoteText) ix.next();<a name="line.290"></a>
+<FONT color="green">291</FONT>                                writeTag(os, 10, "note", note.getCustomerNoteText());<a name="line.291"></a>
+<FONT color="green">292</FONT>                            }<a name="line.292"></a>
+<FONT color="green">293</FONT>                            writeCloseTag(os, 8, "notes");<a name="line.293"></a>
+<FONT color="green">294</FONT>    <a name="line.294"></a>
+<FONT color="green">295</FONT>                            writeCloseTag(os, 6, "payment");<a name="line.295"></a>
+<FONT color="green">296</FONT>    <a name="line.296"></a>
+<FONT color="green">297</FONT>                            first = false;<a name="line.297"></a>
+<FONT color="green">298</FONT>                        }<a name="line.298"></a>
+<FONT color="green">299</FONT>                        writeCloseTag(os, 4, "payments");<a name="line.299"></a>
+<FONT color="green">300</FONT>                        writeCloseTag(os, 2, "check");<a name="line.300"></a>
+<FONT color="green">301</FONT>                    }<a name="line.301"></a>
+<FONT color="green">302</FONT>                }<a name="line.302"></a>
+<FONT color="green">303</FONT>                writeCloseTag(os, 0, "checks");<a name="line.303"></a>
+<FONT color="green">304</FONT>            }<a name="line.304"></a>
+<FONT color="green">305</FONT>            catch (IOException ie) {<a name="line.305"></a>
+<FONT color="green">306</FONT>                LOG.error("extractChecks() Problem reading file:  " + filename, ie);<a name="line.306"></a>
+<FONT color="green">307</FONT>                throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());<a name="line.307"></a>
+<FONT color="green">308</FONT>            }<a name="line.308"></a>
+<FONT color="green">309</FONT>            finally {<a name="line.309"></a>
+<FONT color="green">310</FONT>                // Close file<a name="line.310"></a>
+<FONT color="green">311</FONT>                if (os != null) {<a name="line.311"></a>
+<FONT color="green">312</FONT>                    try {<a name="line.312"></a>
+<FONT color="green">313</FONT>                        os.close();<a name="line.313"></a>
+<FONT color="green">314</FONT>                    }<a name="line.314"></a>
+<FONT color="green">315</FONT>                    catch (IOException ie) {<a name="line.315"></a>
+<FONT color="green">316</FONT>                        // Not much we can do now<a name="line.316"></a>
+<FONT color="green">317</FONT>                    }<a name="line.317"></a>
+<FONT color="green">318</FONT>                }<a name="line.318"></a>
+<FONT color="green">319</FONT>            }<a name="line.319"></a>
+<FONT color="green">320</FONT>        }<a name="line.320"></a>
+<FONT color="green">321</FONT>    <a name="line.321"></a>
+<FONT color="green">322</FONT>        protected void writeExtractAchFile(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {<a name="line.322"></a>
+<FONT color="green">323</FONT>            BufferedWriter os = null;<a name="line.323"></a>
+<FONT color="green">324</FONT>            try {<a name="line.324"></a>
+<FONT color="green">325</FONT>                os = new BufferedWriter(new FileWriter(filename));<a name="line.325"></a>
+<FONT color="green">326</FONT>                os.write("&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n");<a name="line.326"></a>
+<FONT color="green">327</FONT>                writeOpenTag(os, 0, "achPayments");<a name="line.327"></a>
+<FONT color="green">328</FONT>    <a name="line.328"></a>
+<FONT color="green">329</FONT>                // totals for summary<a name="line.329"></a>
+<FONT color="green">330</FONT>                Map&lt;String, Integer&gt; unitCounts = new HashMap&lt;String, Integer&gt;();<a name="line.330"></a>
+<FONT color="green">331</FONT>                Map&lt;String, KualiDecimal&gt; unitTotals = new HashMap&lt;String, KualiDecimal&gt;();<a name="line.331"></a>
+<FONT color="green">332</FONT>    <a name="line.332"></a>
+<FONT color="green">333</FONT>                Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.PaymentStatusCodes.PENDING_ACH);<a name="line.333"></a>
+<FONT color="green">334</FONT>                while (iter.hasNext()) {<a name="line.334"></a>
+<FONT color="green">335</FONT>                    PaymentGroup paymentGroup = (PaymentGroup) iter.next();<a name="line.335"></a>
+<FONT color="green">336</FONT>                    if (!testMode) {<a name="line.336"></a>
+<FONT color="green">337</FONT>                        paymentGroup.setDisbursementDate(new java.sql.Date(processDate.getTime()));<a name="line.337"></a>
+<FONT color="green">338</FONT>                        paymentGroup.setPaymentStatus(extractedStatus);<a name="line.338"></a>
+<FONT color="green">339</FONT>                        businessObjectService.save(paymentGroup);<a name="line.339"></a>
+<FONT color="green">340</FONT>                    }<a name="line.340"></a>
+<FONT color="green">341</FONT>    <a name="line.341"></a>
+<FONT color="green">342</FONT>                    writeOpenTagAttribute(os, 2, "ach", "disbursementNbr", paymentGroup.getDisbursementNbr().toString());<a name="line.342"></a>
+<FONT color="green">343</FONT>                    PaymentProcess paymentProcess = paymentGroup.getProcess();<a name="line.343"></a>
+<FONT color="green">344</FONT>                    writeTag(os, 4, "processCampus", paymentProcess.getCampusCode());<a name="line.344"></a>
+<FONT color="green">345</FONT>                    writeTag(os, 4, "processId", paymentProcess.getId().toString());<a name="line.345"></a>
+<FONT color="green">346</FONT>    <a name="line.346"></a>
+<FONT color="green">347</FONT>                    writeBank(os, 4, paymentGroup.getBank());<a name="line.347"></a>
+<FONT color="green">348</FONT>    <a name="line.348"></a>
+<FONT color="green">349</FONT>                    writeTag(os, 4, "disbursementDate", sdf.format(processDate));<a name="line.349"></a>
+<FONT color="green">350</FONT>                    writeTag(os, 4, "netAmount", paymentGroup.getNetPaymentAmount().toString());<a name="line.350"></a>
+<FONT color="green">351</FONT>    <a name="line.351"></a>
+<FONT color="green">352</FONT>                    writePayeeAch(os, 4, paymentGroup);<a name="line.352"></a>
+<FONT color="green">353</FONT>                    writeTag(os, 4, "customerUnivNbr", paymentGroup.getCustomerInstitutionNumber());<a name="line.353"></a>
+<FONT color="green">354</FONT>                    writeTag(os, 4, "paymentDate", sdf.format(paymentGroup.getPaymentDate()));<a name="line.354"></a>
+<FONT color="green">355</FONT>    <a name="line.355"></a>
+<FONT color="green">356</FONT>                    // Write customer profile information<a name="line.356"></a>
+<FONT color="green">357</FONT>                    CustomerProfile cp = paymentGroup.getBatch().getCustomerProfile();<a name="line.357"></a>
+<FONT color="green">358</FONT>                    writeCustomerProfile(os, 4, cp);<a name="line.358"></a>
+<FONT color="green">359</FONT>    <a name="line.359"></a>
+<FONT color="green">360</FONT>                    // Write all payment level information<a name="line.360"></a>
+<FONT color="green">361</FONT>                    writeOpenTag(os, 4, "payments");<a name="line.361"></a>
+<FONT color="green">362</FONT>                    List pdList = paymentGroup.getPaymentDetails();<a name="line.362"></a>
+<FONT color="green">363</FONT>                    for (Iterator iterator = pdList.iterator(); iterator.hasNext();) {<a name="line.363"></a>
+<FONT color="green">364</FONT>                        PaymentDetail paymentDetail = (PaymentDetail) iterator.next();<a name="line.364"></a>
+<FONT color="green">365</FONT>                        writeOpenTag(os, 6, "payment");<a name="line.365"></a>
+<FONT color="green">366</FONT>    <a name="line.366"></a>
+<FONT color="green">367</FONT>                        // Write detail info<a name="line.367"></a>
+<FONT color="green">368</FONT>                        writeTag(os, 6, "purchaseOrderNbr", paymentDetail.getPurchaseOrderNbr());<a name="line.368"></a>
+<FONT color="green">369</FONT>                        writeTag(os, 6, "invoiceNbr", paymentDetail.getInvoiceNbr());<a name="line.369"></a>
+<FONT color="green">370</FONT>                        writeTag(os, 6, "requisitionNbr", paymentDetail.getRequisitionNbr());<a name="line.370"></a>
+<FONT color="green">371</FONT>                        writeTag(os, 6, "custPaymentDocNbr", paymentDetail.getCustPaymentDocNbr());<a name="line.371"></a>
+<FONT color="green">372</FONT>                        writeTag(os, 6, "invoiceDate", sdf.format(paymentDetail.getInvoiceDate()));<a name="line.372"></a>
+<FONT color="green">373</FONT>    <a name="line.373"></a>
+<FONT color="green">374</FONT>                        writeTag(os, 6, "origInvoiceAmount", paymentDetail.getOrigInvoiceAmount().toString());<a name="line.374"></a>
+<FONT color="green">375</FONT>                        writeTag(os, 6, "netPaymentAmount", paymentDetail.getNetPaymentAmount().toString());<a name="line.375"></a>
+<FONT color="green">376</FONT>                        writeTag(os, 6, "invTotDiscountAmount", paymentDetail.getInvTotDiscountAmount().toString());<a name="line.376"></a>
+<FONT color="green">377</FONT>                        writeTag(os, 6, "invTotShipAmount", paymentDetail.getInvTotShipAmount().toString());<a name="line.377"></a>
+<FONT color="green">378</FONT>                        writeTag(os, 6, "invTotOtherDebitAmount", paymentDetail.getInvTotOtherDebitAmount().toString());<a name="line.378"></a>
+<FONT color="green">379</FONT>                        writeTag(os, 6, "invTotOtherCreditAmount", paymentDetail.getInvTotOtherCreditAmount().toString());<a name="line.379"></a>
+<FONT color="green">380</FONT>    <a name="line.380"></a>
+<FONT color="green">381</FONT>                        writeOpenTag(os, 6, "notes");<a name="line.381"></a>
+<FONT color="green">382</FONT>                        for (Iterator i = paymentDetail.getNotes().iterator(); i.hasNext();) {<a name="line.382"></a>
+<FONT color="green">383</FONT>                            PaymentNoteText note = (PaymentNoteText) i.next();<a name="line.383"></a>
+<FONT color="green">384</FONT>                            writeTag(os, 8, "note", escapeString(note.getCustomerNoteText()));<a name="line.384"></a>
+<FONT color="green">385</FONT>                        }<a name="line.385"></a>
+<FONT color="green">386</FONT>                        writeCloseTag(os, 6, "notes");<a name="line.386"></a>
+<FONT color="green">387</FONT>    <a name="line.387"></a>
+<FONT color="green">388</FONT>                        writeCloseTag(os, 4, "payment");<a name="line.388"></a>
+<FONT color="green">389</FONT>    <a name="line.389"></a>
+<FONT color="green">390</FONT>                        String unit = paymentGroup.getBatch().getCustomerProfile().getChartCode() + "-" + paymentGroup.getBatch().getCustomerProfile().getUnitCode() + "-" + paymentGroup.getBatch().getCustomerProfile().getSubUnitCode();<a name="line.390"></a>
+<FONT color="green">391</FONT>    <a name="line.391"></a>
+<FONT color="green">392</FONT>                        Integer count = 1;<a name="line.392"></a>
+<FONT color="green">393</FONT>                        if (unitCounts.containsKey(unit)) {<a name="line.393"></a>
+<FONT color="green">394</FONT>                            count = 1 + unitCounts.get(unit);<a name="line.394"></a>
+<FONT color="green">395</FONT>                        }<a name="line.395"></a>
+<FONT color="green">396</FONT>                        unitCounts.put(unit, count);<a name="line.396"></a>
+<FONT color="green">397</FONT>    <a name="line.397"></a>
+<FONT color="green">398</FONT>                        KualiDecimal unitTotal = paymentDetail.getNetPaymentAmount();<a name="line.398"></a>
+<FONT color="green">399</FONT>                        if (unitTotals.containsKey(unit)) {<a name="line.399"></a>
+<FONT color="green">400</FONT>                            unitTotal = paymentDetail.getNetPaymentAmount().add(unitTotals.get(unit));<a name="line.400"></a>
+<FONT color="green">401</FONT>                        }<a name="line.401"></a>
+<FONT color="green">402</FONT>                        unitTotals.put(unit, unitTotal);<a name="line.402"></a>
+<FONT color="green">403</FONT>                    }<a name="line.403"></a>
+<FONT color="green">404</FONT>    <a name="line.404"></a>
+<FONT color="green">405</FONT>                    writeCloseTag(os, 4, "payments");<a name="line.405"></a>
+<FONT color="green">406</FONT>                    writeCloseTag(os, 2, "ach");<a name="line.406"></a>
+<FONT color="green">407</FONT>                }<a name="line.407"></a>
+<FONT color="green">408</FONT>                writeCloseTag(os, 0, "achPayments");<a name="line.408"></a>
+<FONT color="green">409</FONT>    <a name="line.409"></a>
+<FONT color="green">410</FONT>                // send summary email<a name="line.410"></a>
+<FONT color="green">411</FONT>                paymentFileEmailService.sendAchSummaryEmail(unitCounts, unitTotals, dateTimeService.getCurrentDate());<a name="line.411"></a>
+<FONT color="green">412</FONT>            }<a name="line.412"></a>
+<FONT color="green">413</FONT>            catch (IOException ie) {<a name="line.413"></a>
+<FONT color="green">414</FONT>                LOG.error("extractAchPayments() Problem reading file:  " + filename, ie);<a name="line.414"></a>
+<FONT color="green">415</FONT>                throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());<a name="line.415"></a>
+<FONT color="green">416</FONT>            }<a name="line.416"></a>
+<FONT color="green">417</FONT>            finally {<a name="line.417"></a>
+<FONT color="green">418</FONT>                // Close file<a name="line.418"></a>
+<FONT color="green">419</FONT>                if (os != null) {<a name="line.419"></a>
+<FONT color="green">420</FONT>                    try {<a name="line.420"></a>
+<FONT color="green">421</FONT>                        os.close();<a name="line.421"></a>
+<FONT color="green">422</FONT>                    }<a name="line.422"></a>
+<FONT color="green">423</FONT>                    catch (IOException ie) {<a name="line.423"></a>
+<FONT color="green">424</FONT>                        // Not much we can do now<a name="line.424"></a>
+<FONT color="green">425</FONT>                    }<a name="line.425"></a>
+<FONT color="green">426</FONT>                }<a name="line.426"></a>
+<FONT color="green">427</FONT>            }<a name="line.427"></a>
+<FONT color="green">428</FONT>        }<a name="line.428"></a>
+<FONT color="green">429</FONT>    <a name="line.429"></a>
+<FONT color="green">430</FONT>        protected static String SPACES = "                                                       ";<a name="line.430"></a>
+<FONT color="green">431</FONT>    <a name="line.431"></a>
+<FONT color="green">432</FONT>        protected void writeTag(BufferedWriter os, int indent, String tag, String data) throws IOException {<a name="line.432"></a>
+<FONT color="green">433</FONT>            if (data != null) {<a name="line.433"></a>
+<FONT color="green">434</FONT>                os.write(SPACES.substring(0, indent));<a name="line.434"></a>
+<FONT color="green">435</FONT>                os.write("&lt;" + tag + "&gt;" + escapeString(data) + "&lt;/" + tag + "&gt;\n");<a name="line.435"></a>
+<FONT color="green">436</FONT>            }<a name="line.436"></a>
+<FONT color="green">437</FONT>        }<a name="line.437"></a>
+<FONT color="green">438</FONT>    <a name="line.438"></a>
+<FONT color="green">439</FONT>        protected void writeOpenTag(BufferedWriter os, int indent, String tag) throws IOException {<a name="line.439"></a>
+<FONT color="green">440</FONT>            os.write(SPACES.substring(0, indent));<a name="line.440"></a>
+<FONT color="green">441</FONT>            os.write("&lt;" + tag + "&gt;\n");<a name="line.441"></a>
+<FONT color="green">442</FONT>        }<a name="line.442"></a>
+<FONT color="green">443</FONT>    <a name="line.443"></a>
+<FONT color="green">444</FONT>        protected void writeOpenTagAttribute(BufferedWriter os, int indent, String tag, String attr, String attrVal) throws IOException {<a name="line.444"></a>
+<FONT color="green">445</FONT>            os.write(SPACES.substring(0, indent));<a name="line.445"></a>
+<FONT color="green">446</FONT>            os.write("&lt;" + tag + " " + attr + "=\"" + escapeString(attrVal) + "\"&gt;\n");<a name="line.446"></a>
+<FONT color="green">447</FONT>        }<a name="line.447"></a>
+<FONT color="green">448</FONT>    <a name="line.448"></a>
+<FONT color="green">449</FONT>        protected void writeOpenTagAttribute(BufferedWriter os, int indent, String tag, String attr1, String attr1Val, String attr2, String attr2Val) throws IOException {<a name="line.449"></a>
+<FONT color="green">450</FONT>            os.write(SPACES.substring(0, indent));<a name="line.450"></a>
+<FONT color="green">451</FONT>            os.write("&lt;" + tag + " " + attr1 + "=\"" + escapeString(attr1Val) + "\" " + attr2 + "=\"" + escapeString(attr2Val) + "\"&gt;\n");<a name="line.451"></a>
+<FONT color="green">452</FONT>        }<a name="line.452"></a>
+<FONT color="green">453</FONT>    <a name="line.453"></a>
+<FONT color="green">454</FONT>        protected void writeCloseTag(BufferedWriter os, int indent, String tag) throws IOException {<a name="line.454"></a>
+<FONT color="green">455</FONT>            os.write(SPACES.substring(0, indent));<a name="line.455"></a>
+<FONT color="green">456</FONT>            os.write("&lt;/" + tag + "&gt;\n");<a name="line.456"></a>
+<FONT color="green">457</FONT>        }<a name="line.457"></a>
+<FONT color="green">458</FONT>    <a name="line.458"></a>
+<FONT color="green">459</FONT>        protected void writeBank(BufferedWriter os, int indent, Bank b) throws IOException {<a name="line.459"></a>
+<FONT color="green">460</FONT>            if (b != null) {<a name="line.460"></a>
+<FONT color="green">461</FONT>                writeOpenTagAttribute(os, indent, "bank", "code", b.getBankCode());<a name="line.461"></a>
+<FONT color="green">462</FONT>                writeTag(os, indent + 2, "accountNumber", b.getBankAccountNumber());<a name="line.462"></a>
+<FONT color="green">463</FONT>                writeTag(os, indent + 2, "routingNumber", b.getBankRoutingNumber());<a name="line.463"></a>
+<FONT color="green">464</FONT>                writeCloseTag(os, indent, "bank");<a name="line.464"></a>
+<FONT color="green">465</FONT>            }<a name="line.465"></a>
+<FONT color="green">466</FONT>        }<a name="line.466"></a>
+<FONT color="green">467</FONT>    <a name="line.467"></a>
+<FONT color="green">468</FONT>        protected void writeCustomerProfile(BufferedWriter os, int indent, CustomerProfile cp) throws IOException {<a name="line.468"></a>
+<FONT color="green">469</FONT>            writeOpenTag(os, indent, "customerProfile");<a name="line.469"></a>
+<FONT color="green">470</FONT>            writeTag(os, indent + 2, "chartCode", cp.getChartCode());<a name="line.470"></a>
+<FONT color="green">471</FONT>            writeTag(os, indent + 2, "orgCode", cp.getUnitCode());<a name="line.471"></a>
+<FONT color="green">472</FONT>            writeTag(os, indent + 2, "subUnitCode", cp.getSubUnitCode());<a name="line.472"></a>
+<FONT color="green">473</FONT>            writeOpenTag(os, indent + 2, "checkHeaderNoteLines");<a name="line.473"></a>
+<FONT color="green">474</FONT>            writeTag(os, indent + 4, "note", cp.getCheckHeaderNoteTextLine1());<a name="line.474"></a>
+<FONT color="green">475</FONT>            writeTag(os, indent + 4, "note", cp.getCheckHeaderNoteTextLine2());<a name="line.475"></a>
+<FONT color="green">476</FONT>            writeTag(os, indent + 4, "note", cp.getCheckHeaderNoteTextLine3());<a name="line.476"></a>
+<FONT color="green">477</FONT>            writeTag(os, indent + 4, "note", cp.getCheckHeaderNoteTextLine4());<a name="line.477"></a>
+<FONT color="green">478</FONT>            writeCloseTag(os, indent + 2, "checkHeaderNoteLines");<a name="line.478"></a>
+<FONT color="green">479</FONT>            writeOpenTag(os, indent + 2, "additionalCheckNoteLines");<a name="line.479"></a>
+<FONT color="green">480</FONT>            writeTag(os, indent + 4, "note", cp.getAdditionalCheckNoteTextLine1());<a name="line.480"></a>
+<FONT color="green">481</FONT>            writeTag(os, indent + 4, "note", cp.getAdditionalCheckNoteTextLine2());<a name="line.481"></a>
+<FONT color="green">482</FONT>            writeTag(os, indent + 4, "note", cp.getAdditionalCheckNoteTextLine3());<a name="line.482"></a>
+<FONT color="green">483</FONT>            writeTag(os, indent + 4, "note", cp.getAdditionalCheckNoteTextLine4());<a name="line.483"></a>
+<FONT color="green">484</FONT>            writeCloseTag(os, indent + 2, "additionalCheckNoteLines");<a name="line.484"></a>
+<FONT color="green">485</FONT>            writeCloseTag(os, indent, "customerProfile");<a name="line.485"></a>
+<FONT color="green">486</FONT>        }<a name="line.486"></a>
+<FONT color="green">487</FONT>    <a name="line.487"></a>
+<FONT color="green">488</FONT>        protected void writePayeeAch(BufferedWriter os, int indent, PaymentGroup pg) throws IOException {<a name="line.488"></a>
+<FONT color="green">489</FONT>            writePayeeInformation(os, indent, pg, true);<a name="line.489"></a>
+<FONT color="green">490</FONT>        }<a name="line.490"></a>
+<FONT color="green">491</FONT>    <a name="line.491"></a>
+<FONT color="green">492</FONT>        protected void writePayee(BufferedWriter os, int indent, PaymentGroup pg) throws IOException {<a name="line.492"></a>
+<FONT color="green">493</FONT>            writePayeeInformation(os, indent, pg, false);<a name="line.493"></a>
+<FONT color="green">494</FONT>        }<a name="line.494"></a>
+<FONT color="green">495</FONT>    <a name="line.495"></a>
+<FONT color="green">496</FONT>        protected void writePayeeInformation(BufferedWriter os, int indent, PaymentGroup pg, boolean includeAch) throws IOException {<a name="line.496"></a>
+<FONT color="green">497</FONT>            os.write(SPACES.substring(0, indent));<a name="line.497"></a>
+<FONT color="green">498</FONT>            os.write("&lt;payee id=\"" + pg.getPayeeId() + "\" type=\"" + pg.getPayeeIdTypeCd() + "\"&gt;\n");<a name="line.498"></a>
+<FONT color="green">499</FONT>            writeTag(os, indent + 2, "payeeName", pg.getPayeeName());<a name="line.499"></a>
+<FONT color="green">500</FONT>            writeTag(os, indent + 2, "line1Address", pg.getLine1Address());<a name="line.500"></a>
+<FONT color="green">501</FONT>            writeTag(os, indent + 2, "line2Address", pg.getLine2Address());<a name="line.501"></a>
+<FONT color="green">502</FONT>            writeTag(os, indent + 2, "line3Address", pg.getLine3Address());<a name="line.502"></a>
+<FONT color="green">503</FONT>            writeTag(os, indent + 2, "line4Address", pg.getLine4Address());<a name="line.503"></a>
+<FONT color="green">504</FONT>            writeTag(os, indent + 2, "city", pg.getCity());<a name="line.504"></a>
+<FONT color="green">505</FONT>            writeTag(os, indent + 2, "state", pg.getState());<a name="line.505"></a>
+<FONT color="green">506</FONT>            writeTag(os, indent + 2, "zipCd", pg.getZipCd());<a name="line.506"></a>
+<FONT color="green">507</FONT>            <a name="line.507"></a>
+<FONT color="green">508</FONT>            // get country name for code<a name="line.508"></a>
+<FONT color="green">509</FONT>            Country country = countryService.getByPrimaryId(pg.getCountry());<a name="line.509"></a>
+<FONT color="green">510</FONT>            if (country != null) {<a name="line.510"></a>
+<FONT color="green">511</FONT>                writeTag(os, indent + 2, "country", country.getPostalCountryName());<a name="line.511"></a>
+<FONT color="green">512</FONT>            }<a name="line.512"></a>
+<FONT color="green">513</FONT>            else {<a name="line.513"></a>
+<FONT color="green">514</FONT>                writeTag(os, indent + 2, "country", pg.getCountry());<a name="line.514"></a>
+<FONT color="green">515</FONT>            }<a name="line.515"></a>
+<FONT color="green">516</FONT>    <a name="line.516"></a>
+<FONT color="green">517</FONT>            if (includeAch) {<a name="line.517"></a>
+<FONT color="green">518</FONT>                writeTag(os, indent + 2, "achBankRoutingNbr", pg.getAchBankRoutingNbr());<a name="line.518"></a>
+<FONT color="green">519</FONT>                writeTag(os, indent + 2, "achBankAccountNbr", pg.getAchAccountNumber().getAchBankAccountNbr());<a name="line.519"></a>
+<FONT color="green">520</FONT>                writeTag(os, indent + 2, "achAccountType", pg.getAchAccountType());<a name="line.520"></a>
+<FONT color="green">521</FONT>            }<a name="line.521"></a>
+<FONT color="green">522</FONT>            writeCloseTag(os, indent, "payee");<a name="line.522"></a>
+<FONT color="green">523</FONT>        }<a name="line.523"></a>
+<FONT color="green">524</FONT>    <a name="line.524"></a>
+<FONT color="green">525</FONT>        protected String escapeString(String input) {<a name="line.525"></a>
+<FONT color="green">526</FONT>            String output = input.replaceAll("\\&amp;", "&amp;amp;");<a name="line.526"></a>
+<FONT color="green">527</FONT>            output = output.replaceAll("\"", "&amp;quot;");<a name="line.527"></a>
+<FONT color="green">528</FONT>            output = output.replaceAll("\\'", "&amp;apos;");<a name="line.528"></a>
+<FONT color="green">529</FONT>            output = output.replaceAll("\\&lt;", "&amp;lt;");<a name="line.529"></a>
+<FONT color="green">530</FONT>            output = output.replaceAll("\\&gt;", "&amp;gt;");<a name="line.530"></a>
+<FONT color="green">531</FONT>            return output;<a name="line.531"></a>
+<FONT color="green">532</FONT>        }<a name="line.532"></a>
+<FONT color="green">533</FONT>    <a name="line.533"></a>
+<FONT color="green">534</FONT>        /**<a name="line.534"></a>
+<FONT color="green">535</FONT>         * Sets the directoryName attribute value.<a name="line.535"></a>
+<FONT color="green">536</FONT>         * <a name="line.536"></a>
+<FONT color="green">537</FONT>         * @param directoryName The directoryName to set.<a name="line.537"></a>
+<FONT color="green">538</FONT>         */<a name="line.538"></a>
+<FONT color="green">539</FONT>        public void setDirectoryName(String directoryName) {<a name="line.539"></a>
+<FONT color="green">540</FONT>            this.directoryName = directoryName;<a name="line.540"></a>
+<FONT color="green">541</FONT>        }<a name="line.541"></a>
+<FONT color="green">542</FONT>    <a name="line.542"></a>
+<FONT color="green">543</FONT>    <a name="line.543"></a>
+<FONT color="green">544</FONT>        /**<a name="line.544"></a>
+<FONT color="green">545</FONT>         * Sets the dateTimeService attribute value.<a name="line.545"></a>
+<FONT color="green">546</FONT>         * <a name="line.546"></a>
+<FONT color="green">547</FONT>         * @param dateTimeService The dateTimeService to set.<a name="line.547"></a>
+<FONT color="green">548</FONT>         */<a name="line.548"></a>
+<FONT color="green">549</FONT>        public void setDateTimeService(DateTimeService dateTimeService) {<a name="line.549"></a>
+<FONT color="green">550</FONT>            this.dateTimeService = dateTimeService;<a name="line.550"></a>
+<FONT color="green">551</FONT>        }<a name="line.551"></a>
+<FONT color="green">552</FONT>    <a name="line.552"></a>
+<FONT color="green">553</FONT>        /**<a name="line.553"></a>
+<FONT color="green">554</FONT>         * Sets the parameterService attribute value.<a name="line.554"></a>
+<FONT color="green">555</FONT>         * <a name="line.555"></a>
+<FONT color="green">556</FONT>         * @param parameterService The parameterService to set.<a name="line.556"></a>
+<FONT color="green">557</FONT>         */<a name="line.557"></a>
+<FONT color="green">558</FONT>        public void setParameterService(ParameterService parameterService) {<a name="line.558"></a>
+<FONT color="green">559</FONT>            this.parameterService = parameterService;<a name="line.559"></a>
+<FONT color="green">560</FONT>        }<a name="line.560"></a>
+<FONT color="green">561</FONT>    <a name="line.561"></a>
+<FONT color="green">562</FONT>        /**<a name="line.562"></a>
+<FONT color="green">563</FONT>         * Sets the paymentGroupService attribute value.<a name="line.563"></a>
+<FONT color="green">564</FONT>         * <a name="line.564"></a>
+<FONT color="green">565</FONT>         * @param paymentGroupService The paymentGroupService to set.<a name="line.565"></a>
+<FONT color="green">566</FONT>         */<a name="line.566"></a>
+<FONT color="green">567</FONT>        public void setPaymentGroupService(PaymentGroupService paymentGroupService) {<a name="line.567"></a>
+<FONT color="green">568</FONT>            this.paymentGroupService = paymentGroupService;<a name="line.568"></a>
+<FONT color="green">569</FONT>        }<a name="line.569"></a>
+<FONT color="green">570</FONT>    <a name="line.570"></a>
+<FONT color="green">571</FONT>        /**<a name="line.571"></a>
+<FONT color="green">572</FONT>         * Sets the paymentDetailService attribute value.<a name="line.572"></a>
+<FONT color="green">573</FONT>         * <a name="line.573"></a>
+<FONT color="green">574</FONT>         * @param paymentDetailService The paymentDetailService to set.<a name="line.574"></a>
+<FONT color="green">575</FONT>         */<a name="line.575"></a>
+<FONT color="green">576</FONT>        public void setPaymentDetailService(PaymentDetailService paymentDetailService) {<a name="line.576"></a>
+<FONT color="green">577</FONT>            this.paymentDetailService = paymentDetailService;<a name="line.577"></a>
+<FONT color="green">578</FONT>        }<a name="line.578"></a>
+<FONT color="green">579</FONT>    <a name="line.579"></a>
+<FONT color="green">580</FONT>        /**<a name="line.580"></a>
+<FONT color="green">581</FONT>         * Sets the paymentGroupHistoryDao attribute value.<a name="line.581"></a>
+<FONT color="green">582</FONT>         * <a name="line.582"></a>
+<FONT color="green">583</FONT>         * @param paymentGroupHistoryDao The paymentGroupHistoryDao to set.<a name="line.583"></a>
+<FONT color="green">584</FONT>         */<a name="line.584"></a>
+<FONT color="green">585</FONT>        public void setPaymentGroupHistoryDao(PaymentGroupHistoryDao paymentGroupHistoryDao) {<a name="line.585"></a>
+<FONT color="green">586</FONT>            this.paymentGroupHistoryDao = paymentGroupHistoryDao;<a name="line.586"></a>
+<FONT color="green">587</FONT>        }<a name="line.587"></a>
+<FONT color="green">588</FONT>    <a name="line.588"></a>
+<FONT color="green">589</FONT>        /**<a name="line.589"></a>
+<FONT color="green">590</FONT>         * Sets the processDao attribute value.<a name="line.590"></a>
+<FONT color="green">591</FONT>         * <a name="line.591"></a>
+<FONT color="green">592</FONT>         * @param processDao The processDao to set.<a name="line.592"></a>
+<FONT color="green">593</FONT>         */<a name="line.593"></a>
+<FONT color="green">594</FONT>        public void setProcessDao(ProcessDao processDao) {<a name="line.594"></a>
+<FONT color="green">595</FONT>            this.processDao = processDao;<a name="line.595"></a>
+<FONT color="green">596</FONT>        }<a name="line.596"></a>
+<FONT color="green">597</FONT>    <a name="line.597"></a>
+<FONT color="green">598</FONT>        /**<a name="line.598"></a>
+<FONT color="green">599</FONT>         * Sets the paymentFileEmailService attribute value.<a name="line.599"></a>
+<FONT color="green">600</FONT>         * <a name="line.600"></a>
+<FONT color="green">601</FONT>         * @param paymentFileEmailService The paymentFileEmailService to set.<a name="line.601"></a>
+<FONT color="green">602</FONT>         */<a name="line.602"></a>
+<FONT color="green">603</FONT>        public void setPaymentFileEmailService(PdpEmailService paymentFileEmailService) {<a name="line.603"></a>
+<FONT color="green">604</FONT>            this.paymentFileEmailService = paymentFileEmailService;<a name="line.604"></a>
+<FONT color="green">605</FONT>        }<a name="line.605"></a>
+<FONT color="green">606</FONT>    <a name="line.606"></a>
+<FONT color="green">607</FONT>        /**<a name="line.607"></a>
+<FONT color="green">608</FONT>         * Sets the business object service<a name="line.608"></a>
+<FONT color="green">609</FONT>         * <a name="line.609"></a>
+<FONT color="green">610</FONT>         * @param businessObjectService<a name="line.610"></a>
+<FONT color="green">611</FONT>         */<a name="line.611"></a>
+<FONT color="green">612</FONT>        public void setBusinessObjectService(BusinessObjectService businessObjectService) {<a name="line.612"></a>
+<FONT color="green">613</FONT>            this.businessObjectService = businessObjectService;<a name="line.613"></a>
+<FONT color="green">614</FONT>        }<a name="line.614"></a>
+<FONT color="green">615</FONT>    <a name="line.615"></a>
+<FONT color="green">616</FONT>        public void setKualiConfigurationService(KualiConfigurationService kualiConfigurationService) {<a name="line.616"></a>
+<FONT color="green">617</FONT>            this.kualiConfigurationService = kualiConfigurationService;<a name="line.617"></a>
+<FONT color="green">618</FONT>        }<a name="line.618"></a>
+<FONT color="green">619</FONT>    <a name="line.619"></a>
+<FONT color="green">620</FONT>        /**<a name="line.620"></a>
+<FONT color="green">621</FONT>         * Gets the countryService attribute.<a name="line.621"></a>
+<FONT color="green">622</FONT>         * <a name="line.622"></a>
+<FONT color="green">623</FONT>         * @return Returns the countryService.<a name="line.623"></a>
+<FONT color="green">624</FONT>         */<a name="line.624"></a>
+<FONT color="green">625</FONT>        protected CountryService getCountryService() {<a name="line.625"></a>
+<FONT color="green">626</FONT>            return countryService;<a name="line.626"></a>
+<FONT color="green">627</FONT>        }<a name="line.627"></a>
+<FONT color="green">628</FONT>    <a name="line.628"></a>
+<FONT color="green">629</FONT>        /**<a name="line.629"></a>
+<FONT color="green">630</FONT>         * Sets the countryService attribute value.<a name="line.630"></a>
+<FONT color="green">631</FONT>         * <a name="line.631"></a>
+<FONT color="green">632</FONT>         * @param countryService The countryService to set.<a name="line.632"></a>
+<FONT color="green">633</FONT>         */<a name="line.633"></a>
+<FONT color="green">634</FONT>        public void setCountryService(CountryService countryService) {<a name="line.634"></a>
+<FONT color="green">635</FONT>            this.countryService = countryService;<a name="line.635"></a>
+<FONT color="green">636</FONT>        }<a name="line.636"></a>
+<FONT color="green">637</FONT>    <a name="line.637"></a>
+<FONT color="green">638</FONT>    <a name="line.638"></a>
+<FONT color="green">639</FONT>    }<a name="line.639"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

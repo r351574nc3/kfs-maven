@@ -1,0 +1,597 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.coa.document.validation.impl;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.List;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.kuali.kfs.coa.businessobject.AccountDelegateGlobal;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.kuali.kfs.sys.KFSConstants;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.kuali.kfs.sys.KFSKeyConstants;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.kfs.sys.document.service.FinancialSystemDocumentTypeService;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kim.bo.Person;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kns.bo.PersistableBusinessObject;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.rice.kns.document.MaintenanceDocument;<a name="line.32"></a>
+<FONT color="green">033</FONT>    import org.kuali.rice.kns.util.GlobalVariables;<a name="line.33"></a>
+<FONT color="green">034</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import org.kuali.rice.kns.util.ObjectUtils;<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>    /**<a name="line.37"></a>
+<FONT color="green">038</FONT>     * This class executes specific rules for the {@link DelegateGlobalMaintenanceDocument}<a name="line.38"></a>
+<FONT color="green">039</FONT>     */<a name="line.39"></a>
+<FONT color="green">040</FONT>    public class DelegateGlobalRule extends GlobalDocumentRuleBase {<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DelegateGlobalRule.class);<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        protected static final KualiDecimal ZERO = KualiDecimal.ZERO;<a name="line.44"></a>
+<FONT color="green">045</FONT>        protected AccountDelegateGlobal newDelegateGlobal;<a name="line.45"></a>
+<FONT color="green">046</FONT>        protected static final String DELEGATE_GLOBALS_PREFIX = "delegateGlobals";<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        public DelegateGlobalRule() {<a name="line.48"></a>
+<FONT color="green">049</FONT>            super();<a name="line.49"></a>
+<FONT color="green">050</FONT>        }<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        /**<a name="line.52"></a>
+<FONT color="green">053</FONT>         * This method sets the convenience objects like newAccount and oldAccount, so you have short and easy handles to the new and<a name="line.53"></a>
+<FONT color="green">054</FONT>         * old objects contained in the maintenance document. It also calls the BusinessObjectBase.refresh(), which will attempt to load<a name="line.54"></a>
+<FONT color="green">055</FONT>         * all sub-objects from the DB by their primary keys, if available.<a name="line.55"></a>
+<FONT color="green">056</FONT>         */<a name="line.56"></a>
+<FONT color="green">057</FONT>        @Override<a name="line.57"></a>
+<FONT color="green">058</FONT>        public void setupConvenienceObjects() {<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>            // setup newDelegateGlobal convenience objects,<a name="line.60"></a>
+<FONT color="green">061</FONT>            // make sure all possible sub-objects are populated<a name="line.61"></a>
+<FONT color="green">062</FONT>            newDelegateGlobal = (AccountDelegateGlobal) super.getNewBo();<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>            // forces refreshes on all the sub-objects in the lists<a name="line.64"></a>
+<FONT color="green">065</FONT>            for (AccountDelegateGlobalDetail delegateGlobal : newDelegateGlobal.getDelegateGlobals()) {<a name="line.65"></a>
+<FONT color="green">066</FONT>                delegateGlobal.refreshNonUpdateableReferences();<a name="line.66"></a>
+<FONT color="green">067</FONT>            }<a name="line.67"></a>
+<FONT color="green">068</FONT>            for (AccountGlobalDetail accountGlobalDetail : newDelegateGlobal.getAccountGlobalDetails()) {<a name="line.68"></a>
+<FONT color="green">069</FONT>                accountGlobalDetail.refreshNonUpdateableReferences();<a name="line.69"></a>
+<FONT color="green">070</FONT>            }<a name="line.70"></a>
+<FONT color="green">071</FONT>        }<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>        /**<a name="line.73"></a>
+<FONT color="green">074</FONT>         * This checks some basic rules for document approval Specifically it calls the following:<a name="line.74"></a>
+<FONT color="green">075</FONT>         * &lt;ul&gt;<a name="line.75"></a>
+<FONT color="green">076</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkSimpleRulesAllLines()}&lt;/li&gt;<a name="line.76"></a>
+<FONT color="green">077</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkOnlyOneChartErrorWrapper(List)}&lt;/li&gt;<a name="line.77"></a>
+<FONT color="green">078</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkForPrimaryDelegateAllLines()}&lt;/li&gt;<a name="line.78"></a>
+<FONT color="green">079</FONT>         * &lt;/ul&gt;<a name="line.79"></a>
+<FONT color="green">080</FONT>         * fails if any rules fail<a name="line.80"></a>
+<FONT color="green">081</FONT>         * <a name="line.81"></a>
+<FONT color="green">082</FONT>         * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomApproveDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)<a name="line.82"></a>
+<FONT color="green">083</FONT>         */<a name="line.83"></a>
+<FONT color="green">084</FONT>        @Override<a name="line.84"></a>
+<FONT color="green">085</FONT>        protected boolean processCustomApproveDocumentBusinessRules(MaintenanceDocument document) {<a name="line.85"></a>
+<FONT color="green">086</FONT>            boolean success = true;<a name="line.86"></a>
+<FONT color="green">087</FONT>            setupConvenienceObjects();<a name="line.87"></a>
+<FONT color="green">088</FONT>            // check simple rules<a name="line.88"></a>
+<FONT color="green">089</FONT>            success &amp;= checkSimpleRulesAllLines(document);<a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>            success &amp;= checkOnlyOneChartErrorWrapper(newDelegateGlobal.getAccountGlobalDetails());<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>            // check for primary routing<a name="line.93"></a>
+<FONT color="green">094</FONT>            success &amp;= checkForPrimaryDelegateAllLines();<a name="line.94"></a>
+<FONT color="green">095</FONT>            return success;<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        /**<a name="line.98"></a>
+<FONT color="green">099</FONT>         * This checks some basic rules for document routing Specifically it calls the following:<a name="line.99"></a>
+<FONT color="green">100</FONT>         * &lt;ul&gt;<a name="line.100"></a>
+<FONT color="green">101</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkSimpleRulesAllLines()}&lt;/li&gt;<a name="line.101"></a>
+<FONT color="green">102</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkAccountDetails(List)}&lt;/li&gt;<a name="line.102"></a>
+<FONT color="green">103</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkForPrimaryDelegateAllLines()}&lt;/li&gt;<a name="line.103"></a>
+<FONT color="green">104</FONT>         * &lt;/ul&gt;<a name="line.104"></a>
+<FONT color="green">105</FONT>         * fails if any rules fail<a name="line.105"></a>
+<FONT color="green">106</FONT>         * <a name="line.106"></a>
+<FONT color="green">107</FONT>         * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)<a name="line.107"></a>
+<FONT color="green">108</FONT>         */<a name="line.108"></a>
+<FONT color="green">109</FONT>        @Override<a name="line.109"></a>
+<FONT color="green">110</FONT>        protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {<a name="line.110"></a>
+<FONT color="green">111</FONT>            boolean success = true;<a name="line.111"></a>
+<FONT color="green">112</FONT>            setupConvenienceObjects();<a name="line.112"></a>
+<FONT color="green">113</FONT>            // check simple rules<a name="line.113"></a>
+<FONT color="green">114</FONT>            success &amp;= checkSimpleRulesAllLines(document);<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>            success &amp;= checkAccountDetails(newDelegateGlobal.getAccountGlobalDetails());<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>            // check for primary routing<a name="line.118"></a>
+<FONT color="green">119</FONT>            success &amp;= checkForPrimaryDelegateAllLines();<a name="line.119"></a>
+<FONT color="green">120</FONT>            return success;<a name="line.120"></a>
+<FONT color="green">121</FONT>        }<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>        /**<a name="line.123"></a>
+<FONT color="green">124</FONT>         * This checks some basic rules for document saving Specifically it calls the following:<a name="line.124"></a>
+<FONT color="green">125</FONT>         * &lt;ul&gt;<a name="line.125"></a>
+<FONT color="green">126</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkSimpleRulesAllLines()}&lt;/li&gt;<a name="line.126"></a>
+<FONT color="green">127</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkOnlyOneChartErrorWrapper(List)}&lt;/li&gt;<a name="line.127"></a>
+<FONT color="green">128</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkForPrimaryDelegateAllLines()}&lt;/li&gt;<a name="line.128"></a>
+<FONT color="green">129</FONT>         * &lt;/ul&gt;<a name="line.129"></a>
+<FONT color="green">130</FONT>         * fails if any rules fail<a name="line.130"></a>
+<FONT color="green">131</FONT>         * <a name="line.131"></a>
+<FONT color="green">132</FONT>         * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomSaveDocumentBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument)<a name="line.132"></a>
+<FONT color="green">133</FONT>         */<a name="line.133"></a>
+<FONT color="green">134</FONT>        @Override<a name="line.134"></a>
+<FONT color="green">135</FONT>        protected boolean processCustomSaveDocumentBusinessRules(MaintenanceDocument document) {<a name="line.135"></a>
+<FONT color="green">136</FONT>            setupConvenienceObjects();<a name="line.136"></a>
+<FONT color="green">137</FONT>            // check simple rules<a name="line.137"></a>
+<FONT color="green">138</FONT>            checkSimpleRulesAllLines(document);<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>            checkOnlyOneChartErrorWrapper(newDelegateGlobal.getAccountGlobalDetails());<a name="line.140"></a>
+<FONT color="green">141</FONT>    <a name="line.141"></a>
+<FONT color="green">142</FONT>            // check for primary routing<a name="line.142"></a>
+<FONT color="green">143</FONT>            checkForPrimaryDelegateAllLines();<a name="line.143"></a>
+<FONT color="green">144</FONT>            return true;<a name="line.144"></a>
+<FONT color="green">145</FONT>        }<a name="line.145"></a>
+<FONT color="green">146</FONT>    <a name="line.146"></a>
+<FONT color="green">147</FONT>        /**<a name="line.147"></a>
+<FONT color="green">148</FONT>         * This checks to see if there are any accounts in the details collection if there are then it calls<a name="line.148"></a>
+<FONT color="green">149</FONT>         * {@link DelegateGlobalRule#checkAccountDetails(AccountGlobalDetail)}<a name="line.149"></a>
+<FONT color="green">150</FONT>         * <a name="line.150"></a>
+<FONT color="green">151</FONT>         * @param details - collection of {@link AccountGlobalDetail}s<a name="line.151"></a>
+<FONT color="green">152</FONT>         * @return false if there are no objects in the collection or any one of the {@link AccountGlobalDetail} fail<a name="line.152"></a>
+<FONT color="green">153</FONT>         */<a name="line.153"></a>
+<FONT color="green">154</FONT>        public boolean checkAccountDetails(List&lt;AccountGlobalDetail&gt; details) {<a name="line.154"></a>
+<FONT color="green">155</FONT>            boolean success = true;<a name="line.155"></a>
+<FONT color="green">156</FONT>    <a name="line.156"></a>
+<FONT color="green">157</FONT>            // check if there are any accounts<a name="line.157"></a>
+<FONT color="green">158</FONT>            if (details.size() == 0) {<a name="line.158"></a>
+<FONT color="green">159</FONT>                putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + "accountGlobalDetails.accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_NO_ACCOUNTS);<a name="line.159"></a>
+<FONT color="green">160</FONT>                success = false;<a name="line.160"></a>
+<FONT color="green">161</FONT>            }<a name="line.161"></a>
+<FONT color="green">162</FONT>            else {<a name="line.162"></a>
+<FONT color="green">163</FONT>                // check each account<a name="line.163"></a>
+<FONT color="green">164</FONT>                int index = 0;<a name="line.164"></a>
+<FONT color="green">165</FONT>                for (AccountGlobalDetail dtl : details) {<a name="line.165"></a>
+<FONT color="green">166</FONT>                    String errorPath = MAINTAINABLE_ERROR_PREFIX + "accountGlobalDetails[" + index + "]";<a name="line.166"></a>
+<FONT color="green">167</FONT>                    GlobalVariables.getMessageMap().addToErrorPath(errorPath);<a name="line.167"></a>
+<FONT color="green">168</FONT>                    success &amp;= checkAccountDetails(dtl);<a name="line.168"></a>
+<FONT color="green">169</FONT>                    GlobalVariables.getMessageMap().removeFromErrorPath(errorPath);<a name="line.169"></a>
+<FONT color="green">170</FONT>                    index++;<a name="line.170"></a>
+<FONT color="green">171</FONT>                }<a name="line.171"></a>
+<FONT color="green">172</FONT>                success &amp;= checkOnlyOneChartErrorWrapper(details);<a name="line.172"></a>
+<FONT color="green">173</FONT>            }<a name="line.173"></a>
+<FONT color="green">174</FONT>    <a name="line.174"></a>
+<FONT color="green">175</FONT>            return success;<a name="line.175"></a>
+<FONT color="green">176</FONT>        }<a name="line.176"></a>
+<FONT color="green">177</FONT>    <a name="line.177"></a>
+<FONT color="green">178</FONT>        /**<a name="line.178"></a>
+<FONT color="green">179</FONT>         * This checks to make sure that each {@link AccountGlobalDetail} has a valid {@link Account}<a name="line.179"></a>
+<FONT color="green">180</FONT>         * <a name="line.180"></a>
+<FONT color="green">181</FONT>         * @param dtl - the {@link AccountGlobalDetail}<a name="line.181"></a>
+<FONT color="green">182</FONT>         * @return false if it does not have a valid {@link Account}<a name="line.182"></a>
+<FONT color="green">183</FONT>         */<a name="line.183"></a>
+<FONT color="green">184</FONT>        public boolean checkAccountDetails(AccountGlobalDetail dtl) {<a name="line.184"></a>
+<FONT color="green">185</FONT>            boolean success = true;<a name="line.185"></a>
+<FONT color="green">186</FONT>            int originalErrorCount = GlobalVariables.getMessageMap().getErrorCount();<a name="line.186"></a>
+<FONT color="green">187</FONT>            getDictionaryValidationService().validateBusinessObject(dtl);<a name="line.187"></a>
+<FONT color="green">188</FONT>            if (StringUtils.isNotBlank(dtl.getAccountNumber()) &amp;&amp; StringUtils.isNotBlank(dtl.getChartOfAccountsCode())) {<a name="line.188"></a>
+<FONT color="green">189</FONT>                dtl.refreshReferenceObject("account");<a name="line.189"></a>
+<FONT color="green">190</FONT>                if (ObjectUtils.isNull(dtl.getAccount())) {<a name="line.190"></a>
+<FONT color="green">191</FONT>                    GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, new String[] { dtl.getChartOfAccountsCode(), dtl.getAccountNumber() });<a name="line.191"></a>
+<FONT color="green">192</FONT>                }<a name="line.192"></a>
+<FONT color="green">193</FONT>            }<a name="line.193"></a>
+<FONT color="green">194</FONT>            success &amp;= GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>            return success;<a name="line.196"></a>
+<FONT color="green">197</FONT>        }<a name="line.197"></a>
+<FONT color="green">198</FONT>    <a name="line.198"></a>
+<FONT color="green">199</FONT>        /**<a name="line.199"></a>
+<FONT color="green">200</FONT>         * This method checks the simple rules for all lines at once and gets called on save, submit, etc. but not on add Specifically<a name="line.200"></a>
+<FONT color="green">201</FONT>         * it calls the following:<a name="line.201"></a>
+<FONT color="green">202</FONT>         * &lt;ul&gt;<a name="line.202"></a>
+<FONT color="green">203</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateUserRules(DelegateGlobalDetail, int, boolean)}&lt;/li&gt;<a name="line.203"></a>
+<FONT color="green">204</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateForNullToAmount(KualiDecimal, KualiDecimal, int, boolean)}&lt;/li&gt;<a name="line.204"></a>
+<FONT color="green">205</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateToAmtGreaterThanFromAmt(KualiDecimal, KualiDecimal, int, boolean)}&lt;/li&gt;<a name="line.205"></a>
+<FONT color="green">206</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateFromAmtGreaterThanEqualZero(KualiDecimal, int, boolean)}&lt;/li&gt;<a name="line.206"></a>
+<FONT color="green">207</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkPrimaryRouteRules(List, DelegateGlobalDetail, Integer, boolean)}&lt;/li&gt;<a name="line.207"></a>
+<FONT color="green">208</FONT>         * &lt;/ul&gt;<a name="line.208"></a>
+<FONT color="green">209</FONT>         * <a name="line.209"></a>
+<FONT color="green">210</FONT>         * @return<a name="line.210"></a>
+<FONT color="green">211</FONT>         */<a name="line.211"></a>
+<FONT color="green">212</FONT>        protected boolean checkSimpleRulesAllLines(MaintenanceDocument document) {<a name="line.212"></a>
+<FONT color="green">213</FONT>    <a name="line.213"></a>
+<FONT color="green">214</FONT>            boolean success = true;<a name="line.214"></a>
+<FONT color="green">215</FONT>            // check if there are any accounts<a name="line.215"></a>
+<FONT color="green">216</FONT>            if (newDelegateGlobal.getDelegateGlobals().size() == 0) {<a name="line.216"></a>
+<FONT color="green">217</FONT>                putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + KFSPropertyConstants.DELEGATE_GLOBALS + "." + KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, KFSKeyConstants.ERROR_DOCUMENT_DELEGATE_CHANGE_NO_DELEGATE);<a name="line.217"></a>
+<FONT color="green">218</FONT>                success = false;<a name="line.218"></a>
+<FONT color="green">219</FONT>            }<a name="line.219"></a>
+<FONT color="green">220</FONT>            else {<a name="line.220"></a>
+<FONT color="green">221</FONT>                // check each delegate<a name="line.221"></a>
+<FONT color="green">222</FONT>                int i = 0;<a name="line.222"></a>
+<FONT color="green">223</FONT>                final FinancialSystemDocumentTypeService documentService = SpringContext.getBean(FinancialSystemDocumentTypeService.class);<a name="line.223"></a>
+<FONT color="green">224</FONT>                for (AccountDelegateGlobalDetail newDelegateGlobalDetail : newDelegateGlobal.getDelegateGlobals()) {<a name="line.224"></a>
+<FONT color="green">225</FONT>                    KualiDecimal fromAmount = newDelegateGlobalDetail.getApprovalFromThisAmount();<a name="line.225"></a>
+<FONT color="green">226</FONT>                    KualiDecimal toAmount = newDelegateGlobalDetail.getApprovalToThisAmount();<a name="line.226"></a>
+<FONT color="green">227</FONT>    <a name="line.227"></a>
+<FONT color="green">228</FONT>                    success &amp;= checkDelegateUserRules(document, newDelegateGlobalDetail, i, false);<a name="line.228"></a>
+<FONT color="green">229</FONT>    <a name="line.229"></a>
+<FONT color="green">230</FONT>                    // FROM amount must be &gt;= 0 (may not be negative)<a name="line.230"></a>
+<FONT color="green">231</FONT>                    success &amp;= checkDelegateFromAmtGreaterThanEqualZero(fromAmount, i, false);<a name="line.231"></a>
+<FONT color="green">232</FONT>    <a name="line.232"></a>
+<FONT color="green">233</FONT>                    // TO amount must be &gt;= FROM amount or Zero<a name="line.233"></a>
+<FONT color="green">234</FONT>                    success &amp;= checkDelegateToAmtGreaterThanFromAmt(fromAmount, toAmount, i, false);<a name="line.234"></a>
+<FONT color="green">235</FONT>    <a name="line.235"></a>
+<FONT color="green">236</FONT>                    success &amp;= checkDelegateDocumentTypeCode(newDelegateGlobalDetail.getFinancialDocumentTypeCode(), documentService);<a name="line.236"></a>
+<FONT color="green">237</FONT>    <a name="line.237"></a>
+<FONT color="green">238</FONT>                    // increment counter for delegate changes list<a name="line.238"></a>
+<FONT color="green">239</FONT>                    i++;<a name="line.239"></a>
+<FONT color="green">240</FONT>                }<a name="line.240"></a>
+<FONT color="green">241</FONT>            }<a name="line.241"></a>
+<FONT color="green">242</FONT>            return success;<a name="line.242"></a>
+<FONT color="green">243</FONT>        }<a name="line.243"></a>
+<FONT color="green">244</FONT>    <a name="line.244"></a>
+<FONT color="green">245</FONT>    <a name="line.245"></a>
+<FONT color="green">246</FONT>        /**<a name="line.246"></a>
+<FONT color="green">247</FONT>         * This method will check through each delegate referenced in the DelegateGlobal to ensure that there is one and only primary<a name="line.247"></a>
+<FONT color="green">248</FONT>         * for each account and doctype<a name="line.248"></a>
+<FONT color="green">249</FONT>         * <a name="line.249"></a>
+<FONT color="green">250</FONT>         * @return false if there is more than one primary delegate<a name="line.250"></a>
+<FONT color="green">251</FONT>         */<a name="line.251"></a>
+<FONT color="green">252</FONT>        protected boolean checkForPrimaryDelegateAllLines() {<a name="line.252"></a>
+<FONT color="green">253</FONT>            boolean success = true;<a name="line.253"></a>
+<FONT color="green">254</FONT>            int i = 0;<a name="line.254"></a>
+<FONT color="green">255</FONT>            for (AccountDelegateGlobalDetail newDelegateGlobalDetail : newDelegateGlobal.getDelegateGlobals()) {<a name="line.255"></a>
+<FONT color="green">256</FONT>                success &amp;= checkPrimaryRouteRules(newDelegateGlobal.getDelegateGlobals(), newDelegateGlobalDetail, new Integer(i), false);<a name="line.256"></a>
+<FONT color="green">257</FONT>                i++;<a name="line.257"></a>
+<FONT color="green">258</FONT>            }<a name="line.258"></a>
+<FONT color="green">259</FONT>            return success;<a name="line.259"></a>
+<FONT color="green">260</FONT>        }<a name="line.260"></a>
+<FONT color="green">261</FONT>    <a name="line.261"></a>
+<FONT color="green">262</FONT>        /**<a name="line.262"></a>
+<FONT color="green">263</FONT>         * This method checks to see if the from amount is greater than zero<a name="line.263"></a>
+<FONT color="green">264</FONT>         * <a name="line.264"></a>
+<FONT color="green">265</FONT>         * @param fromAmount<a name="line.265"></a>
+<FONT color="green">266</FONT>         * @param lineNum<a name="line.266"></a>
+<FONT color="green">267</FONT>         * @return false if from amount less than zero<a name="line.267"></a>
+<FONT color="green">268</FONT>         */<a name="line.268"></a>
+<FONT color="green">269</FONT>        protected boolean checkDelegateFromAmtGreaterThanEqualZero(KualiDecimal fromAmount, int lineNum, boolean add) {<a name="line.269"></a>
+<FONT color="green">270</FONT>            boolean success = true;<a name="line.270"></a>
+<FONT color="green">271</FONT>            if (ObjectUtils.isNotNull(fromAmount)) {<a name="line.271"></a>
+<FONT color="green">272</FONT>                if (fromAmount.isLessThan(ZERO)) {<a name="line.272"></a>
+<FONT color="green">273</FONT>                    String errorPath = KFSConstants.EMPTY_STRING;<a name="line.273"></a>
+<FONT color="green">274</FONT>                    if (add) {<a name="line.274"></a>
+<FONT color="green">275</FONT>                        errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + DELEGATE_GLOBALS_PREFIX + "." + "approvalFromThisAmount";<a name="line.275"></a>
+<FONT color="green">276</FONT>                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_FROM_AMOUNT_NONNEGATIVE);<a name="line.276"></a>
+<FONT color="green">277</FONT>                    }<a name="line.277"></a>
+<FONT color="green">278</FONT>                    else {<a name="line.278"></a>
+<FONT color="green">279</FONT>                        errorPath = DELEGATE_GLOBALS_PREFIX + "[" + lineNum + "]." + "approvalFromThisAmount";<a name="line.279"></a>
+<FONT color="green">280</FONT>                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_FROM_AMOUNT_NONNEGATIVE);<a name="line.280"></a>
+<FONT color="green">281</FONT>                    }<a name="line.281"></a>
+<FONT color="green">282</FONT>                    success &amp;= false;<a name="line.282"></a>
+<FONT color="green">283</FONT>                }<a name="line.283"></a>
+<FONT color="green">284</FONT>            }<a name="line.284"></a>
+<FONT color="green">285</FONT>            return success;<a name="line.285"></a>
+<FONT color="green">286</FONT>        }<a name="line.286"></a>
+<FONT color="green">287</FONT>    <a name="line.287"></a>
+<FONT color="green">288</FONT>        /**<a name="line.288"></a>
+<FONT color="green">289</FONT>         * This method checks to see if the to Amount is greater than the from amount<a name="line.289"></a>
+<FONT color="green">290</FONT>         * <a name="line.290"></a>
+<FONT color="green">291</FONT>         * @param fromAmount<a name="line.291"></a>
+<FONT color="green">292</FONT>         * @param toAmount<a name="line.292"></a>
+<FONT color="green">293</FONT>         * @param lineNum<a name="line.293"></a>
+<FONT color="green">294</FONT>         * @return false if to amount less than from amount<a name="line.294"></a>
+<FONT color="green">295</FONT>         */<a name="line.295"></a>
+<FONT color="green">296</FONT>        protected boolean checkDelegateToAmtGreaterThanFromAmt(KualiDecimal fromAmount, KualiDecimal toAmount, int lineNum, boolean add) {<a name="line.296"></a>
+<FONT color="green">297</FONT>            boolean success = true;<a name="line.297"></a>
+<FONT color="green">298</FONT>            if (ObjectUtils.isNotNull(toAmount)) {<a name="line.298"></a>
+<FONT color="green">299</FONT>    <a name="line.299"></a>
+<FONT color="green">300</FONT>                if (!ObjectUtils.isNull(fromAmount)) {<a name="line.300"></a>
+<FONT color="green">301</FONT>                    // case if FROM amount is non-null and positive, disallow TO amount being less if it is not ZERO (another indicator<a name="line.301"></a>
+<FONT color="green">302</FONT>                    // of infinity)<a name="line.302"></a>
+<FONT color="green">303</FONT>                    if (!toAmount.equals(ZERO) &amp;&amp; toAmount.isLessThan(fromAmount)) {<a name="line.303"></a>
+<FONT color="green">304</FONT>                        String errorPath = KFSConstants.EMPTY_STRING;<a name="line.304"></a>
+<FONT color="green">305</FONT>                        if (add) {<a name="line.305"></a>
+<FONT color="green">306</FONT>                            errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + DELEGATE_GLOBALS_PREFIX + "." + "approvalToThisAmount";<a name="line.306"></a>
+<FONT color="green">307</FONT>                            putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_TO_AMOUNT_MORE_THAN_FROM_OR_ZERO);<a name="line.307"></a>
+<FONT color="green">308</FONT>                        }<a name="line.308"></a>
+<FONT color="green">309</FONT>                        else {<a name="line.309"></a>
+<FONT color="green">310</FONT>                            errorPath = DELEGATE_GLOBALS_PREFIX + "[" + lineNum + "]." + "approvalToThisAmount";<a name="line.310"></a>
+<FONT color="green">311</FONT>                            putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_TO_AMOUNT_MORE_THAN_FROM_OR_ZERO);<a name="line.311"></a>
+<FONT color="green">312</FONT>                        }<a name="line.312"></a>
+<FONT color="green">313</FONT>                        success &amp;= false;<a name="line.313"></a>
+<FONT color="green">314</FONT>                    }<a name="line.314"></a>
+<FONT color="green">315</FONT>                }<a name="line.315"></a>
+<FONT color="green">316</FONT>    <a name="line.316"></a>
+<FONT color="green">317</FONT>                if (toAmount.isLessThan(KualiDecimal.ZERO)) {<a name="line.317"></a>
+<FONT color="green">318</FONT>                    String errorPath = KFSConstants.EMPTY_STRING;<a name="line.318"></a>
+<FONT color="green">319</FONT>                    if (add) {<a name="line.319"></a>
+<FONT color="green">320</FONT>                        errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + DELEGATE_GLOBALS_PREFIX + "." + "approvalToThisAmount";<a name="line.320"></a>
+<FONT color="green">321</FONT>                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_TO_AMOUNT_MORE_THAN_FROM_OR_ZERO);<a name="line.321"></a>
+<FONT color="green">322</FONT>                    }<a name="line.322"></a>
+<FONT color="green">323</FONT>                    else {<a name="line.323"></a>
+<FONT color="green">324</FONT>                        errorPath = DELEGATE_GLOBALS_PREFIX + "[" + lineNum + "]." + "approvalToThisAmount";<a name="line.324"></a>
+<FONT color="green">325</FONT>                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_TO_AMOUNT_MORE_THAN_FROM_OR_ZERO);<a name="line.325"></a>
+<FONT color="green">326</FONT>                    }<a name="line.326"></a>
+<FONT color="green">327</FONT>                    success &amp;= false;<a name="line.327"></a>
+<FONT color="green">328</FONT>                }<a name="line.328"></a>
+<FONT color="green">329</FONT>            }<a name="line.329"></a>
+<FONT color="green">330</FONT>            return success;<a name="line.330"></a>
+<FONT color="green">331</FONT>        }<a name="line.331"></a>
+<FONT color="green">332</FONT>    <a name="line.332"></a>
+<FONT color="green">333</FONT>        /**<a name="line.333"></a>
+<FONT color="green">334</FONT>         * Validates the document type code for the delegate, to make sure it is a Financial System document type code<a name="line.334"></a>
+<FONT color="green">335</FONT>         * <a name="line.335"></a>
+<FONT color="green">336</FONT>         * @param documentTypeCode the document type code to check<a name="line.336"></a>
+<FONT color="green">337</FONT>         * @param delegateService a helpful instance of the delegate service, so new ones don't have to be created all the time<a name="line.337"></a>
+<FONT color="green">338</FONT>         * @return true if the document type code is valid, false otherwise<a name="line.338"></a>
+<FONT color="green">339</FONT>         */<a name="line.339"></a>
+<FONT color="green">340</FONT>        protected boolean checkDelegateDocumentTypeCode(String documentTypeCode, FinancialSystemDocumentTypeService documentService) {<a name="line.340"></a>
+<FONT color="green">341</FONT>            if (!documentService.isFinancialSystemDocumentType(documentTypeCode)) {<a name="line.341"></a>
+<FONT color="green">342</FONT>                String errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + DELEGATE_GLOBALS_PREFIX + "." + KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE;<a name="line.342"></a>
+<FONT color="green">343</FONT>                putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_INVALID_DOC_TYPE, new String[] { documentTypeCode, KFSConstants.ROOT_DOCUMENT_TYPE });<a name="line.343"></a>
+<FONT color="green">344</FONT>    <a name="line.344"></a>
+<FONT color="green">345</FONT>                return false;<a name="line.345"></a>
+<FONT color="green">346</FONT>            }<a name="line.346"></a>
+<FONT color="green">347</FONT>            return true;<a name="line.347"></a>
+<FONT color="green">348</FONT>        }<a name="line.348"></a>
+<FONT color="green">349</FONT>    <a name="line.349"></a>
+<FONT color="green">350</FONT>        /**<a name="line.350"></a>
+<FONT color="green">351</FONT>         * This method validates the rule that says there can be only one PrimaryRoute delegate for each given docType. It checks the<a name="line.351"></a>
+<FONT color="green">352</FONT>         * delegateGlobalToTest against the list, to determine whether adding this new delegateGlobalToTest would violate any<a name="line.352"></a>
+<FONT color="green">353</FONT>         * PrimaryRoute business rule violations. If any of the incoming variables is null or empty, the method will do nothing, and<a name="line.353"></a>
+<FONT color="green">354</FONT>         * return Null. It will only process the business rules if there is sufficient data to do so.<a name="line.354"></a>
+<FONT color="green">355</FONT>         * <a name="line.355"></a>
+<FONT color="green">356</FONT>         * @param delegateGlobalToTest A delegateGlobal line that you want to test against the list.<a name="line.356"></a>
+<FONT color="green">357</FONT>         * @param delegateGlobals A List of delegateGlobal items that is being tested against.<a name="line.357"></a>
+<FONT color="green">358</FONT>         * @return Null if the business rule passes, or an Integer value greater than zero, representing the line that the new line is<a name="line.358"></a>
+<FONT color="green">359</FONT>         *         conflicting with<a name="line.359"></a>
+<FONT color="green">360</FONT>         */<a name="line.360"></a>
+<FONT color="green">361</FONT>        protected Integer checkPrimaryRoutePerDocType(AccountDelegateGlobalDetail delegateGlobalToTest, List&lt;AccountDelegateGlobalDetail&gt; delegateGlobals, Integer testLineNum) {<a name="line.361"></a>
+<FONT color="green">362</FONT>    <a name="line.362"></a>
+<FONT color="green">363</FONT>            // exit immediately if the adding line isnt a Primary routing<a name="line.363"></a>
+<FONT color="green">364</FONT>            if (delegateGlobalToTest == null || delegateGlobals == null || delegateGlobals.isEmpty()) {<a name="line.364"></a>
+<FONT color="green">365</FONT>                return null;<a name="line.365"></a>
+<FONT color="green">366</FONT>            }<a name="line.366"></a>
+<FONT color="green">367</FONT>            if (!delegateGlobalToTest.getAccountDelegatePrimaryRoutingIndicator()) {<a name="line.367"></a>
+<FONT color="green">368</FONT>                return null;<a name="line.368"></a>
+<FONT color="green">369</FONT>            }<a name="line.369"></a>
+<FONT color="green">370</FONT>            if (StringUtils.isBlank(delegateGlobalToTest.getFinancialDocumentTypeCode())) {<a name="line.370"></a>
+<FONT color="green">371</FONT>                return null;<a name="line.371"></a>
+<FONT color="green">372</FONT>            }<a name="line.372"></a>
+<FONT color="green">373</FONT>    <a name="line.373"></a>
+<FONT color="green">374</FONT>            // at this point, the delegateGlobal being added is a Primary for ALL docTypes, so we need to<a name="line.374"></a>
+<FONT color="green">375</FONT>            // test whether any in the existing list are also Primary, regardless of docType<a name="line.375"></a>
+<FONT color="green">376</FONT>            String docType = delegateGlobalToTest.getFinancialDocumentTypeCode();<a name="line.376"></a>
+<FONT color="green">377</FONT>            AccountDelegateGlobalDetail delegateGlobal = null;<a name="line.377"></a>
+<FONT color="green">378</FONT>            for (int lineNumber = 0; lineNumber &lt; delegateGlobals.size(); lineNumber++) {<a name="line.378"></a>
+<FONT color="green">379</FONT>                delegateGlobal = delegateGlobals.get(lineNumber);<a name="line.379"></a>
+<FONT color="green">380</FONT>                if (delegateGlobal.getAccountDelegatePrimaryRoutingIndicator()) {<a name="line.380"></a>
+<FONT color="green">381</FONT>                    if (docType.equalsIgnoreCase(delegateGlobal.getFinancialDocumentTypeCode())) {<a name="line.381"></a>
+<FONT color="green">382</FONT>                        if (testLineNum == null) {<a name="line.382"></a>
+<FONT color="green">383</FONT>                            return new Integer(lineNumber);<a name="line.383"></a>
+<FONT color="green">384</FONT>                        }<a name="line.384"></a>
+<FONT color="green">385</FONT>                        else if (!(testLineNum.intValue() == lineNumber)) {<a name="line.385"></a>
+<FONT color="green">386</FONT>                            return new Integer(lineNumber);<a name="line.386"></a>
+<FONT color="green">387</FONT>                        }<a name="line.387"></a>
+<FONT color="green">388</FONT>                    }<a name="line.388"></a>
+<FONT color="green">389</FONT>                }<a name="line.389"></a>
+<FONT color="green">390</FONT>            }<a name="line.390"></a>
+<FONT color="green">391</FONT>    <a name="line.391"></a>
+<FONT color="green">392</FONT>            return null;<a name="line.392"></a>
+<FONT color="green">393</FONT>        }<a name="line.393"></a>
+<FONT color="green">394</FONT>    <a name="line.394"></a>
+<FONT color="green">395</FONT>        /**<a name="line.395"></a>
+<FONT color="green">396</FONT>         * This checks that the primary routing for delegates is correct, specifically that - there is not already a primary route<a name="line.396"></a>
+<FONT color="green">397</FONT>         * delegate setup for this {@link Account}<a name="line.397"></a>
+<FONT color="green">398</FONT>         * <a name="line.398"></a>
+<FONT color="green">399</FONT>         * @param delegateGlobals<a name="line.399"></a>
+<FONT color="green">400</FONT>         * @param delegateGlobalToTest<a name="line.400"></a>
+<FONT color="green">401</FONT>         * @param lineNum<a name="line.401"></a>
+<FONT color="green">402</FONT>         * @param add<a name="line.402"></a>
+<FONT color="green">403</FONT>         * @return<a name="line.403"></a>
+<FONT color="green">404</FONT>         */<a name="line.404"></a>
+<FONT color="green">405</FONT>        protected boolean checkPrimaryRouteRules(List&lt;AccountDelegateGlobalDetail&gt; delegateGlobals, AccountDelegateGlobalDetail delegateGlobalToTest, Integer lineNum, boolean add) {<a name="line.405"></a>
+<FONT color="green">406</FONT>            boolean success = true;<a name="line.406"></a>
+<FONT color="green">407</FONT>    <a name="line.407"></a>
+<FONT color="green">408</FONT>            String errorPath = "";<a name="line.408"></a>
+<FONT color="green">409</FONT>            Integer result = null;<a name="line.409"></a>
+<FONT color="green">410</FONT>            for (AccountDelegateGlobalDetail delegateGlobal : delegateGlobals) {<a name="line.410"></a>
+<FONT color="green">411</FONT>    <a name="line.411"></a>
+<FONT color="green">412</FONT>                result = checkPrimaryRoutePerDocType(delegateGlobalToTest, delegateGlobals, lineNum);<a name="line.412"></a>
+<FONT color="green">413</FONT>                if (result != null) {<a name="line.413"></a>
+<FONT color="green">414</FONT>                    if (add) {<a name="line.414"></a>
+<FONT color="green">415</FONT>                        errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + DELEGATE_GLOBALS_PREFIX + "." + "financialDocumentTypeCode";<a name="line.415"></a>
+<FONT color="green">416</FONT>                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_DELEGATEMAINT_PRIMARY_ROUTE_ALREADY_EXISTS_FOR_DOCTYPE);<a name="line.416"></a>
+<FONT color="green">417</FONT>                    }<a name="line.417"></a>
+<FONT color="green">418</FONT>                    else {<a name="line.418"></a>
+<FONT color="green">419</FONT>                        errorPath = DELEGATE_GLOBALS_PREFIX + "[" + lineNum.toString() + "]." + "financialDocumentTypeCode";<a name="line.419"></a>
+<FONT color="green">420</FONT>                        putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_DELEGATEMAINT_PRIMARY_ROUTE_ALREADY_EXISTS_FOR_DOCTYPE);<a name="line.420"></a>
+<FONT color="green">421</FONT>                    }<a name="line.421"></a>
+<FONT color="green">422</FONT>                    success &amp;= false;<a name="line.422"></a>
+<FONT color="green">423</FONT>                }<a name="line.423"></a>
+<FONT color="green">424</FONT>            }<a name="line.424"></a>
+<FONT color="green">425</FONT>            return success;<a name="line.425"></a>
+<FONT color="green">426</FONT>        }<a name="line.426"></a>
+<FONT color="green">427</FONT>    <a name="line.427"></a>
+<FONT color="green">428</FONT>        /**<a name="line.428"></a>
+<FONT color="green">429</FONT>         * This checks that the delegate for this {@link Account} exists and is valid (active and a professional)<a name="line.429"></a>
+<FONT color="green">430</FONT>         * <a name="line.430"></a>
+<FONT color="green">431</FONT>         * @param delegateGlobal<a name="line.431"></a>
+<FONT color="green">432</FONT>         * @param lineNum<a name="line.432"></a>
+<FONT color="green">433</FONT>         * @param add<a name="line.433"></a>
+<FONT color="green">434</FONT>         * @return false if the delegate for the {@link Account} doesn't exist or isn't valid<a name="line.434"></a>
+<FONT color="green">435</FONT>         */<a name="line.435"></a>
+<FONT color="green">436</FONT>        protected boolean checkDelegateUserRules(MaintenanceDocument document, AccountDelegateGlobalDetail delegateGlobal, int lineNum, boolean add) {<a name="line.436"></a>
+<FONT color="green">437</FONT>            boolean success = true;<a name="line.437"></a>
+<FONT color="green">438</FONT>            String errorPath = KFSConstants.EMPTY_STRING;<a name="line.438"></a>
+<FONT color="green">439</FONT>            <a name="line.439"></a>
+<FONT color="green">440</FONT>            Person accountDelegate = delegateGlobal.getAccountDelegate();<a name="line.440"></a>
+<FONT color="green">441</FONT>            if (StringUtils.isBlank(delegateGlobal.getAccountDelegateUniversalId()) || ObjectUtils.isNull(accountDelegate)) {<a name="line.441"></a>
+<FONT color="green">442</FONT>                if (add) {<a name="line.442"></a>
+<FONT color="green">443</FONT>                    errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + DELEGATE_GLOBALS_PREFIX + "." + "accountDelegate.principalName";<a name="line.443"></a>
+<FONT color="green">444</FONT>                    putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_USER_DOESNT_EXIST);<a name="line.444"></a>
+<FONT color="green">445</FONT>                }<a name="line.445"></a>
+<FONT color="green">446</FONT>                else {<a name="line.446"></a>
+<FONT color="green">447</FONT>                    errorPath = DELEGATE_GLOBALS_PREFIX + "[" + lineNum + "]." + "accountDelegate.principalName";<a name="line.447"></a>
+<FONT color="green">448</FONT>                    putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCTDELEGATEMAINT_USER_DOESNT_EXIST);<a name="line.448"></a>
+<FONT color="green">449</FONT>                }<a name="line.449"></a>
+<FONT color="green">450</FONT>    <a name="line.450"></a>
+<FONT color="green">451</FONT>                success &amp;= false;<a name="line.451"></a>
+<FONT color="green">452</FONT>            }<a name="line.452"></a>
+<FONT color="green">453</FONT>            else if (!getDocumentHelperService().getDocumentAuthorizer(document).isAuthorized(document, KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER_DELEGATE, accountDelegate.getPrincipalId())) {<a name="line.453"></a>
+<FONT color="green">454</FONT>                if (add) {<a name="line.454"></a>
+<FONT color="green">455</FONT>                    errorPath = KFSConstants.MAINTENANCE_ADD_PREFIX + DELEGATE_GLOBALS_PREFIX + "." + "accountDelegate.principalName";<a name="line.455"></a>
+<FONT color="green">456</FONT>                    putFieldError(errorPath, KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] { accountDelegate.getName(), KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER_DELEGATE });<a name="line.456"></a>
+<FONT color="green">457</FONT>                }<a name="line.457"></a>
+<FONT color="green">458</FONT>                else {<a name="line.458"></a>
+<FONT color="green">459</FONT>                    errorPath = DELEGATE_GLOBALS_PREFIX + "[" + lineNum + "]." + "accountDelegate.principalName";<a name="line.459"></a>
+<FONT color="green">460</FONT>                    putFieldError(errorPath, KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] { accountDelegate.getName(), KFSConstants.ParameterNamespaces.CHART, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER_DELEGATE });<a name="line.460"></a>
+<FONT color="green">461</FONT>                }<a name="line.461"></a>
+<FONT color="green">462</FONT>                <a name="line.462"></a>
+<FONT color="green">463</FONT>                success &amp;= false;<a name="line.463"></a>
+<FONT color="green">464</FONT>            }<a name="line.464"></a>
+<FONT color="green">465</FONT>    <a name="line.465"></a>
+<FONT color="green">466</FONT>            return success;<a name="line.466"></a>
+<FONT color="green">467</FONT>        }<a name="line.467"></a>
+<FONT color="green">468</FONT>    <a name="line.468"></a>
+<FONT color="green">469</FONT>        /**<a name="line.469"></a>
+<FONT color="green">470</FONT>         * This checks that when a new line is added (either {@link AccountGlobalDetail} or {@link DelegateGlobalDetail}) that the<a name="line.470"></a>
+<FONT color="green">471</FONT>         * appropriate rules are run on the new lines being added on {@link AccountGlobalDetail}: - make sure that the account number<a name="line.471"></a>
+<FONT color="green">472</FONT>         * and chart are entered<a name="line.472"></a>
+<FONT color="green">473</FONT>         * &lt;ul&gt;<a name="line.473"></a>
+<FONT color="green">474</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkAccountDetails(AccountGlobalDetail)}&lt;/li&gt;<a name="line.474"></a>
+<FONT color="green">475</FONT>         * &lt;/ul&gt;<a name="line.475"></a>
+<FONT color="green">476</FONT>         * on {@link DelegateGlobalDetail}<a name="line.476"></a>
+<FONT color="green">477</FONT>         * &lt;ul&gt;<a name="line.477"></a>
+<FONT color="green">478</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateFromAmtGreaterThanEqualZero(KualiDecimal, int, boolean)}&lt;/li&gt;<a name="line.478"></a>
+<FONT color="green">479</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateForNullToAmount(KualiDecimal, KualiDecimal, int, boolean)}&lt;/li&gt;<a name="line.479"></a>
+<FONT color="green">480</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateToAmtGreaterThanFromAmt(KualiDecimal, KualiDecimal, int, boolean)}&lt;/li&gt;<a name="line.480"></a>
+<FONT color="green">481</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkDelegateUserRules(DelegateGlobalDetail, int, boolean)}&lt;/li&gt;<a name="line.481"></a>
+<FONT color="green">482</FONT>         * &lt;li&gt;{@link DelegateGlobalRule#checkPrimaryRouteRules(List, DelegateGlobalDetail, Integer, boolean)}&lt;/li&gt;<a name="line.482"></a>
+<FONT color="green">483</FONT>         * &lt;/ul&gt;<a name="line.483"></a>
+<FONT color="green">484</FONT>         * <a name="line.484"></a>
+<FONT color="green">485</FONT>         * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument,<a name="line.485"></a>
+<FONT color="green">486</FONT>         *      java.lang.String, org.kuali.rice.kns.bo.PersistableBusinessObject)<a name="line.486"></a>
+<FONT color="green">487</FONT>         */<a name="line.487"></a>
+<FONT color="green">488</FONT>        public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {<a name="line.488"></a>
+<FONT color="green">489</FONT>            boolean success = true;<a name="line.489"></a>
+<FONT color="green">490</FONT>            if (bo instanceof AccountGlobalDetail) {<a name="line.490"></a>
+<FONT color="green">491</FONT>                AccountGlobalDetail detail = (AccountGlobalDetail) bo;<a name="line.491"></a>
+<FONT color="green">492</FONT>                // make sure that both primary keys are available for this object<a name="line.492"></a>
+<FONT color="green">493</FONT>                if (!checkEmptyValue(detail.getAccountNumber())) {<a name="line.493"></a>
+<FONT color="green">494</FONT>                    // put an error about accountnumber<a name="line.494"></a>
+<FONT color="green">495</FONT>                    GlobalVariables.getMessageMap().putError("accountNumber", KFSKeyConstants.ERROR_REQUIRED, "Account Number");<a name="line.495"></a>
+<FONT color="green">496</FONT>                    success &amp;= false;<a name="line.496"></a>
+<FONT color="green">497</FONT>                }<a name="line.497"></a>
+<FONT color="green">498</FONT>                if (!checkEmptyValue(detail.getChartOfAccountsCode())) {<a name="line.498"></a>
+<FONT color="green">499</FONT>                    // put an error about chart code<a name="line.499"></a>
+<FONT color="green">500</FONT>                    GlobalVariables.getMessageMap().putError("chartOfAccountsCode", KFSKeyConstants.ERROR_REQUIRED, "Chart of Accounts Code");<a name="line.500"></a>
+<FONT color="green">501</FONT>                    success &amp;= false;<a name="line.501"></a>
+<FONT color="green">502</FONT>                }<a name="line.502"></a>
+<FONT color="green">503</FONT>                success &amp;= checkAccountDetails(detail);<a name="line.503"></a>
+<FONT color="green">504</FONT>            }<a name="line.504"></a>
+<FONT color="green">505</FONT>            else if (bo instanceof AccountDelegateGlobalDetail) {<a name="line.505"></a>
+<FONT color="green">506</FONT>                AccountDelegateGlobalDetail detail = (AccountDelegateGlobalDetail) bo;<a name="line.506"></a>
+<FONT color="green">507</FONT>                detail.refreshNonUpdateableReferences();<a name="line.507"></a>
+<FONT color="green">508</FONT>                KualiDecimal fromAmount = detail.getApprovalFromThisAmount();<a name="line.508"></a>
+<FONT color="green">509</FONT>                KualiDecimal toAmount = detail.getApprovalToThisAmount();<a name="line.509"></a>
+<FONT color="green">510</FONT>    <a name="line.510"></a>
+<FONT color="green">511</FONT>                // FROM amount must be &gt;= 0 (may not be negative)<a name="line.511"></a>
+<FONT color="green">512</FONT>                success &amp;= checkDelegateFromAmtGreaterThanEqualZero(fromAmount, 0, true);<a name="line.512"></a>
+<FONT color="green">513</FONT>    <a name="line.513"></a>
+<FONT color="green">514</FONT>                // TO amount must be &gt;= FROM amount or Zero<a name="line.514"></a>
+<FONT color="green">515</FONT>                success &amp;= checkDelegateToAmtGreaterThanFromAmt(fromAmount, toAmount, 0, true);<a name="line.515"></a>
+<FONT color="green">516</FONT>    <a name="line.516"></a>
+<FONT color="green">517</FONT>                // check the user that is being added<a name="line.517"></a>
+<FONT color="green">518</FONT>                // TODO: add back in once the user issues have been fixed<a name="line.518"></a>
+<FONT color="green">519</FONT>                success &amp;= checkDelegateUserRules(document, detail, 0, true);<a name="line.519"></a>
+<FONT color="green">520</FONT>    <a name="line.520"></a>
+<FONT color="green">521</FONT>                // check the routing<a name="line.521"></a>
+<FONT color="green">522</FONT>                success &amp;= checkPrimaryRouteRules(newDelegateGlobal.getDelegateGlobals(), detail, null, true);<a name="line.522"></a>
+<FONT color="green">523</FONT>    <a name="line.523"></a>
+<FONT color="green">524</FONT>                final FinancialSystemDocumentTypeService documentService = SpringContext.getBean(FinancialSystemDocumentTypeService.class);<a name="line.524"></a>
+<FONT color="green">525</FONT>                success &amp;= checkDelegateDocumentTypeCode(detail.getFinancialDocumentTypeCode(), documentService);<a name="line.525"></a>
+<FONT color="green">526</FONT>    <a name="line.526"></a>
+<FONT color="green">527</FONT>            }<a name="line.527"></a>
+<FONT color="green">528</FONT>            return success;<a name="line.528"></a>
+<FONT color="green">529</FONT>        }<a name="line.529"></a>
+<FONT color="green">530</FONT>    <a name="line.530"></a>
+<FONT color="green">531</FONT>    }<a name="line.531"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

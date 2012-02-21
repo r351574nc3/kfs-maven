@@ -1,0 +1,277 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2011 The Kuali Foundation.<a name="line.2"></a>
+<FONT color="green">003</FONT>     * <a name="line.3"></a>
+<FONT color="green">004</FONT>     * Licensed under the Educational Community License, Version 2.0 (the "License");<a name="line.4"></a>
+<FONT color="green">005</FONT>     * you may not use this file except in compliance with the License.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * You may obtain a copy of the License at<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * http://www.opensource.org/licenses/ecl2.php<a name="line.8"></a>
+<FONT color="green">009</FONT>     * <a name="line.9"></a>
+<FONT color="green">010</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.10"></a>
+<FONT color="green">011</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * See the License for the specific language governing permissions and<a name="line.13"></a>
+<FONT color="green">014</FONT>     * limitations under the License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    package org.kuali.kfs.gl.businessobject.options;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.text.ParseException;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.text.SimpleDateFormat;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.util.ArrayList;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Date;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.Iterator;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.List;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.kuali.kfs.gl.businessobject.OriginEntryFull;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.kuali.kfs.sys.KFSPropertyConstants;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import org.kuali.kfs.sys.context.SpringContext;<a name="line.28"></a>
+<FONT color="green">029</FONT>    import org.kuali.rice.core.util.KeyLabelPair;<a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.kuali.rice.kns.service.DataDictionaryService;<a name="line.31"></a>
+<FONT color="green">032</FONT>    import org.kuali.rice.kns.util.KualiDecimal;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>    /**<a name="line.34"></a>
+<FONT color="green">035</FONT>     * An extension of KeyValuesBase that <a name="line.35"></a>
+<FONT color="green">036</FONT>     */<a name="line.36"></a>
+<FONT color="green">037</FONT>    public class OriginEntryFieldFinder extends KeyValuesBase {<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        /**<a name="line.39"></a>
+<FONT color="green">040</FONT>         * Returns a list of all field names and display field names for the Origin Entry class<a name="line.40"></a>
+<FONT color="green">041</FONT>         * @return a List of key/value pair options<a name="line.41"></a>
+<FONT color="green">042</FONT>         * @see org.kuali.rice.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()<a name="line.42"></a>
+<FONT color="green">043</FONT>         */<a name="line.43"></a>
+<FONT color="green">044</FONT>        public List getKeyValues() {<a name="line.44"></a>
+<FONT color="green">045</FONT>            List activeLabels = new ArrayList();<a name="line.45"></a>
+<FONT color="green">046</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, "Fiscal Year"));<a name="line.46"></a>
+<FONT color="green">047</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, "Chart Code"));<a name="line.47"></a>
+<FONT color="green">048</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.ACCOUNT_NUMBER, "Account Number"));<a name="line.48"></a>
+<FONT color="green">049</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.SUB_ACCOUNT_NUMBER, "Sub-Account Number"));<a name="line.49"></a>
+<FONT color="green">050</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, "Object Code"));<a name="line.50"></a>
+<FONT color="green">051</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_SUB_OBJECT_CODE, "Sub-Object Code"));<a name="line.51"></a>
+<FONT color="green">052</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_BALANCE_TYPE_CODE, "Balance Type"));<a name="line.52"></a>
+<FONT color="green">053</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_OBJECT_TYPE_CODE, "Object Type"));<a name="line.53"></a>
+<FONT color="green">054</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.UNIVERSITY_FISCAL_PERIOD_CODE, "Fiscal Period"));<a name="line.54"></a>
+<FONT color="green">055</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, "Document Type"));<a name="line.55"></a>
+<FONT color="green">056</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_SYSTEM_ORIGINATION_CODE, "Origin code"));<a name="line.56"></a>
+<FONT color="green">057</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.DOCUMENT_NUMBER, "Document Number"));<a name="line.57"></a>
+<FONT color="green">058</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.TRANSACTION_ENTRY_SEQUENCE_NUMBER, "Sequence Number"));<a name="line.58"></a>
+<FONT color="green">059</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.TRANSACTION_LEDGER_ENTRY_DESC, "Description"));<a name="line.59"></a>
+<FONT color="green">060</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.TRANSACTION_LEDGER_ENTRY_AMOUNT, "Amount"));<a name="line.60"></a>
+<FONT color="green">061</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.TRANSACTION_DEBIT_CREDIT_CODE, "Debit Credit Indicator"));<a name="line.61"></a>
+<FONT color="green">062</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.TRANSACTION_DATE, "Transaction Date"));<a name="line.62"></a>
+<FONT color="green">063</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.ORGANIZATION_DOCUMENT_NUMBER, "Org Doc Number"));<a name="line.63"></a>
+<FONT color="green">064</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.PROJECT_CODE, "Project Code"));<a name="line.64"></a>
+<FONT color="green">065</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.ORGANIZATION_REFERENCE_ID, "Org Ref ID"));<a name="line.65"></a>
+<FONT color="green">066</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.REFERENCE_FIN_DOCUMENT_TYPE_CODE, "Ref Doc Type"));<a name="line.66"></a>
+<FONT color="green">067</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FIN_SYSTEM_REF_ORIGINATION_CODE, "Ref Origin code"));<a name="line.67"></a>
+<FONT color="green">068</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_DOCUMENT_REFERENCE_NBR, "Ref Doc Number"));<a name="line.68"></a>
+<FONT color="green">069</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.FINANCIAL_DOCUMENT_REVERSAL_DATE, "Reversal Date"));<a name="line.69"></a>
+<FONT color="green">070</FONT>            activeLabels.add(new KeyLabelPair(KFSPropertyConstants.TRANSACTION_ENCUMBRANCE_UPDT_CD, "Enc Update Code"));<a name="line.70"></a>
+<FONT color="green">071</FONT>            return activeLabels;<a name="line.71"></a>
+<FONT color="green">072</FONT>        }<a name="line.72"></a>
+<FONT color="green">073</FONT>    <a name="line.73"></a>
+<FONT color="green">074</FONT>        /**<a name="line.74"></a>
+<FONT color="green">075</FONT>         * Given the property field name for a field, returns the display name<a name="line.75"></a>
+<FONT color="green">076</FONT>         * <a name="line.76"></a>
+<FONT color="green">077</FONT>         * @param fieldName the property field name for a field<a name="line.77"></a>
+<FONT color="green">078</FONT>         * @return the display field name of that field<a name="line.78"></a>
+<FONT color="green">079</FONT>         */<a name="line.79"></a>
+<FONT color="green">080</FONT>        public String getFieldDisplayName(String fieldName) {<a name="line.80"></a>
+<FONT color="green">081</FONT>            for (Iterator iter = getKeyValues().iterator(); iter.hasNext();) {<a name="line.81"></a>
+<FONT color="green">082</FONT>                KeyLabelPair klp = (KeyLabelPair) iter.next();<a name="line.82"></a>
+<FONT color="green">083</FONT>                if (klp.getKey().equals(fieldName)) {<a name="line.83"></a>
+<FONT color="green">084</FONT>                    return klp.getLabel();<a name="line.84"></a>
+<FONT color="green">085</FONT>                }<a name="line.85"></a>
+<FONT color="green">086</FONT>            }<a name="line.86"></a>
+<FONT color="green">087</FONT>            return "Error";<a name="line.87"></a>
+<FONT color="green">088</FONT>        }<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>        /**<a name="line.90"></a>
+<FONT color="green">091</FONT>         * Given the display name of a field, returns the property field name<a name="line.91"></a>
+<FONT color="green">092</FONT>         * <a name="line.92"></a>
+<FONT color="green">093</FONT>         * @param fieldDisplayName the display name of the field<a name="line.93"></a>
+<FONT color="green">094</FONT>         * @return the property field name for that field<a name="line.94"></a>
+<FONT color="green">095</FONT>         */<a name="line.95"></a>
+<FONT color="green">096</FONT>        public String getFieldName(String fieldDisplayName) {<a name="line.96"></a>
+<FONT color="green">097</FONT>            for (Iterator iter = getKeyValues().iterator(); iter.hasNext();) {<a name="line.97"></a>
+<FONT color="green">098</FONT>                KeyLabelPair klp = (KeyLabelPair) iter.next();<a name="line.98"></a>
+<FONT color="green">099</FONT>                if (klp.getLabel().equals(fieldDisplayName)) {<a name="line.99"></a>
+<FONT color="green">100</FONT>                    return (String) klp.getKey();<a name="line.100"></a>
+<FONT color="green">101</FONT>                }<a name="line.101"></a>
+<FONT color="green">102</FONT>            }<a name="line.102"></a>
+<FONT color="green">103</FONT>            return "Error";<a name="line.103"></a>
+<FONT color="green">104</FONT>        }<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>        /**<a name="line.106"></a>
+<FONT color="green">107</FONT>         * Given a field name and a value, determines if that value is valid for the field<a name="line.107"></a>
+<FONT color="green">108</FONT>         * <a name="line.108"></a>
+<FONT color="green">109</FONT>         * @param fieldName the name of a field to inquire on<a name="line.109"></a>
+<FONT color="green">110</FONT>         * @param value the value that the field will potentially be set to<a name="line.110"></a>
+<FONT color="green">111</FONT>         * @return true if the value is valid, false if otherwise<a name="line.111"></a>
+<FONT color="green">112</FONT>         */<a name="line.112"></a>
+<FONT color="green">113</FONT>        public boolean isValidValue(String fieldName, String value) {<a name="line.113"></a>
+<FONT color="green">114</FONT>            if (StringUtils.isBlank(fieldName)) {<a name="line.114"></a>
+<FONT color="green">115</FONT>                return false;<a name="line.115"></a>
+<FONT color="green">116</FONT>            }<a name="line.116"></a>
+<FONT color="green">117</FONT>            String fieldType = getFieldType(fieldName);<a name="line.117"></a>
+<FONT color="green">118</FONT>            int fieldLength = getFieldLength(fieldName);<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>            if (allowNull(fieldName) &amp;&amp; (value == null || value.length() == 0)) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                return true;<a name="line.121"></a>
+<FONT color="green">122</FONT>            }<a name="line.122"></a>
+<FONT color="green">123</FONT>            if (!allowNull(fieldName) &amp;&amp; (value == null || value.length() == 0)) {<a name="line.123"></a>
+<FONT color="green">124</FONT>                return false;<a name="line.124"></a>
+<FONT color="green">125</FONT>            }<a name="line.125"></a>
+<FONT color="green">126</FONT>            if (value.length() &gt; fieldLength) {<a name="line.126"></a>
+<FONT color="green">127</FONT>                return false;<a name="line.127"></a>
+<FONT color="green">128</FONT>            }<a name="line.128"></a>
+<FONT color="green">129</FONT>            if ("KualiDecimal".equals(fieldType)) {<a name="line.129"></a>
+<FONT color="green">130</FONT>                try {<a name="line.130"></a>
+<FONT color="green">131</FONT>                    KualiDecimal d = new KualiDecimal(value);<a name="line.131"></a>
+<FONT color="green">132</FONT>                    return true;<a name="line.132"></a>
+<FONT color="green">133</FONT>                }<a name="line.133"></a>
+<FONT color="green">134</FONT>                catch (NumberFormatException nfe) {<a name="line.134"></a>
+<FONT color="green">135</FONT>                    return false;<a name="line.135"></a>
+<FONT color="green">136</FONT>                }<a name="line.136"></a>
+<FONT color="green">137</FONT>            }<a name="line.137"></a>
+<FONT color="green">138</FONT>            else if ("Integer".equals(fieldType)) {<a name="line.138"></a>
+<FONT color="green">139</FONT>                try {<a name="line.139"></a>
+<FONT color="green">140</FONT>                    Integer d = new Integer(value);<a name="line.140"></a>
+<FONT color="green">141</FONT>                    return true;<a name="line.141"></a>
+<FONT color="green">142</FONT>                }<a name="line.142"></a>
+<FONT color="green">143</FONT>                catch (NumberFormatException nfe) {<a name="line.143"></a>
+<FONT color="green">144</FONT>                    return false;<a name="line.144"></a>
+<FONT color="green">145</FONT>                }<a name="line.145"></a>
+<FONT color="green">146</FONT>            }<a name="line.146"></a>
+<FONT color="green">147</FONT>            else if ("Date".equals(fieldType)) {<a name="line.147"></a>
+<FONT color="green">148</FONT>                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");<a name="line.148"></a>
+<FONT color="green">149</FONT>                try {<a name="line.149"></a>
+<FONT color="green">150</FONT>                    Date d = df.parse(value);<a name="line.150"></a>
+<FONT color="green">151</FONT>                    return true;<a name="line.151"></a>
+<FONT color="green">152</FONT>                }<a name="line.152"></a>
+<FONT color="green">153</FONT>                catch (ParseException e) {<a name="line.153"></a>
+<FONT color="green">154</FONT>                    return false;<a name="line.154"></a>
+<FONT color="green">155</FONT>                }<a name="line.155"></a>
+<FONT color="green">156</FONT>            }<a name="line.156"></a>
+<FONT color="green">157</FONT>            return true;<a name="line.157"></a>
+<FONT color="green">158</FONT>        }<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>        /**<a name="line.160"></a>
+<FONT color="green">161</FONT>         * Returns a String with the name of the type of the given field<a name="line.161"></a>
+<FONT color="green">162</FONT>         * <a name="line.162"></a>
+<FONT color="green">163</FONT>         * @param fieldName the name of the field to inquire on<a name="line.163"></a>
+<FONT color="green">164</FONT>         * @return a String with the name of the class that field returns<a name="line.164"></a>
+<FONT color="green">165</FONT>         */<a name="line.165"></a>
+<FONT color="green">166</FONT>        public String getFieldType(String fieldName) {<a name="line.166"></a>
+<FONT color="green">167</FONT>            if (fieldName.equals(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR)) {<a name="line.167"></a>
+<FONT color="green">168</FONT>                return "Integer";<a name="line.168"></a>
+<FONT color="green">169</FONT>            }<a name="line.169"></a>
+<FONT color="green">170</FONT>            if (fieldName.equals(KFSPropertyConstants.TRANSACTION_ENTRY_SEQUENCE_NUMBER)) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                return "Integer";<a name="line.171"></a>
+<FONT color="green">172</FONT>            }<a name="line.172"></a>
+<FONT color="green">173</FONT>            if (fieldName.equals(KFSPropertyConstants.TRANSACTION_LEDGER_ENTRY_AMOUNT)) {<a name="line.173"></a>
+<FONT color="green">174</FONT>                return "KualiDecimal";<a name="line.174"></a>
+<FONT color="green">175</FONT>            }<a name="line.175"></a>
+<FONT color="green">176</FONT>            if (fieldName.equals(KFSPropertyConstants.TRANSACTION_DATE)) {<a name="line.176"></a>
+<FONT color="green">177</FONT>                return "Date";<a name="line.177"></a>
+<FONT color="green">178</FONT>            }<a name="line.178"></a>
+<FONT color="green">179</FONT>            if (fieldName.equals(KFSPropertyConstants.FINANCIAL_DOCUMENT_REVERSAL_DATE)) {<a name="line.179"></a>
+<FONT color="green">180</FONT>                return "Date";<a name="line.180"></a>
+<FONT color="green">181</FONT>            }<a name="line.181"></a>
+<FONT color="green">182</FONT>            return "String";<a name="line.182"></a>
+<FONT color="green">183</FONT>        }<a name="line.183"></a>
+<FONT color="green">184</FONT>    <a name="line.184"></a>
+<FONT color="green">185</FONT>        /**<a name="line.185"></a>
+<FONT color="green">186</FONT>         * Returns whether the given field can be set to null or not<a name="line.186"></a>
+<FONT color="green">187</FONT>         * <a name="line.187"></a>
+<FONT color="green">188</FONT>         * @param fieldName the name of the field to inquire about<a name="line.188"></a>
+<FONT color="green">189</FONT>         * @return true if it can be set to null, false otherwise<a name="line.189"></a>
+<FONT color="green">190</FONT>         */<a name="line.190"></a>
+<FONT color="green">191</FONT>        public boolean allowNull(String fieldName) {<a name="line.191"></a>
+<FONT color="green">192</FONT>            if (fieldName.equals(KFSPropertyConstants.TRANSACTION_LEDGER_ENTRY_AMOUNT)) {<a name="line.192"></a>
+<FONT color="green">193</FONT>                return false;<a name="line.193"></a>
+<FONT color="green">194</FONT>            }<a name="line.194"></a>
+<FONT color="green">195</FONT>            return true;<a name="line.195"></a>
+<FONT color="green">196</FONT>        }<a name="line.196"></a>
+<FONT color="green">197</FONT>    <a name="line.197"></a>
+<FONT color="green">198</FONT>        /**<a name="line.198"></a>
+<FONT color="green">199</FONT>         * Returns the length of a given field in Origin Entry<a name="line.199"></a>
+<FONT color="green">200</FONT>         * <a name="line.200"></a>
+<FONT color="green">201</FONT>         * @param fieldName the name of the Origin Entry field to get a length for<a name="line.201"></a>
+<FONT color="green">202</FONT>         * @return the length of the field<a name="line.202"></a>
+<FONT color="green">203</FONT>         */<a name="line.203"></a>
+<FONT color="green">204</FONT>        public int getFieldLength(String fieldName) {<a name="line.204"></a>
+<FONT color="green">205</FONT>            DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);<a name="line.205"></a>
+<FONT color="green">206</FONT>            int fieldLength = 0;<a name="line.206"></a>
+<FONT color="green">207</FONT>            fieldLength = dataDictionaryService.getAttributeMaxLength(OriginEntryFull.class, fieldName);<a name="line.207"></a>
+<FONT color="green">208</FONT>            return fieldLength;<a name="line.208"></a>
+<FONT color="green">209</FONT>        }<a name="line.209"></a>
+<FONT color="green">210</FONT>        <a name="line.210"></a>
+<FONT color="green">211</FONT>    }<a name="line.211"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
