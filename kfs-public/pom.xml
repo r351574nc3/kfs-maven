@@ -102,6 +102,14 @@
       <classifier>src</classifier>
       <type>tar.bz2</type>
     </dependency>
+
+    <dependency>
+      <groupId>org.kuali.kfs</groupId>
+      <artifactId>kfs-web</artifactId>
+      <version>${kfs.maven.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
