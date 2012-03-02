@@ -2295,17 +2295,6 @@ limitations under the License.
     <url>http://www.github.com/r351574nc3/kfs-maven</url>
   </scm>
   
-  <distributionManagement>
-    <repository>
-      <id>gh-pages</id>
-      <url>file:///${basedir}/../../kualigan.github.com/repository/</url>
-    </repository>
-    <site>
-      <id>github-project-site</id>
-      <url>gitsite:git@github.com/r351574nc3/kfs-maven</url>
-    </site>
-  </distributionManagement>
-
   <pluginRepositories>
     <pluginRepository>
       <id>maven-central</id>
