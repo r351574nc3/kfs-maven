@@ -31,32 +31,6 @@
   <version>4.1.1-maven-SNAPSHOT</version>
   <description></description>
   <url>http://${kuali.site.hostname}/kfs/${project.version}</url>
-
-  <properties>
-    <kuali.site.publish.url>file:///${basedir}/../../kualigan.github.com/repository/</kuali.site.publish.url>
-    <kuali.repo.release.name>gh-pages</kuali.repo.release.name>
-    <kuali.repo.release.url>file:///${basedir}/../../kualigan.github.com/repository/</kuali.repo.release.url>
-    <kuali.repo.snapshot.name>gh-pages</kuali.repo.snapshot.name>
-    <kuali.repo.snapshot.url>file:///${basedir}/../../kualigan.github.com/repository/</kuali.repo.snapshot.url>
-
-    <kuali.nexus.sonatype.url></kuali.nexus.sonatype.url>
-    <kuali.nexus.sonatype.description>Releasing ${project.artifactId} version ${project.version}</kuali.nexus.sonatype.description>
-    <kuali.nexus.sonatype.phase>none</kuali.nexus.sonatype.phase>
-    <kuali.nexus.sonatype.automatic>true</kuali.nexus.sonatype.automatic>
-    <kuali.nexus.sonatype.promote.auto.select.override>true</kuali.nexus.sonatype.promote.auto.select.override>
-    <kuali.nexus.sonatype.release.repository.id>releases</kuali.nexus.sonatype.release.repository.id>
-
-    <kuali.repo.release.id>sonatype-nexus-staging</kuali.repo.release.id>
-    <kuali.repo.release.name>Sonatype Nexus Release Repository</kuali.repo.release.name>
-    <kuali.repo.release.url>${kuali.nexus.sonatype.url}/service/local/staging/deploy/maven2</kuali.repo.release.url>
-
-
-    <kfs.maven.groupId>org.kuali.kfs</kfs.maven.groupId>
-    <kfs.maven.version>4.1.1-maven-SNAPSHOT</kfs.maven.version>
-    <kfs.external.unpack.phase>none</kfs.external.unpack.phase>
-    <kfs.web.unpack.phase>none</kfs.web.unpack.phase>
-  </properties>
-
  
   <modules>
     <module>core</module>

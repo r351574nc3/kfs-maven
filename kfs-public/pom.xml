@@ -49,11 +49,11 @@
 
   <!-- Properties later populated into configuration.properties -->
   <properties>
-    <kuali.site.publish.url></kuali.site.publish.url>
-    <kuali.repo.release.name></kuali.repo.release.name>
-    <kuali.repo.release.url></kuali.repo.release.url>
-    <kuali.repo.snapshot.name></kuali.repo.snapshot.name>
-    <kuali.repo.snapshot.url></kuali.repo.snapshot.url>
+    <kuali.site.publish.url>http://repo1.maven.org/</kuali.site.publish.url>
+    <kuali.repo.release.name>Maven Central</kuali.repo.release.name>
+    <kuali.repo.release.url>http://repo1.maven.org/</kuali.repo.release.url>
+    <kuali.repo.snapshot.name>Maven Central</kuali.repo.snapshot.name>
+    <kuali.repo.snapshot.url>http://repo1.maven.org/</kuali.repo.snapshot.url>
 
     <kuali.nexus.sonatype.url></kuali.nexus.sonatype.url>
     <kuali.nexus.sonatype.description>Releasing ${project.artifactId} version ${project.version}</kuali.nexus.sonatype.description>
