@@ -21,7 +21,7 @@ limitations under the License.
   <parent>
     <groupId>org.kuali.kfs</groupId>
     <artifactId>kfs-parent</artifactId>
-    <version>4.1.1-maven-SNAPSHOT</version>
+    <version>4.1.1-1</version>
   </parent>
   <artifactId>kfs-web</artifactId>
   <packaging>war</packaging>
@@ -75,9 +75,7 @@ limitations under the License.
             <phase>generate-resources</phase>
             <configuration>
               <target>
-                <unzip src="src/main/resources/help.zip" 
-                       dest="src/main/webapp/static/help/" 
-                       overwrite="false" />
+                <unzip src="src/main/resources/help.zip" dest="src/main/webapp/static/help/" overwrite="false" />
               </target>
             </configuration>
             <goals>
