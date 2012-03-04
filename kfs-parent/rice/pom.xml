@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kuali.kfs</groupId>
     <artifactId>kfs-parent</artifactId>
-    <version>4.1.1-1</version>
+    <version>4.1.1-2-SNAPSHOT</version>
   </parent>
   <artifactId>kfs-rice</artifactId>
 
