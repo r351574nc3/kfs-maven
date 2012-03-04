@@ -28,7 +28,7 @@
   <packaging>pom</packaging>
   <name>kfs</name>
   <inceptionYear>2005</inceptionYear>
-  <version>4.1.1</version>
+  <version>4.1.1-1-SNAPSHOT</version>
   <description></description>
   <url>http://www.github.com/r351574nc3/kfs-maven</url>
  
@@ -41,8 +41,8 @@
   </modules>
 
   <scm>
-    <connection>scm:git:git://github.com/r351574nc3/kfs-maven.git</connection>
-    <developerConnection>scm:git:git://github.com/r351574nc3/kfs-maven.git</developerConnection>
+    <connection>scm:git:git@github.com/r351574nc3/kfs-maven.git</connection>
+    <developerConnection>scm:git:git@github.com/r351574nc3/kfs-maven.git</developerConnection>
     <url>http://www.github.com/r351574nc3/kfs-maven</url>
   </scm>
 
