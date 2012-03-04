@@ -2290,8 +2290,8 @@ limitations under the License.
   </dependencyManagement>
   
   <scm>
-    <connection>scm:git:ssh://git@github.com:r351574nc3/kfs-maven.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:r351574nc3/kfs-maven.git</developerConnection>
+    <connection>scm:git:git@github.com:r351574nc3/kfs-maven.git</connection>
+    <developerConnection>scm:git:git@github.com:r351574nc3/kfs-maven.git</developerConnection>
     <url>http://www.github.com/r351574nc3/kfs-maven</url>
   </scm>
 
