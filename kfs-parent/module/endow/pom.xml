@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kuali.kfs</groupId>
     <artifactId>kfs-module</artifactId>
-    <version>4.1.1-2-SNAPSHOT</version>
+    <version>4.1.1-2</version>
   </parent>
   <artifactId>kfs-module-endow</artifactId>
 
