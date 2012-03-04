@@ -28,9 +28,9 @@
   <packaging>pom</packaging>
   <name>kfs</name>
   <inceptionYear>2005</inceptionYear>
-  <version>4.1.1-maven-SNAPSHOT</version>
+  <version>4.1.1</version>
   <description></description>
-  <url>http://${kuali.site.hostname}/kfs/${project.version}</url>
+  <url>http://www.github.com/r351574nc3/kfs-maven</url>
  
   <modules>
     <module>core</module>
@@ -39,5 +39,23 @@
     <module>rice</module>
     <module>web</module>
   </modules>
+
+  <scm>
+    <connection>scm:git:git://github.com/r351574nc3/kfs-maven.git</connection>
+    <developerConnection>scm:git:git://github.com/r351574nc3/kfs-maven.git</developerConnection>
+    <url>http://www.github.com/r351574nc3/kfs-maven</url>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 </project>
   

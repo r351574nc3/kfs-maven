@@ -27,4 +27,53 @@
   <artifactId>kfs-assembly</artifactId>
   <version>0.0.1</version>
   <name>Shared Assembly Descriptor for KFS projects</name>
+
+  <url>http://www.github.com/r351574nc3/kfs-maven</url>
+
+  <licenses>
+    <license>
+      <name>Leo Przybylski Educational Community License 2.0</name>
+      <url>http://www.opensource.org/licenses/ecl2.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <id>leo</id>
+      <name>Leo Przybylski</name>
+      <email>leo@rsmart.com</email>
+      <url>http://kualigan.blogspot.com</url>
+      <organization>rsmart</organization>
+      <organizationUrl>http://www.rsmart.com</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-7</timezone>
+      <properties>
+        <picUrl>http://www.gravatar.com/avatar/6be04114e185b6fa626a0ee530db34e4.png</picUrl>
+      </properties>
+    </developer>
+  </developers>
+  
+  <ciManagement>
+    <url>http://jenkins.leosandbox.org</url>
+  </ciManagement>
+
+  <scm>
+    <connection>scm:git:git://github.com/r351574nc3/kfs-maven.git</connection>
+    <developerConnection>scm:git:git://github.com/r351574nc3/kfs-maven.git</developerConnection>
+    <url>http://www.github.com/r351574nc3/kfs-maven</url>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

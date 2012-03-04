@@ -28,15 +28,15 @@ limitations under the License.
   <packaging>pom</packaging>
   <name>KFS</name>
   <inceptionYear>2005</inceptionYear>
-  <version>0.0.1</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description></description>
-  <url>http://${kuali.site.hostname}/rice/${project.version}</url>
+  <url>http://www.github.com/r351574nc3/kfs-maven</url>
 
   <licenses>
     <license>
       <name>Leo Przybylski Educational Community License 2.0</name>
       <url>http://www.opensource.org/licenses/ecl2.txt</url>
-      <distribution>manual</distribution>
+      <distribution>repo</distribution>
     </license>
   </licenses>
   
@@ -2294,12 +2294,16 @@ limitations under the License.
     <developerConnection>scm:git:git://github.com/r351574nc3/kfs-maven.git</developerConnection>
     <url>http://www.github.com/r351574nc3/kfs-maven</url>
   </scm>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>maven-central</id>
-      <url>http://repo1.maven.org/maven2/</url>
-    </pluginRepository>
-  </pluginRepositories>      
+
+  <distributionManagement>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
   
 </project>

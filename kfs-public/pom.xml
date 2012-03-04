@@ -47,10 +47,22 @@
     <url></url>
   </scm>
 
+  <distributionManagement>
+    <repository>
+      <id>Maven Central</id>
+      <url>http://repo1.maven.org/</url>
+    </repository>
+    <site>
+      <id>Maven Central</id>
+      <url>http://repo1.maven.org/</url>
+    </site>
+  </distributionManagement>
+
+
   <!-- Properties later populated into configuration.properties -->
   <properties>
-    <kuali.site.publish.url>http://repo1.maven.org/</kuali.site.publish.url>
-    <kuali.repo.release.name>Maven Central</kuali.repo.release.name>
+    <kuali.site.publish.url></kuali.site.publish.url>
+    <kuali.repo.release.name></kuali.repo.release.name>
     <kuali.repo.release.url>http://repo1.maven.org/</kuali.repo.release.url>
     <kuali.repo.snapshot.name>Maven Central</kuali.repo.snapshot.name>
     <kuali.repo.snapshot.url>http://repo1.maven.org/</kuali.repo.snapshot.url>
