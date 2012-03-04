@@ -26,10 +26,10 @@ limitations under the License.
   <groupId>org.kuali.pom</groupId>
   <artifactId>kfs-common</artifactId>
   <packaging>pom</packaging>
-  <name>KFS</name>
+  <name>kfs-common</name>
   <inceptionYear>2005</inceptionYear>
-  <version>0.0.1-SNAPSHOT</version>
-  <description></description>
+  <version>0.0.1</version>
+  <description />
   <url>http://www.github.com/r351574nc3/kfs-maven</url>
 
   <licenses>
@@ -283,10 +283,10 @@ limitations under the License.
     <!-- configuration.properties file that is deployed with the application. -->
     <!-- It will be tokenized using the same properties available to              -->
     <!-- build/project/configuration.properties.                                           -->
-    <institutional.configuration.file></institutional.configuration.file>
+    <institutional.configuration.file />
 
     <!-- allows insertion of custom content into the tomcat context file -->
-    <custom.context.content></custom.context.content>
+    <custom.context.content />
 
 
     <!-- the core configuration property files that should be available in the KualiConfigurationService context, along with configuration.properties -->
@@ -295,7 +295,7 @@ limitations under the License.
     classpath:org/kuali/kfs/sec/messages-sec.properties</core.property.files>
 
     <!-- the institution specific configuration property files that should be available in the KualiConfigurationService context, along with configuration.properties -->
-    <institution.property.files></institution.property.files>
+    <institution.property.files />
 
     <!-- all the configuration property files that should be available in the KualiConfigurationService context, along with configuration.properties -->
     <property.files>${core.property.files}${institution.property.files}</property.files>
@@ -303,7 +303,7 @@ limitations under the License.
     <!-- the core configuration property files that should be added to the KualiConfigurationService context for unit testing -->
     <core.property.test.files>classpath:test-configuration.properties</core.property.test.files>
     <!-- the institution specific configuration property files that should be added to the KualiConfigurationService context for unit testing -->
-    <institution.property.test.files></institution.property.test.files>
+    <institution.property.test.files />
     <!-- all the configuration property files that should be added to the KualiConfigurationService context for unit testing -->
     <property.test.files>${core.property.test.files}${institution.property.test.files}</property.test.files>
 
@@ -346,7 +346,7 @@ limitations under the License.
     <tests.shutdown.class>ContinuousIntegrationShutdown</tests.shutdown.class>
 
     <tests.compile.includes>**/*.java</tests.compile.includes>
-    <tests.compile.excludes></tests.compile.excludes>
+    <tests.compile.excludes />
 
     <javadoc.max.memory>512M</javadoc.max.memory>
 
@@ -371,19 +371,19 @@ limitations under the License.
 
     <classpath.prefix><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
     <classpath>
-    <classpathentry kind="src" path="work/src"/>
-    <classpathentry kind="src" output="test/classes" path="test/infrastructure/src"/>
-    <classpathentry kind="src" output="test/classes" path="test/unit/src"/>
-    <classpathentry kind="src" output="test/classes" path="test/integration/src"/>
+    <classpathentry kind="src" path="work/src" />
+    <classpathentry kind="src" output="test/classes" path="test/infrastructure/src" />
+    <classpathentry kind="src" output="test/classes" path="test/unit/src" />
+    <classpathentry kind="src" output="test/classes" path="test/integration/src" />
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
     <accessrules>
-    <accessrule kind="nonaccessible" pattern="com/**"/>
-    <accessrule kind="nonaccessible" pattern="sun/**"/>
-    <accessrule kind="nonaccessible" pattern="sunw/**"/>
+    <accessrule kind="nonaccessible" pattern="com/**" />
+    <accessrule kind="nonaccessible" pattern="sun/**" />
+    <accessrule kind="nonaccessible" pattern="sunw/**" />
     </accessrules>
     </classpathentry>]]></classpath.prefix>
 	
-    <classpath.suffix><![CDATA[    <classpathentry kind="output" path="work/web-root/WEB-INF/classes"/>
+    <classpath.suffix><![CDATA[    <classpathentry kind="output" path="work/web-root/WEB-INF/classes" />
     </classpath>
     ]]></classpath.suffix>
 
@@ -904,7 +904,7 @@ limitations under the License.
     <accounts.receivable.spring.files>,org/kuali/kfs/module/ar/spring-ar.xml</accounts.receivable.spring.files>
     <purchasing.spring.files>,org/kuali/kfs/module/purap/spring-purap.xml</purchasing.spring.files>
     <contracts.and.grants.spring.files>,org/kuali/kfs/module/cg/spring-cg.xml</contracts.and.grants.spring.files>
-    <kuali.coeus.spring.files></kuali.coeus.spring.files>
+    <kuali.coeus.spring.files />
     <labor.distribution.spring.files>,org/kuali/kfs/module/ld/spring-ld.xml \
     ,org/kuali/kfs/module/bc/spring-bc.xml \
     ,org/kuali/kfs/module/ec/spring-ec.xml</labor.distribution.spring.files>
@@ -921,7 +921,7 @@ limitations under the License.
     <batch.spring.files>,spring-kfs-batch.xml</batch.spring.files>
 
     <!-- the institution specific files that define the spring context for the application -->
-    <institution.spring.source.files></institution.spring.source.files>
+    <institution.spring.source.files />
 
     <base.kfs.rice.override.spring.files>spring-kfs-rice-overrides.xml</base.kfs.rice.override.spring.files>
 
@@ -938,13 +938,13 @@ limitations under the License.
     <capital.asset.spring.test.files>,org/kuali/kfs/module/cam/spring-cam-test.xml</capital.asset.spring.test.files>
     <accounts.receivable.spring.test.files>,org/kuali/kfs/module/ar/spring-ar-test.xml</accounts.receivable.spring.test.files>
     <purchasing.spring.test.files>,org/kuali/kfs/module/purap/spring-purap-test.xml</purchasing.spring.test.files>
-    <contracts.and.grants.spring.test.files></contracts.and.grants.spring.test.files>
-    <labor.distribution.spring.test.files></labor.distribution.spring.test.files>
+    <contracts.and.grants.spring.test.files />
+    <labor.distribution.spring.test.files />
 
     <!-- org/kuali/kfs/module/external/kc/spring-kc-test.xml,\ -->
 
     <!-- the institution specific files that are included in the application spring context for unit testing -->
-    <institution.spring.test.files></institution.spring.test.files>
+    <institution.spring.test.files />
 
     <!-- all the files that are included in the application spring context for unit testing -->
     <!-- Commented out since needs to be set dynamically in build.xml -->
@@ -1091,25 +1091,25 @@ limitations under the License.
     -->
 
     <!-- the institution specific files that define the struts context for the application -->
-    <institution.struts.config.files></institution.struts.config.files>
+    <institution.struts.config.files />
 
     <!-- the institution specific files containing user messages that will be displayed via struts tags in jsps -->
-    <institution.rice.struts.message.resources></institution.rice.struts.message.resources>
+    <institution.rice.struts.message.resources />
 
     <!-- the institution specific classes that wrap java constants for jsps and tags (see ApplicationInitializeListener) -->
-    <institution.jstl.constants.classnames></institution.jstl.constants.classnames>
+    <institution.jstl.constants.classnames />
 
     <!-- the institution specific javascript files that should be available to every non-portal page in the application -->
-    <institution.javascript.files></institution.javascript.files>
+    <institution.javascript.files />
 
     <!-- the institution specific javascript files that should be available in the portal -->
-    <institution.portal.javascript.files></institution.portal.javascript.files>
+    <institution.portal.javascript.files />
 
     <!-- additional css files that should be available to every non-portal page in the application -->
-    <institution.css.files></institution.css.files>
+    <institution.css.files />
 
     <!-- the institution specific css files that should be available to every non-portal page in the application -->
-    <institution.portal.css.files></institution.portal.css.files>
+    <institution.portal.css.files />
 
     <!--
         ##########################
@@ -1129,7 +1129,7 @@ limitations under the License.
 
     <!-- Handling init-base-properties target outcome -->
     <appenders>INFO, LogFile, StdOut</appenders>
-    <distributable.tag></distributable.tag>
+    <distributable.tag />
 
     <!-- Handling init-database-properties target outcome -->
     <datasource.url>${oracle.datasource.url}</datasource.url>
@@ -1194,7 +1194,7 @@ limitations under the License.
       </activation>
       <properties>
         <environment>dev</environment>
-        <env.filter></env.filter>
+        <env.filter />
       </properties>
     </profile>
     
@@ -1256,13 +1256,13 @@ limitations under the License.
       
 
       <properties>
-        <b2b.purchase.order.identity></b2b.purchase.order.identity>
-        <b2b.purchase.order.password></b2b.purchase.order.password>
-        <b2b.shopping.identity></b2b.shopping.identity>
-        <b2b.shopping.password></b2b.shopping.password>
-        <b2b.purchase.order.url></b2b.purchase.order.url>
-        <b2b.punch.back.url></b2b.punch.back.url>
-        <b2b.punch.out.url></b2b.punch.out.url>
+        <b2b.purchase.order.identity />
+        <b2b.purchase.order.password />
+        <b2b.shopping.identity />
+        <b2b.shopping.password />
+        <b2b.purchase.order.url />
+        <b2b.punch.back.url />
+        <b2b.punch.out.url />
       </properties>
     </profile>
 
