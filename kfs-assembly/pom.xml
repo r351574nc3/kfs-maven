@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kuali.pom</groupId>
     <artifactId>kfs-common</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.5</version>
   </parent>
   <groupId>org.kuali.kfs</groupId>
   <artifactId>kfs-assembly</artifactId>
@@ -59,13 +59,6 @@
     <url>http://jenkins.leosandbox.org</url>
   </ciManagement>
 
-  <properties>
-    <!-- These properties modify the release process -->
-    <kuali.release.prepare.goals>clean</kuali.release.prepare.goals>
-    <kuali.release.goals>deploy</kuali.release.goals>
-    <kuali.release.arguments>-DskipTests</kuali.release.arguments>
-  </properties>
-  
   <scm>
     <connection>scm:git:git@github.com:r351574nc3/kfs-maven.git</connection>
     <developerConnection>scm:git:git@github.com:r351574nc3/kfs-maven.git</developerConnection>
