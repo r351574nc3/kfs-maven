@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kuali.pom</groupId>
     <artifactId>kfs-common</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.1</version>
   </parent>
   <groupId>org.kuali.kfs</groupId>
   <artifactId>kfs-assembly</artifactId>
@@ -60,8 +60,6 @@
   </ciManagement>
 
   <properties>
-    <!-- Take this out once 2.0 is released and the kuali-common POM starts using this same version -->
-    <kuali.cm.tools.version>1.1.7</kuali.cm.tools.version>
     <!-- These properties modify the release process -->
     <kuali.release.prepare.goals>clean</kuali.release.prepare.goals>
     <kuali.release.goals>deploy</kuali.release.goals>
