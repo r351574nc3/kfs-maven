@@ -28,6 +28,8 @@ limitations under the License.
 
   <properties>
     <kfs.source.package.phase>package</kfs.source.package.phase>
+    <build.environment>dev</build.environment>
+    <env.filter>${filter.directory}/${build.environment}-build.properties</env.filter>
   </properties>
 
   <build>
