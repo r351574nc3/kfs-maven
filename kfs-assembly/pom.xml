@@ -69,28 +69,6 @@
     <kuali.release.arguments>-DskipTests</kuali.release.arguments>
   </properties>
   
-  <build>
-    <plugins>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>${plugin.release.version}</version>
-          <configuration>
-            <mavenExecutorId>forked-path</mavenExecutorId>
-            <arguments>${kuali.release.arguments}</arguments>
-            <releaseProfiles>${kuali.release.profiles}</releaseProfiles>
-            <useReleaseProfile>${kuali.release.use.maven.profile}</useReleaseProfile>
-            <developmentVersion>${kuali.release.dev.version}</developmentVersion>
-            <releaseVersion>${kuali.release.version}</releaseVersion>
-            <username>${kuali.release.username}</username>
-            <password>${kuali.release.password}</password>
-            <preparationGoals>${kuali.release.prepare.goals}</preparationGoals>
-            <goals>${kuali.release.goals}</goals>
-          </configuration>
-        </plugin>
-      </plugins>
-
-  </build>
-
   <scm>
     <connection>scm:git:git@github.com:r351574nc3/kfs-maven.git</connection>
     <developerConnection>scm:git:git@github.com:r351574nc3/kfs-maven.git</developerConnection>
