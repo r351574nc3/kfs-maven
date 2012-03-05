@@ -21,14 +21,13 @@
   <parent>
     <groupId>org.kuali.pom</groupId>
     <artifactId>kfs-common</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.5-SNAPSHOT</version>
   </parent>
   <groupId>org.kuali.kfs</groupId>
   <artifactId>kfs-assembly</artifactId>
   <version>0.0.5-SNAPSHOT</version>
   <name>Shared Assembly Descriptor for KFS projects</name>
-
-  <url>http://www.github.com/r351574nc3/kfs-maven</url>
+  <url>https://github.com/r351574nc3/kfs-maven/tree/master/kfs-assembly</url>
 
   <licenses>
     <license>
@@ -87,9 +86,9 @@
   </build>
 
   <scm>
-    <connection>scm:git:git@github.com:r351574nc3/kfs-maven.git</connection>
-    <developerConnection>scm:git:git@github.com:r351574nc3/kfs-maven.git</developerConnection>
-    <url>http://www.github.com/r351574nc3/kfs-maven</url>
+    <connection>scm:git:git@github.com:r351574nc3/kfs-maven.git/kfs-assembly</connection>
+    <developerConnection>scm:git:git@github.com:r351574nc3/kfs-maven.git/kfs-assembly</developerConnection>
+    <url>https://github.com/r351574nc3/kfs-maven/tree/master/kfs-assembly</url>
   </scm>
 
   <distributionManagement>
