@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.kuali.kfs</groupId>
     <artifactId>kfs-parent</artifactId>
-    <version>4.1.1-maven-SNAPSHOT</version>
+    <version>4.1.1-3</version>
   </parent>
   <groupId>org.kuali.pom</groupId>
   <artifactId>kfs-public</artifactId>
   <packaging>pom</packaging>
   <name>kfs-public-pom</name>
   <inceptionYear>2012</inceptionYear>
-  <version>0.0.1</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description></description>
 
   <licenses>
@@ -49,38 +49,17 @@
 
   <distributionManagement>
     <repository>
-      <id>Maven Central</id>
-      <url>http://repo1.maven.org/</url>
+      <id>Git Hub</id>
+      <url>file:///${basedir}/../../kualigan.github.com/repository/</url>
     </repository>
-    <site>
-      <id>Maven Central</id>
-      <url>http://repo1.maven.org/</url>
-    </site>
   </distributionManagement>
 
 
   <!-- Properties later populated into configuration.properties -->
   <properties>
-    <kuali.site.publish.url></kuali.site.publish.url>
-    <kuali.repo.release.name></kuali.repo.release.name>
-    <kuali.repo.release.url>http://repo1.maven.org/</kuali.repo.release.url>
-    <kuali.repo.snapshot.name>Maven Central</kuali.repo.snapshot.name>
-    <kuali.repo.snapshot.url>http://repo1.maven.org/</kuali.repo.snapshot.url>
-
-    <kuali.nexus.sonatype.url></kuali.nexus.sonatype.url>
-    <kuali.nexus.sonatype.description>Releasing ${project.artifactId} version ${project.version}</kuali.nexus.sonatype.description>
     <kuali.nexus.sonatype.phase>none</kuali.nexus.sonatype.phase>
-    <kuali.nexus.sonatype.automatic>true</kuali.nexus.sonatype.automatic>
-    <kuali.nexus.sonatype.promote.auto.select.override>true</kuali.nexus.sonatype.promote.auto.select.override>
-    <kuali.nexus.sonatype.release.repository.id>releases</kuali.nexus.sonatype.release.repository.id>
-
-    <kuali.repo.release.id>sonatype-nexus-staging</kuali.repo.release.id>
-    <kuali.repo.release.name>Sonatype Nexus Release Repository</kuali.repo.release.name>
-    <kuali.repo.release.url>${kuali.nexus.sonatype.url}/service/local/staging/deploy/maven2</kuali.repo.release.url>
-
-
     <kfs.maven.groupId>org.kuali.kfs</kfs.maven.groupId>
-    <kfs.maven.version>4.1.1-maven-SNAPSHOT</kfs.maven.version>
+    <kfs.maven.version>4.1.1-4</kfs.maven.version>
     <kfs.external.unpack.phase>none</kfs.external.unpack.phase>
     <kfs.web.unpack.phase>none</kfs.web.unpack.phase>
   </properties>
