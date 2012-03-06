@@ -169,18 +169,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <repositories>
-    <repository>
-      <id>kuali.nexus</id>
-      <name>Nexus Repository Manager</name>
-      <url>${kuali.repo}</url>
-      <releases>
-        <enabled>${kuali.repo.releases}</enabled>
-      </releases>
-      <snapshots>
-        <enabled>${kuali.repo.snapshots}</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 </project>
