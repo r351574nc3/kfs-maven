@@ -52,6 +52,10 @@
       <id>Git Hub</id>
       <url>file:///${basedir}/../../kualigan.github.com/repository/</url>
     </repository>
+    <snapshotRepository>
+      <id>Git Hub</id>
+      <url>file:///${basedir}/../../kualigan.github.com/repository/</url>
+    </snapshotRepository>
   </distributionManagement>
 
 
@@ -60,7 +64,7 @@
     <kuali.repo>http://nexus.kuali.org/content/groups/public</kuali.repo>
     <kuali.nexus.sonatype.phase>none</kuali.nexus.sonatype.phase>
     <kfs.maven.groupId>org.kuali.kfs</kfs.maven.groupId>
-    <kfs.maven.version>4.1.1-4</kfs.maven.version>
+    <kfs.maven.version>4.1.1-5</kfs.maven.version>
     <kfs.external.unpack.phase>none</kfs.external.unpack.phase>
     <kfs.web.unpack.phase>none</kfs.web.unpack.phase>
   </properties>
