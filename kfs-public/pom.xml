@@ -28,8 +28,8 @@
   <packaging>pom</packaging>
   <name>kfs-public-pom</name>
   <inceptionYear>2012</inceptionYear>
-  <version>0.0.1-SNAPSHOT</version>
-  <description></description>
+  <version>0.0.1</version>
+  <description />
 
   <licenses>
   </licenses>
