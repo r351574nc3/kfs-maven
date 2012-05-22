@@ -21,9 +21,9 @@
   <parent>
     <groupId>org.kualigan.kfs</groupId>
     <artifactId>kfs-parent</artifactId>
-    <version>4.1.1-7</version>
+    <version>4.1.1-7-SNAPSHOT</version>
   </parent>
-  <groupId>org.kuali.pom</groupId>
+  <groupId>org.kualigan.pom</groupId>
   <artifactId>kfs-public</artifactId>
   <packaging>pom</packaging>
   <name>kfs-public-pom</name>
