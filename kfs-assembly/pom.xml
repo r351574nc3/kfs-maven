@@ -19,9 +19,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.kuali.pom</groupId>
+    <groupId>org.kualigan.pom</groupId>
     <artifactId>kfs-common</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.7</version>
   </parent>
   <groupId>org.kualigan.kfs</groupId>
   <artifactId>kfs-assembly</artifactId>
