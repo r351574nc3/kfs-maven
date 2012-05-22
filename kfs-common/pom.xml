@@ -28,7 +28,7 @@ limitations under the License.
   <packaging>pom</packaging>
   <name>kfs-common</name>
   <inceptionYear>2005</inceptionYear>
-  <version>0.0.11-SNAPSHOT</version>
+  <version>0.0.11</version>
   <description />
   <url>http://www.github.com/r351574nc3/kfs-maven</url>
 
