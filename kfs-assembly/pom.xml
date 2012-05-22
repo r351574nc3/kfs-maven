@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kualigan.pom</groupId>
     <artifactId>kfs-common</artifactId>
-    <version>0.0.16</version>
+    <version>0.0.18</version>
   </parent>
   <groupId>org.kualigan.kfs</groupId>
   <artifactId>kfs-assembly</artifactId>
