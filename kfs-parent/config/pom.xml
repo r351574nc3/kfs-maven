@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kualigan.kfs</groupId>
     <artifactId>kfs-parent</artifactId>
-    <version>4.1.1-8</version>
+    <version>4.1.1-9-SNAPSHOT</version>
   </parent>
   <artifactId>kfs-config</artifactId>
   <packaging>jar</packaging>
