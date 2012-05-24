@@ -1,0 +1,13 @@
+    <param name="rsmart.spring.source.files">,edu/msu/ebsp/kfs/coa/spring-coa.xml,com/rsmart/kuali/kfs/module/purap/spring-purap.xml,com/rsmart/kuali/kfs/fp/spring-fp.xml,com/rsmart/kuali/kfs/sys/spring-sys.xml,com/rsmart/kuali/kfs/cr/spring-cr.xml,com/rsmart/kuali/kfs/tax/spring-tax.xml,com/rsmart/kuali/kfs/prje/spring-prje.xml,com/rsmart/kuali/kfs/module/ld/spring-ld.xml,com/rsmart/kuali/kfs/gl/spring-gl.xml,com/rsmart/kuali/kfs/coa/spring-coa.xml,edu/csu/kfs/fp/spring-fp.xml,com/rsmart/kuali/kfs/pdp/spring-pdp.xml,com/rsmart/kuali/kfs/pdp/spring-pdp-bottomline.xml,com/rsmart/kuali/kfs/module/ar/spring-ar.xml</param>
+
+    <param name="rsmart.struts.config.files">,/WEB-INF/rsmart-struts-config.xml</param>
+    <param name="rsmart.rice.struts.message.resources">,rsmartApplicationResources,MSU-ApplicationResources</param>
+    <param name="rsmart.property.files">,classpath:rsmartApplicationResources.properties,classpath:MSU-ApplicationResources.properties</param>
+    <param name="rsmart.jstl.constants.classnames"></param>
+
+    <param name="base.kfs.rice.override.spring.files">spring-kfs-rice-overrides.xml,com/rsmart/kuali/kfs/spring-kfs-rice-overrides.xml</param>
+
+    <param name="workflow.documentsearch.base.url">${rice_url}/kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kew.docsearch.DocSearchCriteriaDTO&docFormKey=88888888&returnLocation=${rice_url}/portal.do&hideReturnLink=true</param>
+    <param name="workflow.url">${application.url}</param>
+
+    <param name="pdp.ftp.checkprinting.username">rsmartcust</param>

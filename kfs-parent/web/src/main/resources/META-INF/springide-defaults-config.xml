@@ -1,0 +1,41 @@
+
+    <param name="rice.datadictionary.directory">${build.directory}/rice-datadictionary</param>
+
+    <param name="spring.ide.support.file.prefix"><?xml version="1.0" encoding="UTF-8"?>\</param>
+\n<beansProjectDescription>\
+\n\t<configExtensions>\
+\n\t\t<configExtension>xml</configExtension>\
+\n\t</configExtensions>\
+\n\t<configs>
+
+    <param name="spring.ide.support.file.datadictionary">\</param>
+\n\t</configs>\
+\n\t<configSets>\
+\n\t\t<configSet>\
+\n\t\t\t<name>Data Dictionary</name>\
+\n\t\t\t<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>\
+\n\t\t\t<incomplete>false</incomplete>\
+\n\t\t\t<configs>
+
+    <param name="spring.ide.support.file.services">\</param>
+\n\t\t\t</configs>\
+\n\t\t</configSet>\
+\n\t\t<configSet>\
+\n\t\t\t<name>Services</name>\
+\n\t\t\t<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>\
+\n\t\t\t<incomplete>false</incomplete>\
+\n\t\t\t<configs>
+
+    <param name="spring.ide.support.file.suffix">\</param>
+\n\t\t\t</configs>\
+\n\t\t</configSet>\
+\n\t</configSets>\
+\n\t<springVersion>2.0</springVersion>\
+\n</beansProjectDescription>
+
+    <param name="spring.ide.support.file.line.prefix">\</param>
+\n\t\t\t<config>
+
+    <param name="spring.ide.support.file.line.suffix"></config></param>
+
+    <param name="spring.ide.support.datadictionary.files">**/datadictionary/**/*.xml</param>

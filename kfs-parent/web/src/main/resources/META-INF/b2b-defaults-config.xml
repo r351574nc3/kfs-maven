@@ -1,0 +1,27 @@
+    <param name="b2b.user.agent">kfs</param>
+    <param name="b2b.test.environment">test</param>
+    <param name="b2b.production.environment">Production</param>
+
+    <param name="b2b.test.purchase.order.identity">KualiDemo</param>
+    <param name="b2b.test.purchase.order.password">p01mport</param>
+    <param name="b2b.test.shopping.identity">KualiDemo</param>
+    <param name="b2b.test.shopping.password">c#m1</param>
+    <param name="b2b.test.punch.back.url">${application.url}/b2b.do?methodToCall=returnFromShopping</param>
+    <param name="b2b.test.punch.out.url">http://usertest.sciquest.com/apps/Router/ExternalAuth/cXML/KualiDemo</param>
+    <param name="b2b.test.purchase.order.url">https://usertest.sciquest.com/apps/Router/POXMLImport</param>
+    <param name="#b2b.test.purchase.order.url">http://sciwmtest.sciquest.com/invoke/wm.tn/receive</param>
+
+    <param name="b2b.production.purchase.order.identity"></param>
+    <param name="b2b.production.purchase.order.password"></param>
+    <param name="b2b.production.shopping.identity"></param>
+    <param name="b2b.production.shopping.password"></param>
+    <param name="b2b.production.purchase.order.url"></param>
+    <param name="b2b.production.punch.back.url"></param>
+    <param name="b2b.production.punch.out.url"></param>
+
+    <param name="b2b.test.purchase.order.identity">30000475</param>
+    <param name="b2b.test.purchase.order.password">UCoNn?2011</param>
+    <param name="b2b.test.shopping.identity">30000475</param>
+    <param name="b2b.test.shopping.password">UCoNn?2011</param>
+    <param name="b2b.test.punch.back.url">${application.url}/b2b.do?methodToCall=returnFromShopping</param>
+    <param name="b2b.test.punch.out.url">http://usertest.sciquest.com/apps/Router/ExternalAuth/cXML/30000475</param>

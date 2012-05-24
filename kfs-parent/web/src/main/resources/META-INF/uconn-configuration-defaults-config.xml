@@ -1,0 +1,75 @@
+    <param name="rice.ldapattr.entityId">${rice.ldapattr.entityId}</param>
+    <param name="rice.ldapattr.principalName">${rice.ldapattr.principalName}</param>
+    <param name="rice.ldap.principalAlwaysActive">${rice.ldap.principalAlwaysActive}</param>
+    <param name="rice.ldapattr.firstName">${rice.ldapattr.firstName}</param>
+    <param name="rice.ldapattr.middleName">${rice.ldapattr.middleName}</param>
+    <param name="rice.ldapattr.lastName">${rice.ldapattr.lastName}</param>
+    <param name="rice.ldapattr.fullName">${rice.ldapattr.fullName}</param>
+    <param name="rice.ldapattr.displayName">${rice.ldapattr.displayName}</param>
+    <param name="rice.ldapattr.title">${rice.ldapattr.title}</param>
+    <param name="rice.ldapattr.email">${rice.ldapattr.email}</param>
+    <param name="rice.ldapattr.phoneNumber">${rice.ldapattr.phoneNumber}</param>
+    <param name="rice.pattern.phoneNumberKimFormat">${rice.pattern.phoneNumberKimFormat}</param>
+    <param name="rice.pattern.phoneNumberLdapRegex">${rice.pattern.phoneNumberLdapRegex}</param>
+    <param name="rice.ldapattr.employeeId">${rice.ldapattr.employeeId}</param>
+    <param name="rice.ldapattr.payrollId">${rice.ldapattr.payrollId}</param>
+    <param name="rice.ldapattr.deptNumber">${rice.ldapattr.deptNumber}</param>
+    <param name="rice.ldapattr.deptName">${rice.ldapattr.deptName}</param>
+    <param name="rice.ldapattr.employeeType">${rice.ldapattr.employeeType}</param>
+    <param name="rice.ldapattr.employeeStatus">${rice.ldapattr.employeeStatus}</param>
+    <param name="rice.ldap.employeeTypeMappings">${rice.ldap.employeeTypeMappings}</param>
+    <param name="rice.ldap.employeeStatusMappings">${rice.ldap.employeeStatusMappings}</param>
+    <param name="rice.ldapattr.line1Addr">${rice.ldapattr.line1Addr}</param>
+    <param name="rice.ldapattr.line2Addr">${rice.ldapattr.line2Addr}</param>
+    <param name="rice.ldapattr.postalAddr">${rice.ldapattr.postalAddr}</param>
+    <param name="rice.ldapattr.street">${rice.ldapattr.street}</param>
+    <param name="rice.ldapattr.city">${rice.ldapattr.city}</param>
+    <param name="rice.ldapattr.state">${rice.ldapattr.state}</param>
+    <param name="rice.ldapattr.country">${rice.ldapattr.country}</param>
+    <param name="rice.ldapattr.zipCode">${rice.ldapattr.zipCode}</param>
+    <param name="rice.ldapattr.campus">${rice.ldapattr.campus}</param>
+    <param name="rice.ldapattr.primaryAffiliation">${rice.ldapattr.primaryAffiliation}</param>
+    <param name="rice.ldapattr.affiliation">${rice.ldapattr.affiliation}</param>
+    <param name="rice.ldap.affiliationMappings">${rice.ldap.affiliationMappings}</param>
+    <param name="rice.ldap.campusMappings">${rice.ldap.campusMappings}</param>
+    <param name="rice.ldap.cityZipMappings">${rice.ldap.cityZipMappings}</param>
+    <param name="rice.ldap.defaultCampusCode">${rice.ldap.defaultCampusCode}</param>
+    <param name="rice.ldap.defaultCountryCode">${rice.ldap.defaultCountryCode}</param>
+    <param name="rice.ldap.defaultZipCode">${rice.ldap.defaultZipCode}</param>
+    <param name="rice.ldapattr.uconnPublished">${rice.ldapattr.uconnPublished}</param>
+    <param name="rice.ldap.objectClass">${rice.ldap.objectClass}</param>
+    <param name="kim.to.ldap.field.mappings">${kim.to.ldap.field.mappings}</param>
+    <param name="kim.to.ldap.value.mappings">${kim.to.ldap.value.mappings}</param>
+
+
+    <param name="datasource.username">${datasource.username}</param>
+    <param name="datasource.password">${datasource.password}</param>
+    <param name="datasource.ojb.platform">${datasource.ojb.platform}</param>
+    <param name="datasource.platform">${datasource.platform}</param>
+    <param name="datasource.url">${datasource.url}</param>
+    <param name="datasource.driver.name">${datasource.driver.name}</param>
+    <param name="datasource.pool.validationQuery">${datasource.pool.validationQuery}</param>
+
+
+    <param name="#uconn.jaxwsExposedService.security">${uconn.jaxwsExposedService.security}</param>
+    <param name="#kim.soapExposedService.jaxws.security">${kim.soapExposedService.jaxws.security}</param>
+    <param name="rice.kim.entityTitleLength">${rice.kim.entityTitleLength}</param>
+    <param name="rice.kim.externalIdTypeCode">${rice.kim.externalIdTypeCode}</param>
+    <param name="rice.kim.employee.status.id">${rice.kim.employee.status.id}</param>
+
+    <param name="kfs.datasource.username">${kfs.datasource.username}</param>
+    <param name="kfs.datasource.password">${kfs.datasource.password}</param>
+    <param name="kfs.datasource.url">${kfs.datasource.url}</param>
+
+    <param name="organization.types">${organization.types}</param>
+    <param name="uconn.routing.departmentRole">${uconn.routing.departmentRole}</param>
+    <param name="uconn.routing.unitRole">${uconn.routing.unitRole}</param>
+    <param name="uconn.routing.execRole">${uconn.routing.execRole}</param>
+    <param name="uconn.routing.univHeadRole">${uconn.routing.univHeadRole}</param>
+    <param name="uconn.routing.subDeptRole">${uconn.routing.subDeptRole}</param>
+
+    <param name="javamelody.spring.file">${javamelody.spring.file}</param>
+
+    <param name="svn.revision">${svn.revision}</param>
+
+    <param name="job.status.directory">${job.status.directory}</param>

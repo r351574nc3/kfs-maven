@@ -1,0 +1,68 @@
+
+    <param name="http.session.timeout.minutes">15</param>
+
+
+    <param name="core.struts.config.files">/WEB-INF/struts-config.xml</param>
+
+    <param name="core.rice.struts.message.resources">KR-ApplicationResources,\</param>
+org.kuali.rice.kew.ApplicationResources,\
+org.kuali.rice.ksb.messaging.ApplicationResources,\
+KIM-ApplicationResources,\
+ApplicationResources,\
+org.kuali.kfs.sec.messages-sec
+
+    <param name="core.jstl.constants.classnames">org.kuali.kfs.sys.KFSConstants,\</param>
+org.kuali.kfs.sys.KfsAuthorizationConstants,\
+org.kuali.kfs.gl.GeneralLedgerConstants,\
+org.kuali.kfs.sec.SecConstants,\
+org.kuali.kfs.module.cg.CGConstants,\
+org.kuali.kfs.module.purap.PurapConstants,\
+org.kuali.kfs.module.bc.BCConstants,\
+org.kuali.kfs.module.ec.EffortConstants,\
+org.kuali.kfs.module.cam.CamsConstants,\
+org.kuali.kfs.module.endow.EndowConstants
+
+    <param name="jstl.constants.main.class">org.kuali.kfs.sys.KFSConstants</param>
+
+    <param name="core.javascript.files">kr/scripts/core.js,\</param>
+kr/scripts/dhtml.js,\
+kr/scripts/my_common.js,\
+kr/scripts/jscalendar-1.0/calendar.js,\
+kr/scripts/jscalendar-1.0/lang/calendar-en.js,\
+kr/scripts/jscalendar-1.0/calendar-setup.js,\
+dwr/engine.js,dwr/util.js,\
+dwr/interface/PersonService.js,\
+kr/scripts/objectInfo.js,\
+scripts/rice-overrides.js
+
+    <param name="core.portal.javascript.files">kr/scripts/my_common.js</param>
+
+    <param name="core.css.files">kr/css/kuali.css,kr/scripts/jscalendar-1.0/calendar-win2k-1.css</param>
+    <param name="core.portal.css.files">css/portal.css</param>
+
+
+    <param name="institution.struts.config.files"></param>
+
+    <param name="institution.rice.struts.message.resources"></param>
+
+    <param name="institution.jstl.constants.classnames"></param>
+
+    <param name="institution.javascript.files"></param>
+
+    <param name="institution.portal.javascript.files"></param>
+
+    <param name="institution.css.files"></param>
+
+    <param name="institution.portal.css.files"></param>
+
+
+    <param name="struts.config.files">${core.struts.config.files}${rsmart.struts.config.files}${institution.struts.config.files}</param>
+    <param name="rice.struts.message.resources">${core.rice.struts.message.resources}${rsmart.rice.struts.message.resources}${institution.rice.struts.message.resources}</param>
+
+    <param name="jstl.constants.classnames">${core.jstl.constants.classnames}${rsmart.jstl.constants.classnames}${institution.jstl.constants.classnames}</param>
+
+    <param name="javascript.files">${core.javascript.files}${institution.javascript.files}</param>
+    <param name="portal.javascript.files">${core.portal.javascript.files}${institution.portal.javascript.files}</param>
+
+    <param name="css.files">${core.css.files}${institution.css.files}</param>
+    <param name="portal.css.files">${core.portal.css.files}${institution.portal.css.files}</param>

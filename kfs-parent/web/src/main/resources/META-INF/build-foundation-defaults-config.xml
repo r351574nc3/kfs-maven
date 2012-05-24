@@ -1,0 +1,16 @@
+
+
+    <param name="rice.api.module.name">api</param>
+    <param name="rice.impl.module.name">impl</param>
+    <param name="rice.web.module.name">web</param>
+    <param name="rice.sampleapp.module.name">sampleapp</param>
+    <param name="rice.output.src.suffix">-sources.jar</param>
+    <param name="rice.output.doc.suffix">-javadoc.jar</param>
+    <param name="rice.version">1.0.3.3-m2-SNAPSHOT</param>
+    <param name="rice.war.file.name">${rice.name}-web-${rice.version}.war</param>
+
+    <param name="projects.directory">${base.directory}/projects</param>
+    <param name="maven.home.directory">${base.directory}/tools/maven</param>
+
+    <param name="dependencies.project.directory">${projects.directory}/${ant.project.name}-dependencies</param>
+    <param name="rice.project.directory">${projects.directory}/rice</param>

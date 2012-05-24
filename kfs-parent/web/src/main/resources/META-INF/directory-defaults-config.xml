@@ -1,0 +1,95 @@
+
+    <param name="base.directory">/java</param>
+
+    <param name="appserver.home">${basedir}/build/tomcat</param>
+
+    <param name="external.config.directory">${base.directory}/opt</param>
+
+
+    <param name="tomcat.version">6</param>
+    <param name="#appserver.lib.dir">${appserver.home}/lib</param>
+    <param name="#appserver.classes.dir">${appserver.home}/lib</param>
+    <param name="appserver.deploy.dir">${appserver.home}/webapps</param>
+    <param name="appserver.config.dir">${appserver.home}/conf</param>
+    <param name="appserver.localhost.dir">${appserver.config.dir}/Catalina/localhost</param>
+    <param name="appserver.work.dir">${appserver.home}/work/Catalina/localhost</param>
+
+    <param name="work.directory">work</param>
+    <param name="source.directory">${work.directory}/src</param>
+    <param name="database.directory">${work.directory}/db</param>
+    <param name="webroot.directory">${work.directory}/web-root</param>
+    <param name="webinf.directory">${webroot.directory}/WEB-INF</param>
+    <param name="tags.directory">${webinf.directory}/tags</param>
+    <param name="classes.directory">${webinf.directory}/classes</param>
+    <param name="lib.directory">${webinf.directory}/lib</param>
+    <param name="metainf.directory">${webroot.directory}/META-INF</param>
+    <param name="static.directory">${webroot.directory}/static</param>
+    <param name="help.directory">${static.directory}/help</param>
+    <param name="xsd.directory">${static.directory}/xsd</param>
+
+    <param name="test.infrastructure.source.directory">test/infrastructure/src</param>
+    <param name="test.unit.source.directory">test/unit/src</param>
+    <param name="test.integration.source.directory">test/integration/src</param>
+    <param name="test.lib.directory">test/lib</param>
+
+    <param name="base.security.directory">${external.config.directory}/sa_forms/java</param>
+    <param name="base.settings.directory">${external.config.directory}/j2ee</param>
+    <param name="base.logs.directory">${external.config.directory}/logs</param>
+    <param name="base.work.directory">${external.config.directory}/work</param>
+    <param name="base.deploy.directory">${external.config.directory}/ears</param>
+
+    <param name="security.directory">${base.security.directory}/${build.environment}/${ant.project.name}</param>
+    <param name="settings.directory">${base.settings.directory}/${build.environment}/${ant.project.name}</param>
+    <param name="deploy.working.directory">${base.deploy.directory}/${build.environment}/${ant.project.name}</param>
+    <param name="logs.directory">${base.logs.directory}/${build.environment}/${ant.project.name}</param>
+    <param name="external.work.directory">${base.work.directory}/${build.environment}/${ant.project.name}</param>
+    <param name="attachments.directory">${external.work.directory}/attachments</param>
+    <param name="staging.directory">${external.work.directory}/staging</param>
+    <param name="temp.directory">${external.work.directory}/temp</param>
+    <param name="reports.directory">${external.work.directory}/reports</param>
+
+    <param name="build.directory">build</param>
+    <param name="build.external.directory">${build.directory}/external</param>
+    <param name="build.appserver.directory">${build.external.directory}/appserver</param>
+    <param name="build.user.directory">${build.external.directory}/user</param>
+    <param name="build.work.directory">${build.external.directory}/work</param>
+    <param name="build.project.directory">${build.directory}/project</param>
+    <param name="licenses.directory">licenses</param>
+    <param name="build.distribution.directory">${build.directory}/distribution</param>
+    <param name="build.distribution.licenses.directory">${build.distribution.directory}/${licenses.directory}</param>
+    <param name="build.server.lib.directory">${build.directory}/server-lib</param>
+    <param name="build.rice.lib.directory">${build.directory}/rice-lib</param>
+    <param name="build.kfs.lib.directory">${build.directory}/kfs-lib</param>
+
+    <param name="drivers.directory">${build.directory}/drivers</param>
+
+    <param name="all.temp.directory">${build.directory}/temp</param>
+    <param name="war.directory">${build.directory}/war</param>
+    <param name="war.classes.directory">${war.directory}/WEB-INF/classes</param>
+
+    <param name="test.directory">${build.directory}/test</param>
+    <param name="test.classes.directory">${test.directory}/classes</param>
+    <param name="test.xml.results.directory">${test.directory}/xml</param>
+
+    <param name="deployDir">${build.directory}</param>
+    <param name="test.html.results.directory">${deployDir}/test</param>
+    <param name="doc.directory">${build.directory}/doc</param>
+    <param name="dddoc.directory">${build.directory}/doc-dd-tags</param>
+
+
+    <param name="context.file">context.xml</param>
+    <param name="carol.file">carol.properties</param>
+    <param name="security.file">security.properties</param>
+    <param name="keystore.filename">rice.keystore</param>
+    <param name="configuration.file">configuration.properties</param>
+    <param name="p6spy.file">spy.properties</param>
+    <param name="web.file">web.xml</param>
+    <param name="spring.ide.support.file">.springBeans</param>
+    <param name="ojb.properties.file">OJB.properties</param>
+    <param name="ojb.logging.file">OJB-logging.properties</param>
+    <param name="ojb.repository.file">OJB-repository.xml</param>
+    <param name="encrypt.attributes.properties.file">fieldsToEncrypt.properties</param>
+
+    <param name="security.property.file">${security.directory}/${security.file}</param>
+    <param name="keystore.file">${security.directory}/${keystore.filename}</param>
+

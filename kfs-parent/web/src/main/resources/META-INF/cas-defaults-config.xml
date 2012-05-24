@@ -1,0 +1,80 @@
+
+    <param name="deploy.local.cas.server">true</param>
+
+    <param name="authentication.filter.definition"><filter>\</param>
+\n\t\t<filter-name>CAS Authentication Filter</filter-name>\
+\n\t\t<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>\
+\n\t\t<init-param>\
+\n\t\t\t<param-name>casServerLoginUrl</param-name>\
+\n\t\t\t<param-value>${cas.url}/login</param-value>\
+\n\t\t</init-param>\
+\n\t\t<init-param>\
+\n\t\t\t<param-name>serverName</param-name>\
+\n\t\t\t<param-value>${appserver.url}</param-value>\
+\n\t\t</init-param>\
+\n\t</filter>\
+\n\t<filter>\
+\n\t\t<filter-name>CAS Validation Filter</filter-name>\
+\n\t\t<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>\
+\n\t\t<init-param>\
+\n\t\t\t<param-name>casServerUrlPrefix</param-name>\
+\n\t\t\t<param-value>${cas.url}</param-value>\
+\n\t\t</init-param>\
+\n\t\t<init-param>\
+\n\t\t\t<param-name>serverName</param-name>\
+\n\t\t\t<param-value>${appserver.url}</param-value>\
+\n\t\t</init-param>\
+\n\t</filter>\
+\n\t<filter>\
+\n\t\t<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>\
+\n\t\t<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>\
+\n\t</filter>
+    <param name="authentication.filter.mappings"><filter-mapping>\</param>
+\n\t\t<filter-name>CAS Authentication Filter</filter-name>\
+\n\t\t\t<servlet-name>action</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS Validation Filter</filter-name>\
+\n\t\t\t<servlet-name>action</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>\
+\n\t\t\t<servlet-name>action</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS Authentication Filter</filter-name>\
+\n\t\t\t<servlet-name>dwr-invoker</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS Validation Filter</filter-name>\
+\n\t\t\t<servlet-name>dwr-invoker</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>\
+\n\t\t\t<servlet-name>dwr-invoker</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS Authentication Filter</filter-name>\
+\n\t\t\t<servlet-name>batchFileUpload</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS Validation Filter</filter-name>\
+\n\t\t\t<servlet-name>batchFileUpload</servlet-name>\
+\n\t\t</filter-mapping>\
+\n\t\t<filter-mapping>\
+\n\t\t\t<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>\
+\n\t\t\t<servlet-name>batchFileUpload</servlet-name>\
+\n\t\t</filter-mapping>
+
+
+
+    <param name="cas.context.name">cas</param>
+    <param name="cas.context.file">context-cas.xml</param>
+
+    <param name="cas.datasource.username">${datasource.username}</param>
+    <param name="cas.datasource.password">${datasource.password}</param>
+    <param name="#cas.datasource.url">${datasource.url}</param>
+    <param name="#cas.datasource.driver.class">${datasource.driver.class}</param>
+
+    <param name="cas.require.https">false</param>
+    <param name="cas.validate.password">false</param>

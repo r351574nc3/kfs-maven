@@ -1,0 +1,157 @@
+
+
+    <param name="#is.local.build">true</param>
+
+    <param name="is.clustered">false</param>
+
+    <param name="module.labor.distribution.enabled">true</param>
+    <param name="module.accounts.receivable.enabled">true</param>
+    <param name="module.purchasing.enabled">true</param>
+    <param name="module.capital.asset.enabled">true</param>
+    <param name="module.endowment.enabled">true</param>
+
+    <param name="module.contracts.and.grants.enabled">true</param>
+    <param name="module.external.kuali.coeus.enabled">false</param>
+
+    <param name="#module.access.security.enabled">false</param>
+
+    <param name="institutional.configuration.file"></param>
+
+    <param name="custom.context.content"></param>
+
+
+    <param name="core.property.files">classpath:KR-ApplicationResources.properties,\</param>
+classpath:ApplicationResources.properties,\
+classpath:org/kuali/kfs/sec/messages-sec.properties
+
+    <param name="institution.property.files"></param>
+    <param name="property.files">${core.property.files}${rsmart.property.files}${institution.property.files}</param>
+
+    <param name="core.property.test.files">classpath:test-configuration.properties</param>
+    <param name="institution.property.test.files"></param>
+    <param name="property.test.files">${core.property.test.files}${institution.property.test.files}</param>
+
+    <param name="feedback.link.url">https://test.kuali.org/jira/secure/CreateIssue.jspa?pid=10091&amp;issuetype=1</param>
+    <param name="licensing.contact.email">license@kuali.org</param>
+
+
+
+    <param name="non.java.resources">**/*.properties,\</param>
+**/*.dtd,\
+**/*.xml,\
+**/*.html,\
+**/*.xsd,\
+**/*.jasper,\
+**/*.jrxml,\
+META-INF/*
+
+    <param name="tests.non.java.resources">${non.java.resources},\</param>
+**/*.txt,\
+**/*.sql
+
+
+    <param name="compile.min.memory">128M</param>
+    <param name="compile.max.memory">512M</param>
+
+    <param name="run.tests.min.memory">384M</param>
+    <param name="run.tests.max.memory">1024M</param>
+    <param name="run.tests.max.permsize">128M</param>
+
+    <param name="run.postloadencrypt.min.memory">384M</param>
+    <param name="run.postloadencrypt.max.memory">1024M</param>
+    <param name="run.postloadencrypt.max.permsize">256M</param>
+
+    <param name="tests.includes">**/*Test.java</param>
+    <param name="tests.startup.class">ContinuousIntegrationStartup</param>
+    <param name="tests.shutdown.class">ContinuousIntegrationShutdown</param>
+
+    <param name="tests.compile.includes">**/*.java</param>
+    <param name="tests.compile.excludes"></param>
+
+    <param name="javadoc.max.memory">512M</param>
+
+    <param name="production.environment.code">prd</param>
+
+    <param name="report.writer.service.new.line.characters">\\n</param>
+
+    <param name="kfs.locale">en_US</param>
+
+    <param name="accountCreationServiceSOAP.expose">true</param>
+
+    <param name="#dont.filter.project.schema"></param>
+
+    <param name="use.dd.schema.validation">false</param>
+
+    <param name="classpath.prefix"><?xml version="1.0" encoding="UTF-8"?>\n\</param>
+<classpath>\n\
+    <param name="\t<classpathentry kind">"src" path="work/src"/>\n\</param>
+    <param name="\t<classpathentry kind">"src" output="test/classes" path="test/infrastructure/src"/>\n\</param>
+    <param name="\t<classpathentry kind">"src" output="test/classes" path="test/unit/src"/>\n\</param>
+    <param name="\t<classpathentry kind">"src" output="test/classes" path="test/integration/src"/>\n\</param>
+    <param name="\t<classpathentry kind">"con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">\n\</param>
+\t\t<accessrules>\n\
+    <param name="\t\t\t<accessrule kind">"nonaccessible" pattern="com/**"/>\n\</param>
+    <param name="\t\t\t<accessrule kind">"nonaccessible" pattern="sun/**"/>\n\</param>
+    <param name="\t\t\t<accessrule kind">"nonaccessible" pattern="sunw/**"/>\n\</param>
+\t\t</accessrules>\n\
+\t</classpathentry>\n
+	
+    <param name="classpath.suffix">\t<classpathentry kind="output" path="work/web-root/WEB-INF/classes"/>\n\</param>
+</classpath>\n
+
+    <param name="rice.lib.jars.to.exclude">**/rice-*,\</param>
+**/cas-2*,\
+**/casclient-2*,\
+**/cas-server*,\
+**/acegi*,\
+**/commons-digester*,\
+**/dwr*,\
+**/log4j*,\
+**/xml-apis-*,\
+**/derby*,\
+**/commons-pool-*,\
+**/commons-dbcp-*,\
+**/ant-*.jar,\
+**/hsqldb-*.jar,\
+**/torque-*.jar,\
+**/velocity-*.jar,\
+**/p6spy-*.jar
+
+    <param name="runtime.only.jars">abdera*.jar,\</param>
+activation*.jar,\
+aopalliance*.jar,\
+asm*.jar,\
+avalon*.jar,\
+backport*.jar,\
+batik*.jar,\
+bcprov*.jar,\
+cas*.jar,\
+cglib*.jar,\
+commons-dbcp-*.jar,\
+commons-el*.jar,\
+commons-httpclient-*.jar,\
+commons-pool-*.jar,\
+connector-api*.jar,\
+geronimo*.jar,\
+hibernate*.jar,\
+jasper-*.jar,\
+jaxen*.jar,\
+jboss*.jar,\
+jdom*.jar,\
+jotm*.jar,\
+mysql*.jar,\
+ojdbc*.jar,\
+opensaml*.jar,\
+p6spy*.jar,\
+saaj-impl*.jar,\
+struts-el*.jar,\
+taglibs*.jar,\
+wsdl4j*.jar,\
+wss4j*.jar,\
+wstx*.jar,\
+xalan-serializer*.jar,\
+xapool*.jar,\
+xml-resolver*.jar,\
+XmlSchema*.jar,\
+xmlsec*.jar,\
+xpp3*.jar

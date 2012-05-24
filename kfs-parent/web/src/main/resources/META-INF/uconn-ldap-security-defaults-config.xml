@@ -1,0 +1,7 @@
+    <param name="rice.ldap.username">${rice.ldap.username}</param>
+    <param name="rice.ldap.password">${rice.ldap.password}</param>
+    <param name="rice.ldap.base">${rice.ldap.base}</param>
+    <param name="rice.ldap.url">${rice.ldap.url}</param>
+    <param name="datasource.pool.maxWait">${datasource.pool.maxWait}</param>
+    <param name="datasource.pool.minSize">${datasource.pool.minSize}</param>
+    <param name="datasource.pool.maxSize">${datasource.pool.maxSize}</param>

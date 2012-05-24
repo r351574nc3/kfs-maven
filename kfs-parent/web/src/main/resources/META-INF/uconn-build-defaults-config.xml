@@ -1,0 +1,104 @@
+    <param name="feedback.link.url">http://web2.uconn.edu/kualibugs/bug.php</param>
+    <param name="javamelody.spring.file"></param>
+
+    <param name="institution.configuration.properties.file">build/properties/uconn-configuration.properties</param>
+    <param name="institution.spring.source.files">,edu/uconn/kuali/kfs/vnd/spring-vnd.xml,edu/uconn/kuali/kfs/fp/spring-fp.xml,edu/uconn/kuali/kfs/module/ar/spring-ar.xml,edu/uconn/kuali/kfs/module/cam/spring-cam.xml,edu/uconn/kuali/kfs/coa/spring-coa.xml,edu/uconn/kuali/kfs/gl/spring-gl.xml,edu/uconn/kuali/kfs/sec/spring-sec-gl-overrides.xml,edu/uconn/kuali/kfs/module/purap/spring-purap.xml,edu/uconn/kuali/kfs/pdp/spring-pdp.xml,edu/uconn/kuali/kfs/module/cg/spring-cg.xml,edu/uconn/kuali/rice/kim/spring-kim.xml,edu/uconn/kuali/rice/config/UConnSpringBeans.xml,org/kuali/rice/kim/config/KIMLdapSpringBeans.xml${javamelody.spring.file}</param>
+
+    <param name="	#rice.kim.soapExposedService.jaxws.security">true</param>
+    <param name="	module.access.security.enabled">true</param>
+    <param name="	uconn.jaxwsExposedService.security">false</param>
+    <param name="	kim.soapExposedService.jaxws.security">false</param>
+
+<!-- ldap mappings  -->
+    <param name="rice.ldapattr.entityId">uid</param>
+    <param name="rice.ldapattr.principalName">uid</param>
+    <param name="rice.ldap.principalAlwaysActive">true</param>
+    <param name="rice.ldapattr.firstName">givenName</param>
+    <param name="rice.ldapattr.middleName">initials</param>
+    <param name="rice.ldapattr.lastName">sn</param>
+    <param name="rice.ldapattr.fullName">cn</param>
+    <param name="rice.ldapattr.displayName">displayName</param>
+    <param name="rice.ldapattr.title">title</param>
+    <param name="rice.ldapattr.email">mail</param>
+    <param name="rice.ldapattr.phoneNumber">telephoneNumber</param>
+    <param name="rice.pattern.phoneNumberKimFormat">%s-%s-%s</param>
+    <param name="rice.pattern.phoneNumberLdapRegex">.*([0-9]{3}).*([0-9]{3}).*([0-9]{4})</param>
+    <param name="rice.ldapattr.employeeId">uconnPersonEmplID</param>
+    <param name="rice.ldapattr.payrollId">uconnPersonPayrollID</param>
+    <param name="rice.ldapattr.deptNumber">departmentNumber</param>
+    <param name="rice.ldapattr.deptName">uconnDepartment</param>
+    <param name="rice.ldapattr.employeeType"></param>
+    <param name="rice.ldapattr.employeeStatus"></param>
+    <param name="rice.ldap.employeeTypeMappings"></param>
+    <param name="rice.ldap.employeeStatusMappings">true=A,false=T</param>
+    <param name="rice.ldapattr.line1Addr">street</param>
+    <param name="rice.ldapattr.line2Addr">buildingName</param>
+    <param name="rice.ldapattr.postalAddr">postalAddress</param>
+    <param name="rice.ldapattr.street">street</param>
+    <param name="rice.ldapattr.city"></param>
+    <param name="rice.ldapattr.state"></param>
+    <param name="rice.ldapattr.country"></param>
+    <param name="rice.ldapattr.zipCode"></param>
+    <param name="rice.ldapattr.campus">l</param>
+    <param name="rice.ldapattr.primaryAffiliation">uconnPersonAffiliation</param>
+    <param name="rice.ldapattr.affiliation">eduPersonAffiliation</param>
+    <param name="rice.ldap.affiliationMappings">STAFF=staff,FCLTY=faculty,STDNT=student,AFLT=affiliate</param>
+    <param name="rice.ldap.campusMappings">Storrs=01,Hartford=02,Stamford=03,Torrington=04,Waterbury=05,Avery Point=06,Health Center=07,Extension Services=08</param>
+    <param name="rice.ldap.cityZipMappings">Storrs=06269,Hartford=06117,Stamford=06901,Torrington=06790,Waterbury=06702,Avery Point=06340,Health Center=06030,Extension Services=000000</param>
+    <param name="rice.ldap.defaultCampusCode">01</param>
+    <param name="rice.ldap.defaultCountryCode">1</param>
+    <param name="rice.ldap.defaultZipCode"></param>
+    <param name="rice.ldapattr.uconnPublished">uconnPublished</param>
+    <param name="rice.ldap.objectClass">objectClass</param>
+    <param name="rice.kim.entityTitleLength">20</param>
+    <param name="rice.kim.externalIdTypeCode">emplId</param>
+    <param name="rice.kim.employee.status.id">employee</param>
+    <param name="kim.to.ldap.field.mappings">entityId=uid;principalId=uid;principalName=uid;givenName=sn;principals.principalName=uid;persons.principalName=uid;persons.emailAddress=mail;persons.campus=l;persons.primaryDepartmentName=uconnDepartment;principals.principalId=uid;lastName=sn;firstName=givenName;employmentInformation.employeeId=uconnPersonPayrollID;employmentInformation.entityEmploymentId=uconnPersonEmplId;names.lastName=sn;names.firstName=givenName;employmentInformation.primaryDepartmentName=uconnDepartment;employmentInformation.primaryDepartmentCode=departmentNumber;entityTypes.emailAddresses.emailAddress=mail; </param>
+    <param name="kim.to.ldap.value.mappings">principals.active.Y=member,staff,faculty,employee,student; principals.active.N=FALSE,!*;</param>
+
+    <param name="datasource.username">${kfs_rice_user}</param>
+    <param name="datasource.password">${kfs_rice_password}</param>
+    <param name="datasource.ojb.platform">${datasource_platform}</param>
+    <param name="datasource.platform">org.kuali.rice.core.database.platform.OracleDatabasePlatform</param>
+    <param name="#datasource.url">${datasource_url}</param>
+    <param name="datasource.driver.name">oracle.jdbc.driver.OracleDriver</param>
+    <param name="datasource.pool.validationQuery">select 1 from dual</param>
+
+    <param name="datasource.pool.size">500</param>
+    <param name="datasource.pool.minSize">50</param>
+    <param name="datasource.pool.maxSize">500</param>
+    <param name="datasource.pool.maxWait">30000</param>
+
+    <param name="monitoring.filter"><filter> \</param>
+\n\t\t<filter-name>monitoring</filter-name> \
+\n\t\t<filter-class>net.bull.javamelody.MonitoringFilter</filter-class> \
+\n\t\t<init-param> \
+\n\t\t\t<param-name>log</param-name>\
+\n\t\t\t<param-value>true</param-value>\
+\n\t\t</init-param> \
+\n\t\t<init-param> \
+\n\t\t\t<param-name>system-actions-enabled</param-name>\
+\n\t\t\t<param-value>true</param-value>\
+\n\t\t</init-param> \
+\n\t\t<init-param> \
+\n\t\t\t<param-name>url-exclude-pattern</param-name>\
+\n\t\t\t<param-value>/static/.*|/kr/static/.*|/kr/images/.*|/images-portal/.*</param-value>\
+\n\t\t</init-param> \
+\n\t</filter>
+        
+    <param name="monitoring.mapping"><filter-mapping> \n\t\t<filter-name>monitoring</filter-name> \n\t\t<url-pattern>/*</url-pattern> \n\t</filter-mapping> </param>
+
+    <param name="monitoring.listener"><listener> \n\t\t<listener-class>net.bull.javamelody.SessionListener</listener-class> \n\t</listener> </param>
+
+
+ <!-- additional parameters -->
+    <param name=" organization.types">Not Official=N,university=U,department=D,unit=V,division=V,executive=E,sub-department=B</param>
+    <param name="        uconn.routing.departmentRole"></param>
+    <param name="        uconn.routing.unitRole"></param>
+    <param name="        uconn.routing.execRole"></param>
+    <param name="        uconn.routing.univHeadRole"></param>
+    <param name="        uconn.routing.subDeptRole"></param>
+
+    <param name="svn.revision">${svn.revision}</param>
+
+    <param name="job.status.directory">/home/ctrlmuser</param>

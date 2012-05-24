@@ -1,0 +1,56 @@
+    <param name="spring.transaction.bean.file">spring-jta.xml</param>
+    <param name="spring.datasource.bean.file">spring-datasources.xml</param>
+
+    <param name="core.spring.source.files">org/kuali/kfs/sys/spring-sys.xml,\</param>
+org/kuali/kfs/coa/spring-coa.xml,\
+org/kuali/kfs/fp/spring-fp.xml,\
+org/kuali/kfs/gl/spring-gl.xml,\
+org/kuali/kfs/pdp/spring-pdp.xml,\
+org/kuali/kfs/vnd/spring-vnd.xml
+
+    <param name="access.security.core.spring.files">,org/kuali/kfs/sec/spring-sec.xml,org/kuali/kfs/sec/spring-sec-gl-overrides.xml</param>
+    <param name="access.security.ld.spring.files">,org/kuali/kfs/module/ld/spring-sec-ld-overrides.xml</param>
+    <param name="access.security.purap.spring.files">,org/kuali/kfs/module/purap/spring-sec-purap-overrides.xml</param>
+    <param name="access.security.rice.spring.files">,org/kuali/kfs/sec/spring-sec-rice-overrides.xml</param>
+
+    <param name="integration.spring.files">,org/kuali/kfs/integration/spring-integration.xml</param>
+
+    <param name="endowment.spring.files">,org/kuali/kfs/module/endow/spring-endow.xml</param>
+    <param name="capital.asset.spring.files">,org/kuali/kfs/module/cam/spring-cam.xml,org/kuali/kfs/module/cab/spring-cab.xml</param>
+    <param name="accounts.receivable.spring.files">,org/kuali/kfs/module/ar/spring-ar.xml</param>
+    <param name="purchasing.spring.files">,org/kuali/kfs/module/purap/spring-purap.xml</param>
+    <param name="contracts.and.grants.spring.files">,org/kuali/kfs/module/cg/spring-cg.xml</param>
+    <param name="kuali.coeus.spring.files">,org/kuali/kfs/module/external/kc/spring-kc.xml</param>
+    <param name="labor.distribution.spring.files">,org/kuali/kfs/module/ld/spring-ld.xml\</param>
+,org/kuali/kfs/module/bc/spring-bc.xml\
+,org/kuali/kfs/module/ec/spring-ec.xml
+
+
+    <param name="#optional.module.spring.source.files"></param>
+
+
+
+    <param name="batch.spring.files">,spring-kfs-batch.xml</param>
+
+    <param name="institution.spring.source.files"></param>
+
+    <param name="#spring.source.files">${core.spring.source.files}${optional.module.spring.source.files}${rsmart.spring.source.files}${institution.spring.source.files}</param>
+
+    <param name="base.kfs.rice.override.spring.files">spring-kfs-rice-overrides.xml</param>
+
+    <param name="core.spring.test.files">org/kuali/kfs/sys/spring-sys-test.xml,\</param>
+org/kuali/kfs/gl/spring-gl-test.xml
+
+    <param name="#optional.module.spring.test.files"></param>
+
+    <param name="endowment.spring.test.files">,org/kuali/kfs/module/endow/spring-endow-test.xml</param>
+    <param name="capital.asset.spring.test.files">,org/kuali/kfs/module/cam/spring-cam-test.xml</param>
+    <param name="accounts.receivable.spring.test.files">,org/kuali/kfs/module/ar/spring-ar-test.xml</param>
+    <param name="purchasing.spring.test.files">,org/kuali/kfs/module/purap/spring-purap-test.xml</param>
+    <param name="contracts.and.grants.spring.test.files"></param>
+    <param name="labor.distribution.spring.test.files"></param>
+
+
+    <param name="institution.spring.test.files"></param>
+
+    <param name="#spring.test.files">${core.spring.test.files}${optional.module.spring.test.files}${institution.spring.test.files}</param>
