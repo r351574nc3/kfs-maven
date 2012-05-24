@@ -34,7 +34,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.kuali.kfs</groupId>
+      <groupId>org.kualigan.kfs</groupId>
       <artifactId>kfs-config</artifactId>
       <version>${kfs.maven.version}</version>
       <classifier>src</classifier>
