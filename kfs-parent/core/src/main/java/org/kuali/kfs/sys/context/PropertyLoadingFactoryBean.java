@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The Kuali Foundation.
+ * Copyright 2007 The Kuali Foundation
  * 
  * Licensed under the Educational Community License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package org.kuali.kfs.sys.context;
+
+import java.lang.System;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,9 +112,27 @@ public class PropertyLoadingFactoryBean implements FactoryBean {
             List<String> riceXmlConfigurations = new ArrayList<String>();
             riceXmlConfigurations.add("classpath:META-INF/common-config-defaults.xml");
             JAXBConfigImpl riceXmlConfigurer = new JAXBConfigImpl(riceXmlConfigurations);
-            BASE_PROPERTIES.putAll(riceXmlConfigurer.getProperties());
-            
+            try {
+                riceXmlConfigurer.parseConfig();
+                BASE_PROPERTIES.putAll(riceXmlConfigurer.getProperties());
+            }
+            catch (Exception e) {
+                // Couldn't load the rice configs
+            }
+
             loadProperties(BASE_PROPERTIES, new StringBuffer("classpath:").append(CONFIGURATION_FILE_NAME).append(".properties").toString());
+        }
+
+        final String additionalProps = BASE_PROPERTIES.getProperty("additional.config.locations");
+        final JAXBConfigImpl additionalConfigurer = new JAXBConfigImpl(java.util.Arrays.asList(additionalProps));
+        try {
+            additionalConfigurer.parseConfig();
+            System.out.println("Adding props from " + additionalProps);
+            BASE_PROPERTIES.putAll(additionalConfigurer.getProperties());                    
+        }
+        catch (Exception e) {
+            // Unable to load additional configs
+            e.printStackTrace();
         }
     }
 
