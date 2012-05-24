@@ -42,7 +42,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.kuali.kfs</groupId>
+      <groupId>org.kualigan.kfs</groupId>
       <artifactId>kfs-web</artifactId>
       <version>${kfs.maven.version}</version>
       <type>war</type>
