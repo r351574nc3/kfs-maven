@@ -21,7 +21,7 @@ limitations under the License.
   <parent>
     <groupId>org.kuali.pom</groupId>
     <artifactId>kuali-common</artifactId>
-    <version>1.2.22</version>
+    <version>1.2.24</version>
   </parent>
   <groupId>org.kualigan.pom</groupId>
   <artifactId>kfs-common</artifactId>
