@@ -125,7 +125,7 @@ limitations under the License.
     <kfs-site.generateReports>true</kfs-site.generateReports>
     <kfs.external.package.phase>none</kfs.external.package.phase>    
     <kfs.source.package.phase>none</kfs.source.package.phase>    
-    <kfs.maven.version>1.0.3.3</kfs.maven.version>
+    <kfs.maven.version>${project.version}</kfs.maven.version>
 
     <!-- Servlet API Version -->
     <jsp.version>2.0</jsp.version>
@@ -195,12 +195,16 @@ limitations under the License.
     <cobertura.maxmem>512M</cobertura.maxmem>
     <account.wsdl.packaged.location>wsdl/AccountCreationService.wsdl</account.wsdl.packaged.location>
 
+    <sonar.branch>unknown</sonar.branch>
+    <sonar.host>sonar.kualigan.org</sonar.host>
+    <sonar.host.url>http://${sonar.host}</sonar.host.url>
+    <sonar.jdbc.url>jdbc:mysql://localhost/sonar</sonar.jdbc.url>
+    <sonar.jdbc.username>sonar</sonar.jdbc.username>
+    <sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
+
     <!-- ################################################################################ -->
     <!-- The beginning of the section that describes all the KFS properties                                                          -->
     <!-- ################################################################################ -->
-
-    <current.year>2012</current.year>
-
 
     <!-- values used in KFS-PURAP B2B functions - all values but user -->
     <!-- agent derived by build.xml based on build.environment -->
