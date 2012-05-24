@@ -36,7 +36,7 @@ limitations under the License.
     <finalName>${project.parent.name}-${environment}</finalName>
     <filters>
         <filter>${filter.directory}/defaults.properties</filter>
-    </filter>
+    </filters>
     
     <resources>
       <resource>
