@@ -32,24 +32,6 @@
   <description />
   <url>http://www.github.com/r351574nc3/kfs-maven</url>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.kualigan.kfs</groupId>
-      <artifactId>kfs-config</artifactId>
-      <version>${kfs.maven.version}</version>
-      <classifier>src</classifier>
-      <type>tar.bz2</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kualigan.kfs</groupId>
-      <artifactId>kfs-web</artifactId>
-      <version>${kfs.maven.version}</version>
-      <type>war</type>
-      <scope>provided</scope>
-    </dependency> 
- </dependencies>
- 
   <modules>
     <module>core</module>
     <module>config</module>
