@@ -21,11 +21,11 @@
   <parent>
     <groupId>org.kualigan.pom</groupId>
     <artifactId>kfs-common</artifactId>
-    <version>0.0.18</version>
+    <version>0.0.22</version>
   </parent>
   <groupId>org.kualigan.kfs</groupId>
   <artifactId>kfs-assembly</artifactId>
-  <version>0.0.16-SNAPSHOT</version>
+  <version>0.0.22-SNAPSHOT</version>
   <name>Shared Assembly Descriptor for KFS projects</name>
   <url>https://github.com/r351574nc3/kfs-maven/tree/master/kfs-assembly</url>
 
