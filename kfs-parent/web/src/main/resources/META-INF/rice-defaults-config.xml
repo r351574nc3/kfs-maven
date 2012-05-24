@@ -1,3 +1,4 @@
+<config>
 
     <param name="rice.standalone">false</param>
 
@@ -125,3 +126,4 @@
     <param name="validate.data.dictionary">true</param>
     <param name="validate.ebo.references">true</param>
 
+</config>

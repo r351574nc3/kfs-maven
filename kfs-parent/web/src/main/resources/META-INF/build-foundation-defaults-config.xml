@@ -1,3 +1,4 @@
+<config>
 
 
     <param name="rice.api.module.name">api</param>
@@ -14,3 +15,4 @@
 
     <param name="dependencies.project.directory">${projects.directory}/${ant.project.name}-dependencies</param>
     <param name="rice.project.directory">${projects.directory}/rice</param>
+</config>

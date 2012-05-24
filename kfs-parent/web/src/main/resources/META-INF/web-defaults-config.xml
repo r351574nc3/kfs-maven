@@ -1,3 +1,4 @@
+<config>
 
     <param name="http.session.timeout.minutes">15</param>
 
@@ -66,3 +67,4 @@ scripts/rice-overrides.js
 
     <param name="css.files">${core.css.files}${institution.css.files}</param>
     <param name="portal.css.files">${core.portal.css.files}${institution.portal.css.files}</param>
+</config>

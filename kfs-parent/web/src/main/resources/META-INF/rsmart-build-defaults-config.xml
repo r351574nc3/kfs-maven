@@ -1,3 +1,4 @@
+<config>
     <param name="rsmart.spring.source.files">,edu/msu/ebsp/kfs/coa/spring-coa.xml,com/rsmart/kuali/kfs/module/purap/spring-purap.xml,com/rsmart/kuali/kfs/fp/spring-fp.xml,com/rsmart/kuali/kfs/sys/spring-sys.xml,com/rsmart/kuali/kfs/cr/spring-cr.xml,com/rsmart/kuali/kfs/tax/spring-tax.xml,com/rsmart/kuali/kfs/prje/spring-prje.xml,com/rsmart/kuali/kfs/module/ld/spring-ld.xml,com/rsmart/kuali/kfs/gl/spring-gl.xml,com/rsmart/kuali/kfs/coa/spring-coa.xml,edu/csu/kfs/fp/spring-fp.xml,com/rsmart/kuali/kfs/pdp/spring-pdp.xml,com/rsmart/kuali/kfs/pdp/spring-pdp-bottomline.xml,com/rsmart/kuali/kfs/module/ar/spring-ar.xml</param>
 
     <param name="rsmart.struts.config.files">,/WEB-INF/rsmart-struts-config.xml</param>
@@ -11,3 +12,4 @@
     <param name="workflow.url">${application.url}</param>
 
     <param name="pdp.ftp.checkprinting.username">rsmartcust</param>
+</config>

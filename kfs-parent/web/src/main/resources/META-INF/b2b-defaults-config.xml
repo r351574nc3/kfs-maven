@@ -1,3 +1,4 @@
+<config>
     <param name="b2b.user.agent">kfs</param>
     <param name="b2b.test.environment">test</param>
     <param name="b2b.production.environment">Production</param>
@@ -25,3 +26,4 @@
     <param name="b2b.test.shopping.password">UCoNn?2011</param>
     <param name="b2b.test.punch.back.url">${application.url}/b2b.do?methodToCall=returnFromShopping</param>
     <param name="b2b.test.punch.out.url">http://usertest.sciquest.com/apps/Router/ExternalAuth/cXML/30000475</param>
+</config>

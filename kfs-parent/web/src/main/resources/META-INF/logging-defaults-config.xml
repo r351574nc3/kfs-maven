@@ -1,3 +1,4 @@
+<config>
     <param name="log4j.file">log4j.properties</param>
     <param name="log4j.library.file">log4j-1.2.14.jar</param>
     <param name="log4j.settings.file">${settings.directory}/${log4j.file}</param>
@@ -12,3 +13,4 @@
 
     <param name="org.apache.catalina.core.ContainerBase.[Catalina].level "> INFO</param>
     <param name="org.apache.catalina.core.ContainerBase.[Catalina].handlers "> java.util.logging.ConsoleHandler</param>
+</config>

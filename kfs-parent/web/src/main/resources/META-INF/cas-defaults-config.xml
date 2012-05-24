@@ -1,3 +1,4 @@
+<config>
 
     <param name="deploy.local.cas.server">true</param>
 
@@ -78,3 +79,4 @@
 
     <param name="cas.require.https">false</param>
     <param name="cas.validate.password">false</param>
+</config>

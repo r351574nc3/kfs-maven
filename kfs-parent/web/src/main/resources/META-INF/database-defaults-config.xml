@@ -1,3 +1,4 @@
+<config>
     <param name="mysql.ojb.platform">MySQL</param>
     <param name="oracle.ojb.platform">Oracle9i</param>
     <param name="datasource.ojb.platform">${oracle.ojb.platform}</param>
@@ -23,3 +24,4 @@
     <param name="datasource.validating.query">select 1 from dual</param>
 
     <param name="datasource.xapool.connection.test.mode">2</param>
+</config>

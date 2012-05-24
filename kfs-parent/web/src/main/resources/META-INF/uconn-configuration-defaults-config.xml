@@ -1,3 +1,4 @@
+<config>
     <param name="rice.ldapattr.entityId">${rice.ldapattr.entityId}</param>
     <param name="rice.ldapattr.principalName">${rice.ldapattr.principalName}</param>
     <param name="rice.ldap.principalAlwaysActive">${rice.ldap.principalAlwaysActive}</param>
@@ -73,3 +74,4 @@
     <param name="svn.revision">${svn.revision}</param>
 
     <param name="job.status.directory">${job.status.directory}</param>
+</config>

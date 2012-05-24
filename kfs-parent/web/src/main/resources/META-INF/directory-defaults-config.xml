@@ -1,3 +1,4 @@
+<config>
 
     <param name="base.directory">/java</param>
 
@@ -93,3 +94,4 @@
     <param name="security.property.file">${security.directory}/${security.file}</param>
     <param name="keystore.file">${security.directory}/${keystore.filename}</param>
 
+</config>

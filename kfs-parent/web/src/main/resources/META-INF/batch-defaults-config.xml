@@ -1,3 +1,4 @@
+<config>
 
     <param name="use.quartz.scheduling">true</param>
     <param name="#use.quartz.jdbc.jobstore">false</param>
@@ -9,3 +10,4 @@
     <param name="batch.quartz.trigger.check.interval">30000</param>
 
     <param name="batch.transaction.timeout">500000</param>
+</config>

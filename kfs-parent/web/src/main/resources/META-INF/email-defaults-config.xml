@@ -1,5 +1,7 @@
+<config>
     <param name="mail.relay.server">[[Please set this in your ${user.home}/${ant.project.name}-build.properties file.]]</param>
     <param name="mail.transport.protocol">smtp</param>
 
     <param name="batch.mailing.list">[[Please set this in your ${user.home}/${ant.project.name}-build.properties file.]]</param>
     <param name="incident.mailing.list">[[Please set this in your ${user.home}/${ant.project.name}-build.properties file.]]</param>
+</config>
