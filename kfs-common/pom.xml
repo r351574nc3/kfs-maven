@@ -491,7 +491,7 @@ limitations under the License.
       <extension>
         <groupId>org.kathrynhuxtable.maven.wagon</groupId>
         <artifactId>wagon-gitsite</artifactId>
-        <version>0.3.1</version>
+        <version>0.4-SNAPSHOT</version>
       </extension>
     </extensions>
     
@@ -1321,6 +1321,10 @@ limitations under the License.
   </scm>
 
   <distributionManagement>
+    <site>
+      <id>github-project-site</id>
+      <url>gitsite:git@github.com/r351574nc3/kfs-maven.git</url>
+    </site>
     <repository>
       <id>sonatype-nexus-staging</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
