@@ -118,6 +118,7 @@ limitations under the License.
     <checkstyle.plugin.version>2.6</checkstyle.plugin.version>
     <javadoc.plugin.version>2.7</javadoc.plugin.version>
     <project.info.reports.plugin.version>2.2</project.info.reports.plugin.version>
+    <plugin.pmd.version>2.7.1</plugin.pmd.version>
     <surefire.plugin.version>2.6</surefire.plugin.version>
     <commons.logging.version>1.1.1</commons.logging.version>
     <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
@@ -549,100 +550,6 @@ limitations under the License.
             </execution>
           </executions>
         </plugin>              
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>${maven-site-plugin.version}</version>
-          <configuration>
-            <generateReports>${kfs-site.generateReports}</generateReports>
-            <reportPlugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changelog-plugin</artifactId>
-                <version>${maven-changelog-plugin.version}</version>
-              </plugin>
-              <!--
-                  <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-checkstyle-plugin</artifactId>
-                  <version>${maven-checkstyle-plugin.version}</version>
-                  </plugin>
-              -->
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-              </plugin>
-              <!--
-                  <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-jxr-plugin</artifactId>
-                  <version>${maven-jxr-plugin.version}</version>
-                  </plugin>
-              -->
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${maven-pmd-plugin.version}</version>
-              </plugin>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>${maven-plugin-plugin.version}</version>
-              </plugin>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${maven-project-info-reports-plugin.version}</version>
-                <reportSets>
-                  <reportSet>
-                    <reports>
-                      <report>distribution-management</report>
-                      <report>index</report>
-                      <report>issue-tracking</report>
-                      <report>license</report>
-                      <report>mailing-list</report>
-                      <report>project-team</report>
-                      <report>scm</report>
-                      <report>summary</report>
-                    </reports>
-                  </reportSet>
-                </reportSets>
-              </plugin>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${maven-surefire-report-plugin.version}</version>
-              </plugin>
-              <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>${cobertura-maven-plugin.version}</version>
-              </plugin>
-              <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${findbugs-maven-plugin.version}</version>
-              </plugin>
-              <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javancss-maven-plugin</artifactId>
-                <version>${javancss-maven-plugin.version}</version>
-              </plugin>
-              <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jdepend-maven-plugin</artifactId>
-                <version>${jdepend-maven-plugin.version}</version>
-              </plugin>
-              <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-                <version>${taglist-maven-plugin.version}</version>
-              </plugin>
-            </reportPlugins>
-          </configuration>
-        </plugin>
-
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <version>${plugin.release.version}</version>
