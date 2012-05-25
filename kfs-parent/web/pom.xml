@@ -21,7 +21,7 @@ limitations under the License.
   <parent>
     <groupId>org.kualigan.kfs</groupId>
     <artifactId>kfs-parent</artifactId>
-    <version>0.0.25-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>kfs-web</artifactId>
   <packaging>war</packaging>
