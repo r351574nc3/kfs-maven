@@ -29,7 +29,7 @@
   <packaging>pom</packaging>
   <name>kfs</name>
   <inceptionYear>2005</inceptionYear>
-  <version>0.0.24-SNAPSHOT</version>
+  <version>0.0.24</version>
   <description />
   <url>http://www.github.com/r351574nc3/kfs-maven</url>
 
