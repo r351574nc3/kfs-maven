@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kualigan.kfs</groupId>
     <artifactId>kfs-parent</artifactId>
-    <version>0.0.24</version>
+    <version>0.0.25-SNAPSHOT</version>
   </parent>
   <artifactId>kfs-core</artifactId>
 
