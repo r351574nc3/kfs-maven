@@ -123,6 +123,7 @@ limitations under the License.
     <commons.logging.version>1.1.1</commons.logging.version>
     <cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
 
+    <kuali.cloudfront.phase>none</kuali.cloudfront.phase>
     <ksite.phase>none</ksite.phase>
     <kfs-site.generateReports>true</kfs-site.generateReports>
     <kfs.external.package.phase>none</kfs.external.package.phase>    
