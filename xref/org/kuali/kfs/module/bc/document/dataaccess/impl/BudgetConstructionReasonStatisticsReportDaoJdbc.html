@@ -1,0 +1,510 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>BudgetConstructionReasonStatisticsReportDaoJdbc xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../../apidocs/org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionReasonStatisticsReportDaoJdbc.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2011 The Kuali Foundation.</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Educational Community License, Version 2.0 (the "License");</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * <a href="http://www.opensource.org/licenses/ecl2.php" target="alexandria_uri">http://www.opensource.org/licenses/ecl2.php</a></em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_comment"> * See the License for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment"> * limitations under the License.</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.kuali.kfs.module.bc.document.dataaccess.impl;
+<a class="jxr_linenumber" name="17" href="#17">17</a>  
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.math.BigDecimal;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.bc.BCConstants;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.bc.batch.dataaccess.impl.SQLForStep;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionReasonStatisticsReportDao;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.service.PersistenceService;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.util.Guid;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.util.KualiDecimal;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment"> * build the set of rows for the salary reason statistics report</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionReasonStatisticsReportDaoJdbc.html">BudgetConstructionReasonStatisticsReportDaoJdbc</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionDaoJdbcBase.html">BudgetConstructionDaoJdbcBase</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/BudgetConstructionReasonStatisticsReportDao.html">BudgetConstructionReasonStatisticsReportDao</a> {
+<a class="jxr_linenumber" name="33" href="#33">33</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionReasonStatisticsReportDaoJdbc.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="34" href="#34">34</a>  
+<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ArrayList&lt;SQLForStep&gt; updateReportsReasonStatisticsTable    = <strong class="jxr_keyword">new</strong> ArrayList&lt;SQLForStep&gt;(10);
+<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ArrayList&lt;SQLForStep&gt; reportReasonStatisticsWithThreshold   = <strong class="jxr_keyword">new</strong> ArrayList&lt;SQLForStep&gt;(3);
+<a class="jxr_linenumber" name="37" href="#37">37</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ArrayList&lt;SQLForStep&gt; reportReasonStatisticsWithNoThreshold = <strong class="jxr_keyword">new</strong> ArrayList&lt;SQLForStep&gt;(2);
+<a class="jxr_linenumber" name="38" href="#38">38</a>      
+<a class="jxr_linenumber" name="39" href="#39">39</a>      <strong class="jxr_keyword">private</strong> PersistenceService persistenceService;
+<a class="jxr_linenumber" name="40" href="#40">40</a>  
+<a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionReasonStatisticsReportDaoJdbc.html">BudgetConstructionReasonStatisticsReportDaoJdbc</a>() {
+<a class="jxr_linenumber" name="42" href="#42">42</a>  
+<a class="jxr_linenumber" name="43" href="#43">43</a>          ArrayList&lt;Integer&gt; insertionPoints = <strong class="jxr_keyword">new</strong> ArrayList&lt;Integer&gt;(10);
+<a class="jxr_linenumber" name="44" href="#44">44</a>          
+<a class="jxr_linenumber" name="45" href="#45">45</a>          <em class="jxr_comment">// builds and updates ReasonStatisticsReports</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>          
+<a class="jxr_linenumber" name="47" href="#47">47</a>          <em class="jxr_comment">/*<em class="jxr_comment"> get all emplids for the selections if we are doing the report using a threshold*/</em></em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>          StringBuilder sqlText = <strong class="jxr_keyword">new</strong> StringBuilder(2500);
+<a class="jxr_linenumber" name="49" href="#49">49</a>          sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT01_MT (SESID, EMPLID) \n"</span>);
+<a class="jxr_linenumber" name="50" href="#50">50</a>          sqlText.append(<span class="jxr_string">"SELECT DISTINCT ?, bcaf.emplid \n"</span>);
+<a class="jxr_linenumber" name="51" href="#51">51</a>          sqlText.append(<span class="jxr_string">"FROM LD_BCN_CTRL_LIST_T ctrl, LD_PNDBC_APPTFND_T bcaf, LD_BCN_OBJ_PICK_T pick \n"</span>);
+<a class="jxr_linenumber" name="52" href="#52">52</a>          sqlText.append(<span class="jxr_string">"WHERE ctrl.person_unvl_id = ? \n"</span>);
+<a class="jxr_linenumber" name="53" href="#53">53</a>          sqlText.append(<span class="jxr_string">" AND bcaf.univ_fiscal_yr = ctrl.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="54" href="#54">54</a>          sqlText.append(<span class="jxr_string">" AND bcaf.fin_coa_cd = ctrl.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="55" href="#55">55</a>          sqlText.append(<span class="jxr_string">" AND bcaf.account_nbr = ctrl.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="56" href="#56">56</a>          sqlText.append(<span class="jxr_string">" AND bcaf.sub_acct_nbr = ctrl.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="57" href="#57">57</a>          sqlText.append(<span class="jxr_string">" AND bcaf.emplid &lt;&gt; '"</span>);
+<a class="jxr_linenumber" name="58" href="#58">58</a>          <em class="jxr_comment">// employee ID for a vacant line in budget construction</em>
+<a class="jxr_linenumber" name="59" href="#59">59</a>          insertionPoints.add(sqlText.length());
+<a class="jxr_linenumber" name="60" href="#60">60</a>          sqlText.append(<span class="jxr_string">"' \n"</span>);
+<a class="jxr_linenumber" name="61" href="#61">61</a>          sqlText.append(<span class="jxr_string">" AND bcaf.fin_object_cd = pick.fin_object_cd \n"</span>);
+<a class="jxr_linenumber" name="62" href="#62">62</a>          sqlText.append(<span class="jxr_string">" AND pick.person_unvl_id = ctrl.person_unvl_id \n"</span>);
+<a class="jxr_linenumber" name="63" href="#63">63</a>          sqlText.append(<span class="jxr_string">" AND pick.select_flag &gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="64" href="#64">64</a>                    
+<a class="jxr_linenumber" name="65" href="#65">65</a>          reportReasonStatisticsWithThreshold.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText,insertionPoints));
+<a class="jxr_linenumber" name="66" href="#66">66</a>          sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="67" href="#67">67</a>          insertionPoints.clear();
+<a class="jxr_linenumber" name="68" href="#68">68</a>          
+<a class="jxr_linenumber" name="69" href="#69">69</a>          <em class="jxr_comment">/*<em class="jxr_comment"> get emplids with at least one reason rec for the selections if we are doing the report without a threshold*/</em></em>
+<a class="jxr_linenumber" name="70" href="#70">70</a>          sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT01_MT (SESID, EMPLID) \n"</span>);
+<a class="jxr_linenumber" name="71" href="#71">71</a>          sqlText.append(<span class="jxr_string">"SELECT DISTINCT ?, bcaf.emplid \n"</span>);
+<a class="jxr_linenumber" name="72" href="#72">72</a>          sqlText.append(<span class="jxr_string">"FROM LD_BCN_CTRL_LIST_T ctrl, LD_PNDBC_APPTFND_T bcaf, LD_BCN_OBJ_PICK_T pick, LD_BCN_AF_REASON_T reas, LD_BCN_RSN_CD_PK_T rpk \n"</span>);
+<a class="jxr_linenumber" name="73" href="#73">73</a>          sqlText.append(<span class="jxr_string">"WHERE ctrl.person_unvl_id = ? \n"</span>);
+<a class="jxr_linenumber" name="74" href="#74">74</a>          sqlText.append(<span class="jxr_string">" AND bcaf.univ_fiscal_yr = ctrl.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="75" href="#75">75</a>          sqlText.append(<span class="jxr_string">" AND bcaf.fin_coa_cd = ctrl.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="76" href="#76">76</a>          sqlText.append(<span class="jxr_string">" AND bcaf.account_nbr = ctrl.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="77" href="#77">77</a>          sqlText.append(<span class="jxr_string">" AND bcaf.sub_acct_nbr = ctrl.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="78" href="#78">78</a>          sqlText.append(<span class="jxr_string">" AND bcaf.emplid &lt;&gt; '"</span>);
+<a class="jxr_linenumber" name="79" href="#79">79</a>          <em class="jxr_comment">// employee ID for a vacant line in budget construction</em>
+<a class="jxr_linenumber" name="80" href="#80">80</a>          insertionPoints.add(sqlText.length());
+<a class="jxr_linenumber" name="81" href="#81">81</a>          sqlText.append(<span class="jxr_string">"' \n"</span>);
+<a class="jxr_linenumber" name="82" href="#82">82</a>          sqlText.append(<span class="jxr_string">" AND bcaf.fin_object_cd = pick.fin_object_cd \n"</span>);
+<a class="jxr_linenumber" name="83" href="#83">83</a>          sqlText.append(<span class="jxr_string">" AND pick.person_unvl_id = ctrl.person_unvl_id \n"</span>);
+<a class="jxr_linenumber" name="84" href="#84">84</a>          sqlText.append(<span class="jxr_string">" AND pick.select_flag &gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="85" href="#85">85</a>          sqlText.append(<span class="jxr_string">" AND bcaf.univ_fiscal_yr = reas.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="86" href="#86">86</a>          sqlText.append(<span class="jxr_string">" AND bcaf.fin_coa_cd = reas.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="87" href="#87">87</a>          sqlText.append(<span class="jxr_string">" AND bcaf.account_nbr = reas.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="88" href="#88">88</a>          sqlText.append(<span class="jxr_string">" AND bcaf.sub_acct_nbr = reas.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="89" href="#89">89</a>          sqlText.append(<span class="jxr_string">" AND bcaf.fin_object_cd = reas.fin_object_cd \n"</span>);
+<a class="jxr_linenumber" name="90" href="#90">90</a>          sqlText.append(<span class="jxr_string">" AND bcaf.fin_sub_obj_cd = reas.fin_sub_obj_cd \n"</span>);
+<a class="jxr_linenumber" name="91" href="#91">91</a>          sqlText.append(<span class="jxr_string">" AND bcaf.position_nbr = reas.position_nbr \n"</span>);
+<a class="jxr_linenumber" name="92" href="#92">92</a>          sqlText.append(<span class="jxr_string">" AND bcaf.emplid = reas.emplid \n"</span>);
+<a class="jxr_linenumber" name="93" href="#93">93</a>          sqlText.append(<span class="jxr_string">" AND reas.appt_fnd_reason_cd = rpk.appt_fnd_reason_cd \n"</span>);
+<a class="jxr_linenumber" name="94" href="#94">94</a>          sqlText.append(<span class="jxr_string">" AND rpk.person_unvl_id = ctrl.person_unvl_id \n"</span>);
+<a class="jxr_linenumber" name="95" href="#95">95</a>          sqlText.append(<span class="jxr_string">" AND rpk.select_flag &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="96" href="#96">96</a>                    
+<a class="jxr_linenumber" name="97" href="#97">97</a>          reportReasonStatisticsWithNoThreshold.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText,insertionPoints));
+<a class="jxr_linenumber" name="98" href="#98">98</a>          sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="99" href="#99">99</a>          insertionPoints.clear();
+<a class="jxr_linenumber" name="100" href="#100">100</a> 
+<a class="jxr_linenumber" name="101" href="#101">101</a>         <em class="jxr_comment">/*<em class="jxr_comment"> get the salary and months data for people not on leave from request, base (CSF), and the position table */</em></em>
+<a class="jxr_linenumber" name="102" href="#102">102</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT02_MT \n"</span>);
+<a class="jxr_linenumber" name="103" href="#103">103</a>         sqlText.append(<span class="jxr_string">"(SESID, EMPLID, POSITION_NBR, SAL_AMT, SAL_PCT, SAL_MTHS,  \n"</span>);
+<a class="jxr_linenumber" name="104" href="#104">104</a>         sqlText.append(<span class="jxr_string">" POS_CSF_AMT, POS_CSF_TM_PCT, SAL_PMTHS) \n"</span>);
+<a class="jxr_linenumber" name="105" href="#105">105</a>         sqlText.append(<span class="jxr_string">"SELECT ?, bcaf.emplid, bcaf.position_nbr, bcaf.appt_rqst_amt, bcaf.appt_rqst_tm_pct, bcaf.appt_fnd_mo,  \n"</span>);
+<a class="jxr_linenumber" name="106" href="#106">106</a>         sqlText.append(<span class="jxr_string">" COALESCE(bcsf.pos_csf_amt,0), COALESCE(bcsf.pos_csf_tm_pct,0.0), posn.iu_pay_months \n"</span>);
+<a class="jxr_linenumber" name="107" href="#107">107</a>         sqlText.append(<span class="jxr_string">"FROM (LD_PNDBC_APPTFND_T bcaf LEFT OUTER JOIN LD_BCN_CSF_TRCKR_T bcsf \n"</span>);
+<a class="jxr_linenumber" name="108" href="#108">108</a>         sqlText.append(<span class="jxr_string">" ON ((bcaf.univ_fiscal_yr = bcsf.univ_fiscal_yr) \n"</span>);
+<a class="jxr_linenumber" name="109" href="#109">109</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.fin_coa_cd = bcsf.fin_coa_cd) \n"</span>);
+<a class="jxr_linenumber" name="110" href="#110">110</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.account_nbr = bcsf.account_nbr) \n"</span>);
+<a class="jxr_linenumber" name="111" href="#111">111</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.sub_acct_nbr = bcsf.sub_acct_nbr) \n"</span>);
+<a class="jxr_linenumber" name="112" href="#112">112</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.fin_object_cd = bcsf.fin_object_cd) \n"</span>);
+<a class="jxr_linenumber" name="113" href="#113">113</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.fin_sub_obj_cd = bcsf.fin_sub_obj_cd) \n"</span>);
+<a class="jxr_linenumber" name="114" href="#114">114</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.position_nbr = bcsf.position_nbr) \n"</span>);
+<a class="jxr_linenumber" name="115" href="#115">115</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.emplid = bcsf.emplid))),\n"</span>);
+<a class="jxr_linenumber" name="116" href="#116">116</a>         sqlText.append(<span class="jxr_string">" LD_BCN_POS_T posn, LD_BCN_CTRL_LIST_T ctrl, LD_BCN_BUILD_EXSALTOT01_MT tssn, LD_BCN_OBJ_PICK_T pick \n"</span>);
+<a class="jxr_linenumber" name="117" href="#117">117</a>         sqlText.append(<span class="jxr_string">"WHERE ctrl.person_unvl_id = ? \n"</span>);
+<a class="jxr_linenumber" name="118" href="#118">118</a>         sqlText.append(<span class="jxr_string">" AND tssn.sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="119" href="#119">119</a>         sqlText.append(<span class="jxr_string">" AND bcaf.emplid = tssn.emplid \n"</span>);
+<a class="jxr_linenumber" name="120" href="#120">120</a>         sqlText.append(<span class="jxr_string">" AND bcaf.univ_fiscal_yr = ctrl.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="121" href="#121">121</a>         sqlText.append(<span class="jxr_string">" AND bcaf.fin_coa_cd = ctrl.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="122" href="#122">122</a>         sqlText.append(<span class="jxr_string">" AND bcaf.account_nbr = ctrl.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="123" href="#123">123</a>         sqlText.append(<span class="jxr_string">" AND bcaf.sub_acct_nbr = ctrl.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="124" href="#124">124</a>         sqlText.append(<span class="jxr_string">" AND bcaf.emplid &lt;&gt; '"</span>);
+<a class="jxr_linenumber" name="125" href="#125">125</a>         <em class="jxr_comment">// employee ID for a vacant line in budget construction</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a>         insertionPoints.add(sqlText.length());
+<a class="jxr_linenumber" name="127" href="#127">127</a>         sqlText.append(<span class="jxr_string">"' \n"</span>);
+<a class="jxr_linenumber" name="128" href="#128">128</a>         sqlText.append(<span class="jxr_string">" AND bcaf.appt_fnd_dur_cd = '"</span>);
+<a class="jxr_linenumber" name="129" href="#129">129</a>         <em class="jxr_comment">// default funding duration code</em>
+<a class="jxr_linenumber" name="130" href="#130">130</a>         insertionPoints.add(sqlText.length());
+<a class="jxr_linenumber" name="131" href="#131">131</a>         sqlText.append(<span class="jxr_string">"'\n"</span>);
+<a class="jxr_linenumber" name="132" href="#132">132</a>         sqlText.append(<span class="jxr_string">" AND bcaf.fin_object_cd = pick.fin_object_cd \n"</span>);
+<a class="jxr_linenumber" name="133" href="#133">133</a>         sqlText.append(<span class="jxr_string">" AND pick.person_unvl_id = ctrl.person_unvl_id \n"</span>);
+<a class="jxr_linenumber" name="134" href="#134">134</a>         sqlText.append(<span class="jxr_string">" AND pick.select_flag &gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="135" href="#135">135</a>         sqlText.append(<span class="jxr_string">" AND bcaf.univ_fiscal_yr = posn.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="136" href="#136">136</a>         sqlText.append(<span class="jxr_string">" AND bcaf.position_nbr = posn.position_nbr \n"</span>);
+<a class="jxr_linenumber" name="137" href="#137">137</a> 
+<a class="jxr_linenumber" name="138" href="#138">138</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText,insertionPoints));
+<a class="jxr_linenumber" name="139" href="#139">139</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="140" href="#140">140</a>         insertionPoints.clear();
+<a class="jxr_linenumber" name="141" href="#141">141</a>         
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <em class="jxr_comment">/*<em class="jxr_comment"> get leave flagged bcaf, bcsf and posn info first */</em></em>
+<a class="jxr_linenumber" name="143" href="#143">143</a>         <em class="jxr_comment">/*<em class="jxr_comment"> uses leave related info from bcaf, etc */</em></em>
+<a class="jxr_linenumber" name="144" href="#144">144</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT02_MT \n"</span>);
+<a class="jxr_linenumber" name="145" href="#145">145</a>         sqlText.append(<span class="jxr_string">"(SESID, EMPLID, POSITION_NBR, SAL_AMT, SAL_PCT, SAL_MTHS,  \n"</span>);
+<a class="jxr_linenumber" name="146" href="#146">146</a>         sqlText.append(<span class="jxr_string">" POS_CSF_AMT, POS_CSF_TM_PCT, SAL_PMTHS) \n"</span>);
+<a class="jxr_linenumber" name="147" href="#147">147</a>         sqlText.append(<span class="jxr_string">" SELECT ?, bcaf.emplid, bcaf.position_nbr, bcaf.appt_rqst_csf_amt, bcaf.appt_rqcsf_tm_pct, posn.iu_norm_work_months, \n"</span>);
+<a class="jxr_linenumber" name="148" href="#148">148</a>         sqlText.append(<span class="jxr_string">" bcsf.pos_csf_amt, bcsf.pos_csf_tm_pct, posn.iu_pay_months \n"</span>);
+<a class="jxr_linenumber" name="149" href="#149">149</a>         sqlText.append(<span class="jxr_string">"FROM (LD_PNDBC_APPTFND_T bcaf LEFT OUTER JOIN LD_BCN_CSF_TRCKR_T bcsf \n"</span>);
+<a class="jxr_linenumber" name="150" href="#150">150</a>         sqlText.append(<span class="jxr_string">"ON ((bcaf.univ_fiscal_yr = bcsf.univ_fiscal_yr) \n"</span>);
+<a class="jxr_linenumber" name="151" href="#151">151</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.fin_coa_cd = bcsf.fin_coa_cd)\n"</span>);
+<a class="jxr_linenumber" name="152" href="#152">152</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.account_nbr = bcsf.account_nbr) \n"</span>);
+<a class="jxr_linenumber" name="153" href="#153">153</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.sub_acct_nbr = bcsf.sub_acct_nbr) \n"</span>);
+<a class="jxr_linenumber" name="154" href="#154">154</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.fin_object_cd = bcsf.fin_object_cd) \n"</span>);
+<a class="jxr_linenumber" name="155" href="#155">155</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.fin_sub_obj_cd = bcsf.fin_sub_obj_cd) \n"</span>);
+<a class="jxr_linenumber" name="156" href="#156">156</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.position_nbr = bcsf.position_nbr) \n"</span>);
+<a class="jxr_linenumber" name="157" href="#157">157</a>         sqlText.append(<span class="jxr_string">" AND (bcaf.emplid = bcsf.emplid))),\n"</span>);
+<a class="jxr_linenumber" name="158" href="#158">158</a>         sqlText.append(<span class="jxr_string">" LD_BCN_POS_T posn, LD_BCN_CTRL_LIST_T ctrl, LD_BCN_BUILD_EXSALTOT01_MT tssn, LD_BCN_OBJ_PICK_T pick \n"</span>);
+<a class="jxr_linenumber" name="159" href="#159">159</a>         sqlText.append(<span class="jxr_string">"WHERE ctrl.person_unvl_id = ? \n"</span>);
+<a class="jxr_linenumber" name="160" href="#160">160</a>         sqlText.append(<span class="jxr_string">"AND tssn.sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="161" href="#161">161</a>         sqlText.append(<span class="jxr_string">"AND bcaf.emplid = tssn.emplid \n"</span>);
+<a class="jxr_linenumber" name="162" href="#162">162</a>         sqlText.append(<span class="jxr_string">"AND bcaf.univ_fiscal_yr = ctrl.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="163" href="#163">163</a>         sqlText.append(<span class="jxr_string">"AND bcaf.fin_coa_cd = ctrl.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="164" href="#164">164</a>         sqlText.append(<span class="jxr_string">"AND bcaf.account_nbr = ctrl.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="165" href="#165">165</a>         sqlText.append(<span class="jxr_string">"AND bcaf.sub_acct_nbr = ctrl.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="166" href="#166">166</a>         sqlText.append(<span class="jxr_string">"AND bcaf.emplid &lt;&gt; '"</span>);
+<a class="jxr_linenumber" name="167" href="#167">167</a>         <em class="jxr_comment">// employee ID for a vacant line in budget construction</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a>         insertionPoints.add(sqlText.length());
+<a class="jxr_linenumber" name="169" href="#169">169</a>         sqlText.append(<span class="jxr_string">"' \n"</span>);
+<a class="jxr_linenumber" name="170" href="#170">170</a>         sqlText.append(<span class="jxr_string">"AND bcaf.appt_fnd_dur_cd &lt;&gt; '"</span>);
+<a class="jxr_linenumber" name="171" href="#171">171</a>         <em class="jxr_comment">// default funding duration code</em>
+<a class="jxr_linenumber" name="172" href="#172">172</a>         insertionPoints.add(sqlText.length());
+<a class="jxr_linenumber" name="173" href="#173">173</a>         sqlText.append(<span class="jxr_string">"' \n"</span>);
+<a class="jxr_linenumber" name="174" href="#174">174</a>         sqlText.append(<span class="jxr_string">"AND bcaf.fin_object_cd = pick.fin_object_cd \n"</span>);
+<a class="jxr_linenumber" name="175" href="#175">175</a>         sqlText.append(<span class="jxr_string">"AND pick.person_unvl_id = ctrl.person_unvl_id \n"</span>);
+<a class="jxr_linenumber" name="176" href="#176">176</a>         sqlText.append(<span class="jxr_string">"AND pick.select_flag &gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="177" href="#177">177</a>         sqlText.append(<span class="jxr_string">"AND bcaf.univ_fiscal_yr = posn.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="178" href="#178">178</a>         sqlText.append(<span class="jxr_string">"AND bcaf.position_nbr = posn.position_nbr \n"</span>);
+<a class="jxr_linenumber" name="179" href="#179">179</a>             
+<a class="jxr_linenumber" name="180" href="#180">180</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText,insertionPoints));
+<a class="jxr_linenumber" name="181" href="#181">181</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="182" href="#182">182</a>         insertionPoints.clear();
+<a class="jxr_linenumber" name="183" href="#183">183</a>         
+<a class="jxr_linenumber" name="184" href="#184">184</a>         <em class="jxr_comment">/*<em class="jxr_comment"> take the request appointment attributes (months and position months) from the row for each person with the largest request amount */</em></em>
+<a class="jxr_linenumber" name="185" href="#185">185</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT03_MT (SESID, EMPLID, SAL_MTHS, SAL_PMTHS) \n"</span>);
+<a class="jxr_linenumber" name="186" href="#186">186</a>         sqlText.append(<span class="jxr_string">"SELECT DISTINCT ?, sd.emplid, sd.sal_mths, sd.sal_pmths \n"</span>);
+<a class="jxr_linenumber" name="187" href="#187">187</a>         sqlText.append(<span class="jxr_string">"FROM LD_BCN_BUILD_EXSALTOT02_MT sd \n"</span>);
+<a class="jxr_linenumber" name="188" href="#188">188</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="189" href="#189">189</a>         sqlText.append(<span class="jxr_string">" AND sd.sal_amt &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="190" href="#190">190</a>         sqlText.append(<span class="jxr_string">" AND sd.sal_amt = \n"</span>);
+<a class="jxr_linenumber" name="191" href="#191">191</a>         sqlText.append(<span class="jxr_string">"  (SELECT max(sd2.sal_amt) \n"</span>);
+<a class="jxr_linenumber" name="192" href="#192">192</a>         sqlText.append(<span class="jxr_string">"  FROM LD_BCN_BUILD_EXSALTOT02_MT sd2 \n"</span>);
+<a class="jxr_linenumber" name="193" href="#193">193</a>         sqlText.append(<span class="jxr_string">"  WHERE sd2.sesid = sd.sesid AND sd2.emplid = sd.emplid) \n"</span>);
+<a class="jxr_linenumber" name="194" href="#194">194</a>         sqlText.append(<span class="jxr_string">" AND sd.position_nbr = \n"</span>);
+<a class="jxr_linenumber" name="195" href="#195">195</a>         sqlText.append(<span class="jxr_string">"  (SELECT min(sd3.position_nbr) \n"</span>);
+<a class="jxr_linenumber" name="196" href="#196">196</a>         sqlText.append(<span class="jxr_string">"  FROM LD_BCN_BUILD_EXSALTOT02_MT sd3 \n"</span>);
+<a class="jxr_linenumber" name="197" href="#197">197</a>         sqlText.append(<span class="jxr_string">"  WHERE sd3.sesid = sd.sesid AND sd3.emplid = sd.emplid AND sd3.sal_amt = sd.sal_amt) \n"</span>);
+<a class="jxr_linenumber" name="198" href="#198">198</a>         
+<a class="jxr_linenumber" name="199" href="#199">199</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="200" href="#200">200</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="201" href="#201">201</a>         
+<a class="jxr_linenumber" name="202" href="#202">202</a>         <em class="jxr_comment">/*<em class="jxr_comment"> get the previous year's (base) appointment attributes for each person from the base row with the largest amount */</em></em>
+<a class="jxr_linenumber" name="203" href="#203">203</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT04_MT (SESID, EMPLID, CSF_MTHS, CSF_PMTHS) \n"</span>);
+<a class="jxr_linenumber" name="204" href="#204">204</a>         sqlText.append(<span class="jxr_string">"SELECT DISTINCT ?, sd.emplid, p.iu_norm_work_months, p.iu_pay_months \n"</span>);
+<a class="jxr_linenumber" name="205" href="#205">205</a>         sqlText.append(<span class="jxr_string">"FROM LD_BCN_BUILD_EXSALTOT02_MT sd, LD_BCN_POS_T p \n"</span>);
+<a class="jxr_linenumber" name="206" href="#206">206</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? AND sd.pos_csf_amt &lt;&gt; 0 AND sd.pos_csf_amt = \n"</span>);
+<a class="jxr_linenumber" name="207" href="#207">207</a>         sqlText.append(<span class="jxr_string">" (SELECT max(sd2.pos_csf_amt) FROM LD_BCN_BUILD_EXSALTOT02_MT sd2 \n"</span>);
+<a class="jxr_linenumber" name="208" href="#208">208</a>         sqlText.append(<span class="jxr_string">"  WHERE sd2.sesid = sd.sesid AND sd2.emplid = sd.emplid) \n"</span>);
+<a class="jxr_linenumber" name="209" href="#209">209</a>         sqlText.append(<span class="jxr_string">" AND sd.position_nbr = (SELECT min(sd3.position_nbr) \n"</span>);
+<a class="jxr_linenumber" name="210" href="#210">210</a>         sqlText.append(<span class="jxr_string">"  FROM LD_BCN_BUILD_EXSALTOT02_MT sd3 \n"</span>);
+<a class="jxr_linenumber" name="211" href="#211">211</a>         sqlText.append(<span class="jxr_string">"  WHERE sd3.sesid = sd.sesid AND sd3.emplid = sd.emplid AND sd3.pos_csf_amt = sd.pos_csf_amt) \n"</span>);
+<a class="jxr_linenumber" name="212" href="#212">212</a>         sqlText.append(<span class="jxr_string">"AND p.univ_fiscal_yr = ? AND p.position_nbr = sd.position_nbr \n"</span>);
+<a class="jxr_linenumber" name="213" href="#213">213</a> 
+<a class="jxr_linenumber" name="214" href="#214">214</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="215" href="#215">215</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="216" href="#216">216</a>         
+<a class="jxr_linenumber" name="217" href="#217">217</a>         <em class="jxr_comment">/*<em class="jxr_comment"> merge the base and request appointment attributes and amount sums into a single table, and initialize the use_flag */</em></em>
+<a class="jxr_linenumber" name="218" href="#218">218</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT05_MT \n"</span>);
+<a class="jxr_linenumber" name="219" href="#219">219</a>         sqlText.append(<span class="jxr_string">"(SESID, EMPLID, POS_CSF_AMT, RES_CSF_AMT, POS_CSF_TM_PCT, SAL_AMT,  \n"</span>);
+<a class="jxr_linenumber" name="220" href="#220">220</a>         sqlText.append(<span class="jxr_string">" SAL_PCT, SAL_FTE, SAL_MTHS, SAL_PMTHS, CSF_MTHS, CSF_PMTHS, USE_FLAG) \n"</span>);
+<a class="jxr_linenumber" name="221" href="#221">221</a>         sqlText.append(<span class="jxr_string">"SELECT ?, sm.emplid, SUM(COALESCE(sd.pos_csf_amt,0)), 0, SUM(COALESCE(sd.pos_csf_tm_pct,0)), SUM(COALESCE(sd.sal_amt,0)), \n"</span>);
+<a class="jxr_linenumber" name="222" href="#222">222</a>         sqlText.append(<span class="jxr_string">" SUM(COALESCE(sd.sal_pct,0)), 0, sm.sal_mths, sm.sal_pmths, COALESCE(cm.csf_mths,0), COALESCE(cm.csf_pmths,0), 'Y' \n"</span>);
+<a class="jxr_linenumber" name="223" href="#223">223</a>         sqlText.append(<span class="jxr_string">"FROM (LD_BCN_BUILD_EXSALTOT03_MT sm LEFT OUTER JOIN LD_BCN_BUILD_EXSALTOT04_MT cm \n"</span>);
+<a class="jxr_linenumber" name="224" href="#224">224</a>         sqlText.append(<span class="jxr_string">" ON ((sm.sesid = cm.sesid) AND (sm.emplid = cm.emplid))), LD_BCN_BUILD_EXSALTOT02_MT sd \n"</span>);
+<a class="jxr_linenumber" name="225" href="#225">225</a>         sqlText.append(<span class="jxr_string">"WHERE sm.sesid = ? AND sd.sesid = sm.sesid AND sd.emplid = sm.emplid \n"</span>);
+<a class="jxr_linenumber" name="226" href="#226">226</a>         sqlText.append(<span class="jxr_string">"GROUP BY sm.emplid, sm.sal_mths, sm.sal_pmths, cm.csf_mths, cm.csf_pmths \n"</span>);
+<a class="jxr_linenumber" name="227" href="#227">227</a>             
+<a class="jxr_linenumber" name="228" href="#228">228</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="229" href="#229">229</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="230" href="#230">230</a> 
+<a class="jxr_linenumber" name="231" href="#231">231</a>         <em class="jxr_comment">/*<em class="jxr_comment"> restate the base (CSF) amount to account for changes in the request appointment attributes */</em></em>
+<a class="jxr_linenumber" name="232" href="#232">232</a>         sqlText.append(<span class="jxr_string">"UPDATE LD_BCN_BUILD_EXSALTOT05_MT \n"</span>);
+<a class="jxr_linenumber" name="233" href="#233">233</a>         sqlText.append(<span class="jxr_string">"SET res_csf_amt = ROUND(COALESCE(((pos_csf_amt * sal_pct * sal_mths * csf_pmths) / (pos_csf_tm_pct * csf_mths * sal_pmths)), 0.00),0) \n"</span>);
+<a class="jxr_linenumber" name="234" href="#234">234</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? AND pos_csf_tm_pct &lt;&gt; 0 AND csf_mths &lt;&gt; 0 AND sal_pmths &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="235" href="#235">235</a>         
+<a class="jxr_linenumber" name="236" href="#236">236</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="237" href="#237">237</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="238" href="#238">238</a>         
+<a class="jxr_linenumber" name="239" href="#239">239</a>         <em class="jxr_comment">/*<em class="jxr_comment"> restate the base (CSF) amount to account for changes in the request FTE */</em></em>
+<a class="jxr_linenumber" name="240" href="#240">240</a>         sqlText.append(<span class="jxr_string">"UPDATE LD_BCN_BUILD_EXSALTOT05_MT \n"</span>);
+<a class="jxr_linenumber" name="241" href="#241">241</a>         sqlText.append(<span class="jxr_string">"SET res_csf_amt = ROUND(COALESCE(((res_csf_amt * sal_pmths) / csf_pmths), 0.00),0) \n"</span>);
+<a class="jxr_linenumber" name="242" href="#242">242</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? AND sal_pmths &lt;&gt; csf_pmths AND csf_pmths &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="243" href="#243">243</a>         
+<a class="jxr_linenumber" name="244" href="#244">244</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="245" href="#245">245</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="246" href="#246">246</a>             
+<a class="jxr_linenumber" name="247" href="#247">247</a>         <em class="jxr_comment">/*<em class="jxr_comment"> calculate the fte for each person */</em></em>
+<a class="jxr_linenumber" name="248" href="#248">248</a>         sqlText.append(<span class="jxr_string">"UPDATE LD_BCN_BUILD_EXSALTOT05_MT \n"</span>);
+<a class="jxr_linenumber" name="249" href="#249">249</a>         sqlText.append(<span class="jxr_string">"SET sal_fte = COALESCE((((sal_pct * sal_mths) / sal_pmths) / 100.0), 0.0) \n"</span>);
+<a class="jxr_linenumber" name="250" href="#250">250</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? AND sal_pmths &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="251" href="#251">251</a>                 
+<a class="jxr_linenumber" name="252" href="#252">252</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="253" href="#253">253</a>         sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="254" href="#254">254</a>         
+<a class="jxr_linenumber" name="255" href="#255">255</a>         <em class="jxr_comment">/*<em class="jxr_comment"> for a run with a threshold, we need to set the use_flag to exclude rows with percent changes below the threshold */</em></em>
+<a class="jxr_linenumber" name="256" href="#256">256</a>         sqlText.append(<span class="jxr_string">"UPDATE LD_BCN_BUILD_EXSALTOT05_MT \n"</span>);
+<a class="jxr_linenumber" name="257" href="#257">257</a>         sqlText.append(<span class="jxr_string">"SET USE_FLAG = 'N' \n"</span>);
+<a class="jxr_linenumber" name="258" href="#258">258</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="259" href="#259">259</a>         sqlText.append(<span class="jxr_string">" AND ROUND((((sal_amt - res_csf_amt) / res_csf_amt) * 100),1) &lt; ? \n"</span>);
+<a class="jxr_linenumber" name="260" href="#260">260</a>         sqlText.append(<span class="jxr_string">" AND res_csf_amt &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="261" href="#261">261</a>         sqlText.append(<span class="jxr_string">" AND sal_amt &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="262" href="#262">262</a>         
+<a class="jxr_linenumber" name="263" href="#263">263</a>         reportReasonStatisticsWithThreshold.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="264" href="#264">264</a>         sqlText.delete(0, sqlText.length());   
+<a class="jxr_linenumber" name="265" href="#265">265</a>         
+<a class="jxr_linenumber" name="266" href="#266">266</a>         <em class="jxr_comment">/*<em class="jxr_comment"> reset recs greater than percent change - keep lte */</em></em>
+<a class="jxr_linenumber" name="267" href="#267">267</a>         sqlText.append(<span class="jxr_string">"UPDATE LD_BCN_BUILD_EXSALTOT05_MT \n"</span>);
+<a class="jxr_linenumber" name="268" href="#268">268</a>         sqlText.append(<span class="jxr_string">"SET USE_FLAG = 'N' \n"</span>);
+<a class="jxr_linenumber" name="269" href="#269">269</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="270" href="#270">270</a>         sqlText.append(<span class="jxr_string">" AND ROUND((((sal_amt - res_csf_amt) / res_csf_amt) * 100),1) &gt; ? \n"</span>);
+<a class="jxr_linenumber" name="271" href="#271">271</a>         sqlText.append(<span class="jxr_string">" AND res_csf_amt &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="272" href="#272">272</a>         sqlText.append(<span class="jxr_string">" AND sal_amt &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="273" href="#273">273</a>         
+<a class="jxr_linenumber" name="274" href="#274">274</a>         reportReasonStatisticsWithThreshold.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="275" href="#275">275</a>         sqlText.delete(0, sqlText.length());   
+<a class="jxr_linenumber" name="276" href="#276">276</a>         
+<a class="jxr_linenumber" name="277" href="#277">277</a>         <em class="jxr_comment">/*<em class="jxr_comment"> make a copy of the detailed rows by organization for continuing people */</em></em>
+<a class="jxr_linenumber" name="278" href="#278">278</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT06_MT \n"</span>);
+<a class="jxr_linenumber" name="279" href="#279">279</a>         sqlText.append(<span class="jxr_string">"(SESID, ORG_FIN_COA_CD, ORG_CD, EMPLID, POS_CSF_AMT,  \n"</span>);
+<a class="jxr_linenumber" name="280" href="#280">280</a>         sqlText.append(<span class="jxr_string">" APPT_RQST_AMT, APPT_RQST_FTE_QTY, INIT_RQST_AMT, INIT_RQST_FTE) \n"</span>);
+<a class="jxr_linenumber" name="281" href="#281">281</a>         sqlText.append(<span class="jxr_string">"SELECT DISTINCT ?, ctrl.sel_org_fin_coa, ctrl.sel_org_cd, ssni.emplid, ssni.res_csf_amt, \n"</span>);
+<a class="jxr_linenumber" name="282" href="#282">282</a>         sqlText.append(<span class="jxr_string">" ssni.sal_amt, ssni.sal_fte, 0, 0 \n"</span>);
+<a class="jxr_linenumber" name="283" href="#283">283</a>         sqlText.append(<span class="jxr_string">"FROM LD_BCN_CTRL_LIST_T ctrl, LD_PNDBC_APPTFND_T bcaf, LD_BCN_OBJ_PICK_T pick, LD_BCN_BUILD_EXSALTOT05_MT ssni \n"</span>);
+<a class="jxr_linenumber" name="284" href="#284">284</a>         sqlText.append(<span class="jxr_string">"WHERE ssni.res_csf_amt &lt;&gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="285" href="#285">285</a>         sqlText.append(<span class="jxr_string">" AND ssni.use_flag = 'Y' \n"</span>);
+<a class="jxr_linenumber" name="286" href="#286">286</a>         sqlText.append(<span class="jxr_string">" AND ctrl.person_unvl_id = ? \n"</span>);
+<a class="jxr_linenumber" name="287" href="#287">287</a>         sqlText.append(<span class="jxr_string">" AND bcaf.univ_fiscal_yr = ctrl.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="288" href="#288">288</a>         sqlText.append(<span class="jxr_string">" AND bcaf.fin_coa_cd = ctrl.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="289" href="#289">289</a>         sqlText.append(<span class="jxr_string">" AND bcaf.account_nbr = ctrl.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="290" href="#290">290</a>         sqlText.append(<span class="jxr_string">" AND bcaf.sub_acct_nbr = ctrl.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="291" href="#291">291</a>         sqlText.append(<span class="jxr_string">" AND bcaf.emplid = ssni.emplid \n"</span>);
+<a class="jxr_linenumber" name="292" href="#292">292</a>         sqlText.append(<span class="jxr_string">" AND ssni.sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="293" href="#293">293</a>         sqlText.append(<span class="jxr_string">" AND bcaf.fin_object_cd = pick.fin_object_cd \n"</span>);
+<a class="jxr_linenumber" name="294" href="#294">294</a>         sqlText.append(<span class="jxr_string">" AND pick.person_unvl_id = ctrl.person_unvl_id \n"</span>);
+<a class="jxr_linenumber" name="295" href="#295">295</a>         sqlText.append(<span class="jxr_string">" AND pick.select_flag &gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="296" href="#296">296</a>         
+<a class="jxr_linenumber" name="297" href="#297">297</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="298" href="#298">298</a>         sqlText.delete(0, sqlText.length()); 
+<a class="jxr_linenumber" name="299" href="#299">299</a>         
+<a class="jxr_linenumber" name="300" href="#300">300</a>         <em class="jxr_comment">/*<em class="jxr_comment"> create copy of detail rows by organization for new people (who do not get a raise and therefore satisfy any threshold tests) */</em></em>
+<a class="jxr_linenumber" name="301" href="#301">301</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_BUILD_EXSALTOT06_MT \n"</span>);
+<a class="jxr_linenumber" name="302" href="#302">302</a>         sqlText.append(<span class="jxr_string">"(SESID, ORG_FIN_COA_CD, ORG_CD, EMPLID, POS_CSF_AMT, \n"</span>);
+<a class="jxr_linenumber" name="303" href="#303">303</a>         sqlText.append(<span class="jxr_string">"  APPT_RQST_AMT, APPT_RQST_FTE_QTY, INIT_RQST_AMT, INIT_RQST_FTE) \n"</span>);
+<a class="jxr_linenumber" name="304" href="#304">304</a>         sqlText.append(<span class="jxr_string">"SELECT DISTINCT ?, ctrl.sel_org_fin_coa, ctrl.sel_org_cd, ssni.emplid, ssni.res_csf_amt, \n"</span>);
+<a class="jxr_linenumber" name="305" href="#305">305</a>         sqlText.append(<span class="jxr_string">" 0, 0, ssni.sal_amt, ssni.sal_fte \n"</span>);
+<a class="jxr_linenumber" name="306" href="#306">306</a>         sqlText.append(<span class="jxr_string">"FROM LD_BCN_CTRL_LIST_T ctrl, LD_PNDBC_APPTFND_T bcaf, LD_BCN_OBJ_PICK_T pick, LD_BCN_BUILD_EXSALTOT05_MT ssni \n"</span>);
+<a class="jxr_linenumber" name="307" href="#307">307</a>         sqlText.append(<span class="jxr_string">"WHERE ssni.res_csf_amt = 0 \n"</span>);
+<a class="jxr_linenumber" name="308" href="#308">308</a>         sqlText.append(<span class="jxr_string">" AND ssni.use_flag = 'Y' \n"</span>);
+<a class="jxr_linenumber" name="309" href="#309">309</a>         sqlText.append(<span class="jxr_string">" AND ctrl.person_unvl_id = ? \n"</span>);
+<a class="jxr_linenumber" name="310" href="#310">310</a>         sqlText.append(<span class="jxr_string">" AND bcaf.univ_fiscal_yr = ctrl.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="311" href="#311">311</a>         sqlText.append(<span class="jxr_string">" AND bcaf.fin_coa_cd = ctrl.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="312" href="#312">312</a>         sqlText.append(<span class="jxr_string">" AND bcaf.account_nbr = ctrl.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="313" href="#313">313</a>         sqlText.append(<span class="jxr_string">" AND bcaf.sub_acct_nbr = ctrl.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="314" href="#314">314</a>         sqlText.append(<span class="jxr_string">" AND bcaf.emplid = ssni.emplid \n"</span>);
+<a class="jxr_linenumber" name="315" href="#315">315</a>         sqlText.append(<span class="jxr_string">" AND ssni.sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="316" href="#316">316</a>         sqlText.append(<span class="jxr_string">" AND bcaf.fin_object_cd = pick.fin_object_cd \n"</span>);
+<a class="jxr_linenumber" name="317" href="#317">317</a>         sqlText.append(<span class="jxr_string">" AND pick.person_unvl_id = ctrl.person_unvl_id \n"</span>);
+<a class="jxr_linenumber" name="318" href="#318">318</a>         sqlText.append(<span class="jxr_string">" AND pick.select_flag &gt; 0 \n"</span>);
+<a class="jxr_linenumber" name="319" href="#319">319</a>           
+<a class="jxr_linenumber" name="320" href="#320">320</a>         reportReasonStatisticsWithNoThreshold.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="321" href="#321">321</a>         sqlText.delete(0, sqlText.length()); 
+<a class="jxr_linenumber" name="322" href="#322">322</a>           
+<a class="jxr_linenumber" name="323" href="#323">323</a>         <em class="jxr_comment">/*<em class="jxr_comment"> sum all the detailed rows and insert into the report table */</em></em>
+<a class="jxr_linenumber" name="324" href="#324">324</a>         sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_SLRY_TOT_T \n"</span>);
+<a class="jxr_linenumber" name="325" href="#325">325</a>         sqlText.append(<span class="jxr_string">"(PERSON_UNVL_ID, ORG_FIN_COA_CD, ORG_CD, POS_CSF_AMT, \n"</span>);
+<a class="jxr_linenumber" name="326" href="#326">326</a>         sqlText.append(<span class="jxr_string">"APPT_RQST_AMT, APPT_RQST_FTE_QTY, INIT_RQST_AMT, INIT_RQST_FTE_QTY) \n"</span>);
+<a class="jxr_linenumber" name="327" href="#327">327</a>         sqlText.append(<span class="jxr_string">"SELECT ?, org_fin_coa_cd, org_cd, ROUND(SUM(pos_csf_amt),0),\n"</span>);
+<a class="jxr_linenumber" name="328" href="#328">328</a>         sqlText.append(<span class="jxr_string">" SUM(appt_rqst_amt), SUM(appt_rqst_fte_qty), SUM(init_rqst_amt), SUM(init_rqst_fte) \n"</span>);
+<a class="jxr_linenumber" name="329" href="#329">329</a>         sqlText.append(<span class="jxr_string">"FROM  LD_BCN_BUILD_EXSALTOT06_MT \n"</span>);
+<a class="jxr_linenumber" name="330" href="#330">330</a>         sqlText.append(<span class="jxr_string">"WHERE sesid = ? \n"</span>);
+<a class="jxr_linenumber" name="331" href="#331">331</a>         sqlText.append(<span class="jxr_string">"GROUP BY org_fin_coa_cd, org_cd \n"</span>);
+<a class="jxr_linenumber" name="332" href="#332">332</a>         
+<a class="jxr_linenumber" name="333" href="#333">333</a>         updateReportsReasonStatisticsTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText));
+<a class="jxr_linenumber" name="334" href="#334">334</a>         sqlText.delete(0, sqlText.length()); 
+<a class="jxr_linenumber" name="335" href="#335">335</a>     }
+<a class="jxr_linenumber" name="336" href="#336">336</a> 
+<a class="jxr_linenumber" name="337" href="#337">337</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="338" href="#338">338</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="339" href="#339">339</a> <em class="jxr_javadoccomment">     * @see org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionReasonStatisticsReportDao#cleanReportsReasonStatisticsTable(java.lang.String)</em>
+<a class="jxr_linenumber" name="340" href="#340">340</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="341" href="#341">341</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> cleanReportsReasonStatisticsTable(String principalName) {
+<a class="jxr_linenumber" name="342" href="#342">342</a>         clearTempTableByUnvlId(<span class="jxr_string">"LD_BCN_SLRY_TOT_T"</span>, <span class="jxr_string">"PERSON_UNVL_ID"</span>, principalName);
+<a class="jxr_linenumber" name="343" href="#343">343</a>     }
+<a class="jxr_linenumber" name="344" href="#344">344</a>     
+<a class="jxr_linenumber" name="345" href="#345">345</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="346" href="#346">346</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="347" href="#347">347</a> <em class="jxr_javadoccomment">     * clears the rows for this session out of the work tables</em>
+<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_javadoccomment">     * @param idForSession--a unique identifier for the session</em>
+<a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="350" href="#350">350</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> cleanWorkTablesFromThisSession(String idForSession)
+<a class="jxr_linenumber" name="351" href="#351">351</a>     {
+<a class="jxr_linenumber" name="352" href="#352">352</a>         clearTempTableBySesId(<span class="jxr_string">"LD_BCN_BUILD_EXSALTOT01_MT"</span>, <span class="jxr_string">"SESID"</span>, idForSession);
+<a class="jxr_linenumber" name="353" href="#353">353</a>         clearTempTableBySesId(<span class="jxr_string">"LD_BCN_BUILD_EXSALTOT02_MT"</span>, <span class="jxr_string">"SESID"</span>, idForSession);
+<a class="jxr_linenumber" name="354" href="#354">354</a>         clearTempTableBySesId(<span class="jxr_string">"LD_BCN_BUILD_EXSALTOT03_MT"</span>, <span class="jxr_string">"SESID"</span>, idForSession);
+<a class="jxr_linenumber" name="355" href="#355">355</a>         clearTempTableBySesId(<span class="jxr_string">"LD_BCN_BUILD_EXSALTOT04_MT"</span>, <span class="jxr_string">"SESID"</span>, idForSession);
+<a class="jxr_linenumber" name="356" href="#356">356</a>         clearTempTableBySesId(<span class="jxr_string">"LD_BCN_BUILD_EXSALTOT05_MT"</span>, <span class="jxr_string">"SESID"</span>, idForSession);
+<a class="jxr_linenumber" name="357" href="#357">357</a>         clearTempTableBySesId(<span class="jxr_string">"LD_BCN_BUILD_EXSALTOT06_MT"</span>, <span class="jxr_string">"SESID"</span>, idForSession);
+<a class="jxr_linenumber" name="358" href="#358">358</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="359" href="#359">359</a> <em class="jxr_javadoccomment">         * this is necessary to clear any rows for the tables we have just updated from the OJB cache.  otherwise, subsequent calls to OJB will fetch the old, unupdated cached rows.</em>
+<a class="jxr_linenumber" name="360" href="#360">360</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="361" href="#361">361</a>         persistenceService.clearCache();
+<a class="jxr_linenumber" name="362" href="#362">362</a>     }
+<a class="jxr_linenumber" name="363" href="#363">363</a>     
+<a class="jxr_linenumber" name="364" href="#364">364</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="365" href="#365">365</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="366" href="#366">366</a> <em class="jxr_javadoccomment">     * works in both threshold and non-threshold mode to get the summary salary statistics and appointment attributes for each person</em>
+<a class="jxr_linenumber" name="367" href="#367">367</a> <em class="jxr_javadoccomment">     * @param principalName--the user running the report</em>
+<a class="jxr_linenumber" name="368" href="#368">368</a> <em class="jxr_javadoccomment">     * @param idForSession--a unique ID for the session of the user running the report</em>
+<a class="jxr_linenumber" name="369" href="#369">369</a> <em class="jxr_javadoccomment">     * @param previousFiscalYear--the fiscal year preceding the one for which we are preparing a budget</em>
+<a class="jxr_linenumber" name="370" href="#370">370</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="371" href="#371">371</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> adjustLastYearSalaryForAppointmentChanges(String principalName, String idForSession, Integer previousFiscalYear)
+<a class="jxr_linenumber" name="372" href="#372">372</a>     {
+<a class="jxr_linenumber" name="373" href="#373">373</a>         <em class="jxr_comment">//  strings to be inserted into SQL</em>
+<a class="jxr_linenumber" name="374" href="#374">374</a>         ArrayList&lt;String &gt;stringsToInsert = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(2);
+<a class="jxr_linenumber" name="375" href="#375">375</a>         stringsToInsert.add(BCConstants.VACANT_EMPLID);
+<a class="jxr_linenumber" name="376" href="#376">376</a>         stringsToInsert.add(BCConstants.AppointmentFundingDurationCodes.NONE.durationCode);
+<a class="jxr_linenumber" name="377" href="#377">377</a>         <em class="jxr_comment">// get base (CSF) and request appointment attributes for people with no leave indicated </em>
+<a class="jxr_linenumber" name="378" href="#378">378</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(0).getSQL(stringsToInsert), idForSession, principalName, idForSession);
+<a class="jxr_linenumber" name="379" href="#379">379</a>         <em class="jxr_comment">// get base (CSF) and request appointment attributes for people who are marked as going on leave next year</em>
+<a class="jxr_linenumber" name="380" href="#380">380</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(1).getSQL(stringsToInsert), idForSession, principalName, idForSession);
+<a class="jxr_linenumber" name="381" href="#381">381</a>         <em class="jxr_comment">// for each person, take the request appointment attributes from the record with the higest salary amount</em>
+<a class="jxr_linenumber" name="382" href="#382">382</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(2).getSQL(), idForSession, idForSession);
+<a class="jxr_linenumber" name="383" href="#383">383</a>         <em class="jxr_comment">// for each continuing person, take the base (CSF) appointment attributes from the record with the highest base salary amount</em>
+<a class="jxr_linenumber" name="384" href="#384">384</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(3).getSQL(), idForSession, idForSession, previousFiscalYear);
+<a class="jxr_linenumber" name="385" href="#385">385</a>         <em class="jxr_comment">// merge the appointment attributes and the sums of base and request salary and percent time into a single table</em>
+<a class="jxr_linenumber" name="386" href="#386">386</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(4).getSQL(), idForSession, idForSession);
+<a class="jxr_linenumber" name="387" href="#387">387</a>         <em class="jxr_comment">// restate the base (CSF) salary to account for changes in last year's appointment attributes</em>
+<a class="jxr_linenumber" name="388" href="#388">388</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(5).getSQL(), idForSession);
+<a class="jxr_linenumber" name="389" href="#389">389</a>         <em class="jxr_comment">// restate the base (CSF) salary to account for changes in attributes that affect FTE</em>
+<a class="jxr_linenumber" name="390" href="#390">390</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(6).getSQL(), idForSession);
+<a class="jxr_linenumber" name="391" href="#391">391</a>         <em class="jxr_comment">// calculate an request FTE for each person</em>
+<a class="jxr_linenumber" name="392" href="#392">392</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(7).getSQL(), idForSession);
+<a class="jxr_linenumber" name="393" href="#393">393</a>     }
+<a class="jxr_linenumber" name="394" href="#394">394</a>     
+<a class="jxr_linenumber" name="395" href="#395">395</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="396" href="#396">396</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="397" href="#397">397</a> <em class="jxr_javadoccomment">     * get detailed salary/FTE rows by person and organization for the continuing people to be reported </em>
+<a class="jxr_linenumber" name="398" href="#398">398</a> <em class="jxr_javadoccomment">     * @param principalName</em>
+<a class="jxr_linenumber" name="399" href="#399">399</a> <em class="jxr_javadoccomment">     * @param idForSession</em>
+<a class="jxr_linenumber" name="400" href="#400">400</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="401" href="#401">401</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> fetchIndividualDetailForContinuingPeople(String principalName, String idForSession)
+<a class="jxr_linenumber" name="402" href="#402">402</a>     {
+<a class="jxr_linenumber" name="403" href="#403">403</a>         <em class="jxr_comment">// salaries and FTE by EMPLID and organization for people in the payroll in the base budget year</em>
+<a class="jxr_linenumber" name="404" href="#404">404</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(8).getSQL(), idForSession, principalName, idForSession);
+<a class="jxr_linenumber" name="405" href="#405">405</a>     }
+<a class="jxr_linenumber" name="406" href="#406">406</a>     
+<a class="jxr_linenumber" name="407" href="#407">407</a>     
+<a class="jxr_linenumber" name="408" href="#408">408</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="409" href="#409">409</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="410" href="#410">410</a> <em class="jxr_javadoccomment">     * @see org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionReasonStatisticsReportDao#reportReasonStatisticsWithAThreshold(java.lang.String, java.lang.Integer, boolean, org.kuali.rice.kns.util.KualiDecimal)</em>
+<a class="jxr_linenumber" name="411" href="#411">411</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="412" href="#412">412</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> updateReasonStatisticsReportsWithAThreshold(String principalName, Integer previousFiscalYear, <strong class="jxr_keyword">boolean</strong> reportIncreasesAtOrAboveTheThreshold, KualiDecimal thresholdPercent) {
+<a class="jxr_linenumber" name="413" href="#413">413</a> 
+<a class="jxr_linenumber" name="414" href="#414">414</a>         <em class="jxr_comment">// get a unique session ID   </em>
+<a class="jxr_linenumber" name="415" href="#415">415</a>         String idForSession = (<strong class="jxr_keyword">new</strong> Guid()).toString();
+<a class="jxr_linenumber" name="416" href="#416">416</a>         cleanReportsReasonStatisticsTable(principalName);
+<a class="jxr_linenumber" name="417" href="#417">417</a>         <em class="jxr_comment">// build the list of constant strings to insert into the SQL</em>
+<a class="jxr_linenumber" name="418" href="#418">418</a>         ArrayList&lt;String&gt; stringsToInsert = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(1);
+<a class="jxr_linenumber" name="419" href="#419">419</a>         stringsToInsert.add(BCConstants.VACANT_EMPLID);
+<a class="jxr_linenumber" name="420" href="#420">420</a> 
+<a class="jxr_linenumber" name="421" href="#421">421</a>         <em class="jxr_comment">// for a report by threshold, we want everyone--exclude only vacant lines</em>
+<a class="jxr_linenumber" name="422" href="#422">422</a>         getSimpleJdbcTemplate().update(reportReasonStatisticsWithThreshold.get(0).getSQL(stringsToInsert), idForSession, principalName);
+<a class="jxr_linenumber" name="423" href="#423">423</a>         <em class="jxr_comment">// get all the salary and appointment information for those people</em>
+<a class="jxr_linenumber" name="424" href="#424">424</a>         adjustLastYearSalaryForAppointmentChanges(principalName, idForSession, previousFiscalYear);
+<a class="jxr_linenumber" name="425" href="#425">425</a>         
+<a class="jxr_linenumber" name="426" href="#426">426</a>         <em class="jxr_comment">// mark the rows to be excluded when we are screening with a threshold percent</em>
+<a class="jxr_linenumber" name="427" href="#427">427</a>         <em class="jxr_comment">// (KualiDecimal is not recognized as a type by java.sql--we have to convert it to its superclass BigDecimal)</em>
+<a class="jxr_linenumber" name="428" href="#428">428</a>         BigDecimal thresholdValue = thresholdPercent.bigDecimalValue();
+<a class="jxr_linenumber" name="429" href="#429">429</a>         <strong class="jxr_keyword">if</strong> (reportIncreasesAtOrAboveTheThreshold)
+<a class="jxr_linenumber" name="430" href="#430">430</a>         {
+<a class="jxr_linenumber" name="431" href="#431">431</a>             <em class="jxr_comment">// exclude everyone with increases less than the threshold</em>
+<a class="jxr_linenumber" name="432" href="#432">432</a>             getSimpleJdbcTemplate().update(reportReasonStatisticsWithThreshold.get(1).getSQL(), idForSession, thresholdValue);
+<a class="jxr_linenumber" name="433" href="#433">433</a>         }
+<a class="jxr_linenumber" name="434" href="#434">434</a>         <strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="435" href="#435">435</a>         {
+<a class="jxr_linenumber" name="436" href="#436">436</a>             <em class="jxr_comment">// exclude everyone with increases over the threshold</em>
+<a class="jxr_linenumber" name="437" href="#437">437</a>             getSimpleJdbcTemplate().update(reportReasonStatisticsWithThreshold.get(2).getSQL(), idForSession, thresholdValue);
+<a class="jxr_linenumber" name="438" href="#438">438</a>         }
+<a class="jxr_linenumber" name="439" href="#439">439</a>         
+<a class="jxr_linenumber" name="440" href="#440">440</a>         fetchIndividualDetailForContinuingPeople(principalName, idForSession);
+<a class="jxr_linenumber" name="441" href="#441">441</a>         sumTheDetailRowsToProduceTheReportData (principalName, idForSession);
+<a class="jxr_linenumber" name="442" href="#442">442</a>         
+<a class="jxr_linenumber" name="443" href="#443">443</a>         cleanWorkTablesFromThisSession(idForSession);
+<a class="jxr_linenumber" name="444" href="#444">444</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="445" href="#445">445</a> <em class="jxr_javadoccomment">         * this is necessary to clear any rows for the tables we have just updated from the OJB cache.  otherwise, subsequent calls to OJB will fetch the old, unupdated cached rows.</em>
+<a class="jxr_linenumber" name="446" href="#446">446</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="447" href="#447">447</a>         persistenceService.clearCache();
+<a class="jxr_linenumber" name="448" href="#448">448</a>     }
+<a class="jxr_linenumber" name="449" href="#449">449</a> 
+<a class="jxr_linenumber" name="450" href="#450">450</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="451" href="#451">451</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="452" href="#452">452</a> <em class="jxr_javadoccomment">     * @see org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionReasonStatisticsReportDao#reportReasonStatisticsWithoutAThreshold(java.lang.String, java.lang.Integer)</em>
+<a class="jxr_linenumber" name="453" href="#453">453</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="454" href="#454">454</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> updateReasonStatisticsReportsWithoutAThreshold(String principalName, Integer previousFiscalYear) {
+<a class="jxr_linenumber" name="455" href="#455">455</a>         <em class="jxr_comment">// get a unique session ID   </em>
+<a class="jxr_linenumber" name="456" href="#456">456</a>         String idForSession = (<strong class="jxr_keyword">new</strong> Guid()).toString();
+<a class="jxr_linenumber" name="457" href="#457">457</a>         cleanReportsReasonStatisticsTable(principalName);
+<a class="jxr_linenumber" name="458" href="#458">458</a>         
+<a class="jxr_linenumber" name="459" href="#459">459</a>         <em class="jxr_comment">// build the list of constant strings to insert into the SQL</em>
+<a class="jxr_linenumber" name="460" href="#460">460</a>         ArrayList&lt;String&gt; stringsToInsert = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(1);
+<a class="jxr_linenumber" name="461" href="#461">461</a>         stringsToInsert.add(BCConstants.VACANT_EMPLID);
+<a class="jxr_linenumber" name="462" href="#462">462</a> 
+<a class="jxr_linenumber" name="463" href="#463">463</a>         <em class="jxr_comment">// we want only people who have an attached reason code</em>
+<a class="jxr_linenumber" name="464" href="#464">464</a>         getSimpleJdbcTemplate().update(reportReasonStatisticsWithNoThreshold.get(0).getSQL(stringsToInsert), idForSession, principalName);
+<a class="jxr_linenumber" name="465" href="#465">465</a>         <em class="jxr_comment">// get all the salary and appointment information for those people</em>
+<a class="jxr_linenumber" name="466" href="#466">466</a>         adjustLastYearSalaryForAppointmentChanges(principalName, idForSession, previousFiscalYear);
+<a class="jxr_linenumber" name="467" href="#467">467</a>         
+<a class="jxr_linenumber" name="468" href="#468">468</a>         fetchIndividualDetailForContinuingPeople(principalName, idForSession);
+<a class="jxr_linenumber" name="469" href="#469">469</a>         <em class="jxr_comment">// when we are using a reason code and not a threshold, we want everyone with a reason code, not just continuing people</em>
+<a class="jxr_linenumber" name="470" href="#470">470</a>         <em class="jxr_comment">// new people have no percent increase, and so would not match any threshold, but should be included under this report option</em>
+<a class="jxr_linenumber" name="471" href="#471">471</a>         getSimpleJdbcTemplate().update(reportReasonStatisticsWithNoThreshold.get(1).getSQL(), idForSession, principalName, idForSession);
+<a class="jxr_linenumber" name="472" href="#472">472</a>         sumTheDetailRowsToProduceTheReportData (principalName, idForSession);
+<a class="jxr_linenumber" name="473" href="#473">473</a>         
+<a class="jxr_linenumber" name="474" href="#474">474</a>         cleanWorkTablesFromThisSession(idForSession);
+<a class="jxr_linenumber" name="475" href="#475">475</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="476" href="#476">476</a> <em class="jxr_javadoccomment">         * this is necessary to clear any rows for the tables we have just updated from the OJB cache.  otherwise, subsequent calls to OJB will fetch the old, unupdated cached rows.</em>
+<a class="jxr_linenumber" name="477" href="#477">477</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="478" href="#478">478</a>         persistenceService.clearCache();
+<a class="jxr_linenumber" name="479" href="#479">479</a>     }
+<a class="jxr_linenumber" name="480" href="#480">480</a>     
+<a class="jxr_linenumber" name="481" href="#481">481</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="482" href="#482">482</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="483" href="#483">483</a> <em class="jxr_javadoccomment">     * sum base and request amounts and FTE by organization to produce the data used by the report</em>
+<a class="jxr_linenumber" name="484" href="#484">484</a> <em class="jxr_javadoccomment">     * @param idForSession--the session of the user doing the report</em>
+<a class="jxr_linenumber" name="485" href="#485">485</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="486" href="#486">486</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> sumTheDetailRowsToProduceTheReportData (String principalName, String idForSession) {
+<a class="jxr_linenumber" name="487" href="#487">487</a>         getSimpleJdbcTemplate().update(updateReportsReasonStatisticsTable.get(9).getSQL(), principalName, idForSession);
+<a class="jxr_linenumber" name="488" href="#488">488</a>     }
+<a class="jxr_linenumber" name="489" href="#489">489</a>     
+<a class="jxr_linenumber" name="490" href="#490">490</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPersistenceService(PersistenceService persistenceService)
+<a class="jxr_linenumber" name="491" href="#491">491</a>     {
+<a class="jxr_linenumber" name="492" href="#492">492</a>         <strong class="jxr_keyword">this</strong>.persistenceService = persistenceService;
+<a class="jxr_linenumber" name="493" href="#493">493</a>     }
+<a class="jxr_linenumber" name="494" href="#494">494</a> 
+<a class="jxr_linenumber" name="495" href="#495">495</a> }
+<a class="jxr_linenumber" name="496" href="#496">496</a> 
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

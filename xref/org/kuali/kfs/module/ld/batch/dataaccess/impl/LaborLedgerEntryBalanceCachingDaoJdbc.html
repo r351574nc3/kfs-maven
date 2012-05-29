@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>LaborLedgerEntryBalanceCachingDaoJdbc xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../../apidocs/org/kuali/kfs/module/ld/batch/dataaccess/impl/LaborLedgerEntryBalanceCachingDaoJdbc.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2011 The Kuali Foundation.</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Educational Community License, Version 2.0 (the "License");</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * <a href="http://www.opensource.org/licenses/ecl2.php" target="alexandria_uri">http://www.opensource.org/licenses/ecl2.php</a></em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_comment"> * See the License for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment"> * limitations under the License.</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.kuali.kfs.module.ld.batch.dataaccess.impl;
+<a class="jxr_linenumber" name="17" href="#17">17</a>  
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.gl.batch.dataaccess.impl.LedgerEntryBalanceCachingDaoJdbc;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment"> * This class...</em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../org/kuali/kfs/module/ld/batch/dataaccess/impl/LaborLedgerEntryBalanceCachingDaoJdbc.html">LaborLedgerEntryBalanceCachingDaoJdbc</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../../org/kuali/kfs/gl/batch/dataaccess/impl/LedgerEntryBalanceCachingDaoJdbc.html">LedgerEntryBalanceCachingDaoJdbc</a> {
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
+<a class="jxr_linenumber" name="28" href="#28">28</a>      <strong class="jxr_keyword">public</strong> List compareBalanceHistory(Class balanceClass, Class historyClass, <strong class="jxr_keyword">int</strong> pastYears) {
+<a class="jxr_linenumber" name="29" href="#29">29</a>          List&lt;Map&lt;String, Object&gt;&gt; data = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  
+<a class="jxr_linenumber" name="31" href="#31">31</a>          String balanceTable = getPersistenceStructureService().getTableName(balanceClass);
+<a class="jxr_linenumber" name="32" href="#32">32</a>          String historyTable = getPersistenceStructureService().getTableName(historyClass);
+<a class="jxr_linenumber" name="33" href="#33">33</a>         
+<a class="jxr_linenumber" name="34" href="#34">34</a>          <strong class="jxr_keyword">int</strong> fiscalYear = getUniversityDateService().getCurrentFiscalYear()-pastYears;
+<a class="jxr_linenumber" name="35" href="#35">35</a>          
+<a class="jxr_linenumber" name="36" href="#36">36</a>          StringBuilder queryBuilder = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="37" href="#37">37</a>          
+<a class="jxr_linenumber" name="38" href="#38">38</a>          queryBuilder.append(<span class="jxr_string">"select bh.* "</span>);
+<a class="jxr_linenumber" name="39" href="#39">39</a>          queryBuilder.append(<span class="jxr_string">"from "</span>+historyTable+<span class="jxr_string">" bh  "</span>);
+<a class="jxr_linenumber" name="40" href="#40">40</a>          queryBuilder.append(<span class="jxr_string">"left join ( select "</span>);
+<a class="jxr_linenumber" name="41" href="#41">41</a>          queryBuilder.append(<span class="jxr_string">"UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD, FIN_SUB_OBJ_CD,  FIN_BALANCE_TYP_CD, FIN_OBJ_TYP_CD, POSITION_NBR, EMPLID, "</span>);
+<a class="jxr_linenumber" name="42" href="#42">42</a>          queryBuilder.append(<span class="jxr_string">"ACLN_ANNL_BAL_AMT, FIN_BEG_BAL_LN_AMT, CONTR_GR_BB_AC_AMT, MO1_ACCT_LN_AMT, MO2_ACCT_LN_AMT, MO3_ACCT_LN_AMT, MO4_ACCT_LN_AMT, MO5_ACCT_LN_AMT, MO6_ACCT_LN_AMT, MO7_ACCT_LN_AMT, MO8_ACCT_LN_AMT, MO9_ACCT_LN_AMT, MO10_ACCT_LN_AMT, MO11_ACCT_LN_AMT, MO12_ACCT_LN_AMT, MO13_ACCT_LN_AMT "</span>);
+<a class="jxr_linenumber" name="43" href="#43">43</a>          queryBuilder.append(<span class="jxr_string">"from "</span>+balanceTable+<span class="jxr_string">" ) e on "</span>);
+<a class="jxr_linenumber" name="44" href="#44">44</a>          queryBuilder.append(<span class="jxr_string">"bh.UNIV_FISCAL_YR = e.UNIV_FISCAL_YR and bh.FIN_COA_CD = e.FIN_COA_CD and bh.FIN_OBJECT_CD = e.FIN_OBJECT_CD and bh.FIN_BALANCE_TYP_CD = e.FIN_BALANCE_TYP_CD and bh.SUB_ACCT_NBR = e.SUB_ACCT_NBR and bh.ACCOUNT_NBR = e.ACCOUNT_NBR and bh.FIN_SUB_OBJ_CD = e.FIN_SUB_OBJ_CD and bh.FIN_OBJ_TYP_CD = e.FIN_OBJ_TYP_CD and bh.POSITION_NBR = e.POSITION_NBR and bh.EMPLID = e.EMPLID "</span>);
+<a class="jxr_linenumber" name="45" href="#45">45</a>          queryBuilder.append(<span class="jxr_string">" where e.UNIV_FISCAL_YR &gt;= "</span>+fiscalYear+<span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="46" href="#46">46</a>          queryBuilder.append(<span class="jxr_string">"and (bh.ACLN_ANNL_BAL_AMT &lt;&gt; e.ACLN_ANNL_BAL_AMT or bh.FIN_BEG_BAL_LN_AMT &lt;&gt; e.FIN_BEG_BAL_LN_AMT or bh.CONTR_GR_BB_AC_AMT &lt;&gt; e.CONTR_GR_BB_AC_AMT or  "</span>);
+<a class="jxr_linenumber" name="47" href="#47">47</a>          queryBuilder.append(<span class="jxr_string">"bh.MO1_ACCT_LN_AMT &lt;&gt; e.MO1_ACCT_LN_AMT or bh.MO2_ACCT_LN_AMT &lt;&gt; e.MO2_ACCT_LN_AMT or bh.MO3_ACCT_LN_AMT &lt;&gt; e.MO3_ACCT_LN_AMT or bh.MO4_ACCT_LN_AMT &lt;&gt; e.MO4_ACCT_LN_AMT or bh.MO5_ACCT_LN_AMT &lt;&gt; e.MO5_ACCT_LN_AMT or bh.MO6_ACCT_LN_AMT &lt;&gt; e.MO6_ACCT_LN_AMT or  "</span>);
+<a class="jxr_linenumber" name="48" href="#48">48</a>          queryBuilder.append(<span class="jxr_string">"bh.MO7_ACCT_LN_AMT &lt;&gt; e.MO7_ACCT_LN_AMT or bh.MO8_ACCT_LN_AMT &lt;&gt; e.MO8_ACCT_LN_AMT or bh.MO9_ACCT_LN_AMT &lt;&gt; e.MO9_ACCT_LN_AMT or bh.MO10_ACCT_LN_AMT &lt;&gt; e.MO10_ACCT_LN_AMT or bh.MO11_ACCT_LN_AMT &lt;&gt; e.MO11_ACCT_LN_AMT or bh.MO12_ACCT_LN_AMT &lt;&gt; e.MO12_ACCT_LN_AMT or  "</span>);
+<a class="jxr_linenumber" name="49" href="#49">49</a>          queryBuilder.append(<span class="jxr_string">"bh.MO13_ACCT_LN_AMT &lt;&gt; e.MO13_ACCT_LN_AMT) "</span>);
+<a class="jxr_linenumber" name="50" href="#50">50</a>          
+<a class="jxr_linenumber" name="51" href="#51">51</a>          data = getSimpleJdbcTemplate().queryForList(queryBuilder.toString());
+<a class="jxr_linenumber" name="52" href="#52">52</a>  
+<a class="jxr_linenumber" name="53" href="#53">53</a>          <strong class="jxr_keyword">return</strong> data;
+<a class="jxr_linenumber" name="54" href="#54">54</a>          
+<a class="jxr_linenumber" name="55" href="#55">55</a>      }
+<a class="jxr_linenumber" name="56" href="#56">56</a>      
+<a class="jxr_linenumber" name="57" href="#57">57</a>      
+<a class="jxr_linenumber" name="58" href="#58">58</a>  }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

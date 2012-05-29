@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>AccountBalanceObjectDaoJdbc xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../apidocs/org/kuali/kfs/gl/dataaccess/impl/AccountBalanceObjectDaoJdbc.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2011 The Kuali Foundation.</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Educational Community License, Version 2.0 (the "License");</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * <a href="http://www.opensource.org/licenses/ecl2.php" target="alexandria_uri">http://www.opensource.org/licenses/ecl2.php</a></em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_comment"> * See the License for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment"> * limitations under the License.</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.kuali.kfs.gl.dataaccess.impl;
+<a class="jxr_linenumber" name="17" href="#17">17</a>  
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.math.BigDecimal;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.gl.GeneralLedgerConstants;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.gl.dataaccess.AccountBalanceObjectDao;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.gl.service.AccountBalanceService;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.KFSConstants;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.businessobject.SystemOptions;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.businessobject.UniversityDate;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.context.SpringContext;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.service.UniversityDateService;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.util.Guid;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.springframework.dao.IncorrectResultSizeDataAccessException;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.springframework.jdbc.support.rowset.SqlRowSet;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment"> * Calculate Balance By Object Balance Inquiry Screen</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/kuali/kfs/gl/dataaccess/impl/AccountBalanceObjectDaoJdbc.html">AccountBalanceObjectDaoJdbc</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/kuali/kfs/gl/dataaccess/impl/AccountBalanceDaoJdbcBase.html">AccountBalanceDaoJdbcBase</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../org/kuali/kfs/gl/dataaccess/AccountBalanceObjectDao.html">AccountBalanceObjectDao</a> {
+<a class="jxr_linenumber" name="39" href="#39">39</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountBalanceObjectDaoJdbc.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="40" href="#40">40</a>  
+<a class="jxr_linenumber" name="41" href="#41">41</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     * Returns a collection of report data for the account balance by object inquiry</em>
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * @param universityFiscalYear the university fiscal year of reported on account balances</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     * @param chartOfAccountsCode the chart of accounts code of reported on account balances</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment">     * @param accountNumber the account number of reported on account balances</em>
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_javadoccomment">     * @param financialObjectLevelCode the object level code of reported on account balances</em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     * @param financialReportingSortCode the sort code for reported results</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     * @param isCostShareExcluded whether cost share account balances should be excluded from the query or not</em>
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment">     * @param isConsolidated whether the results of the query should be consolidated</em>
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment">     * @param pendingEntriesCode whether this query should account for no pending entries, approved pending entries, or all pending entries</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     * @return a List of Maps with the results of the query</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     * @see org.kuali.kfs.gl.dataaccess.AccountBalanceDao#findAccountBalanceByObject(java.lang.Integer, java.lang.String,</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     *      java.lang.String, java.lang.String, java.lang.String, boolean, boolean, int)</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">public</strong> List findAccountBalanceByObject(Integer universityFiscalYear, String chartOfAccountsCode, String accountNumber, String financialObjectLevelCode, String financialReportingSortCode, <strong class="jxr_keyword">boolean</strong> isCostShareExcluded, <strong class="jxr_keyword">boolean</strong> isConsolidated, <strong class="jxr_keyword">int</strong> pendingEntriesCode) {
+<a class="jxr_linenumber" name="57" href="#57">57</a>          LOG.debug(<span class="jxr_string">"findAccountBalanceByObject() started"</span>);
+<a class="jxr_linenumber" name="58" href="#58">58</a>  
+<a class="jxr_linenumber" name="59" href="#59">59</a>          <a href="../../../../../../org/kuali/kfs/sys/businessobject/SystemOptions.html">SystemOptions</a> options = optionsService.getOptions(universityFiscalYear);
+<a class="jxr_linenumber" name="60" href="#60">60</a>          List&lt;Map&lt;String, Object&gt;&gt; data = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="61" href="#61">61</a>          String sessionId = <strong class="jxr_keyword">new</strong> Guid().toString();
+<a class="jxr_linenumber" name="62" href="#62">62</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="63" href="#63">63</a>              <em class="jxr_comment">// Delete any data for this session if it exists already</em>
+<a class="jxr_linenumber" name="64" href="#64">64</a>              clearTempTable(<span class="jxr_string">"FP_BAL_BY_OBJ_MT"</span>, <span class="jxr_string">"SESID"</span>, sessionId);
+<a class="jxr_linenumber" name="65" href="#65">65</a>              clearTempTable(<span class="jxr_string">"FP_INTERIM1_OBJ_MT"</span>, <span class="jxr_string">"SESID"</span>, sessionId);
+<a class="jxr_linenumber" name="66" href="#66">66</a>  
+<a class="jxr_linenumber" name="67" href="#67">67</a>              <em class="jxr_comment">// Add in all the data we need</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>              getSimpleJdbcTemplate().update(<span class="jxr_string">"INSERT INTO FP_INTERIM1_OBJ_MT (UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR,FIN_OBJECT_CD, FIN_SUB_OBJ_CD, CURR_BDLN_BAL_AMT,"</span> 
+<a class="jxr_linenumber" name="69" href="#69">69</a>                      + <span class="jxr_string">" ACLN_ACTLS_BAL_AMT, ACLN_ENCUM_BAL_AMT, TIMESTAMP,SESID) "</span> 
+<a class="jxr_linenumber" name="70" href="#70">70</a>                      + <span class="jxr_string">" SELECT a.UNIV_FISCAL_YR, a.FIN_COA_CD, a.ACCOUNT_NBR, a.SUB_ACCT_NBR,"</span> 
+<a class="jxr_linenumber" name="71" href="#71">71</a>                      + <span class="jxr_string">" a.FIN_OBJECT_CD, a.FIN_SUB_OBJ_CD, a.CURR_BDLN_BAL_AMT,a.ACLN_ACTLS_BAL_AMT, a.ACLN_ENCUM_BAL_AMT, a.TIMESTAMP, ?"</span> 
+<a class="jxr_linenumber" name="72" href="#72">72</a>                      + <span class="jxr_string">" FROM GL_ACCT_BALANCES_T a, CA_OBJECT_CODE_T o WHERE a.univ_fiscal_yr = ? "</span> 
+<a class="jxr_linenumber" name="73" href="#73">73</a>                      + <span class="jxr_string">" AND a.fin_coa_cd = ?"</span> 
+<a class="jxr_linenumber" name="74" href="#74">74</a>                      + <span class="jxr_string">" AND a.account_nbr = ?"</span> 
+<a class="jxr_linenumber" name="75" href="#75">75</a>                      + <span class="jxr_string">" AND a.univ_fiscal_yr = o.univ_fiscal_yr AND a.fin_coa_cd = o.fin_coa_cd AND a.fin_object_cd = o.fin_object_cd "</span> 
+<a class="jxr_linenumber" name="76" href="#76">76</a>                      + <span class="jxr_string">"AND o.fin_obj_level_cd = ?"</span>, sessionId, universityFiscalYear, chartOfAccountsCode, accountNumber, financialObjectLevelCode);
+<a class="jxr_linenumber" name="77" href="#77">77</a>  
+<a class="jxr_linenumber" name="78" href="#78">78</a>              <em class="jxr_comment">// Summarize pending entries into fp_interim1_level_mt if necessary</em>
+<a class="jxr_linenumber" name="79" href="#79">79</a>              <strong class="jxr_keyword">if</strong> ((pendingEntriesCode == AccountBalanceService.PENDING_ALL) || (pendingEntriesCode == AccountBalanceService.PENDING_APPROVED)) {
+<a class="jxr_linenumber" name="80" href="#80">80</a>                  <strong class="jxr_keyword">if</strong> (getMatchingPendingEntriesByObject(options, universityFiscalYear, chartOfAccountsCode, accountNumber, financialObjectLevelCode, isCostShareExcluded, pendingEntriesCode, sessionId)) {
+<a class="jxr_linenumber" name="81" href="#81">81</a>                      summarizePendingEntriesByObject(options, sessionId);
+<a class="jxr_linenumber" name="82" href="#82">82</a>                  }
+<a class="jxr_linenumber" name="83" href="#83">83</a>              }
+<a class="jxr_linenumber" name="84" href="#84">84</a>  
+<a class="jxr_linenumber" name="85" href="#85">85</a>              <em class="jxr_comment">// Delete what we don't need</em>
+<a class="jxr_linenumber" name="86" href="#86">86</a>              <strong class="jxr_keyword">if</strong> (isCostShareExcluded) {
+<a class="jxr_linenumber" name="87" href="#87">87</a>                  purgeCostShareEntries(<span class="jxr_string">"FP_INTERIM1_OBJ_MT"</span>, <span class="jxr_string">"sesid"</span>, sessionId);
+<a class="jxr_linenumber" name="88" href="#88">88</a>              }
+<a class="jxr_linenumber" name="89" href="#89">89</a>  
+<a class="jxr_linenumber" name="90" href="#90">90</a>              <em class="jxr_comment">// Summarize</em>
+<a class="jxr_linenumber" name="91" href="#91">91</a>              <strong class="jxr_keyword">if</strong> (isConsolidated) {
+<a class="jxr_linenumber" name="92" href="#92">92</a>                  getSimpleJdbcTemplate().update(<span class="jxr_string">"INSERT INTO FP_BAL_BY_OBJ_MT (SUB_ACCT_NBR, FIN_OBJECT_CD, CURR_BDLN_BAL_AMT, ACLN_ACTLS_BAL_AMT, ACLN_ENCUM_BAL_AMT, FIN_REPORT_SORT_CD, "</span> 
+<a class="jxr_linenumber" name="93" href="#93">93</a>                          + <span class="jxr_string">"SESID) SELECT  '*ALL*',fin_object_cd, SUM(curr_bdln_bal_amt),SUM(acln_actls_bal_amt), SUM(acln_encum_bal_amt),"</span> 
+<a class="jxr_linenumber" name="94" href="#94">94</a>                          + <span class="jxr_string">"'B', ? "</span> 
+<a class="jxr_linenumber" name="95" href="#95">95</a>                          + <span class="jxr_string">" FROM FP_INTERIM1_OBJ_MT WHERE FP_INTERIM1_OBJ_MT.SESID  = ?"</span> 
+<a class="jxr_linenumber" name="96" href="#96">96</a>                          + <span class="jxr_string">" GROUP BY fin_object_cd"</span>, sessionId, sessionId);
+<a class="jxr_linenumber" name="97" href="#97">97</a>              }
+<a class="jxr_linenumber" name="98" href="#98">98</a>              <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="99" href="#99">99</a>                  getSimpleJdbcTemplate().update(<span class="jxr_string">"INSERT INTO FP_BAL_BY_OBJ_MT (SUB_ACCT_NBR, FIN_OBJECT_CD, CURR_BDLN_BAL_AMT, ACLN_ACTLS_BAL_AMT, ACLN_ENCUM_BAL_AMT, FIN_REPORT_SORT_CD, "</span> 
+<a class="jxr_linenumber" name="100" href="#100">100</a>                         + <span class="jxr_string">"SESID) SELECT  sub_acct_nbr, fin_object_cd, SUM(curr_bdln_bal_amt), SUM(acln_actls_bal_amt),SUM(acln_encum_bal_amt), "</span> 
+<a class="jxr_linenumber" name="101" href="#101">101</a>                         + <span class="jxr_string">" 'B', ? "</span> 
+<a class="jxr_linenumber" name="102" href="#102">102</a>                         + <span class="jxr_string">" FROM FP_INTERIM1_OBJ_MT WHERE FP_INTERIM1_OBJ_MT.SESID = ? "</span> 
+<a class="jxr_linenumber" name="103" href="#103">103</a>                         + <span class="jxr_string">" GROUP BY sub_acct_nbr, fin_object_cd"</span>, sessionId, sessionId);
+<a class="jxr_linenumber" name="104" href="#104">104</a>             }
+<a class="jxr_linenumber" name="105" href="#105">105</a> 
+<a class="jxr_linenumber" name="106" href="#106">106</a>             <em class="jxr_comment">// Here's the data</em>
+<a class="jxr_linenumber" name="107" href="#107">107</a>             data = getSimpleJdbcTemplate().queryForList(<span class="jxr_string">"select SUB_ACCT_NBR, FIN_OBJECT_CD, CURR_BDLN_BAL_AMT, ACLN_ACTLS_BAL_AMT, ACLN_ENCUM_BAL_AMT, FIN_REPORT_SORT_CD from FP_BAL_BY_OBJ_MT "</span> 
+<a class="jxr_linenumber" name="108" href="#108">108</a>                     + <span class="jxr_string">" where SESID = ? "</span> + <span class="jxr_string">" order by fin_object_cd"</span>, sessionId);
+<a class="jxr_linenumber" name="109" href="#109">109</a>         }
+<a class="jxr_linenumber" name="110" href="#110">110</a>         <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="111" href="#111">111</a>             <em class="jxr_comment">// Clean up everything</em>
+<a class="jxr_linenumber" name="112" href="#112">112</a>             clearTempTable(<span class="jxr_string">"FP_BAL_BY_OBJ_MT"</span>, <span class="jxr_string">"SESID"</span>, sessionId);
+<a class="jxr_linenumber" name="113" href="#113">113</a>             clearTempTable(<span class="jxr_string">"FP_INTERIM1_OBJ_MT"</span>, <span class="jxr_string">"SESID"</span>, sessionId);
+<a class="jxr_linenumber" name="114" href="#114">114</a>             clearTempTable(<span class="jxr_string">"GL_PENDING_ENTRY_MT"</span>, <span class="jxr_string">"SESID"</span>, sessionId);
+<a class="jxr_linenumber" name="115" href="#115">115</a>         }
+<a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">return</strong> data;
+<a class="jxr_linenumber" name="117" href="#117">117</a>     }
+<a class="jxr_linenumber" name="118" href="#118">118</a> 
+<a class="jxr_linenumber" name="119" href="#119">119</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     * Summarizes all the pending ledger entries that would need to be reported on by this inquiry, </em>
+<a class="jxr_linenumber" name="121" href="#121">121</a> <em class="jxr_javadoccomment">     * and saves all of that data to a temporary table</em>
+<a class="jxr_linenumber" name="122" href="#122">122</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     * @param options a set of system options</em>
+<a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * @param sessionId the unique web id of the currently inquiring user, used as a key for the temp table</em>
+<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> summarizePendingEntriesByObject(<a href="../../../../../../org/kuali/kfs/sys/businessobject/SystemOptions.html">SystemOptions</a> options, String sessionId) {
+<a class="jxr_linenumber" name="127" href="#127">127</a>         LOG.debug(<span class="jxr_string">"summarizePendingEntriesByObject() started"</span>);
+<a class="jxr_linenumber" name="128" href="#128">128</a> 
+<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="130" href="#130">130</a> 
+<a class="jxr_linenumber" name="131" href="#131">131</a>             String balanceStatementSql = <span class="jxr_string">"SELECT CURR_BDLN_BAL_AMT,ACLN_ACTLS_BAL_AMT,ACLN_ENCUM_BAL_AMT "</span> 
+<a class="jxr_linenumber" name="132" href="#132">132</a>                     + <span class="jxr_string">"FROM FP_INTERIM1_OBJ_MT "</span> 
+<a class="jxr_linenumber" name="133" href="#133">133</a>                     + <span class="jxr_string">"WHERE sesid = ? AND univ_fiscal_yr = ? AND fin_coa_cd = ? AND account_nbr = ? AND sub_acct_nbr = ?"</span> 
+<a class="jxr_linenumber" name="134" href="#134">134</a>                     + <span class="jxr_string">" AND fin_object_cd = ? AND fin_sub_obj_cd = ?"</span>;
+<a class="jxr_linenumber" name="135" href="#135">135</a> 
+<a class="jxr_linenumber" name="136" href="#136">136</a>             String updateBalanceStatementSql = <span class="jxr_string">"UPDATE FP_INTERIM1_OBJ_MT "</span> 
+<a class="jxr_linenumber" name="137" href="#137">137</a>                     + <span class="jxr_string">" SET curr_bdln_bal_amt = ?,acln_actls_bal_amt = ?,acln_encum_bal_amt = ? "</span> 
+<a class="jxr_linenumber" name="138" href="#138">138</a>                     + <span class="jxr_string">" WHERE sesid = ? AND univ_fiscal_yr = ? AND fin_coa_cd = ? AND account_nbr = ? AND sub_acct_nbr = ?"</span> 
+<a class="jxr_linenumber" name="139" href="#139">139</a>                     + <span class="jxr_string">" AND fin_object_cd = ? AND fin_sub_obj_cd = ?"</span>;
+<a class="jxr_linenumber" name="140" href="#140">140</a> 
+<a class="jxr_linenumber" name="141" href="#141">141</a>             String insertBalanceStatementSql = <span class="jxr_string">"INSERT INTO FP_INTERIM1_OBJ_MT (UNIV_FISCAL_YR, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD, "</span> 
+<a class="jxr_linenumber" name="142" href="#142">142</a>                     + <span class="jxr_string">"FIN_SUB_OBJ_CD, CURR_BDLN_BAL_AMT, ACLN_ACTLS_BAL_AMT, ACLN_ENCUM_BAL_AMT, TIMESTAMP, SESID) "</span> 
+<a class="jxr_linenumber" name="143" href="#143">143</a>                     + <span class="jxr_string">"VALUES (?,?,?,?,?,?,?,?,?,"</span> + getDbPlatform().getCurTimeFunction() + <span class="jxr_string">",?)"</span>;
+<a class="jxr_linenumber" name="144" href="#144">144</a> 
+<a class="jxr_linenumber" name="145" href="#145">145</a>             SqlRowSet pendingEntryRowSet = getJdbcTemplate().queryForRowSet(<span class="jxr_string">"SELECT b.FIN_OFFST_GNRTN_CD,t.FIN_OBJTYP_DBCR_CD,e.* "</span> 
+<a class="jxr_linenumber" name="146" href="#146">146</a>                     + <span class="jxr_string">"FROM GL_PENDING_ENTRY_MT e,CA_OBJ_TYPE_T t,CA_BALANCE_TYPE_T b "</span> + <span class="jxr_string">"WHERE e.SESID = ?"</span> 
+<a class="jxr_linenumber" name="147" href="#147">147</a>                     + <span class="jxr_string">" AND e.FIN_OBJ_TYP_CD = t.FIN_OBJ_TYP_CD AND e.fin_balance_typ_cd = b.fin_balance_typ_cd "</span> 
+<a class="jxr_linenumber" name="148" href="#148">148</a>                     + <span class="jxr_string">"ORDER BY e.univ_fiscal_yr,e.account_nbr,e.sub_acct_nbr,e.fin_object_cd,e.fin_sub_obj_cd,e.fin_obj_typ_cd"</span>, <strong class="jxr_keyword">new</strong> Object[] { sessionId });
+<a class="jxr_linenumber" name="149" href="#149">149</a> 
+<a class="jxr_linenumber" name="150" href="#150">150</a> 
+<a class="jxr_linenumber" name="151" href="#151">151</a>             <strong class="jxr_keyword">int</strong> updateCount = 0;
+<a class="jxr_linenumber" name="152" href="#152">152</a>             <strong class="jxr_keyword">int</strong> insertCount = 0;
+<a class="jxr_linenumber" name="153" href="#153">153</a>             <strong class="jxr_keyword">while</strong> (pendingEntryRowSet.next()) {
+<a class="jxr_linenumber" name="154" href="#154">154</a> 
+<a class="jxr_linenumber" name="155" href="#155">155</a>                 Map&lt;String, Object&gt; balance = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="156" href="#156">156</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="157" href="#157">157</a>                     balance = getSimpleJdbcTemplate().queryForMap(balanceStatementSql, sessionId, pendingEntryRowSet.getInt(GeneralLedgerConstants.ColumnNames.UNIVERSITY_FISCAL_YEAR), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.CHART_OF_ACCOUNTS_CODE), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.ACCOUNT_NUMBER), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.SUB_ACCOUNT_NUMBER), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.OBJECT_CODE), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.SUB_OBJECT_CODE));
+<a class="jxr_linenumber" name="158" href="#158">158</a>                 }
+<a class="jxr_linenumber" name="159" href="#159">159</a>                 <strong class="jxr_keyword">catch</strong> (IncorrectResultSizeDataAccessException ex) {
+<a class="jxr_linenumber" name="160" href="#160">160</a>                     <strong class="jxr_keyword">if</strong> (ex.getActualSize() != 0) {
+<a class="jxr_linenumber" name="161" href="#161">161</a>                         LOG.error(<span class="jxr_string">"balance request sql returned more than one row, aborting"</span>, ex);
+<a class="jxr_linenumber" name="162" href="#162">162</a>                         <strong class="jxr_keyword">throw</strong> ex;
+<a class="jxr_linenumber" name="163" href="#163">163</a>                     }
+<a class="jxr_linenumber" name="164" href="#164">164</a>                     <em class="jxr_comment">// no rows returned - that's ok</em>
+<a class="jxr_linenumber" name="165" href="#165">165</a>                 }
+<a class="jxr_linenumber" name="166" href="#166">166</a> 
+<a class="jxr_linenumber" name="167" href="#167">167</a>                 String balanceType = pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.BALANCE_TYPE_CODE);
+<a class="jxr_linenumber" name="168" href="#168">168</a>                 String debitCreditCode = pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.DEBIT_CREDIT_CODE);
+<a class="jxr_linenumber" name="169" href="#169">169</a>                 String objectTypeDebitCreditCode = pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.OBJECT_TYPE_DEBIT_CREDIT_CODE);
+<a class="jxr_linenumber" name="170" href="#170">170</a>                 String offsetGenerationCode = pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.OFFSET_GENERATION_CODE);
+<a class="jxr_linenumber" name="171" href="#171">171</a> 
+<a class="jxr_linenumber" name="172" href="#172">172</a>                 <strong class="jxr_keyword">if</strong> (balance != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="173" href="#173">173</a>                     updateCount++;
+<a class="jxr_linenumber" name="174" href="#174">174</a> 
+<a class="jxr_linenumber" name="175" href="#175">175</a>                     BigDecimal <a href="../../../../../../org/kuali/kfs/sys/KFSKeyConstants.html">budget</a> = (BigDecimal) balance.get(GeneralLedgerConstants.ColumnNames.CURRENT_BDLN_BALANCE_AMOUNT);
+<a class="jxr_linenumber" name="176" href="#176">176</a>                     BigDecimal actual = (BigDecimal) balance.get(GeneralLedgerConstants.ColumnNames.ACCOUNTING_LINE_ACTUALS_BALANCE_AMOUNT);
+<a class="jxr_linenumber" name="177" href="#177">177</a>                     BigDecimal encumb = (BigDecimal) balance.get(GeneralLedgerConstants.ColumnNames.ACCOUNTING_LINE_ENCUMBRANCE_BALANCE_AMOUNT);
+<a class="jxr_linenumber" name="178" href="#178">178</a> 
+<a class="jxr_linenumber" name="179" href="#179">179</a>                     <strong class="jxr_keyword">if</strong> (balanceType.equals(options.getBudgetCheckingBalanceTypeCd())) {
+<a class="jxr_linenumber" name="180" href="#180">180</a>                         <a href="../../../../../../org/kuali/kfs/sys/KFSKeyConstants.html">budget</a> = budget.add(pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT));
+<a class="jxr_linenumber" name="181" href="#181">181</a>                     }
+<a class="jxr_linenumber" name="182" href="#182">182</a>                     <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (balanceType.equals(options.getActualFinancialBalanceTypeCd())) {
+<a class="jxr_linenumber" name="183" href="#183">183</a>                         <strong class="jxr_keyword">if</strong> (debitCreditCode.equals(objectTypeDebitCreditCode) || ((<span class="jxr_string">"N"</span>.equals(offsetGenerationCode) &amp;&amp; KFSConstants.GL_BUDGET_CODE.equals(debitCreditCode)))) {
+<a class="jxr_linenumber" name="184" href="#184">184</a>                             actual = actual.add(pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT));
+<a class="jxr_linenumber" name="185" href="#185">185</a>                         }
+<a class="jxr_linenumber" name="186" href="#186">186</a>                         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="187" href="#187">187</a>                             actual = actual.subtract(pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT));
+<a class="jxr_linenumber" name="188" href="#188">188</a>                         }
+<a class="jxr_linenumber" name="189" href="#189">189</a>                     }
+<a class="jxr_linenumber" name="190" href="#190">190</a>                     <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (balanceType.equals(options.getExtrnlEncumFinBalanceTypCd()) || balanceType.equals(options.getIntrnlEncumFinBalanceTypCd()) || balanceType.equals(options.getPreencumbranceFinBalTypeCd()) || <span class="jxr_string">"CE"</span>.equals(balanceType)) {
+<a class="jxr_linenumber" name="191" href="#191">191</a>                         <strong class="jxr_keyword">if</strong> (debitCreditCode.equals(objectTypeDebitCreditCode) || ((<span class="jxr_string">"N"</span>.equals(offsetGenerationCode) &amp;&amp; KFSConstants.GL_BUDGET_CODE.equals(debitCreditCode)))) {
+<a class="jxr_linenumber" name="192" href="#192">192</a>                             encumb = encumb.add(pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT));
+<a class="jxr_linenumber" name="193" href="#193">193</a>                         }
+<a class="jxr_linenumber" name="194" href="#194">194</a>                         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="195" href="#195">195</a>                             encumb = encumb.subtract(pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT));
+<a class="jxr_linenumber" name="196" href="#196">196</a>                         }
+<a class="jxr_linenumber" name="197" href="#197">197</a>                     }
+<a class="jxr_linenumber" name="198" href="#198">198</a> 
+<a class="jxr_linenumber" name="199" href="#199">199</a>                     <em class="jxr_comment">// A balance exists, so we need to update it</em>
+<a class="jxr_linenumber" name="200" href="#200">200</a>                     getSimpleJdbcTemplate().update(updateBalanceStatementSql, budget, actual, encumb, sessionId, pendingEntryRowSet.getInt(GeneralLedgerConstants.ColumnNames.UNIVERSITY_FISCAL_YEAR), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.CHART_OF_ACCOUNTS_CODE), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.ACCOUNT_NUMBER), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.SUB_ACCOUNT_NUMBER), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.OBJECT_CODE), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.SUB_OBJECT_CODE));
+<a class="jxr_linenumber" name="201" href="#201">201</a>                 }
+<a class="jxr_linenumber" name="202" href="#202">202</a>                 <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="203" href="#203">203</a>                     insertCount++;
+<a class="jxr_linenumber" name="204" href="#204">204</a> 
+<a class="jxr_linenumber" name="205" href="#205">205</a>                     BigDecimal <a href="../../../../../../org/kuali/kfs/sys/KFSKeyConstants.html">budget</a> = <strong class="jxr_keyword">new</strong> BigDecimal(<span class="jxr_string">"0"</span>);
+<a class="jxr_linenumber" name="206" href="#206">206</a>                     BigDecimal actual = <strong class="jxr_keyword">new</strong> BigDecimal(<span class="jxr_string">"0"</span>);
+<a class="jxr_linenumber" name="207" href="#207">207</a>                     BigDecimal encumb = <strong class="jxr_keyword">new</strong> BigDecimal(<span class="jxr_string">"0"</span>);
+<a class="jxr_linenumber" name="208" href="#208">208</a> 
+<a class="jxr_linenumber" name="209" href="#209">209</a>                     <strong class="jxr_keyword">if</strong> (balanceType.equals(options.getBudgetCheckingBalanceTypeCd())) {
+<a class="jxr_linenumber" name="210" href="#210">210</a>                         <a href="../../../../../../org/kuali/kfs/sys/KFSKeyConstants.html">budget</a> = pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT);
+<a class="jxr_linenumber" name="211" href="#211">211</a>                     }
+<a class="jxr_linenumber" name="212" href="#212">212</a>                     <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (balanceType.equals(options.getActualFinancialBalanceTypeCd())) {
+<a class="jxr_linenumber" name="213" href="#213">213</a>                         <strong class="jxr_keyword">if</strong> (debitCreditCode.equals(objectTypeDebitCreditCode) || ((<span class="jxr_string">"N"</span>.equals(offsetGenerationCode) &amp;&amp; KFSConstants.GL_BUDGET_CODE.equals(debitCreditCode)))) {
+<a class="jxr_linenumber" name="214" href="#214">214</a>                             actual = pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT);
+<a class="jxr_linenumber" name="215" href="#215">215</a>                         }
+<a class="jxr_linenumber" name="216" href="#216">216</a>                         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="217" href="#217">217</a>                             actual = pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT).negate();
+<a class="jxr_linenumber" name="218" href="#218">218</a>                         }
+<a class="jxr_linenumber" name="219" href="#219">219</a>                     }
+<a class="jxr_linenumber" name="220" href="#220">220</a>                     <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (balanceType.equals(options.getExtrnlEncumFinBalanceTypCd()) || balanceType.equals(options.getIntrnlEncumFinBalanceTypCd()) || balanceType.equals(options.getPreencumbranceFinBalTypeCd()) || <span class="jxr_string">"CE"</span>.equals(balanceType)) {
+<a class="jxr_linenumber" name="221" href="#221">221</a>                         <strong class="jxr_keyword">if</strong> (debitCreditCode.equals(objectTypeDebitCreditCode) || ((<span class="jxr_string">"N"</span>.equals(offsetGenerationCode) &amp;&amp; KFSConstants.GL_BUDGET_CODE.equals(debitCreditCode)))) {
+<a class="jxr_linenumber" name="222" href="#222">222</a>                             encumb = pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT);
+<a class="jxr_linenumber" name="223" href="#223">223</a>                         }
+<a class="jxr_linenumber" name="224" href="#224">224</a>                         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="225" href="#225">225</a>                             encumb = pendingEntryRowSet.getBigDecimal(GeneralLedgerConstants.ColumnNames.TRANSACTION_LEDGER_ENTRY_AMOUNT).negate();
+<a class="jxr_linenumber" name="226" href="#226">226</a>                         }
+<a class="jxr_linenumber" name="227" href="#227">227</a>                     }
+<a class="jxr_linenumber" name="228" href="#228">228</a> 
+<a class="jxr_linenumber" name="229" href="#229">229</a>                     <em class="jxr_comment">// No balance exists, so we need to insert one</em>
+<a class="jxr_linenumber" name="230" href="#230">230</a>                     getSimpleJdbcTemplate().update(insertBalanceStatementSql, pendingEntryRowSet.getInt(GeneralLedgerConstants.ColumnNames.UNIVERSITY_FISCAL_YEAR), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.CHART_OF_ACCOUNTS_CODE), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.ACCOUNT_NUMBER), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.SUB_ACCOUNT_NUMBER), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.OBJECT_CODE), pendingEntryRowSet.getString(GeneralLedgerConstants.ColumnNames.SUB_OBJECT_CODE), budget, actual, encumb, sessionId);
+<a class="jxr_linenumber" name="231" href="#231">231</a>                 }
+<a class="jxr_linenumber" name="232" href="#232">232</a>             }
+<a class="jxr_linenumber" name="233" href="#233">233</a>             LOG.info(<span class="jxr_string">"summarizePendingEntriesByObject() INSERTS: "</span> + insertCount);
+<a class="jxr_linenumber" name="234" href="#234">234</a>             LOG.info(<span class="jxr_string">"summarizePendingEntriesByObject() UPDATES: "</span> + updateCount);
+<a class="jxr_linenumber" name="235" href="#235">235</a>         }
+<a class="jxr_linenumber" name="236" href="#236">236</a>         <strong class="jxr_keyword">catch</strong> (RuntimeException ex) {
+<a class="jxr_linenumber" name="237" href="#237">237</a>             LOG.error(<span class="jxr_string">"summarizePendingEntriesByObject() Exception running sql"</span>, ex);
+<a class="jxr_linenumber" name="238" href="#238">238</a>             <strong class="jxr_keyword">throw</strong> ex;
+<a class="jxr_linenumber" name="239" href="#239">239</a>         }
+<a class="jxr_linenumber" name="240" href="#240">240</a>     }
+<a class="jxr_linenumber" name="241" href="#241">241</a> 
+<a class="jxr_linenumber" name="242" href="#242">242</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">     * Get any matching pending entries. Return true if there were some, false if not.</em>
+<a class="jxr_linenumber" name="244" href="#244">244</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="245" href="#245">245</a> <em class="jxr_javadoccomment">     * @param universityFiscalYear the university fiscal year of pending entries to summarize</em>
+<a class="jxr_linenumber" name="246" href="#246">246</a> <em class="jxr_javadoccomment">     * @param chartOfAccountsCode the chart of accounts code of pending entries to summarize</em>
+<a class="jxr_linenumber" name="247" href="#247">247</a> <em class="jxr_javadoccomment">     * @param accountNumber the account number of pending entries to summarize</em>
+<a class="jxr_linenumber" name="248" href="#248">248</a> <em class="jxr_javadoccomment">     * @param financialObjectLevelCode the object level code of pending entries to summarize</em>
+<a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">     * @param pendingEntriesCode whether to summarize all, approved, or no pending entries</em>
+<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">     * @return true if any matching pending entries were found, false otherwise</em>
+<a class="jxr_linenumber" name="251" href="#251">251</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="252" href="#252">252</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> getMatchingPendingEntriesByObject(<a href="../../../../../../org/kuali/kfs/sys/businessobject/SystemOptions.html">SystemOptions</a> options, Integer universityFiscalYear, String chartOfAccountsCode, String accountNumber, String financialObjectLevelCode, <strong class="jxr_keyword">boolean</strong> isCostShareExcluded, <strong class="jxr_keyword">int</strong> pendingEntriesCode, String sessionId) {
+<a class="jxr_linenumber" name="253" href="#253">253</a>         LOG.debug(<span class="jxr_string">"getMatchingPendingEntriesByObject() started"</span>);
+<a class="jxr_linenumber" name="254" href="#254">254</a> 
+<a class="jxr_linenumber" name="255" href="#255">255</a>         <em class="jxr_comment">// If they have specified this year, we will get all the pending entries where the year is equal or the year is null</em>
+<a class="jxr_linenumber" name="256" href="#256">256</a>         <em class="jxr_comment">// (because most eDocs don't fill in the year field).</em>
+<a class="jxr_linenumber" name="257" href="#257">257</a>         <em class="jxr_comment">// If they have specified a previous year, we will get all the pending entries where the year is equal to their selection</em>
+<a class="jxr_linenumber" name="258" href="#258">258</a>         <em class="jxr_comment">// without the nulls (because we will post eDocs</em>
+<a class="jxr_linenumber" name="259" href="#259">259</a>         <em class="jxr_comment">// with blank years tonight most probably.</em>
+<a class="jxr_linenumber" name="260" href="#260">260</a> 
+<a class="jxr_linenumber" name="261" href="#261">261</a>         <a href="../../../../../../org/kuali/kfs/sys/businessobject/UniversityDate.html">UniversityDate</a> today = SpringContext.getBean(UniversityDateService.<strong class="jxr_keyword">class</strong>).getCurrentUniversityDate();
+<a class="jxr_linenumber" name="262" href="#262">262</a> 
+<a class="jxr_linenumber" name="263" href="#263">263</a>         clearTempTable(<span class="jxr_string">"GL_PENDING_ENTRY_MT"</span>, <span class="jxr_string">"SESID"</span>, sessionId);
+<a class="jxr_linenumber" name="264" href="#264">264</a> 
+<a class="jxr_linenumber" name="265" href="#265">265</a>         List&lt;Object&gt; params = <strong class="jxr_keyword">new</strong> ArrayList&lt;Object&gt;(20);
+<a class="jxr_linenumber" name="266" href="#266">266</a> 
+<a class="jxr_linenumber" name="267" href="#267">267</a>         String insertSql = <span class="jxr_string">"insert into GL_PENDING_ENTRY_MT (SESID, FS_ORIGIN_CD, FDOC_NBR, TRN_ENTR_SEQ_NBR, "</span> 
+<a class="jxr_linenumber" name="268" href="#268">268</a>                 + <span class="jxr_string">"FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_OBJECT_CD, FIN_SUB_OBJ_CD, FIN_BALANCE_TYP_CD,"</span> 
+<a class="jxr_linenumber" name="269" href="#269">269</a>                 + <span class="jxr_string">"FIN_OBJ_TYP_CD, UNIV_FISCAL_YR, UNIV_FISCAL_PRD_CD, TRN_LDGR_ENTR_DESC, TRN_LDGR_ENTR_AMT, TRN_DEBIT_CRDT_CD,"</span> 
+<a class="jxr_linenumber" name="270" href="#270">270</a>                 + <span class="jxr_string">"TRANSACTION_DT, FDOC_TYP_CD, ORG_DOC_NBR, PROJECT_CD, ORG_REFERENCE_ID, FDOC_REF_TYP_CD, FS_REF_ORIGIN_CD,FDOC_REF_NBR, "</span> 
+<a class="jxr_linenumber" name="271" href="#271">271</a>                 + <span class="jxr_string">"FDOC_REVERSAL_DT, TRN_ENCUM_UPDT_CD, FDOC_APPROVED_CD, ACCT_SF_FINOBJ_CD, TRN_ENTR_OFST_CD,TRNENTR_PROCESS_TM) "</span>;
+<a class="jxr_linenumber" name="272" href="#272">272</a> 
+<a class="jxr_linenumber" name="273" href="#273">273</a>         String selectSql = <span class="jxr_string">"SELECT ?, p.FS_ORIGIN_CD, p.FDOC_NBR, p.TRN_ENTR_SEQ_NBR, p.FIN_COA_CD, p.ACCOUNT_NBR, "</span> 
+<a class="jxr_linenumber" name="274" href="#274">274</a>                 + getDbPlatform().getIsNullFunction(<span class="jxr_string">"p.SUB_ACCT_NBR"</span>, <span class="jxr_string">"'-----'"</span>) 
+<a class="jxr_linenumber" name="275" href="#275">275</a>                 + <span class="jxr_string">", "</span> 
+<a class="jxr_linenumber" name="276" href="#276">276</a>                 + <span class="jxr_string">" p.FIN_OBJECT_CD, "</span> 
+<a class="jxr_linenumber" name="277" href="#277">277</a>                 + getDbPlatform().getIsNullFunction(<span class="jxr_string">"p.FIN_SUB_OBJ_CD"</span>, <span class="jxr_string">"'---'"</span>) 
+<a class="jxr_linenumber" name="278" href="#278">278</a>                 + <span class="jxr_string">", p.FIN_BALANCE_TYP_CD,p.FIN_OBJ_TYP_CD, p.UNIV_FISCAL_YR, "</span> 
+<a class="jxr_linenumber" name="279" href="#279">279</a>                 + <span class="jxr_string">" p.UNIV_FISCAL_PRD_CD, p.TRN_LDGR_ENTR_DESC, p.TRN_LDGR_ENTR_AMT, p.TRN_DEBIT_CRDT_CD,"</span> 
+<a class="jxr_linenumber" name="280" href="#280">280</a>                 + <span class="jxr_string">"p.TRANSACTION_DT, p.FDOC_TYP_CD, p.ORG_DOC_NBR, PROJECT_CD, p.ORG_REFERENCE_ID, p.FDOC_REF_TYP_CD, p.FS_REF_ORIGIN_CD,p.FDOC_REF_NBR, p.FDOC_REVERSAL_DT, p.TRN_ENCUM_UPDT_CD, p.FDOC_APPROVED_CD, p.ACCT_SF_FINOBJ_CD, p.TRN_ENTR_OFST_CD,p.TRNENTR_PROCESS_TM "</span> 
+<a class="jxr_linenumber" name="281" href="#281">281</a>                 + <span class="jxr_string">"FROM GL_PENDING_ENTRY_T p,CA_OBJECT_CODE_T o,KRNS_DOC_HDR_T d,FS_DOC_HEADER_T fd "</span>
+<a class="jxr_linenumber" name="282" href="#282">282</a>                 + <span class="jxr_string">"WHERE o.FIN_COA_CD = p.FIN_COA_CD AND o.FIN_OBJECT_CD = p.FIN_OBJECT_CD AND o.FIN_OBJ_LEVEL_CD = ?"</span> 
+<a class="jxr_linenumber" name="283" href="#283">283</a>                 + <span class="jxr_string">" AND p.fdoc_nbr = d.DOC_HDR_ID AND d.DOC_HDR_ID = fd.fdoc_nbr AND "</span> 
+<a class="jxr_linenumber" name="284" href="#284">284</a>                 + <span class="jxr_string">" p.FIN_COA_CD = ?"</span> 
+<a class="jxr_linenumber" name="285" href="#285">285</a>                 + <span class="jxr_string">" and p.account_nbr = ?"</span> 
+<a class="jxr_linenumber" name="286" href="#286">286</a>                 + <span class="jxr_string">" and o.univ_fiscal_yr = ?"</span>;
+<a class="jxr_linenumber" name="287" href="#287">287</a>         params.add(sessionId);
+<a class="jxr_linenumber" name="288" href="#288">288</a>         params.add(financialObjectLevelCode);
+<a class="jxr_linenumber" name="289" href="#289">289</a>         params.add(chartOfAccountsCode);
+<a class="jxr_linenumber" name="290" href="#290">290</a>         params.add(accountNumber);
+<a class="jxr_linenumber" name="291" href="#291">291</a>         params.add(universityFiscalYear);
+<a class="jxr_linenumber" name="292" href="#292">292</a> 
+<a class="jxr_linenumber" name="293" href="#293">293</a>         <strong class="jxr_keyword">if</strong> (pendingEntriesCode == AccountBalanceService.PENDING_ALL) {
+<a class="jxr_linenumber" name="294" href="#294">294</a>             selectSql = selectSql + <span class="jxr_string">" AND fd.fdoc_status_cd &lt;&gt; '"</span> + KFSConstants.DocumentStatusCodes.DISAPPROVED + <span class="jxr_string">"' "</span>;
+<a class="jxr_linenumber" name="295" href="#295">295</a>         }
+<a class="jxr_linenumber" name="296" href="#296">296</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="297" href="#297">297</a>             selectSql = selectSql + <span class="jxr_string">" AND fd.fdoc_status_cd = '"</span> + KFSConstants.DocumentStatusCodes.APPROVED + <span class="jxr_string">"' "</span>;
+<a class="jxr_linenumber" name="298" href="#298">298</a>         }
+<a class="jxr_linenumber" name="299" href="#299">299</a>         selectSql = selectSql + <span class="jxr_string">" AND fd.fdoc_status_cd &lt;&gt; '"</span> + KFSConstants.DocumentStatusCodes.CANCELLED + <span class="jxr_string">"' "</span>;
+<a class="jxr_linenumber" name="300" href="#300">300</a>         selectSql = selectSql + <span class="jxr_string">" AND p.FDOC_APPROVED_CD &lt;&gt; '"</span> + KFSConstants.DocumentStatusCodes.CANCELLED + <span class="jxr_string">"' "</span>;
+<a class="jxr_linenumber" name="301" href="#301">301</a> 
+<a class="jxr_linenumber" name="302" href="#302">302</a>         <strong class="jxr_keyword">if</strong> (today.getUniversityFiscalYear().equals(universityFiscalYear)) {
+<a class="jxr_linenumber" name="303" href="#303">303</a>             selectSql = selectSql + <span class="jxr_string">"AND (p.univ_fiscal_yr is null OR p.univ_fiscal_yr = ? )"</span>;
+<a class="jxr_linenumber" name="304" href="#304">304</a>             params.add(universityFiscalYear);
+<a class="jxr_linenumber" name="305" href="#305">305</a>         }
+<a class="jxr_linenumber" name="306" href="#306">306</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="307" href="#307">307</a>             selectSql = selectSql + <span class="jxr_string">"AND p.univ_fiscal_yr = ?"</span>;
+<a class="jxr_linenumber" name="308" href="#308">308</a>             params.add(universityFiscalYear);
+<a class="jxr_linenumber" name="309" href="#309">309</a>         }
+<a class="jxr_linenumber" name="310" href="#310">310</a> 
+<a class="jxr_linenumber" name="311" href="#311">311</a>         getSimpleJdbcTemplate().update(insertSql + selectSql, params.toArray());
+<a class="jxr_linenumber" name="312" href="#312">312</a> 
+<a class="jxr_linenumber" name="313" href="#313">313</a>         <strong class="jxr_keyword">if</strong> (isCostShareExcluded) {
+<a class="jxr_linenumber" name="314" href="#314">314</a>             purgeCostShareEntries(<span class="jxr_string">"GL_PENDING_ENTRY_MT"</span>, <span class="jxr_string">"sesid"</span>, sessionId);
+<a class="jxr_linenumber" name="315" href="#315">315</a>         }
+<a class="jxr_linenumber" name="316" href="#316">316</a> 
+<a class="jxr_linenumber" name="317" href="#317">317</a>         <strong class="jxr_keyword">if</strong> (!hasEntriesInPendingTable(sessionId)) {
+<a class="jxr_linenumber" name="318" href="#318">318</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="319" href="#319">319</a>         }
+<a class="jxr_linenumber" name="320" href="#320">320</a> 
+<a class="jxr_linenumber" name="321" href="#321">321</a>         fixPendingEntryDisplay(options.getUniversityFiscalYear(), sessionId);
+<a class="jxr_linenumber" name="322" href="#322">322</a> 
+<a class="jxr_linenumber" name="323" href="#323">323</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="324" href="#324">324</a>     }
+<a class="jxr_linenumber" name="325" href="#325">325</a> }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

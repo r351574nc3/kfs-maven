@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>BudgetConstructionList2PLGReportDaoJdbc xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../../apidocs/org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionList2PLGReportDaoJdbc.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2011 The Kuali Foundation.</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Educational Community License, Version 2.0 (the "License");</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * <a href="http://www.opensource.org/licenses/ecl2.php" target="alexandria_uri">http://www.opensource.org/licenses/ecl2.php</a></em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_comment"> * See the License for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment"> * limitations under the License.</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.kuali.kfs.module.bc.document.dataaccess.impl;
+<a class="jxr_linenumber" name="17" href="#17">17</a>  
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.bc.batch.dataaccess.impl.SQLForStep;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionList2PLGReportDao;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.KFSConstants.BudgetConstructionConstants;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.service.PersistenceService;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> * builds the report for accounts which are out of balance because benefits have been calculated on salaries and the amounts don't match what is in GL.  the discrepancy is in an object code called '2PLG'.</em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="28" href="#28">28</a>  
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionList2PLGReportDaoJdbc.html">BudgetConstructionList2PLGReportDaoJdbc</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionDaoJdbcBase.html">BudgetConstructionDaoJdbcBase</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/BudgetConstructionList2PLGReportDao.html">BudgetConstructionList2PLGReportDao</a> {
+<a class="jxr_linenumber" name="30" href="#30">30</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BudgetConstructionList2PLGReportDaoJdbc.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ArrayList&lt;SQLForStep&gt; updateReportsList2PLGTable = <strong class="jxr_keyword">new</strong> ArrayList&lt;SQLForStep&gt;(1);
+<a class="jxr_linenumber" name="33" href="#33">33</a>      
+<a class="jxr_linenumber" name="34" href="#34">34</a>      <strong class="jxr_keyword">private</strong> PersistenceService persistenceService;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  
+<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/document/dataaccess/impl/BudgetConstructionList2PLGReportDaoJdbc.html">BudgetConstructionList2PLGReportDaoJdbc</a>() {
+<a class="jxr_linenumber" name="37" href="#37">37</a>  
+<a class="jxr_linenumber" name="38" href="#38">38</a>          ArrayList&lt;Integer&gt; insertionPoints = <strong class="jxr_keyword">new</strong> ArrayList&lt;Integer&gt;(1);
+<a class="jxr_linenumber" name="39" href="#39">39</a>          
+<a class="jxr_linenumber" name="40" href="#40">40</a>          <em class="jxr_comment">// builds and updates List2PLGReports</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>          <em class="jxr_comment">/*<em class="jxr_comment"> get accounts, sub-accounts that have an imbalance between detailed salary and general ledger, displayed in the object class 2PLG */</em></em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>          StringBuilder sqlText = <strong class="jxr_keyword">new</strong> StringBuilder(500);
+<a class="jxr_linenumber" name="43" href="#43">43</a>          sqlText.append(<span class="jxr_string">"INSERT INTO LD_BCN_2PLG_LIST_MT \n"</span>);
+<a class="jxr_linenumber" name="44" href="#44">44</a>          sqlText.append(<span class="jxr_string">"(PERSON_UNVL_ID, ORG_FIN_COA_CD, ORG_CD, FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, ACLN_ANNL_BAL_AMT) \n"</span>);
+<a class="jxr_linenumber" name="45" href="#45">45</a>          sqlText.append(<span class="jxr_string">"SELECT ?, ctrl.sel_org_fin_coa, ctrl.sel_org_cd, ctrl.fin_coa_cd, ctrl.account_nbr, ctrl.sub_acct_nbr, pbgl.acln_annl_bal_amt \n"</span>);
+<a class="jxr_linenumber" name="46" href="#46">46</a>          sqlText.append(<span class="jxr_string">"FROM LD_PND_BCNSTR_GL_T pbgl, LD_BCN_CTRL_LIST_T ctrl \n"</span>);
+<a class="jxr_linenumber" name="47" href="#47">47</a>          sqlText.append(<span class="jxr_string">"WHERE ctrl.person_unvl_id = ? \n"</span>);
+<a class="jxr_linenumber" name="48" href="#48">48</a>          sqlText.append(<span class="jxr_string">" AND pbgl.fdoc_nbr = ctrl.fdoc_nbr \n"</span>);
+<a class="jxr_linenumber" name="49" href="#49">49</a>          sqlText.append(<span class="jxr_string">" AND pbgl.univ_fiscal_yr = ctrl.univ_fiscal_yr \n"</span>);
+<a class="jxr_linenumber" name="50" href="#50">50</a>          sqlText.append(<span class="jxr_string">" AND pbgl.fin_coa_cd = ctrl.fin_coa_cd \n"</span>);
+<a class="jxr_linenumber" name="51" href="#51">51</a>          sqlText.append(<span class="jxr_string">" AND pbgl.account_nbr = ctrl.account_nbr \n"</span>);
+<a class="jxr_linenumber" name="52" href="#52">52</a>          sqlText.append(<span class="jxr_string">" AND pbgl.sub_acct_nbr = ctrl.sub_acct_nbr \n"</span>);
+<a class="jxr_linenumber" name="53" href="#53">53</a>          sqlText.append(<span class="jxr_string">" AND pbgl.fin_object_cd = '"</span>);
+<a class="jxr_linenumber" name="54" href="#54">54</a>          <em class="jxr_comment">// the 2PLG constant</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>          insertionPoints.add(sqlText.length());
+<a class="jxr_linenumber" name="56" href="#56">56</a>          sqlText.append(<span class="jxr_string">"'"</span>);
+<a class="jxr_linenumber" name="57" href="#57">57</a>  
+<a class="jxr_linenumber" name="58" href="#58">58</a>          updateReportsList2PLGTable.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/kuali/kfs/module/bc/batch/dataaccess/impl/SQLForStep.html">SQLForStep</a>(sqlText,insertionPoints));
+<a class="jxr_linenumber" name="59" href="#59">59</a>          insertionPoints.clear();
+<a class="jxr_linenumber" name="60" href="#60">60</a>          sqlText.delete(0, sqlText.length());
+<a class="jxr_linenumber" name="61" href="#61">61</a>  
+<a class="jxr_linenumber" name="62" href="#62">62</a>      }
+<a class="jxr_linenumber" name="63" href="#63">63</a>  
+<a class="jxr_linenumber" name="64" href="#64">64</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     *  remove from the table rows for any previous report requested by this user</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> cleanReportsList2PLGTable(String principalName) {
+<a class="jxr_linenumber" name="68" href="#68">68</a>          clearTempTableByUnvlId(<span class="jxr_string">"LD_BCN_2PLG_LIST_MT"</span>, <span class="jxr_string">"PERSON_UNVL_ID"</span>, principalName);
+<a class="jxr_linenumber" name="69" href="#69">69</a>      }
+<a class="jxr_linenumber" name="70" href="#70">70</a>  
+<a class="jxr_linenumber" name="71" href="#71">71</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="73" href="#73">73</a>  <em class="jxr_javadoccomment">     * @see org.kuali.kfs.module.bc.document.dataaccess.BudgetConstructionList2PLGReportDao#updateReportsList2PLGTable(java.lang.String)</em>
+<a class="jxr_linenumber" name="74" href="#74">74</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> updateList2PLGReportsTable(String principalName) {
+<a class="jxr_linenumber" name="76" href="#76">76</a>          <em class="jxr_comment">// get rid of any rows from a previous report requested by this user</em>
+<a class="jxr_linenumber" name="77" href="#77">77</a>          cleanReportsList2PLGTable(principalName);
+<a class="jxr_linenumber" name="78" href="#78">78</a>          <em class="jxr_comment">// fetch the constant naming the 2PLG object class</em>
+<a class="jxr_linenumber" name="79" href="#79">79</a>          ArrayList&lt;String&gt; stringToInsert = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(1); 
+<a class="jxr_linenumber" name="80" href="#80">80</a>          stringToInsert.add(BudgetConstructionConstants.OBJECT_CODE_2PLG);
+<a class="jxr_linenumber" name="81" href="#81">81</a>          <em class="jxr_comment">// fill the table</em>
+<a class="jxr_linenumber" name="82" href="#82">82</a>          getSimpleJdbcTemplate().update(updateReportsList2PLGTable.get(0).getSQL(stringToInsert), principalName, principalName);
+<a class="jxr_linenumber" name="83" href="#83">83</a>          <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="84" href="#84">84</a>  <em class="jxr_javadoccomment">         * this is necessary to clear any rows for the tables we have just updated from the OJB cache.  otherwise, subsequent calls to OJB will fetch the old, unupdated cached rows.</em>
+<a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="86" href="#86">86</a>          persistenceService.clearCache();
+<a class="jxr_linenumber" name="87" href="#87">87</a>      }
+<a class="jxr_linenumber" name="88" href="#88">88</a>      
+<a class="jxr_linenumber" name="89" href="#89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPersistenceService(PersistenceService persistenceService)
+<a class="jxr_linenumber" name="90" href="#90">90</a>      {
+<a class="jxr_linenumber" name="91" href="#91">91</a>          <strong class="jxr_keyword">this</strong>.persistenceService = persistenceService;
+<a class="jxr_linenumber" name="92" href="#92">92</a>      }
+<a class="jxr_linenumber" name="93" href="#93">93</a>  
+<a class="jxr_linenumber" name="94" href="#94">94</a>  }
+<a class="jxr_linenumber" name="95" href="#95">95</a>  
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

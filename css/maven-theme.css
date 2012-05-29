@@ -1,46 +1,44 @@
-/**
- * Copyright 2004-2011 The Kuali Foundation
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * http://www.opensource.org/licenses/ecl2.php
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 body {
-  background-color: #fff;
-  font-family: Verdana, Helvetica, Arial, sans-serif;
-  margin-left: auto;
-  margin-right: auto;
-  background-repeat: repeat-y;
-  font-size: 13px;
-  padding: 0px;
+  padding: 0px 0px 10px 0px;
 }
-td, select, input, li{
+body, td, select, input, li{
   font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-size: 12px;
-  color:#333333;
+  font-size: 13px;
 }
 code{
-  font-size: 12px;
+  font-family: Courier, monospace;
+  font-size: 13px;
 }
 a {
   text-decoration: none;
 }
 a:link {
+  color:#36a;
+}
+a:visited  {
   color:#47a;
 }
-a:visited {
-  color:#68a;
-}
 a:active, a:hover {
-  color:#990000;
+  color:#69c;
 }
 #legend li.externalLink {
   background: url(../images/external.png) left top no-repeat;
@@ -59,55 +57,53 @@ a.newWindow, a.newWindow:link, a.newWindow:visited, a.newWindow:active, a.newWin
   padding-right: 18px;
 }
 h2 {
-  font-size: 17px;
-  color: #333333;
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #999;
+  color: #900;
+  background-color: #ddd;
+  font-weight:900;
+  font-size: x-large;
 }
 h3 {
-  padding: 4px 4px 4px 24px;
-  color: #666;
-  background-color: #ccc;
-  font-weight: bold;
-  font-size: 14px;
-  background-image: url(../images/h3.jpg);
-  background-repeat: no-repeat;
-  background-position: left bottom;
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #aaa;
+  color: #900;
+  background-color: #eee;
+  font-weight: normal;
+  font-size: large;
+}
+h4 {
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #bbb;
+  color: #900;
+  background-color: #fff;
+  font-weight: normal;
+  font-size: large;
+}
+h5 {
+  padding: 4px 4px 4px 6px;
+  color: #900;
+  font-size: medium;
 }
 p {
   line-height: 1.3em;
-  font-size: 12px;
-  color: #000;
+  font-size: small;
 }
 #breadcrumbs {
-  height: 13px;
-  background-image: url(../images/breadcrumbs.jpg);
-  padding: 5px 10px 14px 20px;
-}
-* html #breadcrumbs {
-  padding-bottom: 8px;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  background-color: #ccc;
 }
 #leftColumn {
-  margin: 10px 0 10px 0;
-  border-top-color: #ccc;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-right-color: #ccc;
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-bottom-color: #ccc;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  padding-right: 5px;
-  padding-left: 5px;
+  margin: 10px 0 0 5px;
+  border: 1px solid #999;
+  background-color: #eee;
 }
 #navcolumn h5 {
   font-size: smaller;
   border-bottom: 1px solid #aaaaaa;
   padding-top: 2px;
-  padding-left: 9px;
-  color: #49635a;
-  background-image: url(../images/h5.jpg);
-  background-repeat: no-repeat;
-  background-position: left bottom;
+  color: #000;
 }
 
 table.bodyTable th {
@@ -118,7 +114,7 @@ table.bodyTable th {
 }
 
 table.bodyTable th, table.bodyTable td {
-  font-size: 11px;
+  font-size: 1em;
 }
 
 table.bodyTable tr.a {
@@ -129,73 +125,23 @@ table.bodyTable tr.b {
   background-color: #eee;
 }
 
-table.bodyTable tr.a:hover, table.bodyTable tr.b:hover {
-  background: #dfe3db;
-}
-
 .source {
   border: 1px solid #999;
-  overflow:auto
+}
+dl {
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #aaa;
+  background-color: #ffc;
 }
 dt {
-  padding: 4px 4px 4px 24px;
-  color: #333333;
-  background-color: #ccc;
-  font-weight: bold;
-  font-size: 14px;
-  background-image: url(../images/h3.jpg);
-  background-repeat: no-repeat;
-  background-position: left bottom;
+  color: #900;
 }
-.subsectionTitle {
-  font-size: 13px;
-  font-weight: bold;
-  color: #666;
-
-}
-
-table {
-  font-size: 10px;
-}
-.xright a:link, .xright a:visited, .xright a:active {
-  color: #666;
-}
-.xright a:hover {
-  color: #003300;
+#organizationLogo img, #projectLogo img, #projectLogo span{
+  margin: 8px;
 }
 #banner {
-  height: 93px;
-  background: url(../images/banner.jpg);
+  border-bottom: 1px solid #fff;
 }
-#navcolumn ul {
-  margin: 5px 0 15px -0em;
-}
-#navcolumn ul a {
-  color: #333333;
-}
-#navcolumn ul a:hover {
-  color: red;
-}
-#intro {
-  border: solid #ccc 1px;
-  margin: 6px 0px 0px 0px;
-  padding: 10px 40px 10px 40px;
-}
-.subsection {
-  margin-left: 3px;
-  color: #333333;
-}
-
-.subsection p {
-  font-size: 12px;
-}
-#footer {
-  padding: 10px;
-  margin: 20px 0px 20px 0px;
-  border-top: solid #ccc 1px;
-  color: #333333;
-}
-
 .errormark, .warningmark, .donemark, .infomark {
   background: url(../images/icon_error_sml.gif) no-repeat;
 }
@@ -211,3 +157,4 @@ table {
 .infomark {
   background-image: url(../images/icon_info_sml.gif);
 }
+

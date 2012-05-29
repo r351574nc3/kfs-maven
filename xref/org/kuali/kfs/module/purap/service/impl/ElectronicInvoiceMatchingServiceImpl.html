@@ -1,0 +1,736 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ElectronicInvoiceMatchingServiceImpl xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../apidocs/org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceMatchingServiceImpl.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2011 The Kuali Foundation.</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Educational Community License, Version 2.0 (the "License");</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * <a href="http://www.opensource.org/licenses/ecl2.php" target="alexandria_uri">http://www.opensource.org/licenses/ecl2.php</a></em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_comment"> * See the License for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment"> * limitations under the License.</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.kuali.kfs.module.purap.service.impl;
+<a class="jxr_linenumber" name="17" href="#17">17</a>  
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.math.BigDecimal;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.util.HashSet;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.util.Set;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang.ArrayUtils;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang.StringUtils;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang.math.NumberUtils;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.log4j.Logger;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.PurapConstants;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.PurapKeyConstants;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.PurapParameterConstants;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.batch.ElectronicInvoiceStep;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.businessobject.ElectronicInvoice;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceDetailRequestSummary;
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReason;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReasonType;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.businessobject.PurApItem;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.service.ElectronicInvoiceMatchingService;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.module.purap.util.PurApItemUtils;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.context.SpringContext;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.service.TaxService;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.vnd.businessobject.PurchaseOrderCostSource;
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.vnd.businessobject.VendorDetail;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.vnd.document.service.VendorService;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.service.BusinessObjectService;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.service.DateTimeService;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.service.ParameterService;
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.util.KualiDecimal;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.util.ObjectUtils;
+<a class="jxr_linenumber" name="55" href="#55">55</a>  
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceMatchingServiceImpl.html">ElectronicInvoiceMatchingServiceImpl</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../../org/kuali/kfs/module/purap/service/ElectronicInvoiceMatchingService.html">ElectronicInvoiceMatchingService</a> {
+<a class="jxr_linenumber" name="57" href="#57">57</a>  
+<a class="jxr_linenumber" name="58" href="#58">58</a>      <strong class="jxr_keyword">private</strong> Logger LOG = Logger.getLogger(ElectronicInvoiceMatchingServiceImpl.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="59" href="#59">59</a>      
+<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> Map&lt;String,ElectronicInvoiceRejectReasonType&gt; rejectReasonTypes;
+<a class="jxr_linenumber" name="61" href="#61">61</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/kuali/kfs/vnd/document/service/VendorService.html">VendorService</a> vendorService;
+<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../../org/kuali/kfs/sys/service/TaxService.html">TaxService</a> taxService;
+<a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">private</strong> DateTimeService dateTimeService;
+<a class="jxr_linenumber" name="64" href="#64">64</a>      
+<a class="jxr_linenumber" name="65" href="#65">65</a>      String upperVariancePercentString;
+<a class="jxr_linenumber" name="66" href="#66">66</a>      String lowerVariancePercentString; 
+<a class="jxr_linenumber" name="67" href="#67">67</a>      
+<a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> doMatchingProcess(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder) {
+<a class="jxr_linenumber" name="69" href="#69">69</a>          
+<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="71" href="#71">71</a>              LOG.info(<span class="jxr_string">"Matching process started"</span>);
+<a class="jxr_linenumber" name="72" href="#72">72</a>          }
+<a class="jxr_linenumber" name="73" href="#73">73</a>          
+<a class="jxr_linenumber" name="74" href="#74">74</a>          upperVariancePercentString = SpringContext.getBean(ParameterService.<strong class="jxr_keyword">class</strong>).getParameterValue(ElectronicInvoiceStep.<strong class="jxr_keyword">class</strong>, PurapParameterConstants.ElectronicInvoiceParameters.SALES_TAX_UPPER_VARIANCE_PERCENT);
+<a class="jxr_linenumber" name="75" href="#75">75</a>          lowerVariancePercentString = SpringContext.getBean(ParameterService.<strong class="jxr_keyword">class</strong>).getParameterValue(ElectronicInvoiceStep.<strong class="jxr_keyword">class</strong>, PurapParameterConstants.ElectronicInvoiceParameters.SALES_TAX_LOWER_VARIANCE_PERCENT);;
+<a class="jxr_linenumber" name="76" href="#76">76</a>          
+<a class="jxr_linenumber" name="77" href="#77">77</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="78" href="#78">78</a>              <strong class="jxr_keyword">if</strong> (orderHolder.isValidateHeaderInformation()) {
+<a class="jxr_linenumber" name="79" href="#79">79</a>                  
+<a class="jxr_linenumber" name="80" href="#80">80</a>                  validateHeaderInformation(orderHolder);
+<a class="jxr_linenumber" name="81" href="#81">81</a>                  
+<a class="jxr_linenumber" name="82" href="#82">82</a>                  <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()) {
+<a class="jxr_linenumber" name="83" href="#83">83</a>                      <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="84" href="#84">84</a>                          LOG.info(<span class="jxr_string">"Matching process failed at header validation"</span>);
+<a class="jxr_linenumber" name="85" href="#85">85</a>                      }
+<a class="jxr_linenumber" name="86" href="#86">86</a>                      <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="87" href="#87">87</a>                  }
+<a class="jxr_linenumber" name="88" href="#88">88</a>              }
+<a class="jxr_linenumber" name="89" href="#89">89</a>              
+<a class="jxr_linenumber" name="90" href="#90">90</a>              validateInvoiceDetails(orderHolder);
+<a class="jxr_linenumber" name="91" href="#91">91</a>              
+<a class="jxr_linenumber" name="92" href="#92">92</a>              <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()) {
+<a class="jxr_linenumber" name="93" href="#93">93</a>                  <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="94" href="#94">94</a>                      LOG.info(<span class="jxr_string">"Matching process failed at order detail validation"</span>);
+<a class="jxr_linenumber" name="95" href="#95">95</a>                  }
+<a class="jxr_linenumber" name="96" href="#96">96</a>                  <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="97" href="#97">97</a>              }
+<a class="jxr_linenumber" name="98" href="#98">98</a>              
+<a class="jxr_linenumber" name="99" href="#99">99</a>          }
+<a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">catch</strong> (NumberFormatException e) {
+<a class="jxr_linenumber" name="101" href="#101">101</a>             <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="102" href="#102">102</a>                 LOG.info(<span class="jxr_string">"Matching process matching failed due to number format exception "</span> + e.getMessage());
+<a class="jxr_linenumber" name="103" href="#103">103</a>             }
+<a class="jxr_linenumber" name="104" href="#104">104</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVALID_NUMBER_FORMAT, e.getMessage(), orderHolder.getFileName());
+<a class="jxr_linenumber" name="105" href="#105">105</a>             orderHolder.addInvoiceHeaderRejectReason(rejectReason);
+<a class="jxr_linenumber" name="106" href="#106">106</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="107" href="#107">107</a>         }
+<a class="jxr_linenumber" name="108" href="#108">108</a>         
+<a class="jxr_linenumber" name="109" href="#109">109</a>         <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="110" href="#110">110</a>             LOG.info(<span class="jxr_string">"Matching process ended successfully"</span>);
+<a class="jxr_linenumber" name="111" href="#111">111</a>         }
+<a class="jxr_linenumber" name="112" href="#112">112</a>     }
+<a class="jxr_linenumber" name="113" href="#113">113</a> 
+<a class="jxr_linenumber" name="114" href="#114">114</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateHeaderInformation(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder){
+<a class="jxr_linenumber" name="115" href="#115">115</a>         
+<a class="jxr_linenumber" name="116" href="#116">116</a>         String dunsField = PurapConstants.ElectronicInvoice.RejectDocumentFields.VENDOR_DUNS_NUMBER;
+<a class="jxr_linenumber" name="117" href="#117">117</a>         String applnResourceKeyName = PurapKeyConstants.ERROR_REJECT_INVALID_DUNS;
+<a class="jxr_linenumber" name="118" href="#118">118</a>         
+<a class="jxr_linenumber" name="119" href="#119">119</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isEmpty(orderHolder.getDunsNumber())){
+<a class="jxr_linenumber" name="120" href="#120">120</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUNS_NOT_FOUND,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="121" href="#121">121</a>             orderHolder.addInvoiceHeaderRejectReason(rejectReason,dunsField,applnResourceKeyName);
+<a class="jxr_linenumber" name="122" href="#122">122</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="123" href="#123">123</a>         }
+<a class="jxr_linenumber" name="124" href="#124">124</a>         
+<a class="jxr_linenumber" name="125" href="#125">125</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isRejectDocumentHolder()){
+<a class="jxr_linenumber" name="126" href="#126">126</a>             <a href="../../../../../../../org/kuali/kfs/vnd/businessobject/VendorDetail.html">VendorDetail</a> vendorDetail = SpringContext.getBean(VendorService.<strong class="jxr_keyword">class</strong>).getVendorByDunsNumber(orderHolder.getDunsNumber());
+<a class="jxr_linenumber" name="127" href="#127">127</a>             <strong class="jxr_keyword">if</strong> (vendorDetail == <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="128" href="#128">128</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUNS_INVALID, <strong class="jxr_keyword">null</strong>, orderHolder.getFileName());
+<a class="jxr_linenumber" name="129" href="#129">129</a>                 orderHolder.addInvoiceHeaderRejectReason(rejectReason,dunsField,applnResourceKeyName);
+<a class="jxr_linenumber" name="130" href="#130">130</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="131" href="#131">131</a>             }
+<a class="jxr_linenumber" name="132" href="#132">132</a>         }<strong class="jxr_keyword">else</strong>{
+<a class="jxr_linenumber" name="133" href="#133">133</a>             <strong class="jxr_keyword">if</strong> (orderHolder.getVendorHeaderId() == <strong class="jxr_keyword">null</strong> &amp;&amp; orderHolder.getVendorDetailId() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="134" href="#134">134</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUNS_INVALID, <strong class="jxr_keyword">null</strong>, orderHolder.getFileName());
+<a class="jxr_linenumber" name="135" href="#135">135</a>                 orderHolder.addInvoiceHeaderRejectReason(rejectReason,dunsField,applnResourceKeyName);
+<a class="jxr_linenumber" name="136" href="#136">136</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="137" href="#137">137</a>             }
+<a class="jxr_linenumber" name="138" href="#138">138</a>         }
+<a class="jxr_linenumber" name="139" href="#139">139</a> 
+<a class="jxr_linenumber" name="140" href="#140">140</a>         String invoiceNumberField = PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_FILE_NUMBER;
+<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">if</strong> (!orderHolder.isInvoiceNumberAcceptIndicatorEnabled()){
+<a class="jxr_linenumber" name="142" href="#142">142</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isEmpty(orderHolder.getInvoiceNumber())){
+<a class="jxr_linenumber" name="143" href="#143">143</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_ID_EMPTY,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="144" href="#144">144</a>                 orderHolder.addInvoiceHeaderRejectReason(rejectReason,invoiceNumberField,PurapKeyConstants.ERROR_REJECT_INVOICE_NUMBER_EMPTY);
+<a class="jxr_linenumber" name="145" href="#145">145</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="146" href="#146">146</a>             }
+<a class="jxr_linenumber" name="147" href="#147">147</a>         }
+<a class="jxr_linenumber" name="148" href="#148">148</a>         
+<a class="jxr_linenumber" name="149" href="#149">149</a>         String invoiceDateField = PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_FILE_DATE;
+<a class="jxr_linenumber" name="150" href="#150">150</a>         
+<a class="jxr_linenumber" name="151" href="#151">151</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isEmpty(orderHolder.getInvoiceDateString()) || orderHolder.getInvoiceDate() == <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="152" href="#152">152</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_DATE_INVALID,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="153" href="#153">153</a>             orderHolder.addInvoiceHeaderRejectReason(rejectReason,invoiceDateField,PurapKeyConstants.ERROR_REJECT_INVOICE_DATE_INVALID);
+<a class="jxr_linenumber" name="154" href="#154">154</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="155" href="#155">155</a>         }<strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (orderHolder.getInvoiceDate().after(dateTimeService.getCurrentDate())) {
+<a class="jxr_linenumber" name="156" href="#156">156</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_DATE_GREATER,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName()); 
+<a class="jxr_linenumber" name="157" href="#157">157</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,invoiceDateField,PurapKeyConstants.ERROR_REJECT_INVOICE_DATE_GREATER);
+<a class="jxr_linenumber" name="158" href="#158">158</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="159" href="#159">159</a>         }
+<a class="jxr_linenumber" name="160" href="#160">160</a>         
+<a class="jxr_linenumber" name="161" href="#161">161</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isInformationOnly()){
+<a class="jxr_linenumber" name="162" href="#162">162</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INFORMATION_ONLY,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="163" href="#163">163</a>             orderHolder.addInvoiceHeaderRejectReason(rejectReason);
+<a class="jxr_linenumber" name="164" href="#164">164</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="165" href="#165">165</a>         }
+<a class="jxr_linenumber" name="166" href="#166">166</a>         
+<a class="jxr_linenumber" name="167" href="#167">167</a>         validateSummaryAmounts(orderHolder);
+<a class="jxr_linenumber" name="168" href="#168">168</a>             
+<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()) {
+<a class="jxr_linenumber" name="170" href="#170">170</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="171" href="#171">171</a>         }
+<a class="jxr_linenumber" name="172" href="#172">172</a>         
+<a class="jxr_linenumber" name="173" href="#173">173</a>         validateItemTypes(orderHolder);
+<a class="jxr_linenumber" name="174" href="#174">174</a>         
+<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()) {
+<a class="jxr_linenumber" name="176" href="#176">176</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="177" href="#177">177</a>         }
+<a class="jxr_linenumber" name="178" href="#178">178</a>         
+<a class="jxr_linenumber" name="179" href="#179">179</a>     }
+<a class="jxr_linenumber" name="180" href="#180">180</a> 
+<a class="jxr_linenumber" name="181" href="#181">181</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateSummaryAmounts(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder) {
+<a class="jxr_linenumber" name="182" href="#182">182</a>         
+<a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isRejectDocumentHolder()){
+<a class="jxr_linenumber" name="184" href="#184">184</a>             <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="185" href="#185">185</a> <em class="jxr_javadoccomment">             * If there are any rejects related to the summary, we're retaining it since </em>
+<a class="jxr_linenumber" name="186" href="#186">186</a> <em class="jxr_javadoccomment">             * it's not possible to get the summary amount totals from the reject doc</em>
+<a class="jxr_linenumber" name="187" href="#187">187</a> <em class="jxr_javadoccomment">             */</em>
+<a class="jxr_linenumber" name="188" href="#188">188</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="189" href="#189">189</a>         }
+<a class="jxr_linenumber" name="190" href="#190">190</a> 
+<a class="jxr_linenumber" name="191" href="#191">191</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceDetailRequestSummary.html">ElectronicInvoiceDetailRequestSummary</a> summary = orderHolder.getElectronicInvoice().getInvoiceDetailRequestSummary();
+<a class="jxr_linenumber" name="192" href="#192">192</a> 
+<a class="jxr_linenumber" name="193" href="#193">193</a>         <strong class="jxr_keyword">boolean</strong> enableSalesTaxInd = SpringContext.getBean(ParameterService.<strong class="jxr_keyword">class</strong>).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.<strong class="jxr_keyword">class</strong>, PurapParameterConstants.ENABLE_SALES_TAX_IND);
+<a class="jxr_linenumber" name="194" href="#194">194</a>         
+<a class="jxr_linenumber" name="195" href="#195">195</a>         <strong class="jxr_keyword">boolean</strong> salesTaxUsed = false;
+<a class="jxr_linenumber" name="196" href="#196">196</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/PurapWorkflowConstants.html">PurchaseOrderDocument</a> poDoc = orderHolder.getPurchaseOrderDocument();
+<a class="jxr_linenumber" name="197" href="#197">197</a>         <strong class="jxr_keyword">if</strong> (poDoc != <strong class="jxr_keyword">null</strong>) {  <em class="jxr_comment">// we handle bad PO's in the eInvoice later, so just skip this</em>
+<a class="jxr_linenumber" name="198" href="#198">198</a>             List&lt;PurApItem&gt; items = PurApItemUtils.getAboveTheLineOnly(poDoc.getItems());
+<a class="jxr_linenumber" name="199" href="#199">199</a>             <strong class="jxr_keyword">for</strong> (PurApItem  item : items) {
+<a class="jxr_linenumber" name="200" href="#200">200</a>                 <strong class="jxr_keyword">if</strong> (item.getItemType().isTaxableIndicator()) {
+<a class="jxr_linenumber" name="201" href="#201">201</a>                     salesTaxUsed = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="202" href="#202">202</a>                     <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="203" href="#203">203</a>                 }
+<a class="jxr_linenumber" name="204" href="#204">204</a>             }
+<a class="jxr_linenumber" name="205" href="#205">205</a>             
+<a class="jxr_linenumber" name="206" href="#206">206</a>             <strong class="jxr_keyword">boolean</strong> useTaxUsed = poDoc.isUseTaxIndicator();
+<a class="jxr_linenumber" name="207" href="#207">207</a>             enableSalesTaxInd &amp;= (salesTaxUsed || useTaxUsed);
+<a class="jxr_linenumber" name="208" href="#208">208</a>             
+<a class="jxr_linenumber" name="209" href="#209">209</a>             BigDecimal summaryTaxAmount = summary.getInvoiceTaxAmount();
+<a class="jxr_linenumber" name="210" href="#210">210</a>             <strong class="jxr_keyword">if</strong> (!enableSalesTaxInd) {
+<a class="jxr_linenumber" name="211" href="#211">211</a>                 <em class="jxr_comment">// if sales tax is disabled, total tax amount shall be zero </em>
+<a class="jxr_linenumber" name="212" href="#212">212</a>                 <strong class="jxr_keyword">if</strong> (summaryTaxAmount.compareTo(<strong class="jxr_keyword">new</strong> BigDecimal(0)) != 0) {
+<a class="jxr_linenumber" name="213" href="#213">213</a>                     String extraDescription = <span class="jxr_string">"Summary Tax Amount:"</span> + summaryTaxAmount;
+<a class="jxr_linenumber" name="214" href="#214">214</a>                     <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.TAX_SUMMARY_AMT_EXISTS, extraDescription, orderHolder.getFileName());
+<a class="jxr_linenumber" name="215" href="#215">215</a>                     orderHolder.addInvoiceHeaderRejectReason(rejectReason);      
+<a class="jxr_linenumber" name="216" href="#216">216</a>                 }
+<a class="jxr_linenumber" name="217" href="#217">217</a>             }
+<a class="jxr_linenumber" name="218" href="#218">218</a>             <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (orderHolder.isTaxInLine()) {
+<a class="jxr_linenumber" name="219" href="#219">219</a>                 validateSummaryAmount(orderHolder, summaryTaxAmount, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_TAX, PurapConstants.ElectronicInvoice.TAX_SUMMARY_AMT_MISMATCH);
+<a class="jxr_linenumber" name="220" href="#220">220</a>             }
+<a class="jxr_linenumber" name="221" href="#221">221</a>         }
+<a class="jxr_linenumber" name="222" href="#222">222</a> 
+<a class="jxr_linenumber" name="223" href="#223">223</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isShippingInLine()) {
+<a class="jxr_linenumber" name="224" href="#224">224</a>             validateSummaryAmount(orderHolder, summary.getInvoiceShippingAmount(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SHIPPING, PurapConstants.ElectronicInvoice.SHIPPING_SUMMARY_AMT_MISMATCH);
+<a class="jxr_linenumber" name="225" href="#225">225</a>         }
+<a class="jxr_linenumber" name="226" href="#226">226</a> 
+<a class="jxr_linenumber" name="227" href="#227">227</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isSpecialHandlingInLine()) {
+<a class="jxr_linenumber" name="228" href="#228">228</a>             validateSummaryAmount(orderHolder, summary.getInvoiceSpecialHandlingAmount(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SPECIAL_HANDLING, PurapConstants.ElectronicInvoice.SPL_HANDLING_SUMMARY_AMT_MISMATCH);
+<a class="jxr_linenumber" name="229" href="#229">229</a>         }
+<a class="jxr_linenumber" name="230" href="#230">230</a> 
+<a class="jxr_linenumber" name="231" href="#231">231</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isDiscountInLine()) {
+<a class="jxr_linenumber" name="232" href="#232">232</a>             validateSummaryAmount(orderHolder, summary.getInvoiceDiscountAmount(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT, PurapConstants.ElectronicInvoice.DISCOUNT_SUMMARY_AMT_MISMATCH);
+<a class="jxr_linenumber" name="233" href="#233">233</a>         }
+<a class="jxr_linenumber" name="234" href="#234">234</a>         
+<a class="jxr_linenumber" name="235" href="#235">235</a>     }
+<a class="jxr_linenumber" name="236" href="#236">236</a> 
+<a class="jxr_linenumber" name="237" href="#237">237</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateSummaryAmount(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder, 
+<a class="jxr_linenumber" name="238" href="#238">238</a>                                        BigDecimal summaryAmount, 
+<a class="jxr_linenumber" name="239" href="#239">239</a>                                        String invoiceLineItemTypeCode, 
+<a class="jxr_linenumber" name="240" href="#240">240</a>                                        String rejectDescriptionCode) {
+<a class="jxr_linenumber" name="241" href="#241">241</a> 
+<a class="jxr_linenumber" name="242" href="#242">242</a>         BigDecimal lineItemTotalAmount = orderHolder.getElectronicInvoice().getFileTotalAmountForInLineItems(invoiceLineItemTypeCode);
+<a class="jxr_linenumber" name="243" href="#243">243</a> 
+<a class="jxr_linenumber" name="244" href="#244">244</a> <em class="jxr_comment">//        if (lineItemTotalAmount.compareTo(BigDecimal.ZERO) != 0) { // old way, but it's not needed</em>
+<a class="jxr_linenumber" name="245" href="#245">245</a>             <strong class="jxr_keyword">if</strong> ((lineItemTotalAmount.compareTo(summaryAmount)) != 0) {
+<a class="jxr_linenumber" name="246" href="#246">246</a>                 String extraDescription = <span class="jxr_string">"Line Total Amount:"</span> + lineItemTotalAmount + <span class="jxr_string">",Summary Total Amount:"</span> + summaryAmount;
+<a class="jxr_linenumber" name="247" href="#247">247</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(rejectDescriptionCode, extraDescription, orderHolder.getFileName());
+<a class="jxr_linenumber" name="248" href="#248">248</a>                 orderHolder.addInvoiceHeaderRejectReason(rejectReason);
+<a class="jxr_linenumber" name="249" href="#249">249</a>             }
+<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_comment">//        }</em>
+<a class="jxr_linenumber" name="251" href="#251">251</a>     }
+<a class="jxr_linenumber" name="252" href="#252">252</a> 
+<a class="jxr_linenumber" name="253" href="#253">253</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateItemTypes(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder) {
+<a class="jxr_linenumber" name="254" href="#254">254</a>         
+<a class="jxr_linenumber" name="255" href="#255">255</a>         validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_ITEM);
+<a class="jxr_linenumber" name="256" href="#256">256</a>         validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_TAX);
+<a class="jxr_linenumber" name="257" href="#257">257</a>         validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SHIPPING);
+<a class="jxr_linenumber" name="258" href="#258">258</a>         validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_SPECIAL_HANDLING);
+<a class="jxr_linenumber" name="259" href="#259">259</a>         validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT);
+<a class="jxr_linenumber" name="260" href="#260">260</a>         validateItemMapping(orderHolder, ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_EXMT);
+<a class="jxr_linenumber" name="261" href="#261">261</a> 
+<a class="jxr_linenumber" name="262" href="#262">262</a>     }
+<a class="jxr_linenumber" name="263" href="#263">263</a> 
+<a class="jxr_linenumber" name="264" href="#264">264</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateItemMapping(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder, String kualiItemTypeCode) {
+<a class="jxr_linenumber" name="265" href="#265">265</a> 
+<a class="jxr_linenumber" name="266" href="#266">266</a>         <strong class="jxr_keyword">if</strong> (!orderHolder.isItemTypeAvailableInItemMapping(kualiItemTypeCode)) {
+<a class="jxr_linenumber" name="267" href="#267">267</a>             String extraDescription = kualiItemTypeCode;
+<a class="jxr_linenumber" name="268" href="#268">268</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.ITEM_MAPPING_NOT_AVAILABLE, extraDescription, orderHolder.getFileName());
+<a class="jxr_linenumber" name="269" href="#269">269</a>             orderHolder.addInvoiceHeaderRejectReason(rejectReason);
+<a class="jxr_linenumber" name="270" href="#270">270</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="271" href="#271">271</a>         }
+<a class="jxr_linenumber" name="272" href="#272">272</a>         
+<a class="jxr_linenumber" name="273" href="#273">273</a>     }
+<a class="jxr_linenumber" name="274" href="#274">274</a>     
+<a class="jxr_linenumber" name="275" href="#275">275</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateInvoiceDetails(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder){
+<a class="jxr_linenumber" name="276" href="#276">276</a>         
+<a class="jxr_linenumber" name="277" href="#277">277</a>         validatePurchaseOrderMatch(orderHolder);
+<a class="jxr_linenumber" name="278" href="#278">278</a>         
+<a class="jxr_linenumber" name="279" href="#279">279</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()){
+<a class="jxr_linenumber" name="280" href="#280">280</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="281" href="#281">281</a>         }
+<a class="jxr_linenumber" name="282" href="#282">282</a>         
+<a class="jxr_linenumber" name="283" href="#283">283</a>         validateInvoiceItems(orderHolder);
+<a class="jxr_linenumber" name="284" href="#284">284</a>         
+<a class="jxr_linenumber" name="285" href="#285">285</a>         <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="286" href="#286">286</a>             <strong class="jxr_keyword">if</strong> (!orderHolder.isInvoiceRejected()){
+<a class="jxr_linenumber" name="287" href="#287">287</a>                 LOG.info(<span class="jxr_string">"Purchase order document match done successfully"</span>);
+<a class="jxr_linenumber" name="288" href="#288">288</a>             }
+<a class="jxr_linenumber" name="289" href="#289">289</a>         }
+<a class="jxr_linenumber" name="290" href="#290">290</a>     }
+<a class="jxr_linenumber" name="291" href="#291">291</a>     
+<a class="jxr_linenumber" name="292" href="#292">292</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validatePurchaseOrderMatch(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder){
+<a class="jxr_linenumber" name="293" href="#293">293</a>         
+<a class="jxr_linenumber" name="294" href="#294">294</a>         String poIDFieldName = PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_PO_ID;
+<a class="jxr_linenumber" name="295" href="#295">295</a>         String poID = orderHolder.getInvoicePurchaseOrderID();
+<a class="jxr_linenumber" name="296" href="#296">296</a>         
+<a class="jxr_linenumber" name="297" href="#297">297</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isEmpty(poID)){
+<a class="jxr_linenumber" name="298" href="#298">298</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ID_EMPTY,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="299" href="#299">299</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,poIDFieldName,PurapKeyConstants.ERROR_REJECT_INVOICE_POID_EMPTY);
+<a class="jxr_linenumber" name="300" href="#300">300</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="301" href="#301">301</a>         }
+<a class="jxr_linenumber" name="302" href="#302">302</a>         
+<a class="jxr_linenumber" name="303" href="#303">303</a>         String extraDesc = <span class="jxr_string">"Invoice Order ID:"</span> + poID;
+<a class="jxr_linenumber" name="304" href="#304">304</a>         
+<a class="jxr_linenumber" name="305" href="#305">305</a>         <strong class="jxr_keyword">if</strong> (!NumberUtils.isDigits(poID)){
+<a class="jxr_linenumber" name="306" href="#306">306</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ID_INVALID_FORMAT,extraDesc,orderHolder.getFileName());
+<a class="jxr_linenumber" name="307" href="#307">307</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,poIDFieldName,PurapKeyConstants.ERROR_REJECT_INVOICE_POID_INVALID);
+<a class="jxr_linenumber" name="308" href="#308">308</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="309" href="#309">309</a>         }
+<a class="jxr_linenumber" name="310" href="#310">310</a>         
+<a class="jxr_linenumber" name="311" href="#311">311</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/PurapWorkflowConstants.html">PurchaseOrderDocument</a> poDoc = orderHolder.getPurchaseOrderDocument();
+<a class="jxr_linenumber" name="312" href="#312">312</a>         
+<a class="jxr_linenumber" name="313" href="#313">313</a>         <strong class="jxr_keyword">if</strong> (poDoc == <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="314" href="#314">314</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_NOT_EXISTS,extraDesc,orderHolder.getFileName());
+<a class="jxr_linenumber" name="315" href="#315">315</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,poIDFieldName,PurapKeyConstants.ERROR_REJECT_INVOICE__PO_NOT_EXISTS);
+<a class="jxr_linenumber" name="316" href="#316">316</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="317" href="#317">317</a>         }
+<a class="jxr_linenumber" name="318" href="#318">318</a>         
+<a class="jxr_linenumber" name="319" href="#319">319</a>         <strong class="jxr_keyword">if</strong> (poDoc.getVendorHeaderGeneratedIdentifier() == <strong class="jxr_keyword">null</strong> || 
+<a class="jxr_linenumber" name="320" href="#320">320</a>             poDoc.getVendorDetailAssignedIdentifier() == <strong class="jxr_keyword">null</strong> || 
+<a class="jxr_linenumber" name="321" href="#321">321</a>                 !(poDoc.getVendorHeaderGeneratedIdentifier().equals(orderHolder.getVendorHeaderId()) &amp;&amp;
+<a class="jxr_linenumber" name="322" href="#322">322</a>                   poDoc.getVendorDetailAssignedIdentifier().equals(orderHolder.getVendorDetailId()))){
+<a class="jxr_linenumber" name="323" href="#323">323</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="324" href="#324">324</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason);
+<a class="jxr_linenumber" name="325" href="#325">325</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="326" href="#326">326</a>         }
+<a class="jxr_linenumber" name="327" href="#327">327</a>         
+<a class="jxr_linenumber" name="328" href="#328">328</a>     }
+<a class="jxr_linenumber" name="329" href="#329">329</a>     
+<a class="jxr_linenumber" name="330" href="#330">330</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateInvoiceItems(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder){
+<a class="jxr_linenumber" name="331" href="#331">331</a>         
+<a class="jxr_linenumber" name="332" href="#332">332</a>         Set poLineNumbers = <strong class="jxr_keyword">new</strong> HashSet();
+<a class="jxr_linenumber" name="333" href="#333">333</a>         
+<a class="jxr_linenumber" name="334" href="#334">334</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a>[] itemHolders = orderHolder.getItems();  
+<a class="jxr_linenumber" name="335" href="#335">335</a>         <strong class="jxr_keyword">if</strong> (itemHolders != <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="336" href="#336">336</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; itemHolders.length; i++) {
+<a class="jxr_linenumber" name="337" href="#337">337</a>                 validateInvoiceItem(itemHolders[i],poLineNumbers);
+<a class="jxr_linenumber" name="338" href="#338">338</a>             }
+<a class="jxr_linenumber" name="339" href="#339">339</a>         }
+<a class="jxr_linenumber" name="340" href="#340">340</a>     }
+<a class="jxr_linenumber" name="341" href="#341">341</a>     
+<a class="jxr_linenumber" name="342" href="#342">342</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateInvoiceItem(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a> itemHolder,
+<a class="jxr_linenumber" name="343" href="#343">343</a>                                      Set poLineNumbers){
+<a class="jxr_linenumber" name="344" href="#344">344</a>         
+<a class="jxr_linenumber" name="345" href="#345">345</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/PurchaseOrderItem.html">PurchaseOrderItem</a> poItem = itemHolder.getPurchaseOrderItem();
+<a class="jxr_linenumber" name="346" href="#346">346</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder = itemHolder.getInvoiceOrderHolder();
+<a class="jxr_linenumber" name="347" href="#347">347</a>         
+<a class="jxr_linenumber" name="348" href="#348">348</a>         <strong class="jxr_keyword">if</strong> (poItem == <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="349" href="#349">349</a>             String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="350" href="#350">350</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.NO_MATCHING_PO_ITEM,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="351" href="#351">351</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_INVOICE__ITEM_NOMATCH);
+<a class="jxr_linenumber" name="352" href="#352">352</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="353" href="#353">353</a>         }
+<a class="jxr_linenumber" name="354" href="#354">354</a>         
+<a class="jxr_linenumber" name="355" href="#355">355</a>         <strong class="jxr_keyword">if</strong> (poLineNumbers.contains(itemHolder.getInvoiceItemLineNumber())){
+<a class="jxr_linenumber" name="356" href="#356">356</a>             String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="357" href="#357">357</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.DUPLIATE_INVOICE_LINE_ITEM,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="358" href="#358">358</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_PO_ITEM_DUPLICATE);
+<a class="jxr_linenumber" name="359" href="#359">359</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="360" href="#360">360</a>         }<strong class="jxr_keyword">else</strong>{
+<a class="jxr_linenumber" name="361" href="#361">361</a>             poLineNumbers.add(itemHolder.getInvoiceItemLineNumber());
+<a class="jxr_linenumber" name="362" href="#362">362</a>         }
+<a class="jxr_linenumber" name="363" href="#363">363</a>         
+<a class="jxr_linenumber" name="364" href="#364">364</a>         <strong class="jxr_keyword">if</strong> (!poItem.isItemActiveIndicator()){
+<a class="jxr_linenumber" name="365" href="#365">365</a>             String extraDescription = <span class="jxr_string">"PO Item Line Number:"</span> + poItem.getItemLineNumber();
+<a class="jxr_linenumber" name="366" href="#366">366</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INACTIVE_LINE_ITEM,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="367" href="#367">367</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_PO_ITEM_INACTIVE);
+<a class="jxr_linenumber" name="368" href="#368">368</a>             <strong class="jxr_keyword">return</strong>; 
+<a class="jxr_linenumber" name="369" href="#369">369</a>         }
+<a class="jxr_linenumber" name="370" href="#370">370</a> 
+<a class="jxr_linenumber" name="371" href="#371">371</a>         <strong class="jxr_keyword">if</strong> (!itemHolder.isCatalogNumberAcceptIndicatorEnabled()){
+<a class="jxr_linenumber" name="372" href="#372">372</a>             validateCatalogNumber(itemHolder);
+<a class="jxr_linenumber" name="373" href="#373">373</a>             <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()){
+<a class="jxr_linenumber" name="374" href="#374">374</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="375" href="#375">375</a>             }
+<a class="jxr_linenumber" name="376" href="#376">376</a>         }
+<a class="jxr_linenumber" name="377" href="#377">377</a>         
+<a class="jxr_linenumber" name="378" href="#378">378</a>         <strong class="jxr_keyword">if</strong> (!itemHolder.isUnitOfMeasureAcceptIndicatorEnabled()){
+<a class="jxr_linenumber" name="379" href="#379">379</a>             <strong class="jxr_keyword">if</strong> (!StringUtils.equals(poItem.getItemUnitOfMeasureCode(), itemHolder.getInvoiceItemUnitOfMeasureCode())){
+<a class="jxr_linenumber" name="380" href="#380">380</a>                 String extraDescription = <span class="jxr_string">"Invoice UOM:"</span> + itemHolder.getInvoiceItemUnitOfMeasureCode() + <span class="jxr_string">", PO UOM:"</span> + poItem.getItemUnitOfMeasureCode();
+<a class="jxr_linenumber" name="381" href="#381">381</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.UNIT_OF_MEASURE_MISMATCH,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="382" href="#382">382</a>                 orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_UOM,PurapKeyConstants.ERROR_REJECT_UOM_MISMATCH);
+<a class="jxr_linenumber" name="383" href="#383">383</a>                 <strong class="jxr_keyword">return</strong>; 
+<a class="jxr_linenumber" name="384" href="#384">384</a>             }
+<a class="jxr_linenumber" name="385" href="#385">385</a>         }
+<a class="jxr_linenumber" name="386" href="#386">386</a>         
+<a class="jxr_linenumber" name="387" href="#387">387</a>         validateUnitPrice(itemHolder);
+<a class="jxr_linenumber" name="388" href="#388">388</a>             
+<a class="jxr_linenumber" name="389" href="#389">389</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()){
+<a class="jxr_linenumber" name="390" href="#390">390</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="391" href="#391">391</a>         }
+<a class="jxr_linenumber" name="392" href="#392">392</a>         
+<a class="jxr_linenumber" name="393" href="#393">393</a>         validateSalesTax(itemHolder);
+<a class="jxr_linenumber" name="394" href="#394">394</a>         
+<a class="jxr_linenumber" name="395" href="#395">395</a>         <strong class="jxr_keyword">if</strong> (orderHolder.isInvoiceRejected()){
+<a class="jxr_linenumber" name="396" href="#396">396</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="397" href="#397">397</a>         }
+<a class="jxr_linenumber" name="398" href="#398">398</a>         
+<a class="jxr_linenumber" name="399" href="#399">399</a>         <strong class="jxr_keyword">if</strong> (poItem.getItemQuantity() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="400" href="#400">400</a>             validateQtyBasedItem(itemHolder);
+<a class="jxr_linenumber" name="401" href="#401">401</a>         }<strong class="jxr_keyword">else</strong>{
+<a class="jxr_linenumber" name="402" href="#402">402</a>             validateNonQtyBasedItem(itemHolder);
+<a class="jxr_linenumber" name="403" href="#403">403</a>         }
+<a class="jxr_linenumber" name="404" href="#404">404</a>         
+<a class="jxr_linenumber" name="405" href="#405">405</a>     }
+<a class="jxr_linenumber" name="406" href="#406">406</a>     
+<a class="jxr_linenumber" name="407" href="#407">407</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateCatalogNumber(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a> itemHolder){
+<a class="jxr_linenumber" name="408" href="#408">408</a>         
+<a class="jxr_linenumber" name="409" href="#409">409</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/PurchaseOrderItem.html">PurchaseOrderItem</a> poItem = itemHolder.getPurchaseOrderItem();
+<a class="jxr_linenumber" name="410" href="#410">410</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder = itemHolder.getInvoiceOrderHolder();
+<a class="jxr_linenumber" name="411" href="#411">411</a>         
+<a class="jxr_linenumber" name="412" href="#412">412</a>         String invoiceCatalogNumberStripped = itemHolder.getCatalogNumberStripped();
+<a class="jxr_linenumber" name="413" href="#413">413</a>         String poCatalogNumberStripped = ElectronicInvoiceUtils.stripSplChars(poItem.getItemCatalogNumber());
+<a class="jxr_linenumber" name="414" href="#414">414</a>         
+<a class="jxr_linenumber" name="415" href="#415">415</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="416" href="#416">416</a> <em class="jxr_javadoccomment">         * If Catalog number in invoice and po are not empty, create reject reason if it doesn't match </em>
+<a class="jxr_linenumber" name="417" href="#417">417</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="418" href="#418">418</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isNotBlank(invoiceCatalogNumberStripped) &amp;&amp;
+<a class="jxr_linenumber" name="419" href="#419">419</a>             StringUtils.isNotBlank(poCatalogNumberStripped)){
+<a class="jxr_linenumber" name="420" href="#420">420</a>             
+<a class="jxr_linenumber" name="421" href="#421">421</a>             <strong class="jxr_keyword">if</strong> (!StringUtils.equals(poCatalogNumberStripped, invoiceCatalogNumberStripped)){
+<a class="jxr_linenumber" name="422" href="#422">422</a>                 
+<a class="jxr_linenumber" name="423" href="#423">423</a>                 String extraDescription = <span class="jxr_string">"Invoice Catalog No:"</span> + invoiceCatalogNumberStripped + <span class="jxr_string">", PO Catalog No:"</span> + poCatalogNumberStripped;
+<a class="jxr_linenumber" name="424" href="#424">424</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.CATALOG_NUMBER_MISMATCH,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="425" href="#425">425</a>                 orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_CATALOG_NUMBER,PurapKeyConstants.ERROR_REJECT_CATALOG_MISMATCH);
+<a class="jxr_linenumber" name="426" href="#426">426</a>             }
+<a class="jxr_linenumber" name="427" href="#427">427</a>             
+<a class="jxr_linenumber" name="428" href="#428">428</a>         }<strong class="jxr_keyword">else</strong>{
+<a class="jxr_linenumber" name="429" href="#429">429</a>             
+<a class="jxr_linenumber" name="430" href="#430">430</a>             <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="431" href="#431">431</a> <em class="jxr_javadoccomment">             * If catalog number is empty in PO/&amp;Invoice, check whether the catalog check is required for the requisition source.</em>
+<a class="jxr_linenumber" name="432" href="#432">432</a> <em class="jxr_javadoccomment">             * If exists in param, create reject reason.</em>
+<a class="jxr_linenumber" name="433" href="#433">433</a> <em class="jxr_javadoccomment">             * If not exists, continue with UOM and unit price match.</em>
+<a class="jxr_linenumber" name="434" href="#434">434</a> <em class="jxr_javadoccomment">             */</em>
+<a class="jxr_linenumber" name="435" href="#435">435</a>             String reqSourceRequiringCatalogMatch = SpringContext.getBean(ParameterService.<strong class="jxr_keyword">class</strong>).getParameterValue(ElectronicInvoiceStep.<strong class="jxr_keyword">class</strong>, PurapParameterConstants.ElectronicInvoiceParameters.REQUISITION_SOURCES_REQUIRING_CATALOG_MATCHING);
+<a class="jxr_linenumber" name="436" href="#436">436</a>             String requisitionSourceCodeInPO = orderHolder.getPurchaseOrderDocument().getRequisitionSourceCode();
+<a class="jxr_linenumber" name="437" href="#437">437</a>             
+<a class="jxr_linenumber" name="438" href="#438">438</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(reqSourceRequiringCatalogMatch)){
+<a class="jxr_linenumber" name="439" href="#439">439</a>                 String[] requisitionSourcesFromParam = StringUtils.split(reqSourceRequiringCatalogMatch,';');
+<a class="jxr_linenumber" name="440" href="#440">440</a>                 <strong class="jxr_keyword">if</strong> (ArrayUtils.contains(requisitionSourcesFromParam, requisitionSourceCodeInPO)){
+<a class="jxr_linenumber" name="441" href="#441">441</a>                     String extraDescription = <span class="jxr_string">"Invoice Catalog No:"</span> + invoiceCatalogNumberStripped + <span class="jxr_string">", PO Catalog No:"</span> + poItem.getItemCatalogNumber();
+<a class="jxr_linenumber" name="442" href="#442">442</a>                     <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.CATALOG_NUMBER_MISMATCH,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="443" href="#443">443</a>                     orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_CATALOG_NUMBER,PurapKeyConstants.ERROR_REJECT_CATALOG_MISMATCH);
+<a class="jxr_linenumber" name="444" href="#444">444</a>                 }
+<a class="jxr_linenumber" name="445" href="#445">445</a>             }
+<a class="jxr_linenumber" name="446" href="#446">446</a>         }
+<a class="jxr_linenumber" name="447" href="#447">447</a>     }
+<a class="jxr_linenumber" name="448" href="#448">448</a>     
+<a class="jxr_linenumber" name="449" href="#449">449</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateQtyBasedItem(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a> itemHolder){
+<a class="jxr_linenumber" name="450" href="#450">450</a>         
+<a class="jxr_linenumber" name="451" href="#451">451</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/PurchaseOrderItem.html">PurchaseOrderItem</a> poItem = itemHolder.getPurchaseOrderItem();
+<a class="jxr_linenumber" name="452" href="#452">452</a>         
+<a class="jxr_linenumber" name="453" href="#453">453</a>         String fileName = itemHolder.getInvoiceOrderHolder().getFileName();
+<a class="jxr_linenumber" name="454" href="#454">454</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder = itemHolder.getInvoiceOrderHolder();
+<a class="jxr_linenumber" name="455" href="#455">455</a>         
+<a class="jxr_linenumber" name="456" href="#456">456</a>         <strong class="jxr_keyword">if</strong> (KualiDecimal.ZERO.compareTo(poItem.getItemOutstandingEncumberedQuantity()) &gt;= 0) {
+<a class="jxr_linenumber" name="457" href="#457">457</a>             <em class="jxr_comment">//we have no quantity left encumbered on the po item</em>
+<a class="jxr_linenumber" name="458" href="#458">458</a>             String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="459" href="#459">459</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.OUTSTANDING_ENCUMBERED_QTY_AVAILABLE,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="460" href="#460">460</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_QUANTITY,PurapKeyConstants.ERROR_REJECT_POITEM_OUTSTANDING_QTY);
+<a class="jxr_linenumber" name="461" href="#461">461</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="462" href="#462">462</a>         }
+<a class="jxr_linenumber" name="463" href="#463">463</a>         
+<a class="jxr_linenumber" name="464" href="#464">464</a>         <strong class="jxr_keyword">if</strong> (itemHolder.getInvoiceItemQuantity() == <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="465" href="#465">465</a>             <em class="jxr_comment">//we have quantity entered on the PO Item but the Invoice has no quantity</em>
+<a class="jxr_linenumber" name="466" href="#466">466</a>             String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="467" href="#467">467</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_QTY_EMPTY,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="468" href="#468">468</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_QUANTITY,PurapKeyConstants.ERROR_REJECT_POITEM_INVOICE_QTY_EMPTY);
+<a class="jxr_linenumber" name="469" href="#469">469</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="470" href="#470">470</a>         }<strong class="jxr_keyword">else</strong>{
+<a class="jxr_linenumber" name="471" href="#471">471</a>             
+<a class="jxr_linenumber" name="472" href="#472">472</a>             <strong class="jxr_keyword">if</strong>(!itemHolder.getInvoiceOrderHolder().getPurchaseOrderDocument().isReceivingDocumentRequiredIndicator()){ 
+<a class="jxr_linenumber" name="473" href="#473">473</a> 
+<a class="jxr_linenumber" name="474" href="#474">474</a>                 <strong class="jxr_keyword">if</strong> ((itemHolder.getInvoiceItemQuantity().compareTo(poItem.getItemOutstandingEncumberedQuantity().bigDecimalValue())) &gt; 0) {
+<a class="jxr_linenumber" name="475" href="#475">475</a>                     <em class="jxr_comment">//we have more quantity on the e-invoice than left outstanding encumbered on the PO item</em>
+<a class="jxr_linenumber" name="476" href="#476">476</a>                     String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="477" href="#477">477</a>                     <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ITEM_QTY_LESSTHAN_INVOICE_ITEM_QTY,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="478" href="#478">478</a>                     orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_QUANTITY,PurapKeyConstants.ERROR_REJECT_POITEM_LESS_OUTSTANDING_QTY);
+<a class="jxr_linenumber" name="479" href="#479">479</a>                     <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="480" href="#480">480</a>                 }
+<a class="jxr_linenumber" name="481" href="#481">481</a>             }
+<a class="jxr_linenumber" name="482" href="#482">482</a>         }
+<a class="jxr_linenumber" name="483" href="#483">483</a>         
+<a class="jxr_linenumber" name="484" href="#484">484</a>     }
+<a class="jxr_linenumber" name="485" href="#485">485</a>     
+<a class="jxr_linenumber" name="486" href="#486">486</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateNonQtyBasedItem(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a> itemHolder){
+<a class="jxr_linenumber" name="487" href="#487">487</a>         
+<a class="jxr_linenumber" name="488" href="#488">488</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/PurchaseOrderItem.html">PurchaseOrderItem</a> poItem = itemHolder.getPurchaseOrderItem();
+<a class="jxr_linenumber" name="489" href="#489">489</a>         
+<a class="jxr_linenumber" name="490" href="#490">490</a>         String fileName = itemHolder.getInvoiceOrderHolder().getFileName();
+<a class="jxr_linenumber" name="491" href="#491">491</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder = itemHolder.getInvoiceOrderHolder();
+<a class="jxr_linenumber" name="492" href="#492">492</a>         
+<a class="jxr_linenumber" name="493" href="#493">493</a>         <strong class="jxr_keyword">if</strong> ((KualiDecimal.ZERO.compareTo(poItem.getItemOutstandingEncumberedAmount())) &gt;= 0) {
+<a class="jxr_linenumber" name="494" href="#494">494</a>             <em class="jxr_comment">//we have no dollars left encumbered on the po item</em>
+<a class="jxr_linenumber" name="495" href="#495">495</a>             String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="496" href="#496">496</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.OUTSTANDING_ENCUMBERED_AMT_AVAILABLE,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="497" href="#497">497</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_POITEM_OUTSTANDING_EMCUMBERED_AMOUNT);
+<a class="jxr_linenumber" name="498" href="#498">498</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="499" href="#499">499</a>         }<strong class="jxr_keyword">else</strong>{
+<a class="jxr_linenumber" name="500" href="#500">500</a>             <em class="jxr_comment">//we have encumbered dollars left on PO</em>
+<a class="jxr_linenumber" name="501" href="#501">501</a>             <strong class="jxr_keyword">if</strong> (((itemHolder.getInvoiceItemSubTotalAmount().setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue())) &gt; 0) {
+<a class="jxr_linenumber" name="502" href="#502">502</a>                 String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="503" href="#503">503</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ITEM_AMT_LESSTHAN_INVOICE_ITEM_AMT,extraDescription,orderHolder.getFileName());
+<a class="jxr_linenumber" name="504" href="#504">504</a>                 orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_POITEM_LESS_OUTSTANDING_EMCUMBERED_AMOUNT);
+<a class="jxr_linenumber" name="505" href="#505">505</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="506" href="#506">506</a>             }
+<a class="jxr_linenumber" name="507" href="#507">507</a>             
+<a class="jxr_linenumber" name="508" href="#508">508</a>         }
+<a class="jxr_linenumber" name="509" href="#509">509</a>     }
+<a class="jxr_linenumber" name="510" href="#510">510</a>     
+<a class="jxr_linenumber" name="511" href="#511">511</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateUnitPrice(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a> itemHolder){
+<a class="jxr_linenumber" name="512" href="#512">512</a>         
+<a class="jxr_linenumber" name="513" href="#513">513</a>         <a href="../../../../../../../org/kuali/kfs/vnd/businessobject/PurchaseOrderCostSource.html">PurchaseOrderCostSource</a> costSource = itemHolder.getInvoiceOrderHolder().getPurchaseOrderDocument().getPurchaseOrderCostSource();
+<a class="jxr_linenumber" name="514" href="#514">514</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/PurchaseOrderItem.html">PurchaseOrderItem</a> poItem = itemHolder.getPurchaseOrderItem();
+<a class="jxr_linenumber" name="515" href="#515">515</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder = itemHolder.getInvoiceOrderHolder();
+<a class="jxr_linenumber" name="516" href="#516">516</a>         
+<a class="jxr_linenumber" name="517" href="#517">517</a>         String extraDescription = <span class="jxr_string">"Invoice Item Line Number:"</span> + itemHolder.getInvoiceItemLineNumber();
+<a class="jxr_linenumber" name="518" href="#518">518</a>         
+<a class="jxr_linenumber" name="519" href="#519">519</a>         BigDecimal actualVariance = itemHolder.getInvoiceItemUnitPrice().subtract(poItem.getItemUnitPrice());
+<a class="jxr_linenumber" name="520" href="#520">520</a>         
+<a class="jxr_linenumber" name="521" href="#521">521</a>         BigDecimal lowerPercentage = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="522" href="#522">522</a>         <strong class="jxr_keyword">if</strong> (costSource.getItemUnitPriceLowerVariancePercent() != <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="523" href="#523">523</a>             <em class="jxr_comment">//Checking for lower variance</em>
+<a class="jxr_linenumber" name="524" href="#524">524</a>             lowerPercentage = costSource.getItemUnitPriceLowerVariancePercent();
+<a class="jxr_linenumber" name="525" href="#525">525</a>         }
+<a class="jxr_linenumber" name="526" href="#526">526</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="527" href="#527">527</a>             <em class="jxr_comment">//If the cost source itemUnitPriceLowerVariancePercent is null then</em>
+<a class="jxr_linenumber" name="528" href="#528">528</a>             <em class="jxr_comment">//we'll use the exact match (100%).</em>
+<a class="jxr_linenumber" name="529" href="#529">529</a>             lowerPercentage = <strong class="jxr_keyword">new</strong> BigDecimal(100);
+<a class="jxr_linenumber" name="530" href="#530">530</a>         }
+<a class="jxr_linenumber" name="531" href="#531">531</a>         
+<a class="jxr_linenumber" name="532" href="#532">532</a>         BigDecimal lowerAcceptableVariance = (lowerPercentage.divide(<strong class="jxr_keyword">new</strong> BigDecimal(100))).multiply(poItem.getItemUnitPrice()).negate();
+<a class="jxr_linenumber" name="533" href="#533">533</a> 
+<a class="jxr_linenumber" name="534" href="#534">534</a>         <strong class="jxr_keyword">if</strong> (lowerAcceptableVariance.compareTo(actualVariance) &gt; 0) {
+<a class="jxr_linenumber" name="535" href="#535">535</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_AMT_LESSER_THAN_LOWER_VARIANCE, extraDescription, orderHolder.getFileName());
+<a class="jxr_linenumber" name="536" href="#536">536</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason, PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_REJECT_UNITPRICE_LOWERVARIANCE);
+<a class="jxr_linenumber" name="537" href="#537">537</a>         }
+<a class="jxr_linenumber" name="538" href="#538">538</a>         
+<a class="jxr_linenumber" name="539" href="#539">539</a>         BigDecimal upperPercentage = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="540" href="#540">540</a>         
+<a class="jxr_linenumber" name="541" href="#541">541</a>         <strong class="jxr_keyword">if</strong> (costSource.getItemUnitPriceUpperVariancePercent() != <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="542" href="#542">542</a>             <em class="jxr_comment">//Checking for upper variance</em>
+<a class="jxr_linenumber" name="543" href="#543">543</a>             upperPercentage = costSource.getItemUnitPriceUpperVariancePercent();
+<a class="jxr_linenumber" name="544" href="#544">544</a>         }
+<a class="jxr_linenumber" name="545" href="#545">545</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="546" href="#546">546</a>             <em class="jxr_comment">//If the cost source itemUnitPriceLowerVariancePercent is null then</em>
+<a class="jxr_linenumber" name="547" href="#547">547</a>             <em class="jxr_comment">//we'll use the exact match (100%).</em>
+<a class="jxr_linenumber" name="548" href="#548">548</a>             upperPercentage = <strong class="jxr_keyword">new</strong> BigDecimal(100);
+<a class="jxr_linenumber" name="549" href="#549">549</a>         }
+<a class="jxr_linenumber" name="550" href="#550">550</a>         BigDecimal upperAcceptableVariance = (upperPercentage.divide(<strong class="jxr_keyword">new</strong> BigDecimal(100))).multiply(poItem.getItemUnitPrice());
+<a class="jxr_linenumber" name="551" href="#551">551</a> 
+<a class="jxr_linenumber" name="552" href="#552">552</a>         <strong class="jxr_keyword">if</strong> (upperAcceptableVariance.compareTo(actualVariance) &lt; 0) {
+<a class="jxr_linenumber" name="553" href="#553">553</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_AMT_GREATER_THAN_UPPER_VARIANCE, extraDescription, orderHolder.getFileName());
+<a class="jxr_linenumber" name="554" href="#554">554</a>             orderHolder.addInvoiceOrderRejectReason(rejectReason, PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_REJECT_UNITPRICE_UPPERVARIANCE);
+<a class="jxr_linenumber" name="555" href="#555">555</a>         }
+<a class="jxr_linenumber" name="556" href="#556">556</a>         
+<a class="jxr_linenumber" name="557" href="#557">557</a>     }
+<a class="jxr_linenumber" name="558" href="#558">558</a>     
+<a class="jxr_linenumber" name="559" href="#559">559</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> validateSalesTax(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a> itemHolder){
+<a class="jxr_linenumber" name="560" href="#560">560</a> 
+<a class="jxr_linenumber" name="561" href="#561">561</a>         <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="562" href="#562">562</a>             LOG.info(<span class="jxr_string">"Validating sales tax"</span>);
+<a class="jxr_linenumber" name="563" href="#563">563</a>         }
+<a class="jxr_linenumber" name="564" href="#564">564</a> 
+<a class="jxr_linenumber" name="565" href="#565">565</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceOrderHolder.html">ElectronicInvoiceOrderHolder</a> orderHolder = itemHolder.getInvoiceOrderHolder();
+<a class="jxr_linenumber" name="566" href="#566">566</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/PurchaseOrderItem.html">PurchaseOrderItem</a> poItem = itemHolder.getPurchaseOrderItem();
+<a class="jxr_linenumber" name="567" href="#567">567</a>         KualiDecimal invoiceSalesTaxAmount = <strong class="jxr_keyword">new</strong> KualiDecimal(itemHolder.getTaxAmount());
+<a class="jxr_linenumber" name="568" href="#568">568</a>         
+<a class="jxr_linenumber" name="569" href="#569">569</a>         <strong class="jxr_keyword">boolean</strong> enableSalesTaxInd = SpringContext.getBean(ParameterService.<strong class="jxr_keyword">class</strong>).getIndicatorParameter(KfsParameterConstants.PURCHASING_DOCUMENT.<strong class="jxr_keyword">class</strong>, PurapParameterConstants.ENABLE_SALES_TAX_IND);
+<a class="jxr_linenumber" name="570" href="#570">570</a>         
+<a class="jxr_linenumber" name="571" href="#571">571</a>         <strong class="jxr_keyword">boolean</strong> salesTaxUsed = false;
+<a class="jxr_linenumber" name="572" href="#572">572</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/PurapWorkflowConstants.html">PurchaseOrderDocument</a> poDoc = orderHolder.getPurchaseOrderDocument();
+<a class="jxr_linenumber" name="573" href="#573">573</a>         List&lt;PurApItem&gt; items = PurApItemUtils.getAboveTheLineOnly(poDoc.getItems());
+<a class="jxr_linenumber" name="574" href="#574">574</a>         <strong class="jxr_keyword">for</strong> (PurApItem  item : items) {
+<a class="jxr_linenumber" name="575" href="#575">575</a>             <strong class="jxr_keyword">if</strong> (item.getItemType().isTaxableIndicator()) {
+<a class="jxr_linenumber" name="576" href="#576">576</a>                 salesTaxUsed = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="577" href="#577">577</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="578" href="#578">578</a>             }
+<a class="jxr_linenumber" name="579" href="#579">579</a>         }
+<a class="jxr_linenumber" name="580" href="#580">580</a>         <strong class="jxr_keyword">boolean</strong> useTaxUsed = poDoc.isUseTaxIndicator();
+<a class="jxr_linenumber" name="581" href="#581">581</a>         enableSalesTaxInd &amp;= (poItem.getItemType().isTaxableIndicator() &amp;&amp; (salesTaxUsed || useTaxUsed));
+<a class="jxr_linenumber" name="582" href="#582">582</a>         
+<a class="jxr_linenumber" name="583" href="#583">583</a>         <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="584" href="#584">584</a>             LOG.info(<span class="jxr_string">"Sales Tax Enable Indicator - "</span> + enableSalesTaxInd);
+<a class="jxr_linenumber" name="585" href="#585">585</a>             LOG.info(<span class="jxr_string">"Invoice item tax amount - "</span> + invoiceSalesTaxAmount);
+<a class="jxr_linenumber" name="586" href="#586">586</a>         }
+<a class="jxr_linenumber" name="587" href="#587">587</a>         <strong class="jxr_keyword">if</strong> (!enableSalesTaxInd) {
+<a class="jxr_linenumber" name="588" href="#588">588</a>             <em class="jxr_comment">// if sales tax is disabled, item tax amount shall be zero </em>
+<a class="jxr_linenumber" name="589" href="#589">589</a>             <strong class="jxr_keyword">if</strong> (invoiceSalesTaxAmount.compareTo(KualiDecimal.ZERO) != 0) {
+<a class="jxr_linenumber" name="590" href="#590">590</a>                 String extraDescription = <span class="jxr_string">"Item Tax Amount:"</span> + invoiceSalesTaxAmount;
+<a class="jxr_linenumber" name="591" href="#591">591</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.TAX_SUMMARY_AMT_EXISTS, extraDescription, orderHolder.getFileName());
+<a class="jxr_linenumber" name="592" href="#592">592</a>                 orderHolder.addInvoiceHeaderRejectReason(rejectReason);      
+<a class="jxr_linenumber" name="593" href="#593">593</a>             }
+<a class="jxr_linenumber" name="594" href="#594">594</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="595" href="#595">595</a>         }
+<a class="jxr_linenumber" name="596" href="#596">596</a> 
+<a class="jxr_linenumber" name="597" href="#597">597</a>         <em class="jxr_comment">// For reject doc, trans date should be the einvoice processed date.</em>
+<a class="jxr_linenumber" name="598" href="#598">598</a>         java.sql.Date transTaxDate = itemHolder.getInvoiceOrderHolder().getInvoiceProcessedDate();
+<a class="jxr_linenumber" name="599" href="#599">599</a>         String deliveryPostalCode = poItem.getPurchaseOrder().getDeliveryPostalCode();
+<a class="jxr_linenumber" name="600" href="#600">600</a>         KualiDecimal extendedPrice = <strong class="jxr_keyword">new</strong> KualiDecimal(getExtendedPrice(itemHolder).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR));
+<a class="jxr_linenumber" name="601" href="#601">601</a>         
+<a class="jxr_linenumber" name="602" href="#602">602</a>         KualiDecimal salesTaxAmountCalculated = taxService.getTotalSalesTaxAmount(transTaxDate, deliveryPostalCode, extendedPrice);
+<a class="jxr_linenumber" name="603" href="#603">603</a>         KualiDecimal actualVariance = invoiceSalesTaxAmount.subtract(salesTaxAmountCalculated);
+<a class="jxr_linenumber" name="604" href="#604">604</a>         
+<a class="jxr_linenumber" name="605" href="#605">605</a>         <strong class="jxr_keyword">if</strong> (LOG.isInfoEnabled()){
+<a class="jxr_linenumber" name="606" href="#606">606</a>             LOG.info(<span class="jxr_string">"Sales Tax Upper Variance param - "</span> + upperVariancePercentString);
+<a class="jxr_linenumber" name="607" href="#607">607</a>             LOG.info(<span class="jxr_string">"Sales Tax Lower Variance param - "</span> + lowerVariancePercentString);
+<a class="jxr_linenumber" name="608" href="#608">608</a>             LOG.info(<span class="jxr_string">"Trans date (from invoice/rejectdoc) - "</span> + transTaxDate);
+<a class="jxr_linenumber" name="609" href="#609">609</a>             LOG.info(<span class="jxr_string">"Delivery Postal Code - "</span> + deliveryPostalCode);
+<a class="jxr_linenumber" name="610" href="#610">610</a>             LOG.info(<span class="jxr_string">"Extended price - "</span> + extendedPrice);
+<a class="jxr_linenumber" name="611" href="#611">611</a>             LOG.info(<span class="jxr_string">"Sales Tax amount (from sales tax service) - "</span> + salesTaxAmountCalculated);
+<a class="jxr_linenumber" name="612" href="#612">612</a>         }
+<a class="jxr_linenumber" name="613" href="#613">613</a>         
+<a class="jxr_linenumber" name="614" href="#614">614</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(upperVariancePercentString)){
+<a class="jxr_linenumber" name="615" href="#615">615</a>             
+<a class="jxr_linenumber" name="616" href="#616">616</a>             KualiDecimal upperVariancePercent = <strong class="jxr_keyword">new</strong> KualiDecimal(upperVariancePercentString);
+<a class="jxr_linenumber" name="617" href="#617">617</a>             BigDecimal upperAcceptableVariance = (upperVariancePercent.divide(<strong class="jxr_keyword">new</strong> KualiDecimal(100))).multiply(salesTaxAmountCalculated).bigDecimalValue();
+<a class="jxr_linenumber" name="618" href="#618">618</a>             
+<a class="jxr_linenumber" name="619" href="#619">619</a>             <strong class="jxr_keyword">if</strong> (upperAcceptableVariance.compareTo(actualVariance.bigDecimalValue()) &lt; 0){
+<a class="jxr_linenumber" name="620" href="#620">620</a>                 <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.SALES_TAX_AMT_GREATER_THAN_UPPER_VARIANCE,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="621" href="#621">621</a>                 orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_TAX_AMT,PurapKeyConstants.ERROR_REJECT_TAXAMOUNT_UPPERVARIANCE);
+<a class="jxr_linenumber" name="622" href="#622">622</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="623" href="#623">623</a>             }
+<a class="jxr_linenumber" name="624" href="#624">624</a>             
+<a class="jxr_linenumber" name="625" href="#625">625</a>         }
+<a class="jxr_linenumber" name="626" href="#626">626</a>         
+<a class="jxr_linenumber" name="627" href="#627">627</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(lowerVariancePercentString)){
+<a class="jxr_linenumber" name="628" href="#628">628</a>             
+<a class="jxr_linenumber" name="629" href="#629">629</a>             KualiDecimal lowerVariancePercent = <strong class="jxr_keyword">new</strong> KualiDecimal(lowerVariancePercentString);
+<a class="jxr_linenumber" name="630" href="#630">630</a>             BigDecimal lowerAcceptableVariance = (lowerVariancePercent.divide(<strong class="jxr_keyword">new</strong> KualiDecimal(100))).multiply(salesTaxAmountCalculated).bigDecimalValue().negate();
+<a class="jxr_linenumber" name="631" href="#631">631</a>             
+<a class="jxr_linenumber" name="632" href="#632">632</a>             <strong class="jxr_keyword">if</strong> (lowerAcceptableVariance.compareTo(BigDecimal.ZERO) &gt;= 0 &amp;&amp; 
+<a class="jxr_linenumber" name="633" href="#633">633</a>                 actualVariance.compareTo(KualiDecimal.ZERO) &gt;= 0){
+<a class="jxr_linenumber" name="634" href="#634">634</a>                 <strong class="jxr_keyword">if</strong> (actualVariance.bigDecimalValue().compareTo(lowerAcceptableVariance) &gt; 0){
+<a class="jxr_linenumber" name="635" href="#635">635</a>                     <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.SALES_TAX_AMT_LESSER_THAN_LOWER_VARIANCE,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="636" href="#636">636</a>                     orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_TAX_AMT,PurapKeyConstants.ERROR_REJECT_TAXAMOUNT_LOWERVARIANCE);
+<a class="jxr_linenumber" name="637" href="#637">637</a>                 }
+<a class="jxr_linenumber" name="638" href="#638">638</a>             }<strong class="jxr_keyword">else</strong>{
+<a class="jxr_linenumber" name="639" href="#639">639</a>                 <strong class="jxr_keyword">if</strong> (actualVariance.bigDecimalValue().compareTo(lowerAcceptableVariance) &lt; 0){
+<a class="jxr_linenumber" name="640" href="#640">640</a>                     <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.SALES_TAX_AMT_LESSER_THAN_LOWER_VARIANCE,<strong class="jxr_keyword">null</strong>,orderHolder.getFileName());
+<a class="jxr_linenumber" name="641" href="#641">641</a>                     orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_TAX_AMT,PurapKeyConstants.ERROR_REJECT_TAXAMOUNT_LOWERVARIANCE);
+<a class="jxr_linenumber" name="642" href="#642">642</a>                 }
+<a class="jxr_linenumber" name="643" href="#643">643</a>             }
+<a class="jxr_linenumber" name="644" href="#644">644</a>         }
+<a class="jxr_linenumber" name="645" href="#645">645</a>         
+<a class="jxr_linenumber" name="646" href="#646">646</a>     }
+<a class="jxr_linenumber" name="647" href="#647">647</a>     
+<a class="jxr_linenumber" name="648" href="#648">648</a>     
+<a class="jxr_linenumber" name="649" href="#649">649</a>     
+<a class="jxr_linenumber" name="650" href="#650">650</a>     <em class="jxr_comment">//Copied from PurApItemBase.calculateExtendedPrice</em>
+<a class="jxr_linenumber" name="651" href="#651">651</a>     <strong class="jxr_keyword">protected</strong> BigDecimal getExtendedPrice(<a href="../../../../../../../org/kuali/kfs/module/purap/service/impl/ElectronicInvoiceItemHolder.html">ElectronicInvoiceItemHolder</a> itemHolder){
+<a class="jxr_linenumber" name="652" href="#652">652</a>         <strong class="jxr_keyword">if</strong> (itemHolder.getPurchaseOrderItem().getItemType().isAmountBasedGeneralLedgerIndicator()) {
+<a class="jxr_linenumber" name="653" href="#653">653</a>             <em class="jxr_comment">// SERVICE ITEM: return unit price as extended price</em>
+<a class="jxr_linenumber" name="654" href="#654">654</a>             <strong class="jxr_keyword">return</strong> itemHolder.getUnitPrice();
+<a class="jxr_linenumber" name="655" href="#655">655</a>         }
+<a class="jxr_linenumber" name="656" href="#656">656</a>         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (ObjectUtils.isNotNull(itemHolder.getQuantity())) { <em class="jxr_comment">// qty wont be null since it's defined as a reqd field in xsd </em>
+<a class="jxr_linenumber" name="657" href="#657">657</a>             BigDecimal calcExtendedPrice = itemHolder.getUnitPrice().multiply(itemHolder.getQuantity());
+<a class="jxr_linenumber" name="658" href="#658">658</a>             <em class="jxr_comment">// ITEM TYPE (qty driven): return (unitPrice x qty)</em>
+<a class="jxr_linenumber" name="659" href="#659">659</a>             <strong class="jxr_keyword">return</strong> calcExtendedPrice;
+<a class="jxr_linenumber" name="660" href="#660">660</a>         }
+<a class="jxr_linenumber" name="661" href="#661">661</a>         <strong class="jxr_keyword">return</strong> BigDecimal.ZERO;
+<a class="jxr_linenumber" name="662" href="#662">662</a>     }
+<a class="jxr_linenumber" name="663" href="#663">663</a>     
+<a class="jxr_linenumber" name="664" href="#664">664</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> createRejectReason(String rejectReasonTypeCode, String extraDescription, String fileName) {
+<a class="jxr_linenumber" name="665" href="#665">665</a>         
+<a class="jxr_linenumber" name="666" href="#666">666</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReasonType.html">ElectronicInvoiceRejectReasonType</a> rejectReasonType = getElectronicInvoiceRejectReasonType(rejectReasonTypeCode);
+<a class="jxr_linenumber" name="667" href="#667">667</a>         <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a> eInvoiceRejectReason = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReason.html">ElectronicInvoiceRejectReason</a>();
+<a class="jxr_linenumber" name="668" href="#668">668</a> 
+<a class="jxr_linenumber" name="669" href="#669">669</a>         <strong class="jxr_keyword">if</strong> (rejectReasonType == <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="670" href="#670">670</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> NullPointerException(<span class="jxr_string">"Reject reason type for "</span> + rejectReasonTypeCode + <span class="jxr_string">" not available in DB"</span>);
+<a class="jxr_linenumber" name="671" href="#671">671</a>         }
+<a class="jxr_linenumber" name="672" href="#672">672</a>         eInvoiceRejectReason.setInvoiceFileName(fileName);
+<a class="jxr_linenumber" name="673" href="#673">673</a>         eInvoiceRejectReason.setInvoiceRejectReasonTypeCode(rejectReasonTypeCode);
+<a class="jxr_linenumber" name="674" href="#674">674</a> 
+<a class="jxr_linenumber" name="675" href="#675">675</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(extraDescription)) {
+<a class="jxr_linenumber" name="676" href="#676">676</a>             eInvoiceRejectReason.setInvoiceRejectReasonDescription(rejectReasonType.getInvoiceRejectReasonTypeDescription() + <span class="jxr_string">" ("</span> + extraDescription + <span class="jxr_string">")"</span>);
+<a class="jxr_linenumber" name="677" href="#677">677</a>         }
+<a class="jxr_linenumber" name="678" href="#678">678</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="679" href="#679">679</a>             eInvoiceRejectReason.setInvoiceRejectReasonDescription(rejectReasonType.getInvoiceRejectReasonTypeDescription());
+<a class="jxr_linenumber" name="680" href="#680">680</a>         }
+<a class="jxr_linenumber" name="681" href="#681">681</a> 
+<a class="jxr_linenumber" name="682" href="#682">682</a>         <strong class="jxr_keyword">return</strong> eInvoiceRejectReason;
+<a class="jxr_linenumber" name="683" href="#683">683</a>         
+<a class="jxr_linenumber" name="684" href="#684">684</a>     }
+<a class="jxr_linenumber" name="685" href="#685">685</a>     
+<a class="jxr_linenumber" name="686" href="#686">686</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReasonType.html">ElectronicInvoiceRejectReasonType</a> getElectronicInvoiceRejectReasonType(String rejectReasonTypeCode){
+<a class="jxr_linenumber" name="687" href="#687">687</a>         <strong class="jxr_keyword">if</strong> (rejectReasonTypes == <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="688" href="#688">688</a>             rejectReasonTypes = getElectronicInvoiceRejectReasonTypes();
+<a class="jxr_linenumber" name="689" href="#689">689</a>         }
+<a class="jxr_linenumber" name="690" href="#690">690</a>         <strong class="jxr_keyword">return</strong> rejectReasonTypes.get(rejectReasonTypeCode);
+<a class="jxr_linenumber" name="691" href="#691">691</a>     }
+<a class="jxr_linenumber" name="692" href="#692">692</a> 
+<a class="jxr_linenumber" name="693" href="#693">693</a>     <strong class="jxr_keyword">protected</strong> Map&lt;String, ElectronicInvoiceRejectReasonType&gt; getElectronicInvoiceRejectReasonTypes(){
+<a class="jxr_linenumber" name="694" href="#694">694</a>         
+<a class="jxr_linenumber" name="695" href="#695">695</a>         Collection&lt;ElectronicInvoiceRejectReasonType&gt; collection = SpringContext.getBean(BusinessObjectService.<strong class="jxr_keyword">class</strong>).findAll(ElectronicInvoiceRejectReasonType.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="696" href="#696">696</a>         Map rejectReasonTypesMap = <strong class="jxr_keyword">new</strong> HashMap&lt;String, ElectronicInvoiceRejectReasonType&gt;();
+<a class="jxr_linenumber" name="697" href="#697">697</a>         
+<a class="jxr_linenumber" name="698" href="#698">698</a>         <strong class="jxr_keyword">if</strong> (collection != <strong class="jxr_keyword">null</strong> &amp;&amp;
+<a class="jxr_linenumber" name="699" href="#699">699</a>             collection.size() &gt; 0){
+<a class="jxr_linenumber" name="700" href="#700">700</a>             <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReasonType.html">ElectronicInvoiceRejectReasonType</a>[] rejectReasonTypesArr = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/kuali/kfs/module/purap/businessobject/ElectronicInvoiceRejectReasonType.html">ElectronicInvoiceRejectReasonType</a>[collection.size()];
+<a class="jxr_linenumber" name="701" href="#701">701</a>             collection.toArray(rejectReasonTypesArr);
+<a class="jxr_linenumber" name="702" href="#702">702</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; rejectReasonTypesArr.length; i++) {
+<a class="jxr_linenumber" name="703" href="#703">703</a>                 rejectReasonTypesMap.put(rejectReasonTypesArr[i].getInvoiceRejectReasonTypeCode(), rejectReasonTypesArr[i]);
+<a class="jxr_linenumber" name="704" href="#704">704</a>             }
+<a class="jxr_linenumber" name="705" href="#705">705</a>         }
+<a class="jxr_linenumber" name="706" href="#706">706</a>         
+<a class="jxr_linenumber" name="707" href="#707">707</a>         <strong class="jxr_keyword">return</strong> rejectReasonTypesMap;
+<a class="jxr_linenumber" name="708" href="#708">708</a>     }
+<a class="jxr_linenumber" name="709" href="#709">709</a> 
+<a class="jxr_linenumber" name="710" href="#710">710</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setVendorService(<a href="../../../../../../../org/kuali/kfs/vnd/document/service/VendorService.html">VendorService</a> vendorService) {
+<a class="jxr_linenumber" name="711" href="#711">711</a>         <strong class="jxr_keyword">this</strong>.vendorService = vendorService;
+<a class="jxr_linenumber" name="712" href="#712">712</a>     }
+<a class="jxr_linenumber" name="713" href="#713">713</a> 
+<a class="jxr_linenumber" name="714" href="#714">714</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTaxService(<a href="../../../../../../../org/kuali/kfs/sys/service/TaxService.html">TaxService</a> taxService) {
+<a class="jxr_linenumber" name="715" href="#715">715</a>         <strong class="jxr_keyword">this</strong>.taxService = taxService;
+<a class="jxr_linenumber" name="716" href="#716">716</a>     }
+<a class="jxr_linenumber" name="717" href="#717">717</a> 
+<a class="jxr_linenumber" name="718" href="#718">718</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDateTimeService(DateTimeService dateTimeService) {
+<a class="jxr_linenumber" name="719" href="#719">719</a>         <strong class="jxr_keyword">this</strong>.dateTimeService = dateTimeService;
+<a class="jxr_linenumber" name="720" href="#720">720</a>     }
+<a class="jxr_linenumber" name="721" href="#721">721</a> 
+<a class="jxr_linenumber" name="722" href="#722">722</a> }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

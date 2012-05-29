@@ -1,0 +1,832 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>CashManagementDocumentRule xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../apidocs/org/kuali/kfs/fp/document/validation/impl/CashManagementDocumentRule.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2011 The Kuali Foundation.</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Educational Community License, Version 2.0 (the "License");</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * <a href="http://www.opensource.org/licenses/ecl2.php" target="alexandria_uri">http://www.opensource.org/licenses/ecl2.php</a></em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_comment"> * See the License for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment"> * limitations under the License.</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.kuali.kfs.fp.document.validation.impl;
+<a class="jxr_linenumber" name="17" href="#17">17</a>  
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.Calendar;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.util.GregorianCalendar;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.util.Iterator;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.log4j.Logger;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.CashDrawer;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.CashieringItemInProcess;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.CashieringTransaction;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.Check;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.CoinDetail;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.CurrencyDetail;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.Deposit;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.businessobject.DepositCashReceiptControl;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.document.CashManagementDocument;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.document.CashReceiptDocument;
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.document.service.CashManagementService;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.document.service.CashReceiptService;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.document.validation.CashManagingRule;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.fp.service.CashDrawerService;
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.KFSConstants;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.KFSKeyConstants;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.KFSPropertyConstants;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.KFSConstants.DocumentStatusCodes.CashReceipt;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.context.SpringContext;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.document.validation.impl.BankCodeValidation;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.kuali.kfs.sys.document.validation.impl.GeneralLedgerPostingDocumentRuleBase;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kim.bo.Person;
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.document.Document;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.service.DictionaryValidationService;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.util.GlobalVariables;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.kuali.rice.kns.util.KualiDecimal;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment"> * Business rule(s) applicable to Cash Management Document.</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/kuali/kfs/fp/document/validation/impl/CashManagementDocumentRule.html">CashManagementDocumentRule</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../org/kuali/kfs/sys/document/validation/impl/GeneralLedgerPostingDocumentRuleBase.html">GeneralLedgerPostingDocumentRuleBase</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../../org/kuali/kfs/fp/document/validation/CashManagingRule.html">CashManagingRule</a> {
+<a class="jxr_linenumber" name="57" href="#57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger LOG = Logger.getLogger(CashManagementDocumentRule.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="58" href="#58">58</a>  
+<a class="jxr_linenumber" name="59" href="#59">59</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <em class="jxr_javadoccomment">     * Overrides to validate that the person saving the document is the initiator, validates that the cash drawer is open for</em>
+<a class="jxr_linenumber" name="61" href="#61">61</a>  <em class="jxr_javadoccomment">     * initial creation, validates that the cash drawer for the specific verification unit is closed for subsequent saves, and</em>
+<a class="jxr_linenumber" name="62" href="#62">62</a>  <em class="jxr_javadoccomment">     * validates that the associate cash receipts are still verified.</em>
+<a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_javadoccomment">     * @param document submitted cash management document</em>
+<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     * @return true if there are no issues processing rules associated with saving a cash management document</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * @see org.kuali.rice.kns.rule.DocumentRuleBase#processCustomSaveDocumentBusinessRules(org.kuali.rice.kns.document.Document)</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>      @Override
+<a class="jxr_linenumber" name="69" href="#69">69</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> processCustomSaveDocumentBusinessRules(Document document) {
+<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">boolean</strong> isValid = <strong class="jxr_keyword">super</strong>.processCustomSaveDocumentBusinessRules(document);
+<a class="jxr_linenumber" name="71" href="#71">71</a>  
+<a class="jxr_linenumber" name="72" href="#72">72</a>          <a href="../../../../../../../org/kuali/kfs/fp/document/CashManagementDocument.html">CashManagementDocument</a> cmd = (CashManagementDocument) document;
+<a class="jxr_linenumber" name="73" href="#73">73</a>  
+<a class="jxr_linenumber" name="74" href="#74">74</a>          <em class="jxr_comment">// verify the cash drawer for the verification unit is closed for post-initialized saves</em>
+<a class="jxr_linenumber" name="75" href="#75">75</a>          verifyCashDrawerForVerificationUnitIsOpenForPostInitiationSaves(cmd);
+<a class="jxr_linenumber" name="76" href="#76">76</a>  
+<a class="jxr_linenumber" name="77" href="#77">77</a>          <em class="jxr_comment">// verify deposits</em>
+<a class="jxr_linenumber" name="78" href="#78">78</a>          isValid &amp;= validateDeposits(cmd);
+<a class="jxr_linenumber" name="79" href="#79">79</a>  
+<a class="jxr_linenumber" name="80" href="#80">80</a>          <strong class="jxr_keyword">return</strong> isValid;
+<a class="jxr_linenumber" name="81" href="#81">81</a>      }
+<a class="jxr_linenumber" name="82" href="#82">82</a>  
+<a class="jxr_linenumber" name="83" href="#83">83</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="84" href="#84">84</a>  <em class="jxr_javadoccomment">     * Overrides to validate that all cash receipts are deposited when routing cash management document.</em>
+<a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="86" href="#86">86</a>  <em class="jxr_javadoccomment">     * @param document submitted cash management document</em>
+<a class="jxr_linenumber" name="87" href="#87">87</a>  <em class="jxr_javadoccomment">     * @return true if there are no issues processing rules associated with routing a cash management document</em>
+<a class="jxr_linenumber" name="88" href="#88">88</a>  <em class="jxr_javadoccomment">     * @see org.kuali.rice.kns.rules.DocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.rice.kns.document.Document)</em>
+<a class="jxr_linenumber" name="89" href="#89">89</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="90" href="#90">90</a>      @Override
+<a class="jxr_linenumber" name="91" href="#91">91</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> processCustomRouteDocumentBusinessRules(Document document) {
+<a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">boolean</strong> isValid = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="93" href="#93">93</a>  
+<a class="jxr_linenumber" name="94" href="#94">94</a>          <a href="../../../../../../../org/kuali/kfs/fp/document/CashManagementDocument.html">CashManagementDocument</a> cmDoc = (CashManagementDocument) document;
+<a class="jxr_linenumber" name="95" href="#95">95</a>          isValid &amp;= verifyAllVerifiedCashReceiptsDeposited(cmDoc);
+<a class="jxr_linenumber" name="96" href="#96">96</a>  
+<a class="jxr_linenumber" name="97" href="#97">97</a>          <strong class="jxr_keyword">return</strong> isValid;
+<a class="jxr_linenumber" name="98" href="#98">98</a>      }
+<a class="jxr_linenumber" name="99" href="#99">99</a>  
+<a class="jxr_linenumber" name="100" href="#100">100</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     * This method checks to make sure that the current system user is the person that initiated this document in the first place.</em>
+<a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="103" href="#103">103</a> <em class="jxr_javadoccomment">     * @param cmd submitted cash management document</em>
+<a class="jxr_linenumber" name="104" href="#104">104</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="105" href="#105">105</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> verifyUserIsDocumentInitiator(<a href="../../../../../../../org/kuali/kfs/fp/document/CashManagementDocument.html">CashManagementDocument</a> cmd) {
+<a class="jxr_linenumber" name="106" href="#106">106</a>         Person currentUser = GlobalVariables.getUserSession().getPerson();
+<a class="jxr_linenumber" name="107" href="#107">107</a>         <strong class="jxr_keyword">if</strong> (cmd.getDocumentHeader() != <strong class="jxr_keyword">null</strong> &amp;&amp; cmd.getDocumentHeader().getWorkflowDocument() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="108" href="#108">108</a>             String cmdInitiatorNetworkId = cmd.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+<a class="jxr_linenumber" name="109" href="#109">109</a>             <strong class="jxr_keyword">if</strong> (!cmdInitiatorNetworkId.equalsIgnoreCase(currentUser.getPrincipalName())) {
+<a class="jxr_linenumber" name="110" href="#110">110</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The current user ("</span> + currentUser.getPrincipalName() + <span class="jxr_string">") is not the individual ("</span> + cmdInitiatorNetworkId + <span class="jxr_string">") that initiated this document."</span>);
+<a class="jxr_linenumber" name="111" href="#111">111</a>             }
+<a class="jxr_linenumber" name="112" href="#112">112</a>         }
+<a class="jxr_linenumber" name="113" href="#113">113</a>     }
+<a class="jxr_linenumber" name="114" href="#114">114</a> 
+<a class="jxr_linenumber" name="115" href="#115">115</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="116" href="#116">116</a> <em class="jxr_javadoccomment">     * This method checks to make sure that the cash drawer is closed for the associated verification unit, for post initiation</em>
+<a class="jxr_linenumber" name="117" href="#117">117</a> <em class="jxr_javadoccomment">     * saves for CashManagementDocuments which don't have Final</em>
+<a class="jxr_linenumber" name="118" href="#118">118</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="119" href="#119">119</a> <em class="jxr_javadoccomment">     * @param cmd submitted cash management document</em>
+<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="121" href="#121">121</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> verifyCashDrawerForVerificationUnitIsOpenForPostInitiationSaves(<a href="../../../../../../../org/kuali/kfs/fp/document/CashManagementDocument.html">CashManagementDocument</a> cmd) {
+<a class="jxr_linenumber" name="122" href="#122">122</a>         <strong class="jxr_keyword">if</strong> (cmd.getDocumentHeader() != <strong class="jxr_keyword">null</strong> &amp;&amp; cmd.getDocumentHeader().getWorkflowDocument() != <strong class="jxr_keyword">null</strong> &amp;&amp; cmd.getDocumentHeader().getWorkflowDocument().getRouteHeader() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="123" href="#123">123</a>             <strong class="jxr_keyword">if</strong> (cmd.getDocumentHeader().getWorkflowDocument().stateIsSaved()) {
+<a class="jxr_linenumber" name="124" href="#124">124</a>                 <em class="jxr_comment">// now verify that the associated cash drawer is in the appropriate state</em>
+<a class="jxr_linenumber" name="125" href="#125">125</a>                 <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashDrawer.html">CashDrawer</a> cd = SpringContext.getBean(CashDrawerService.<strong class="jxr_keyword">class</strong>).getByCampusCode(cmd.getCampusCode());
+<a class="jxr_linenumber" name="126" href="#126">126</a>                 <strong class="jxr_keyword">if</strong> (cd == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="127" href="#127">127</a>                     <em class="jxr_comment">// we got the rule without having a cash drawer?  freaky...</em>
+<a class="jxr_linenumber" name="128" href="#128">128</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"No cash drawer exists for campus code "</span>+cmd.getCampusCode()+<span class="jxr_string">"; please create on via the Cash Drawer Maintenance Document before attemping to create a CashManagementDocument for campus "</span>+cmd.getCampusCode());
+<a class="jxr_linenumber" name="129" href="#129">129</a>                 }
+<a class="jxr_linenumber" name="130" href="#130">130</a>                 <strong class="jxr_keyword">if</strong> (!cmd.hasFinalDeposit()) {
+<a class="jxr_linenumber" name="131" href="#131">131</a>                     <strong class="jxr_keyword">if</strong> (!cd.isOpen()) {
+<a class="jxr_linenumber" name="132" href="#132">132</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The cash drawer for verification unit \&quot;"</span> + cd.getCampusCode() + <span class="jxr_string">"\&quot; is closed.  It should be open when a cash management document for that verification unit is open and being saved."</span>);
+<a class="jxr_linenumber" name="133" href="#133">133</a>                     }
+<a class="jxr_linenumber" name="134" href="#134">134</a>                 }
+<a class="jxr_linenumber" name="135" href="#135">135</a>                 <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="136" href="#136">136</a>                     <strong class="jxr_keyword">if</strong> (!cd.isLocked()) {
+<a class="jxr_linenumber" name="137" href="#137">137</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The cash drawer for verification unit \&quot;"</span> + cd.getCampusCode() + <span class="jxr_string">"\&quot; is closed.  It should be open when a cash management document for that verification unit is open and being saved."</span>);
+<a class="jxr_linenumber" name="138" href="#138">138</a>                     }
+<a class="jxr_linenumber" name="139" href="#139">139</a>                 }
+<a class="jxr_linenumber" name="140" href="#140">140</a>             }
+<a class="jxr_linenumber" name="141" href="#141">141</a>         }
+<a class="jxr_linenumber" name="142" href="#142">142</a>     }
+<a class="jxr_linenumber" name="143" href="#143">143</a> 
+<a class="jxr_linenumber" name="144" href="#144">144</a> 
+<a class="jxr_linenumber" name="145" href="#145">145</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     * Validates all Deposits associated with the given CashManagementDocument</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="148" href="#148">148</a> <em class="jxr_javadoccomment">     * @param cmd submitted cash management document</em>
+<a class="jxr_linenumber" name="149" href="#149">149</a> <em class="jxr_javadoccomment">     * @return true if all deposits in a cash management are valid</em>
+<a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="151" href="#151">151</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> validateDeposits(<a href="../../../../../../../org/kuali/kfs/fp/document/CashManagementDocument.html">CashManagementDocument</a> cmd) {
+<a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">boolean</strong> isValid = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="153" href="#153">153</a>         <strong class="jxr_keyword">boolean</strong> isInitiated = cmd.getDocumentHeader().getWorkflowDocument().stateIsInitiated();
+<a class="jxr_linenumber" name="154" href="#154">154</a> 
+<a class="jxr_linenumber" name="155" href="#155">155</a>         GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.DOCUMENT);
+<a class="jxr_linenumber" name="156" href="#156">156</a> 
+<a class="jxr_linenumber" name="157" href="#157">157</a>         <strong class="jxr_keyword">int</strong> index = 0;
+<a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">for</strong> (Iterator deposits = cmd.getDeposits().iterator(); deposits.hasNext(); index++) {
+<a class="jxr_linenumber" name="159" href="#159">159</a>             <a href="../../../../../../../org/kuali/kfs/fp/businessobject/Deposit.html">Deposit</a> deposit = (Deposit) deposits.next();
+<a class="jxr_linenumber" name="160" href="#160">160</a> 
+<a class="jxr_linenumber" name="161" href="#161">161</a>             GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.DEPOSIT + <span class="jxr_string">"["</span> + index + <span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="162" href="#162">162</a>             isValid &amp;= validateDeposit(deposit, isInitiated);
+<a class="jxr_linenumber" name="163" href="#163">163</a>             GlobalVariables.getMessageMap().removeFromErrorPath(KFSPropertyConstants.DEPOSIT + <span class="jxr_string">"["</span> + index + <span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="164" href="#164">164</a>         }
+<a class="jxr_linenumber" name="165" href="#165">165</a> 
+<a class="jxr_linenumber" name="166" href="#166">166</a>         GlobalVariables.getMessageMap().removeFromErrorPath(KFSPropertyConstants.DOCUMENT);
+<a class="jxr_linenumber" name="167" href="#167">167</a> 
+<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">return</strong> isValid;
+<a class="jxr_linenumber" name="169" href="#169">169</a>     }
+<a class="jxr_linenumber" name="170" href="#170">170</a> 
+<a class="jxr_linenumber" name="171" href="#171">171</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     * If documentIsInitiated, performs complete dataDictionary-driven validation of the given Deposit. Unconditionally validates</em>
+<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * the CashReceipts associated with the given Deposit.</em>
+<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     * @param deposit individual deposit from cash management document</em>
+<a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     * @param documentIsInitiated if document is initiated</em>
+<a class="jxr_linenumber" name="177" href="#177">177</a> <em class="jxr_javadoccomment">     * @return true if deposit is valid</em>
+<a class="jxr_linenumber" name="178" href="#178">178</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="179" href="#179">179</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> validateDeposit(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/Deposit.html">Deposit</a> deposit, <strong class="jxr_keyword">boolean</strong> documentIsInitiated) {
+<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">boolean</strong> isValid = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="181" href="#181">181</a> 
+<a class="jxr_linenumber" name="182" href="#182">182</a>         verifyCashReceipts(deposit, documentIsInitiated);
+<a class="jxr_linenumber" name="183" href="#183">183</a> 
+<a class="jxr_linenumber" name="184" href="#184">184</a>         <strong class="jxr_keyword">if</strong> (!documentIsInitiated) {
+<a class="jxr_linenumber" name="185" href="#185">185</a>             isValid = performDataDictionaryValidation(deposit);
+<a class="jxr_linenumber" name="186" href="#186">186</a>         }
+<a class="jxr_linenumber" name="187" href="#187">187</a> 
+<a class="jxr_linenumber" name="188" href="#188">188</a>         <strong class="jxr_keyword">return</strong> isValid;
+<a class="jxr_linenumber" name="189" href="#189">189</a>     }
+<a class="jxr_linenumber" name="190" href="#190">190</a> 
+<a class="jxr_linenumber" name="191" href="#191">191</a> 
+<a class="jxr_linenumber" name="192" href="#192">192</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> List INITIATED_STATES = Arrays.asList(<strong class="jxr_keyword">new</strong> String[] { CashReceipt.VERIFIED });
+<a class="jxr_linenumber" name="193" href="#193">193</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> List UNINITIATED_STATES = Arrays.asList(<strong class="jxr_keyword">new</strong> String[] { CashReceipt.INTERIM, CashReceipt.FINAL });
+<a class="jxr_linenumber" name="194" href="#194">194</a> 
+<a class="jxr_linenumber" name="195" href="#195">195</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="196" href="#196">196</a> <em class="jxr_javadoccomment">     * Verifies that all CashReceipts associated with the given document are of an appropriate status for the given</em>
+<a class="jxr_linenumber" name="197" href="#197">197</a> <em class="jxr_javadoccomment">     * CashManagementDocument state</em>
+<a class="jxr_linenumber" name="198" href="#198">198</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="199" href="#199">199</a> <em class="jxr_javadoccomment">     * @param deposit deposit from cash management document</em>
+<a class="jxr_linenumber" name="200" href="#200">200</a> <em class="jxr_javadoccomment">     * @param documentIsInitiated if document is initiated</em>
+<a class="jxr_linenumber" name="201" href="#201">201</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="202" href="#202">202</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> verifyCashReceipts(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/Deposit.html">Deposit</a> deposit, <strong class="jxr_keyword">boolean</strong> documentIsInitiated) {
+<a class="jxr_linenumber" name="203" href="#203">203</a>         List desiredCRStates = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="204" href="#204">204</a>         <strong class="jxr_keyword">if</strong> (documentIsInitiated) {
+<a class="jxr_linenumber" name="205" href="#205">205</a>             desiredCRStates = INITIATED_STATES;
+<a class="jxr_linenumber" name="206" href="#206">206</a>         }
+<a class="jxr_linenumber" name="207" href="#207">207</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="208" href="#208">208</a>             desiredCRStates = UNINITIATED_STATES;
+<a class="jxr_linenumber" name="209" href="#209">209</a>         }
+<a class="jxr_linenumber" name="210" href="#210">210</a> 
+<a class="jxr_linenumber" name="211" href="#211">211</a>         <strong class="jxr_keyword">for</strong> (Iterator depositCashReceiptControls = deposit.getDepositCashReceiptControl().iterator(); depositCashReceiptControls.hasNext();) {
+<a class="jxr_linenumber" name="212" href="#212">212</a>             <a href="../../../../../../../org/kuali/kfs/fp/businessobject/DepositCashReceiptControl.html">DepositCashReceiptControl</a> depositCashReceiptControl = (DepositCashReceiptControl) depositCashReceiptControls.next();
+<a class="jxr_linenumber" name="213" href="#213">213</a>             <a href="../../../../../../../org/kuali/kfs/fp/document/CashReceiptDocument.html">CashReceiptDocument</a> cashReceipt = depositCashReceiptControl.getCashReceiptDocument();
+<a class="jxr_linenumber" name="214" href="#214">214</a>             String crState = cashReceipt.getDocumentHeader().getFinancialDocumentStatusCode();
+<a class="jxr_linenumber" name="215" href="#215">215</a>             <strong class="jxr_keyword">if</strong> (!desiredCRStates.contains(crState)) {
+<a class="jxr_linenumber" name="216" href="#216">216</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Cash receipt document number "</span> + cashReceipt.getDocumentNumber() + <span class="jxr_string">" is not in an appropriate state for the associated CashManagementDocument to be submitted."</span>);
+<a class="jxr_linenumber" name="217" href="#217">217</a>             }
+<a class="jxr_linenumber" name="218" href="#218">218</a>         }
+<a class="jxr_linenumber" name="219" href="#219">219</a>     }
+<a class="jxr_linenumber" name="220" href="#220">220</a> 
+<a class="jxr_linenumber" name="221" href="#221">221</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="222" href="#222">222</a> <em class="jxr_javadoccomment">     * Verifies that all verified cash receipts have been deposited</em>
+<a class="jxr_linenumber" name="223" href="#223">223</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="224" href="#224">224</a> <em class="jxr_javadoccomment">     * @param cmDoc the cash management document that is about to be routed</em>
+<a class="jxr_linenumber" name="225" href="#225">225</a> <em class="jxr_javadoccomment">     * @return true if there are no outstanding verified cash receipts that are not part of a deposit, false if otherwise</em>
+<a class="jxr_linenumber" name="226" href="#226">226</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="227" href="#227">227</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> verifyAllVerifiedCashReceiptsDeposited(<a href="../../../../../../../org/kuali/kfs/fp/document/CashManagementDocument.html">CashManagementDocument</a> cmDoc) {
+<a class="jxr_linenumber" name="228" href="#228">228</a>         <strong class="jxr_keyword">boolean</strong> allCRsDeposited = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="229" href="#229">229</a>         <a href="../../../../../../../org/kuali/kfs/fp/document/service/CashManagementService.html">CashManagementService</a> cms = SpringContext.getBean(CashManagementService.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="230" href="#230">230</a>         List verifiedReceipts = SpringContext.getBean(CashReceiptService.<strong class="jxr_keyword">class</strong>).getCashReceipts(cmDoc.getCampusCode(), KFSConstants.DocumentStatusCodes.CashReceipt.VERIFIED);
+<a class="jxr_linenumber" name="231" href="#231">231</a>         <strong class="jxr_keyword">for</strong> (Object o : verifiedReceipts) {
+<a class="jxr_linenumber" name="232" href="#232">232</a>             <strong class="jxr_keyword">if</strong> (!cms.verifyCashReceiptIsDeposited(cmDoc, (CashReceiptDocument) o)) {
+<a class="jxr_linenumber" name="233" href="#233">233</a>                 allCRsDeposited = false;
+<a class="jxr_linenumber" name="234" href="#234">234</a>                 GlobalVariables.getMessageMap().putError(KFSConstants.CASH_MANAGEMENT_DEPOSIT_ERRORS, KFSKeyConstants.CashManagement.ERROR_NON_DEPOSITED_VERIFIED_CASH_RECEIPT, <strong class="jxr_keyword">new</strong> String[] { ((CashReceiptDocument) o).getDocumentNumber() });
+<a class="jxr_linenumber" name="235" href="#235">235</a>             }
+<a class="jxr_linenumber" name="236" href="#236">236</a>         }
+<a class="jxr_linenumber" name="237" href="#237">237</a>         <strong class="jxr_keyword">return</strong> allCRsDeposited;
+<a class="jxr_linenumber" name="238" href="#238">238</a>     }
+<a class="jxr_linenumber" name="239" href="#239">239</a> 
+<a class="jxr_linenumber" name="240" href="#240">240</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="241" href="#241">241</a> <em class="jxr_javadoccomment">     * Performs complete, recursive dataDictionary-driven validation of the given Deposit.</em>
+<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">     * @param deposit deposit from cash management document</em>
+<a class="jxr_linenumber" name="244" href="#244">244</a> <em class="jxr_javadoccomment">     * @return true if deposit is validated against data dictionary entry</em>
+<a class="jxr_linenumber" name="245" href="#245">245</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="246" href="#246">246</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> performDataDictionaryValidation(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/Deposit.html">Deposit</a> deposit) {
+<a class="jxr_linenumber" name="247" href="#247">247</a>         <em class="jxr_comment">// check for required fields</em>
+<a class="jxr_linenumber" name="248" href="#248">248</a>         SpringContext.getBean(DictionaryValidationService.<strong class="jxr_keyword">class</strong>).validateBusinessObject(deposit);
+<a class="jxr_linenumber" name="249" href="#249">249</a> 
+<a class="jxr_linenumber" name="250" href="#250">250</a>         <em class="jxr_comment">// validate foreign-key relationships</em>
+<a class="jxr_linenumber" name="251" href="#251">251</a>         <em class="jxr_comment">//KFSMI-798 - refresh() changed to refreshNonUpdateableReferences()</em>
+<a class="jxr_linenumber" name="252" href="#252">252</a>         <em class="jxr_comment">//Deposit has updatable references, but for validation we do not need to refresh the updatable references. </em>
+<a class="jxr_linenumber" name="253" href="#253">253</a>         <em class="jxr_comment">//E.g. updatable collections - they might have been set by the user and we would not want to overwrite their changes.</em>
+<a class="jxr_linenumber" name="254" href="#254">254</a>         deposit.refreshNonUpdateableReferences();
+<a class="jxr_linenumber" name="255" href="#255">255</a>         
+<a class="jxr_linenumber" name="256" href="#256">256</a>         <em class="jxr_comment">// validate bank code</em>
+<a class="jxr_linenumber" name="257" href="#257">257</a>         BankCodeValidation.validate(deposit.getDepositBankCode(), KFSPropertyConstants.DEPOSIT_BANK_CODE, <strong class="jxr_keyword">true</strong>, false);
+<a class="jxr_linenumber" name="258" href="#258">258</a> 
+<a class="jxr_linenumber" name="259" href="#259">259</a>         <strong class="jxr_keyword">return</strong> GlobalVariables.getMessageMap().hasNoErrors();
+<a class="jxr_linenumber" name="260" href="#260">260</a>     }
+<a class="jxr_linenumber" name="261" href="#261">261</a> 
+<a class="jxr_linenumber" name="262" href="#262">262</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">     * Processes the checks to validate that the application of the given cashiering transaction will be valid</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">     * @see org.kuali.kfs.fp.document.validation.CashManagingRule#processCashieringTransactionApplication(org.kuali.kfs.fp.businessobject.CashieringTransaction)</em>
+<a class="jxr_linenumber" name="265" href="#265">265</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="266" href="#266">266</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> processCashieringTransactionApplication(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashDrawer.html">CashDrawer</a> cashDrawer, <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> cashieringTransaction) {
+<a class="jxr_linenumber" name="267" href="#267">267</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="268" href="#268">268</a>         success &amp;= checkMoneyInNoNegatives(cashieringTransaction);
+<a class="jxr_linenumber" name="269" href="#269">269</a>         success &amp;= checkMoneyOutNoNegatives(cashieringTransaction);
+<a class="jxr_linenumber" name="270" href="#270">270</a>         success &amp;= checkAllPaidBackItemsInProcess(cashieringTransaction);
+<a class="jxr_linenumber" name="271" href="#271">271</a>         success &amp;= checkNewItemInProcessDoesNotExceedCashDrawer(cashDrawer, cashieringTransaction);
+<a class="jxr_linenumber" name="272" href="#272">272</a>         success &amp;= checkNewItemInProcessInPast(cashieringTransaction);
+<a class="jxr_linenumber" name="273" href="#273">273</a>         success &amp;= checkTransactionCheckTotalDoesNotExceedCashDrawer(cashDrawer, cashieringTransaction);
+<a class="jxr_linenumber" name="274" href="#274">274</a>         success &amp;= checkItemInProcessIsNotPayingOffItemInProcess(cashieringTransaction);
+<a class="jxr_linenumber" name="275" href="#275">275</a>         <strong class="jxr_keyword">if</strong> (success) {
+<a class="jxr_linenumber" name="276" href="#276">276</a>             success = checkEnoughCashForMoneyOut(cashDrawer, cashieringTransaction);
+<a class="jxr_linenumber" name="277" href="#277">277</a>         }
+<a class="jxr_linenumber" name="278" href="#278">278</a>         <strong class="jxr_keyword">if</strong> (success) {
+<a class="jxr_linenumber" name="279" href="#279">279</a>             success &amp;= checkMoneyInMoneyOutBalance(cashieringTransaction);
+<a class="jxr_linenumber" name="280" href="#280">280</a>         }
+<a class="jxr_linenumber" name="281" href="#281">281</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="282" href="#282">282</a>     }
+<a class="jxr_linenumber" name="283" href="#283">283</a>     
+<a class="jxr_linenumber" name="284" href="#284">284</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="285" href="#285">285</a> <em class="jxr_javadoccomment">     * Returns true if none of the entered money-in amounts (cash and coin) are not negative in a cashiering transaction</em>
+<a class="jxr_linenumber" name="286" href="#286">286</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="287" href="#287">287</a> <em class="jxr_javadoccomment">     * @param trans represents cashiering transaction from document</em>
+<a class="jxr_linenumber" name="288" href="#288">288</a> <em class="jxr_javadoccomment">     * @return true if none of the amounts are negative</em>
+<a class="jxr_linenumber" name="289" href="#289">289</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="290" href="#290">290</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkMoneyInNoNegatives(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="291" href="#291">291</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="292" href="#292">292</a> 
+<a class="jxr_linenumber" name="293" href="#293">293</a>         <em class="jxr_comment">// money in currency</em>
+<a class="jxr_linenumber" name="294" href="#294">294</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentHundredDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentHundredDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="295" href="#295">295</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.hundredDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getHundredDollarCount().toString(), <span class="jxr_string">"hundred dollar count"</span> });
+<a class="jxr_linenumber" name="296" href="#296">296</a>             success = false;
+<a class="jxr_linenumber" name="297" href="#297">297</a>         }
+<a class="jxr_linenumber" name="298" href="#298">298</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentFiftyDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentFiftyDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="299" href="#299">299</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.fiftyDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getFiftyDollarCount().toString(), <span class="jxr_string">"fifty dollar count"</span> });
+<a class="jxr_linenumber" name="300" href="#300">300</a>             success = false;
+<a class="jxr_linenumber" name="301" href="#301">301</a>         }
+<a class="jxr_linenumber" name="302" href="#302">302</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentTwentyDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentTwentyDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="303" href="#303">303</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.twentyDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getTwentyDollarCount().toString(), <span class="jxr_string">"twenty dollar count"</span> });
+<a class="jxr_linenumber" name="304" href="#304">304</a>             success = false;
+<a class="jxr_linenumber" name="305" href="#305">305</a>         }
+<a class="jxr_linenumber" name="306" href="#306">306</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentTenDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentTenDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="307" href="#307">307</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.tenDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getTenDollarCount().toString(), <span class="jxr_string">"ten dollar count"</span> });
+<a class="jxr_linenumber" name="308" href="#308">308</a>             success = false;
+<a class="jxr_linenumber" name="309" href="#309">309</a>         }
+<a class="jxr_linenumber" name="310" href="#310">310</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentFiveDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentFiveDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="311" href="#311">311</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.fiveDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getFiveDollarCount().toString(), <span class="jxr_string">"five dollar count"</span> });
+<a class="jxr_linenumber" name="312" href="#312">312</a>             success = false;
+<a class="jxr_linenumber" name="313" href="#313">313</a>         }
+<a class="jxr_linenumber" name="314" href="#314">314</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentTwoDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentTwoDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="315" href="#315">315</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.twoDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getTwoDollarCount().toString(), <span class="jxr_string">"two dollar count"</span> });
+<a class="jxr_linenumber" name="316" href="#316">316</a>             success = false;
+<a class="jxr_linenumber" name="317" href="#317">317</a>         }
+<a class="jxr_linenumber" name="318" href="#318">318</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentOneDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentOneDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="319" href="#319">319</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.oneDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getOneDollarCount().toString(), <span class="jxr_string">"one dollar count"</span> });
+<a class="jxr_linenumber" name="320" href="#320">320</a>             success = false;
+<a class="jxr_linenumber" name="321" href="#321">321</a>         }
+<a class="jxr_linenumber" name="322" href="#322">322</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCurrency().getFinancialDocumentOtherDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCurrency().getFinancialDocumentOtherDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="323" href="#323">323</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.financialDocumentOtherDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getFinancialDocumentOtherDollarAmount().toString(), <span class="jxr_string">"other dollar amount"</span> });
+<a class="jxr_linenumber" name="324" href="#324">324</a>             success = false;
+<a class="jxr_linenumber" name="325" href="#325">325</a>         }
+<a class="jxr_linenumber" name="326" href="#326">326</a> 
+<a class="jxr_linenumber" name="327" href="#327">327</a>         <em class="jxr_comment">// money in coin</em>
+<a class="jxr_linenumber" name="328" href="#328">328</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCoin().getFinancialDocumentHundredCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCoin().getFinancialDocumentHundredCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="329" href="#329">329</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCoin.hundredCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getHundredCentCount().toString(), <span class="jxr_string">"hundred cent count"</span> });
+<a class="jxr_linenumber" name="330" href="#330">330</a>             success = false;
+<a class="jxr_linenumber" name="331" href="#331">331</a>         }
+<a class="jxr_linenumber" name="332" href="#332">332</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCoin().getFinancialDocumentFiftyCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCoin().getFinancialDocumentFiftyCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="333" href="#333">333</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCoin.fiftyCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getFiftyCentCount().toString(), <span class="jxr_string">"fifty cent count"</span> });
+<a class="jxr_linenumber" name="334" href="#334">334</a>             success = false;
+<a class="jxr_linenumber" name="335" href="#335">335</a>         }
+<a class="jxr_linenumber" name="336" href="#336">336</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCoin().getFinancialDocumentTenCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCoin().getFinancialDocumentTenCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="337" href="#337">337</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCoin.tenCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getTenCentCount().toString(), <span class="jxr_string">"ten cent count"</span> });
+<a class="jxr_linenumber" name="338" href="#338">338</a>             success = false;
+<a class="jxr_linenumber" name="339" href="#339">339</a>         }
+<a class="jxr_linenumber" name="340" href="#340">340</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCoin().getFinancialDocumentTwentyFiveCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCoin().getFinancialDocumentTwentyFiveCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="341" href="#341">341</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCoin.twentyFiveCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getTwentyFiveCentCount().toString(), <span class="jxr_string">"twenty five cent count"</span> });
+<a class="jxr_linenumber" name="342" href="#342">342</a>             success = false;
+<a class="jxr_linenumber" name="343" href="#343">343</a>         }
+<a class="jxr_linenumber" name="344" href="#344">344</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCoin().getFinancialDocumentFiveCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCoin().getFinancialDocumentFiveCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="345" href="#345">345</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCoin.fiveCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getFiveCentCount().toString(), <span class="jxr_string">"five cent count"</span> });
+<a class="jxr_linenumber" name="346" href="#346">346</a>             success = false;
+<a class="jxr_linenumber" name="347" href="#347">347</a>         }
+<a class="jxr_linenumber" name="348" href="#348">348</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCoin().getFinancialDocumentOneCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCoin().getFinancialDocumentOneCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="349" href="#349">349</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCoin.oneCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getOneCentCount().toString(), <span class="jxr_string">"one cent count"</span> });
+<a class="jxr_linenumber" name="350" href="#350">350</a>             success = false;
+<a class="jxr_linenumber" name="351" href="#351">351</a>         }
+<a class="jxr_linenumber" name="352" href="#352">352</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyInCoin().getFinancialDocumentOtherCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyInCoin().getFinancialDocumentOtherCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="353" href="#353">353</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCoin.financialDocumentOtherCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getFinancialDocumentOtherCentAmount().toString(), <span class="jxr_string">"other cent amount"</span> });
+<a class="jxr_linenumber" name="354" href="#354">354</a>             success = false;
+<a class="jxr_linenumber" name="355" href="#355">355</a>         }
+<a class="jxr_linenumber" name="356" href="#356">356</a> 
+<a class="jxr_linenumber" name="357" href="#357">357</a>         <em class="jxr_comment">// newItemInProcess amount</em>
+<a class="jxr_linenumber" name="358" href="#358">358</a>         <strong class="jxr_keyword">if</strong> (trans.getNewItemInProcess() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getNewItemInProcess().isPopulated() &amp;&amp; trans.getNewItemInProcess().getItemAmount().isNegative()) {
+<a class="jxr_linenumber" name="359" href="#359">359</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.newItemInProcess.itemAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_NEW_ITEM_IN_PROCESS_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[0]);
+<a class="jxr_linenumber" name="360" href="#360">360</a>             success = false;
+<a class="jxr_linenumber" name="361" href="#361">361</a>         }
+<a class="jxr_linenumber" name="362" href="#362">362</a> 
+<a class="jxr_linenumber" name="363" href="#363">363</a>         <em class="jxr_comment">// checks</em>
+<a class="jxr_linenumber" name="364" href="#364">364</a>         <strong class="jxr_keyword">int</strong> count = 0;
+<a class="jxr_linenumber" name="365" href="#365">365</a>         <strong class="jxr_keyword">for</strong> (Check check : trans.getMoneyInChecks()) {
+<a class="jxr_linenumber" name="366" href="#366">366</a>             <strong class="jxr_keyword">if</strong> (check.getAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; check.getAmount().isNegative()) {
+<a class="jxr_linenumber" name="367" href="#367">367</a>                 GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInChecks["</span> + count + <span class="jxr_string">"].amount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CHECK_AMOUNT_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { check.getAmount().toString(), check.getDescription() });
+<a class="jxr_linenumber" name="368" href="#368">368</a>                 success = false;
+<a class="jxr_linenumber" name="369" href="#369">369</a>             }
+<a class="jxr_linenumber" name="370" href="#370">370</a>             count += 1;
+<a class="jxr_linenumber" name="371" href="#371">371</a>         }
+<a class="jxr_linenumber" name="372" href="#372">372</a> 
+<a class="jxr_linenumber" name="373" href="#373">373</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="374" href="#374">374</a>     }
+<a class="jxr_linenumber" name="375" href="#375">375</a> 
+<a class="jxr_linenumber" name="376" href="#376">376</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="377" href="#377">377</a> <em class="jxr_javadoccomment">     * Returns true if none of the entered money-out amounts (cash and coin) are not negative in a cashiering transaction</em>
+<a class="jxr_linenumber" name="378" href="#378">378</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="379" href="#379">379</a> <em class="jxr_javadoccomment">     * @param trans represents cashiering transaction from document</em>
+<a class="jxr_linenumber" name="380" href="#380">380</a> <em class="jxr_javadoccomment">     * @return true if none of the amounts are negative</em>
+<a class="jxr_linenumber" name="381" href="#381">381</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="382" href="#382">382</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkMoneyOutNoNegatives(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="383" href="#383">383</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="384" href="#384">384</a> 
+<a class="jxr_linenumber" name="385" href="#385">385</a>         <em class="jxr_comment">// money out currency</em>
+<a class="jxr_linenumber" name="386" href="#386">386</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentHundredDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentHundredDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="387" href="#387">387</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.hundredDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyOutCurrency().getHundredDollarCount().toString(), <span class="jxr_string">"hundred dollar count"</span> });
+<a class="jxr_linenumber" name="388" href="#388">388</a>             success = false;
+<a class="jxr_linenumber" name="389" href="#389">389</a>         }
+<a class="jxr_linenumber" name="390" href="#390">390</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentFiftyDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentFiftyDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="391" href="#391">391</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.fiftyDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyOutCurrency().getFiftyDollarCount().toString(), <span class="jxr_string">"fifty dollar count"</span> });
+<a class="jxr_linenumber" name="392" href="#392">392</a>             success = false;
+<a class="jxr_linenumber" name="393" href="#393">393</a>         }
+<a class="jxr_linenumber" name="394" href="#394">394</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentTwentyDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentTwentyDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="395" href="#395">395</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.twentyDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyOutCurrency().getTwentyDollarCount().toString(), <span class="jxr_string">"twenty dollar count"</span> });
+<a class="jxr_linenumber" name="396" href="#396">396</a>             success = false;
+<a class="jxr_linenumber" name="397" href="#397">397</a>         }
+<a class="jxr_linenumber" name="398" href="#398">398</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentTenDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentTenDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="399" href="#399">399</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.tenDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getTenDollarCount().toString(), <span class="jxr_string">"ten dollar count"</span> });
+<a class="jxr_linenumber" name="400" href="#400">400</a>             success = false;
+<a class="jxr_linenumber" name="401" href="#401">401</a>         }
+<a class="jxr_linenumber" name="402" href="#402">402</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentFiveDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentFiveDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="403" href="#403">403</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.fiveDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyOutCurrency().getFiveDollarCount().toString(), <span class="jxr_string">"five dollar count"</span> });
+<a class="jxr_linenumber" name="404" href="#404">404</a>             success = false;
+<a class="jxr_linenumber" name="405" href="#405">405</a>         }
+<a class="jxr_linenumber" name="406" href="#406">406</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentTwoDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentTwoDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="407" href="#407">407</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.twoDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyOutCurrency().getTwoDollarCount().toString(), <span class="jxr_string">"two dollar count"</span> });
+<a class="jxr_linenumber" name="408" href="#408">408</a>             success = false;
+<a class="jxr_linenumber" name="409" href="#409">409</a>         }
+<a class="jxr_linenumber" name="410" href="#410">410</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentOneDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentOneDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="411" href="#411">411</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.oneDollarCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getOneDollarCount().toString(), <span class="jxr_string">"one dollar count"</span> });
+<a class="jxr_linenumber" name="412" href="#412">412</a>             success = false;
+<a class="jxr_linenumber" name="413" href="#413">413</a>         }
+<a class="jxr_linenumber" name="414" href="#414">414</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCurrency().getFinancialDocumentOtherDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCurrency().getFinancialDocumentOtherDollarAmount().isNegative()) {
+<a class="jxr_linenumber" name="415" href="#415">415</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentOtherDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCurrency().getFinancialDocumentOtherDollarAmount().toString(), <span class="jxr_string">"other dollar amount"</span> });
+<a class="jxr_linenumber" name="416" href="#416">416</a>             success = false;
+<a class="jxr_linenumber" name="417" href="#417">417</a>         }
+<a class="jxr_linenumber" name="418" href="#418">418</a> 
+<a class="jxr_linenumber" name="419" href="#419">419</a>         <em class="jxr_comment">// money out coin</em>
+<a class="jxr_linenumber" name="420" href="#420">420</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCoin().getFinancialDocumentHundredCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCoin().getFinancialDocumentHundredCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="421" href="#421">421</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.hundredCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getHundredCentCount().toString(), <span class="jxr_string">"hundred cent count"</span> });
+<a class="jxr_linenumber" name="422" href="#422">422</a>             success = false;
+<a class="jxr_linenumber" name="423" href="#423">423</a>         }
+<a class="jxr_linenumber" name="424" href="#424">424</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCoin().getFinancialDocumentFiftyCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCoin().getFinancialDocumentFiftyCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="425" href="#425">425</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.fiftyCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getFiftyCentCount().toString(), <span class="jxr_string">"fifty cent count"</span> });
+<a class="jxr_linenumber" name="426" href="#426">426</a>             success = false;
+<a class="jxr_linenumber" name="427" href="#427">427</a>         }
+<a class="jxr_linenumber" name="428" href="#428">428</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCoin().getFinancialDocumentTenCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCoin().getFinancialDocumentTenCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="429" href="#429">429</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.tenCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getTenCentCount().toString(), <span class="jxr_string">"ten cent count"</span> });
+<a class="jxr_linenumber" name="430" href="#430">430</a>             success = false;
+<a class="jxr_linenumber" name="431" href="#431">431</a>         }
+<a class="jxr_linenumber" name="432" href="#432">432</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCoin().getFinancialDocumentTwentyFiveCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCoin().getFinancialDocumentTwentyFiveCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="433" href="#433">433</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.twentyFiveCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getTwentyFiveCentCount().toString(), <span class="jxr_string">"twenty five cent count"</span> });
+<a class="jxr_linenumber" name="434" href="#434">434</a>             success = false;
+<a class="jxr_linenumber" name="435" href="#435">435</a>         }
+<a class="jxr_linenumber" name="436" href="#436">436</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCoin().getFinancialDocumentFiveCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCoin().getFinancialDocumentFiveCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="437" href="#437">437</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.fiveCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getFiveCentCount().toString(), <span class="jxr_string">"five cent count"</span> });
+<a class="jxr_linenumber" name="438" href="#438">438</a>             success = false;
+<a class="jxr_linenumber" name="439" href="#439">439</a>         }
+<a class="jxr_linenumber" name="440" href="#440">440</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCoin().getFinancialDocumentOneCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCoin().getFinancialDocumentOneCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="441" href="#441">441</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.oneCentCount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyInCoin().getOneCentCount().toString(), <span class="jxr_string">"one cent count"</span> });
+<a class="jxr_linenumber" name="442" href="#442">442</a>             success = false;
+<a class="jxr_linenumber" name="443" href="#443">443</a>         }
+<a class="jxr_linenumber" name="444" href="#444">444</a>         <strong class="jxr_keyword">if</strong> (trans.getMoneyOutCoin().getFinancialDocumentOtherCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getMoneyOutCoin().getFinancialDocumentOtherCentAmount().isNegative()) {
+<a class="jxr_linenumber" name="445" href="#445">445</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentOtherCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { trans.getMoneyOutCoin().getFinancialDocumentOtherCentAmount().toString(), <span class="jxr_string">"other cent amount"</span> });
+<a class="jxr_linenumber" name="446" href="#446">446</a>             success = false;
+<a class="jxr_linenumber" name="447" href="#447">447</a>         }
+<a class="jxr_linenumber" name="448" href="#448">448</a> 
+<a class="jxr_linenumber" name="449" href="#449">449</a>         <em class="jxr_comment">// open items in process amounts</em>
+<a class="jxr_linenumber" name="450" href="#450">450</a>         <strong class="jxr_keyword">int</strong> count = 0;
+<a class="jxr_linenumber" name="451" href="#451">451</a>         <strong class="jxr_keyword">if</strong> (trans.getOpenItemsInProcess() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="452" href="#452">452</a>             <strong class="jxr_keyword">for</strong> (CashieringItemInProcess itemInProc : trans.getOpenItemsInProcess()) {
+<a class="jxr_linenumber" name="453" href="#453">453</a>                 <strong class="jxr_keyword">if</strong> (itemInProc.getCurrentPayment() != <strong class="jxr_keyword">null</strong> &amp;&amp; itemInProc.getCurrentPayment().isNegative()) {
+<a class="jxr_linenumber" name="454" href="#454">454</a>                     GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.openItemsInProcess["</span> + count + <span class="jxr_string">"].currentPayment"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_REDUCED_ITEM_IN_PROCESS_NOT_NEGATIVE, <strong class="jxr_keyword">new</strong> String[] { itemInProc.getItemIdentifier().toString() });
+<a class="jxr_linenumber" name="455" href="#455">455</a>                     success = false;
+<a class="jxr_linenumber" name="456" href="#456">456</a>                 }
+<a class="jxr_linenumber" name="457" href="#457">457</a>                 count += 1;
+<a class="jxr_linenumber" name="458" href="#458">458</a>             }
+<a class="jxr_linenumber" name="459" href="#459">459</a>         }
+<a class="jxr_linenumber" name="460" href="#460">460</a> 
+<a class="jxr_linenumber" name="461" href="#461">461</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="462" href="#462">462</a>     }
+<a class="jxr_linenumber" name="463" href="#463">463</a> 
+<a class="jxr_linenumber" name="464" href="#464">464</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="465" href="#465">465</a> <em class="jxr_javadoccomment">     * Returns true if money-in and money-out are in balance with each other</em>
+<a class="jxr_linenumber" name="466" href="#466">466</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="467" href="#467">467</a> <em class="jxr_javadoccomment">     * @param trans represents cashiering transaction from cash management document</em>
+<a class="jxr_linenumber" name="468" href="#468">468</a> <em class="jxr_javadoccomment">     * @return true if money-in and money-out are balanced</em>
+<a class="jxr_linenumber" name="469" href="#469">469</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="470" href="#470">470</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkMoneyInMoneyOutBalance(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="471" href="#471">471</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="472" href="#472">472</a>         <strong class="jxr_keyword">if</strong> (!trans.getMoneyInTotal().equals(trans.getMoneyOutTotal())) {
+<a class="jxr_linenumber" name="473" href="#473">473</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyInCurrency.financialDocumentHundredDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_IN_OUT_DO_NOT_BALANCE, <strong class="jxr_keyword">new</strong> String[0]);
+<a class="jxr_linenumber" name="474" href="#474">474</a>             success = false;
+<a class="jxr_linenumber" name="475" href="#475">475</a>         }
+<a class="jxr_linenumber" name="476" href="#476">476</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="477" href="#477">477</a>     }
+<a class="jxr_linenumber" name="478" href="#478">478</a> 
+<a class="jxr_linenumber" name="479" href="#479">479</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="480" href="#480">480</a> <em class="jxr_javadoccomment">     * This method returns true if none of the coin (1 cent, 5 cents, etc) and cash increments (1 dollar, 2 dollars, 5 dollars etc. )</em>
+<a class="jxr_linenumber" name="481" href="#481">481</a> <em class="jxr_javadoccomment">     * from ( money-in + cash drawer ) exceed the amount for that increment from the money-out.</em>
+<a class="jxr_linenumber" name="482" href="#482">482</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="483" href="#483">483</a> <em class="jxr_javadoccomment">     * @param cmDoc represents cash management document</em>
+<a class="jxr_linenumber" name="484" href="#484">484</a> <em class="jxr_javadoccomment">     * @param trans represents cash transaction from cash management document</em>
+<a class="jxr_linenumber" name="485" href="#485">485</a> <em class="jxr_javadoccomment">     * @return true if none of the coin and cash increments from money-in + cash drawer excreed amount for increments in money-out </em>
+<a class="jxr_linenumber" name="486" href="#486">486</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="487" href="#487">487</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkEnoughCashForMoneyOut(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashDrawer.html">CashDrawer</a> cashDrawer, <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="488" href="#488">488</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="489" href="#489">489</a> 
+<a class="jxr_linenumber" name="490" href="#490">490</a>         <em class="jxr_comment">// money out currency</em>
+<a class="jxr_linenumber" name="491" href="#491">491</a>         <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CurrencyDetail.html">CurrencyDetail</a> moneyInCurrency = trans.getMoneyInCurrency();
+<a class="jxr_linenumber" name="492" href="#492">492</a>         <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CurrencyDetail.html">CurrencyDetail</a> moneyOutCurrency = trans.getMoneyOutCurrency();
+<a class="jxr_linenumber" name="493" href="#493">493</a> 
+<a class="jxr_linenumber" name="494" href="#494">494</a>         KualiDecimal existingHundredDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="495" href="#495">495</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentHundredDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="496" href="#496">496</a>             existingHundredDollarAmount = existingHundredDollarAmount.add(cashDrawer.getFinancialDocumentHundredDollarAmount());
+<a class="jxr_linenumber" name="497" href="#497">497</a>         }
+<a class="jxr_linenumber" name="498" href="#498">498</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentHundredDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="499" href="#499">499</a>             existingHundredDollarAmount = existingHundredDollarAmount.add(moneyInCurrency.getFinancialDocumentHundredDollarAmount());
+<a class="jxr_linenumber" name="500" href="#500">500</a>         }
+<a class="jxr_linenumber" name="501" href="#501">501</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentHundredDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingHundredDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentHundredDollarAmount())) {
+<a class="jxr_linenumber" name="502" href="#502">502</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentHundredDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"hundred dollar"</span>, moneyOutCurrency.getFinancialDocumentHundredDollarAmount().toString(), cashDrawer.getFinancialDocumentHundredDollarAmount().toString() });
+<a class="jxr_linenumber" name="503" href="#503">503</a>             success = false;
+<a class="jxr_linenumber" name="504" href="#504">504</a>         }
+<a class="jxr_linenumber" name="505" href="#505">505</a> 
+<a class="jxr_linenumber" name="506" href="#506">506</a>         KualiDecimal existingOtherDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="507" href="#507">507</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentOtherDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="508" href="#508">508</a>             existingOtherDollarAmount = existingOtherDollarAmount.add(cashDrawer.getFinancialDocumentOtherDollarAmount());
+<a class="jxr_linenumber" name="509" href="#509">509</a>         }
+<a class="jxr_linenumber" name="510" href="#510">510</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentOtherDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="511" href="#511">511</a>             existingOtherDollarAmount = existingOtherDollarAmount.add(moneyInCurrency.getFinancialDocumentOtherDollarAmount());
+<a class="jxr_linenumber" name="512" href="#512">512</a>         }
+<a class="jxr_linenumber" name="513" href="#513">513</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentOtherDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingOtherDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentOtherDollarAmount())) {
+<a class="jxr_linenumber" name="514" href="#514">514</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentOtherDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"other dollar"</span>, moneyOutCurrency.getFinancialDocumentOtherDollarAmount().toString(), cashDrawer.getFinancialDocumentOtherDollarAmount().toString() });
+<a class="jxr_linenumber" name="515" href="#515">515</a>             success = false;
+<a class="jxr_linenumber" name="516" href="#516">516</a>         }
+<a class="jxr_linenumber" name="517" href="#517">517</a> 
+<a class="jxr_linenumber" name="518" href="#518">518</a>         KualiDecimal existingTwoDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="519" href="#519">519</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentTwoDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="520" href="#520">520</a>             existingTwoDollarAmount = existingTwoDollarAmount.add(cashDrawer.getFinancialDocumentTwoDollarAmount());
+<a class="jxr_linenumber" name="521" href="#521">521</a>         }
+<a class="jxr_linenumber" name="522" href="#522">522</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentTwoDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="523" href="#523">523</a>             existingTwoDollarAmount = existingTwoDollarAmount.add(moneyInCurrency.getFinancialDocumentTwoDollarAmount());
+<a class="jxr_linenumber" name="524" href="#524">524</a>         }
+<a class="jxr_linenumber" name="525" href="#525">525</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentTwoDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingTwoDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentTwoDollarAmount())) {
+<a class="jxr_linenumber" name="526" href="#526">526</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentTwoDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"two dollar"</span>, moneyOutCurrency.getFinancialDocumentTwoDollarAmount().toString(), cashDrawer.getFinancialDocumentTwoDollarAmount().toString() });
+<a class="jxr_linenumber" name="527" href="#527">527</a>             success = false;
+<a class="jxr_linenumber" name="528" href="#528">528</a>         }
+<a class="jxr_linenumber" name="529" href="#529">529</a> 
+<a class="jxr_linenumber" name="530" href="#530">530</a>         KualiDecimal existingFiftyDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="531" href="#531">531</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentFiftyDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="532" href="#532">532</a>             existingFiftyDollarAmount = existingFiftyDollarAmount.add(cashDrawer.getFinancialDocumentFiftyDollarAmount());
+<a class="jxr_linenumber" name="533" href="#533">533</a>         }
+<a class="jxr_linenumber" name="534" href="#534">534</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentFiftyDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="535" href="#535">535</a>             existingFiftyDollarAmount = existingFiftyDollarAmount.add(moneyInCurrency.getFinancialDocumentFiftyDollarAmount());
+<a class="jxr_linenumber" name="536" href="#536">536</a>         }
+<a class="jxr_linenumber" name="537" href="#537">537</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentFiftyDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingFiftyDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentFiftyDollarAmount())) {
+<a class="jxr_linenumber" name="538" href="#538">538</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentFiftyDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"fifty dollar"</span>, moneyOutCurrency.getFinancialDocumentFiftyDollarAmount().toString(), cashDrawer.getFinancialDocumentFiftyDollarAmount().toString() });
+<a class="jxr_linenumber" name="539" href="#539">539</a>             success = false;
+<a class="jxr_linenumber" name="540" href="#540">540</a>         }
+<a class="jxr_linenumber" name="541" href="#541">541</a> 
+<a class="jxr_linenumber" name="542" href="#542">542</a>         KualiDecimal existingTwentyDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="543" href="#543">543</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentTwentyDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="544" href="#544">544</a>             existingTwentyDollarAmount = existingTwentyDollarAmount.add(cashDrawer.getFinancialDocumentTwentyDollarAmount());
+<a class="jxr_linenumber" name="545" href="#545">545</a>         }
+<a class="jxr_linenumber" name="546" href="#546">546</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentTwentyDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="547" href="#547">547</a>             existingTwentyDollarAmount = existingTwentyDollarAmount.add(moneyInCurrency.getFinancialDocumentTwentyDollarAmount());
+<a class="jxr_linenumber" name="548" href="#548">548</a>         }
+<a class="jxr_linenumber" name="549" href="#549">549</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentTwentyDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingTwentyDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentTwentyDollarAmount())) {
+<a class="jxr_linenumber" name="550" href="#550">550</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentTwentyDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"twenty dollar"</span>, moneyOutCurrency.getFinancialDocumentTwentyDollarAmount().toString(), cashDrawer.getFinancialDocumentTwentyDollarAmount().toString() });
+<a class="jxr_linenumber" name="551" href="#551">551</a>             success = false;
+<a class="jxr_linenumber" name="552" href="#552">552</a>         }
+<a class="jxr_linenumber" name="553" href="#553">553</a> 
+<a class="jxr_linenumber" name="554" href="#554">554</a>         KualiDecimal existingTenDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="555" href="#555">555</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentTenDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="556" href="#556">556</a>             existingTenDollarAmount = existingTenDollarAmount.add(cashDrawer.getFinancialDocumentTenDollarAmount());
+<a class="jxr_linenumber" name="557" href="#557">557</a>         }
+<a class="jxr_linenumber" name="558" href="#558">558</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentTenDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="559" href="#559">559</a>             existingTenDollarAmount = existingTenDollarAmount.add(moneyInCurrency.getFinancialDocumentTenDollarAmount());
+<a class="jxr_linenumber" name="560" href="#560">560</a>         }
+<a class="jxr_linenumber" name="561" href="#561">561</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentTenDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingTenDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentTenDollarAmount())) {
+<a class="jxr_linenumber" name="562" href="#562">562</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentTenDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"ten dollar"</span>, moneyOutCurrency.getFinancialDocumentTenDollarAmount().toString(), cashDrawer.getFinancialDocumentTenDollarAmount().toString() });
+<a class="jxr_linenumber" name="563" href="#563">563</a>             success = false;
+<a class="jxr_linenumber" name="564" href="#564">564</a>         }
+<a class="jxr_linenumber" name="565" href="#565">565</a> 
+<a class="jxr_linenumber" name="566" href="#566">566</a>         KualiDecimal existingFiveDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="567" href="#567">567</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentFiveDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="568" href="#568">568</a>             existingFiveDollarAmount = existingFiveDollarAmount.add(cashDrawer.getFinancialDocumentFiveDollarAmount());
+<a class="jxr_linenumber" name="569" href="#569">569</a>         }
+<a class="jxr_linenumber" name="570" href="#570">570</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentFiveDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="571" href="#571">571</a>             existingFiveDollarAmount = existingFiveDollarAmount.add(moneyInCurrency.getFinancialDocumentFiveDollarAmount());
+<a class="jxr_linenumber" name="572" href="#572">572</a>         }
+<a class="jxr_linenumber" name="573" href="#573">573</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentFiveDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingFiveDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentFiveDollarAmount())) {
+<a class="jxr_linenumber" name="574" href="#574">574</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentFiveDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"five dollar"</span>, moneyOutCurrency.getFinancialDocumentFiveDollarAmount().toString(), cashDrawer.getFinancialDocumentFiveDollarAmount().toString() });
+<a class="jxr_linenumber" name="575" href="#575">575</a>             success = false;
+<a class="jxr_linenumber" name="576" href="#576">576</a>         }
+<a class="jxr_linenumber" name="577" href="#577">577</a> 
+<a class="jxr_linenumber" name="578" href="#578">578</a>         KualiDecimal existingOneDollarAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="579" href="#579">579</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentOneDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="580" href="#580">580</a>             existingOneDollarAmount = existingOneDollarAmount.add(cashDrawer.getFinancialDocumentOneDollarAmount());
+<a class="jxr_linenumber" name="581" href="#581">581</a>         }
+<a class="jxr_linenumber" name="582" href="#582">582</a>         <strong class="jxr_keyword">if</strong> (moneyInCurrency.getFinancialDocumentOneDollarAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="583" href="#583">583</a>             existingOneDollarAmount = existingOneDollarAmount.add(moneyInCurrency.getFinancialDocumentOneDollarAmount());
+<a class="jxr_linenumber" name="584" href="#584">584</a>         }
+<a class="jxr_linenumber" name="585" href="#585">585</a>         <strong class="jxr_keyword">if</strong> (moneyOutCurrency.getFinancialDocumentOneDollarAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingOneDollarAmount.isLessThan(moneyOutCurrency.getFinancialDocumentOneDollarAmount())) {
+<a class="jxr_linenumber" name="586" href="#586">586</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCurrency.financialDocumentOneDollarAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"one dollar"</span>, moneyOutCurrency.getFinancialDocumentOneDollarAmount().toString(), cashDrawer.getFinancialDocumentOneDollarAmount().toString() });
+<a class="jxr_linenumber" name="587" href="#587">587</a>             success = false;
+<a class="jxr_linenumber" name="588" href="#588">588</a>         }
+<a class="jxr_linenumber" name="589" href="#589">589</a> 
+<a class="jxr_linenumber" name="590" href="#590">590</a>         <em class="jxr_comment">// money out coin</em>
+<a class="jxr_linenumber" name="591" href="#591">591</a>         <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CoinDetail.html">CoinDetail</a> moneyOutCoin = trans.getMoneyOutCoin();
+<a class="jxr_linenumber" name="592" href="#592">592</a>         <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CoinDetail.html">CoinDetail</a> moneyInCoin = trans.getMoneyInCoin();
+<a class="jxr_linenumber" name="593" href="#593">593</a>         KualiDecimal existingHundredCentAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="594" href="#594">594</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentHundredCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="595" href="#595">595</a>             existingHundredCentAmount = existingHundredCentAmount.add(cashDrawer.getFinancialDocumentHundredCentAmount());
+<a class="jxr_linenumber" name="596" href="#596">596</a>         }
+<a class="jxr_linenumber" name="597" href="#597">597</a>         <strong class="jxr_keyword">if</strong> (moneyInCoin.getFinancialDocumentHundredCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="598" href="#598">598</a>             existingHundredCentAmount = existingHundredCentAmount.add(moneyInCoin.getFinancialDocumentHundredCentAmount());
+<a class="jxr_linenumber" name="599" href="#599">599</a>         }
+<a class="jxr_linenumber" name="600" href="#600">600</a>         <strong class="jxr_keyword">if</strong> (moneyOutCoin.getFinancialDocumentHundredCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingHundredCentAmount.isLessThan(moneyOutCoin.getFinancialDocumentHundredCentAmount())) {
+<a class="jxr_linenumber" name="601" href="#601">601</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentHundredCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"hundred cent"</span>, moneyOutCoin.getFinancialDocumentHundredCentAmount().toString(), cashDrawer.getFinancialDocumentHundredCentAmount().toString() });
+<a class="jxr_linenumber" name="602" href="#602">602</a>             success = false;
+<a class="jxr_linenumber" name="603" href="#603">603</a>         }
+<a class="jxr_linenumber" name="604" href="#604">604</a> 
+<a class="jxr_linenumber" name="605" href="#605">605</a>         KualiDecimal existingOtherCentAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="606" href="#606">606</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentOtherCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="607" href="#607">607</a>             existingOtherCentAmount = existingOtherCentAmount.add(cashDrawer.getFinancialDocumentOtherCentAmount());
+<a class="jxr_linenumber" name="608" href="#608">608</a>         }
+<a class="jxr_linenumber" name="609" href="#609">609</a>         <strong class="jxr_keyword">if</strong> (moneyInCoin.getFinancialDocumentOtherCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="610" href="#610">610</a>             existingOtherCentAmount = existingOtherCentAmount.add(moneyInCoin.getFinancialDocumentOtherCentAmount());
+<a class="jxr_linenumber" name="611" href="#611">611</a>         }
+<a class="jxr_linenumber" name="612" href="#612">612</a>         <strong class="jxr_keyword">if</strong> (moneyOutCoin.getFinancialDocumentOtherCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingOtherCentAmount.isLessThan(moneyOutCoin.getFinancialDocumentOtherCentAmount())) {
+<a class="jxr_linenumber" name="613" href="#613">613</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentOtherCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"other cent"</span>, moneyOutCoin.getFinancialDocumentOtherCentAmount().toString(), cashDrawer.getFinancialDocumentOtherCentAmount().toString() });
+<a class="jxr_linenumber" name="614" href="#614">614</a>             success = false;
+<a class="jxr_linenumber" name="615" href="#615">615</a>         }
+<a class="jxr_linenumber" name="616" href="#616">616</a> 
+<a class="jxr_linenumber" name="617" href="#617">617</a>         KualiDecimal existingFiftyCentAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="618" href="#618">618</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentFiftyCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="619" href="#619">619</a>             existingFiftyCentAmount = existingFiftyCentAmount.add(cashDrawer.getFinancialDocumentFiftyCentAmount());
+<a class="jxr_linenumber" name="620" href="#620">620</a>         }
+<a class="jxr_linenumber" name="621" href="#621">621</a>         <strong class="jxr_keyword">if</strong> (moneyInCoin.getFinancialDocumentFiftyCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="622" href="#622">622</a>             existingFiftyCentAmount = existingFiftyCentAmount.add(moneyInCoin.getFinancialDocumentFiftyCentAmount());
+<a class="jxr_linenumber" name="623" href="#623">623</a>         }
+<a class="jxr_linenumber" name="624" href="#624">624</a>         <strong class="jxr_keyword">if</strong> (moneyOutCoin.getFinancialDocumentFiftyCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingFiftyCentAmount.isLessThan(moneyOutCoin.getFinancialDocumentFiftyCentAmount())) {
+<a class="jxr_linenumber" name="625" href="#625">625</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentFiftyCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"fifty cent"</span>, moneyOutCoin.getFinancialDocumentFiftyCentAmount().toString(), cashDrawer.getFinancialDocumentFiftyCentAmount().toString() });
+<a class="jxr_linenumber" name="626" href="#626">626</a>             success = false;
+<a class="jxr_linenumber" name="627" href="#627">627</a>         }
+<a class="jxr_linenumber" name="628" href="#628">628</a> 
+<a class="jxr_linenumber" name="629" href="#629">629</a>         KualiDecimal existingTwentyFiveCentAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="630" href="#630">630</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentTwentyFiveCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="631" href="#631">631</a>             existingTwentyFiveCentAmount = existingTwentyFiveCentAmount.add(cashDrawer.getFinancialDocumentTwentyFiveCentAmount());
+<a class="jxr_linenumber" name="632" href="#632">632</a>         }
+<a class="jxr_linenumber" name="633" href="#633">633</a>         <strong class="jxr_keyword">if</strong> (moneyInCoin.getFinancialDocumentTwentyFiveCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="634" href="#634">634</a>             existingTwentyFiveCentAmount = existingTwentyFiveCentAmount.add(moneyInCoin.getFinancialDocumentTwentyFiveCentAmount());
+<a class="jxr_linenumber" name="635" href="#635">635</a>         }
+<a class="jxr_linenumber" name="636" href="#636">636</a>         <strong class="jxr_keyword">if</strong> (moneyOutCoin.getFinancialDocumentTwentyFiveCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingTwentyFiveCentAmount.isLessThan(moneyOutCoin.getFinancialDocumentTwentyFiveCentAmount())) {
+<a class="jxr_linenumber" name="637" href="#637">637</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentTwentyFiveCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"twenty five cent"</span>, moneyOutCoin.getFinancialDocumentTwentyFiveCentAmount().toString(), cashDrawer.getFinancialDocumentTwentyFiveCentAmount().toString() });
+<a class="jxr_linenumber" name="638" href="#638">638</a>             success = false;
+<a class="jxr_linenumber" name="639" href="#639">639</a>         }
+<a class="jxr_linenumber" name="640" href="#640">640</a> 
+<a class="jxr_linenumber" name="641" href="#641">641</a>         KualiDecimal existingTenCentAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="642" href="#642">642</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentTenCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="643" href="#643">643</a>             existingTenCentAmount = existingTenCentAmount.add(cashDrawer.getFinancialDocumentTenCentAmount());
+<a class="jxr_linenumber" name="644" href="#644">644</a>         }
+<a class="jxr_linenumber" name="645" href="#645">645</a>         <strong class="jxr_keyword">if</strong> (moneyInCoin.getFinancialDocumentTenCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="646" href="#646">646</a>             existingTenCentAmount = existingTenCentAmount.add(moneyInCoin.getFinancialDocumentTenCentAmount());
+<a class="jxr_linenumber" name="647" href="#647">647</a>         }
+<a class="jxr_linenumber" name="648" href="#648">648</a>         <strong class="jxr_keyword">if</strong> (moneyOutCoin.getFinancialDocumentTenCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingTenCentAmount.isLessThan(moneyOutCoin.getFinancialDocumentTenCentAmount())) {
+<a class="jxr_linenumber" name="649" href="#649">649</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentTenCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"ten cent"</span>, moneyOutCoin.getFinancialDocumentTenCentAmount().toString(), cashDrawer.getFinancialDocumentTenCentAmount().toString() });
+<a class="jxr_linenumber" name="650" href="#650">650</a>             success = false;
+<a class="jxr_linenumber" name="651" href="#651">651</a>         }
+<a class="jxr_linenumber" name="652" href="#652">652</a> 
+<a class="jxr_linenumber" name="653" href="#653">653</a>         KualiDecimal existingFiveCentAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="654" href="#654">654</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentFiveCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="655" href="#655">655</a>             existingFiveCentAmount = existingFiveCentAmount.add(cashDrawer.getFinancialDocumentFiveCentAmount());
+<a class="jxr_linenumber" name="656" href="#656">656</a>         }
+<a class="jxr_linenumber" name="657" href="#657">657</a>         <strong class="jxr_keyword">if</strong> (moneyInCoin.getFinancialDocumentFiveCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="658" href="#658">658</a>             existingFiveCentAmount = existingFiveCentAmount.add(moneyInCoin.getFinancialDocumentFiveCentAmount());
+<a class="jxr_linenumber" name="659" href="#659">659</a>         }
+<a class="jxr_linenumber" name="660" href="#660">660</a>         <strong class="jxr_keyword">if</strong> (moneyOutCoin.getFinancialDocumentFiveCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingFiveCentAmount.isLessThan(moneyOutCoin.getFinancialDocumentFiveCentAmount())) {
+<a class="jxr_linenumber" name="661" href="#661">661</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentFiveCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"five cent"</span>, moneyOutCoin.getFinancialDocumentFiveCentAmount().toString(), cashDrawer.getFinancialDocumentFiveCentAmount().toString() });
+<a class="jxr_linenumber" name="662" href="#662">662</a>             success = false;
+<a class="jxr_linenumber" name="663" href="#663">663</a>         }
+<a class="jxr_linenumber" name="664" href="#664">664</a> 
+<a class="jxr_linenumber" name="665" href="#665">665</a>         KualiDecimal existingOneCentAmount = KualiDecimal.ZERO;
+<a class="jxr_linenumber" name="666" href="#666">666</a>         <strong class="jxr_keyword">if</strong> (cashDrawer.getFinancialDocumentOneCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="667" href="#667">667</a>             existingOneCentAmount = existingOneCentAmount.add(cashDrawer.getFinancialDocumentOneCentAmount());
+<a class="jxr_linenumber" name="668" href="#668">668</a>         }
+<a class="jxr_linenumber" name="669" href="#669">669</a>         <strong class="jxr_keyword">if</strong> (moneyInCoin.getFinancialDocumentOneCentAmount() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="670" href="#670">670</a>             existingOneCentAmount = existingOneCentAmount.add(moneyInCoin.getFinancialDocumentOneCentAmount());
+<a class="jxr_linenumber" name="671" href="#671">671</a>         }
+<a class="jxr_linenumber" name="672" href="#672">672</a>         <strong class="jxr_keyword">if</strong> (moneyOutCoin.getFinancialDocumentOneCentAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; existingOneCentAmount.isLessThan(moneyOutCoin.getFinancialDocumentOneCentAmount())) {
+<a class="jxr_linenumber" name="673" href="#673">673</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.moneyOutCoin.financialDocumentOneCentAmount"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CASH_COUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"one cent"</span>, moneyOutCoin.getFinancialDocumentOneCentAmount().toString(), cashDrawer.getFinancialDocumentOneCentAmount().toString() });
+<a class="jxr_linenumber" name="674" href="#674">674</a>             success = false;
+<a class="jxr_linenumber" name="675" href="#675">675</a>         }
+<a class="jxr_linenumber" name="676" href="#676">676</a> 
+<a class="jxr_linenumber" name="677" href="#677">677</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="678" href="#678">678</a>     }
+<a class="jxr_linenumber" name="679" href="#679">679</a> 
+<a class="jxr_linenumber" name="680" href="#680">680</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="681" href="#681">681</a> <em class="jxr_javadoccomment">     * This method returns true if the new item in process does not exceed the current amount in the cash drawer reserves</em>
+<a class="jxr_linenumber" name="682" href="#682">682</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="683" href="#683">683</a> <em class="jxr_javadoccomment">     * @param cmDoc submitted cash management document</em>
+<a class="jxr_linenumber" name="684" href="#684">684</a> <em class="jxr_javadoccomment">     * @param trans transaction from cash management document</em>
+<a class="jxr_linenumber" name="685" href="#685">685</a> <em class="jxr_javadoccomment">     * @return true if the new item in process does not exceed the current amount in the cash drawer reserves</em>
+<a class="jxr_linenumber" name="686" href="#686">686</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="687" href="#687">687</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkNewItemInProcessDoesNotExceedCashDrawer(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashDrawer.html">CashDrawer</a> cashDrawer, <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="688" href="#688">688</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="689" href="#689">689</a> 
+<a class="jxr_linenumber" name="690" href="#690">690</a>         <strong class="jxr_keyword">if</strong> (trans.getNewItemInProcess().getItemAmount() != <strong class="jxr_keyword">null</strong> &amp;&amp; trans.getNewItemInProcess().getItemAmount().isGreaterThan(calculateTotalCashDrawerReserves(cashDrawer, trans))) {
+<a class="jxr_linenumber" name="691" href="#691">691</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.newItemInProcess"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_AMOUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"new Item In Process"</span>, trans.getNewItemInProcess().getItemAmount().toString(), calculateTotalCashDrawerReserves(cashDrawer, trans).toString() });
+<a class="jxr_linenumber" name="692" href="#692">692</a>             success = false;
+<a class="jxr_linenumber" name="693" href="#693">693</a>         }
+<a class="jxr_linenumber" name="694" href="#694">694</a> 
+<a class="jxr_linenumber" name="695" href="#695">695</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="696" href="#696">696</a>     }
+<a class="jxr_linenumber" name="697" href="#697">697</a> 
+<a class="jxr_linenumber" name="698" href="#698">698</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="699" href="#699">699</a> <em class="jxr_javadoccomment">     * This method returns true if check total from transaction does not exceed the current amount in the cash drawer reserves </em>
+<a class="jxr_linenumber" name="700" href="#700">700</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="701" href="#701">701</a> <em class="jxr_javadoccomment">     * @param cmDoc submitted cash management document</em>
+<a class="jxr_linenumber" name="702" href="#702">702</a> <em class="jxr_javadoccomment">     * @param trans transaction from cash management document</em>
+<a class="jxr_linenumber" name="703" href="#703">703</a> <em class="jxr_javadoccomment">     * @return true if check total from transaction does not exceed the current amount in the cash drawer reserves</em>
+<a class="jxr_linenumber" name="704" href="#704">704</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="705" href="#705">705</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkTransactionCheckTotalDoesNotExceedCashDrawer(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashDrawer.html">CashDrawer</a> cashDrawer, <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="706" href="#706">706</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="707" href="#707">707</a> 
+<a class="jxr_linenumber" name="708" href="#708">708</a>         <strong class="jxr_keyword">if</strong> (trans.getTotalCheckAmount().isGreaterThan(calculateTotalCashDrawerReserves(cashDrawer, trans))) {
+<a class="jxr_linenumber" name="709" href="#709">709</a>             GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.newCheck"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_AMOUNT_EXCEEDS_DRAWER, <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"given checks"</span>, trans.getTotalCheckAmount().toString(), calculateTotalCashDrawerReserves(cashDrawer, trans).toString() });
+<a class="jxr_linenumber" name="710" href="#710">710</a>             success = false;
+<a class="jxr_linenumber" name="711" href="#711">711</a>         }
+<a class="jxr_linenumber" name="712" href="#712">712</a> 
+<a class="jxr_linenumber" name="713" href="#713">713</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="714" href="#714">714</a>     }
+<a class="jxr_linenumber" name="715" href="#715">715</a>  
+<a class="jxr_linenumber" name="716" href="#716">716</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="717" href="#717">717</a> <em class="jxr_javadoccomment">     * This method returns true if the current payment amount for the cashiering item in process does not exceed</em>
+<a class="jxr_linenumber" name="718" href="#718">718</a> <em class="jxr_javadoccomment">     * the actual item amount for the item in process</em>
+<a class="jxr_linenumber" name="719" href="#719">719</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="720" href="#720">720</a> <em class="jxr_javadoccomment">     * @param itemInProc cashiering item in process</em>
+<a class="jxr_linenumber" name="721" href="#721">721</a> <em class="jxr_javadoccomment">     * @param cashieringItemNumber cashiering item number</em>
+<a class="jxr_linenumber" name="722" href="#722">722</a> <em class="jxr_javadoccomment">     * @return true if the current payment amount for the cashiering item in process does not exceed</em>
+<a class="jxr_linenumber" name="723" href="#723">723</a> <em class="jxr_javadoccomment">     *          the actual item amount for the item in process</em>
+<a class="jxr_linenumber" name="724" href="#724">724</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="725" href="#725">725</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkPaidBackItemInProcessDoesNotExceedTotal(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringItemInProcess.html">CashieringItemInProcess</a> itemInProc, <strong class="jxr_keyword">int</strong> cashieringItemNumber) {
+<a class="jxr_linenumber" name="726" href="#726">726</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="727" href="#727">727</a>         <strong class="jxr_keyword">if</strong> (itemInProc.getCurrentPayment() != <strong class="jxr_keyword">null</strong> &amp;&amp; itemInProc.getCurrentPayment().isGreaterThan(itemInProc.getItemAmount())) {
+<a class="jxr_linenumber" name="728" href="#728">728</a>             GlobalVariables.getMessageMap().putError(KFSConstants.CASHIERING_TRANSACTION_OPEN_ITEM_IN_PROCESS_PROPERTY + <span class="jxr_string">"["</span> + cashieringItemNumber + <span class="jxr_string">"]"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_AMOUNT_PAID_BACK_EXCEEDS_AMOUNT_LEFT, <strong class="jxr_keyword">new</strong> String[] { itemInProc.getItemIdentifier().toString() });
+<a class="jxr_linenumber" name="729" href="#729">729</a>             success = false;
+<a class="jxr_linenumber" name="730" href="#730">730</a>         }
+<a class="jxr_linenumber" name="731" href="#731">731</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="732" href="#732">732</a>     }
+<a class="jxr_linenumber" name="733" href="#733">733</a> 
+<a class="jxr_linenumber" name="734" href="#734">734</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="735" href="#735">735</a> <em class="jxr_javadoccomment">     * This method returns true if a new item in process is populated and none of the open item in process' amounts are greater than zero.</em>
+<a class="jxr_linenumber" name="736" href="#736">736</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="737" href="#737">737</a> <em class="jxr_javadoccomment">     * @param cmDoc submitted cash management document</em>
+<a class="jxr_linenumber" name="738" href="#738">738</a> <em class="jxr_javadoccomment">     * @param trans transaction from cash management document</em>
+<a class="jxr_linenumber" name="739" href="#739">739</a> <em class="jxr_javadoccomment">     * @return true if a new item in process is populated and none of the open item in process' amounts are greater than zero.</em>
+<a class="jxr_linenumber" name="740" href="#740">740</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="741" href="#741">741</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkItemInProcessIsNotPayingOffItemInProcess(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="742" href="#742">742</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="743" href="#743">743</a>         <strong class="jxr_keyword">if</strong> (trans.getNewItemInProcess().isPopulated()) {
+<a class="jxr_linenumber" name="744" href="#744">744</a>             <strong class="jxr_keyword">int</strong> count = 0;
+<a class="jxr_linenumber" name="745" href="#745">745</a>             <strong class="jxr_keyword">for</strong> (CashieringItemInProcess advance : trans.getOpenItemsInProcess()) {
+<a class="jxr_linenumber" name="746" href="#746">746</a>                 <strong class="jxr_keyword">if</strong> (advance.getCurrentPayment() != <strong class="jxr_keyword">null</strong> &amp;&amp; advance.getCurrentPayment().isGreaterThan(KualiDecimal.ZERO)) {
+<a class="jxr_linenumber" name="747" href="#747">747</a>                     GlobalVariables.getMessageMap().putError(KFSConstants.CASHIERING_TRANSACTION_OPEN_ITEM_IN_PROCESS_PROPERTY + <span class="jxr_string">"["</span> + count + <span class="jxr_string">"]"</span>, KFSKeyConstants.CashManagement.ERROR_DOCUMENT_CASHIERING_TRANSACTION_CANNOT_PAY_OFF_ADVANCE_WITH_ADVANCE, <strong class="jxr_keyword">new</strong> String[] { advance.getItemIdentifier().toString() });
+<a class="jxr_linenumber" name="748" href="#748">748</a>                     success = false;
+<a class="jxr_linenumber" name="749" href="#749">749</a>                 }
+<a class="jxr_linenumber" name="750" href="#750">750</a>                 count += 1;
+<a class="jxr_linenumber" name="751" href="#751">751</a>             }
+<a class="jxr_linenumber" name="752" href="#752">752</a>         }
+<a class="jxr_linenumber" name="753" href="#753">753</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="754" href="#754">754</a>     }
+<a class="jxr_linenumber" name="755" href="#755">755</a> 
+<a class="jxr_linenumber" name="756" href="#756">756</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="757" href="#757">757</a> <em class="jxr_javadoccomment">     * This method returns true if all open items in process amounts do not exceed the total for each specific item's amount total</em>
+<a class="jxr_linenumber" name="758" href="#758">758</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="759" href="#759">759</a> <em class="jxr_javadoccomment">     * @param trans transaction from cash management document</em>
+<a class="jxr_linenumber" name="760" href="#760">760</a> <em class="jxr_javadoccomment">     * @return true if all open items in process amounts do not exceed the total for each specific item's amount total</em>
+<a class="jxr_linenumber" name="761" href="#761">761</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="762" href="#762">762</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkAllPaidBackItemsInProcess(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="763" href="#763">763</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="764" href="#764">764</a>         <strong class="jxr_keyword">int</strong> count = 0;
+<a class="jxr_linenumber" name="765" href="#765">765</a>         <strong class="jxr_keyword">if</strong> (trans.getOpenItemsInProcess() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="766" href="#766">766</a>             <strong class="jxr_keyword">for</strong> (CashieringItemInProcess itemInProc : trans.getOpenItemsInProcess()) {
+<a class="jxr_linenumber" name="767" href="#767">767</a>                 success &amp;= checkPaidBackItemInProcessDoesNotExceedTotal(itemInProc, count);
+<a class="jxr_linenumber" name="768" href="#768">768</a>                 count += 1;
+<a class="jxr_linenumber" name="769" href="#769">769</a>             }
+<a class="jxr_linenumber" name="770" href="#770">770</a>         }
+<a class="jxr_linenumber" name="771" href="#771">771</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="772" href="#772">772</a>     }
+<a class="jxr_linenumber" name="773" href="#773">773</a> 
+<a class="jxr_linenumber" name="774" href="#774">774</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="775" href="#775">775</a> <em class="jxr_javadoccomment">     * This method returns true if the current date is after all new items in process' open dates</em>
+<a class="jxr_linenumber" name="776" href="#776">776</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="777" href="#777">777</a> <em class="jxr_javadoccomment">     * @param trans transaction from cash management document</em>
+<a class="jxr_linenumber" name="778" href="#778">778</a> <em class="jxr_javadoccomment">     * @return true if the current date is after all new items in process' open dates</em>
+<a class="jxr_linenumber" name="779" href="#779">779</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="780" href="#780">780</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> checkNewItemInProcessInPast(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="781" href="#781">781</a>         <strong class="jxr_keyword">boolean</strong> success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="782" href="#782">782</a>         <strong class="jxr_keyword">if</strong> (trans.getNewItemInProcess().isPopulated()) {
+<a class="jxr_linenumber" name="783" href="#783">783</a>             <strong class="jxr_keyword">if</strong> (trans.getNewItemInProcess().getItemOpenDate() != <strong class="jxr_keyword">null</strong> &amp;&amp; convertDateToDayYear(trans.getNewItemInProcess().getItemOpenDate()) &gt; convertDateToDayYear(<strong class="jxr_keyword">new</strong> Date())) {
+<a class="jxr_linenumber" name="784" href="#784">784</a>                 GlobalVariables.getMessageMap().putError(<span class="jxr_string">"document.currentTransaction.newItemInProcess.itemOpenDate"</span>, KFSKeyConstants.CashManagement.ERROR_NEW_ITEM_IN_PROCESS_IN_FUTURE, <strong class="jxr_keyword">new</strong> String[] {});
+<a class="jxr_linenumber" name="785" href="#785">785</a>                 success = false;
+<a class="jxr_linenumber" name="786" href="#786">786</a>             }
+<a class="jxr_linenumber" name="787" href="#787">787</a>         }
+<a class="jxr_linenumber" name="788" href="#788">788</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="789" href="#789">789</a>     }
+<a class="jxr_linenumber" name="790" href="#790">790</a> 
+<a class="jxr_linenumber" name="791" href="#791">791</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="792" href="#792">792</a> <em class="jxr_javadoccomment">     * This method calculates the total cash drawer reserves amount</em>
+<a class="jxr_linenumber" name="793" href="#793">793</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="794" href="#794">794</a> <em class="jxr_javadoccomment">     * @param cmDoc</em>
+<a class="jxr_linenumber" name="795" href="#795">795</a> <em class="jxr_javadoccomment">     * @param trans</em>
+<a class="jxr_linenumber" name="796" href="#796">796</a> <em class="jxr_javadoccomment">     * @return KualiDecimal as total from cash drawer reserves</em>
+<a class="jxr_linenumber" name="797" href="#797">797</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="798" href="#798">798</a>     <strong class="jxr_keyword">protected</strong> KualiDecimal calculateTotalCashDrawerReserves(<a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashDrawer.html">CashDrawer</a> cashDrawer, <a href="../../../../../../../org/kuali/kfs/fp/businessobject/CashieringTransaction.html">CashieringTransaction</a> trans) {
+<a class="jxr_linenumber" name="799" href="#799">799</a>         KualiDecimal reserves = <strong class="jxr_keyword">new</strong> KualiDecimal(cashDrawer.getTotalAmount().bigDecimalValue());
+<a class="jxr_linenumber" name="800" href="#800">800</a>         reserves = reserves.add(trans.getMoneyInCurrency().getTotalAmount());
+<a class="jxr_linenumber" name="801" href="#801">801</a>         reserves = reserves.add(trans.getMoneyInCoin().getTotalAmount());
+<a class="jxr_linenumber" name="802" href="#802">802</a>         <strong class="jxr_keyword">return</strong> reserves;
+<a class="jxr_linenumber" name="803" href="#803">803</a>     }
+<a class="jxr_linenumber" name="804" href="#804">804</a> 
+<a class="jxr_linenumber" name="805" href="#805">805</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="806" href="#806">806</a> <em class="jxr_javadoccomment">     * This method returns the current day of year as an int for a specific date.</em>
+<a class="jxr_linenumber" name="807" href="#807">807</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="808" href="#808">808</a> <em class="jxr_javadoccomment">     * @param d date</em>
+<a class="jxr_linenumber" name="809" href="#809">809</a> <em class="jxr_javadoccomment">     * @return int as day of year</em>
+<a class="jxr_linenumber" name="810" href="#810">810</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="811" href="#811">811</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> convertDateToDayYear(Date d) {
+<a class="jxr_linenumber" name="812" href="#812">812</a>         Calendar cal = <strong class="jxr_keyword">new</strong> GregorianCalendar();
+<a class="jxr_linenumber" name="813" href="#813">813</a>         cal.setTime(d);
+<a class="jxr_linenumber" name="814" href="#814">814</a>         <strong class="jxr_keyword">return</strong> cal.get(Calendar.YEAR) * 366 + cal.get(Calendar.DAY_OF_YEAR);
+<a class="jxr_linenumber" name="815" href="#815">815</a>     }
+<a class="jxr_linenumber" name="816" href="#816">816</a>     
+<a class="jxr_linenumber" name="817" href="#817">817</a> }
+<a class="jxr_linenumber" name="818" href="#818">818</a> 
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+
